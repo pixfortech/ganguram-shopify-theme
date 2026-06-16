@@ -16,6 +16,68 @@
 	endif 
 -%}
 
+{%- comment -%} Phase 1 (visual only): hover/tap animation scoped to the "Mango Delights" menu item. CSS-only, no JS, no business logic. Emitted once on the classic pass; styles apply to desktop + mobile drawer. {%- endcomment -%}
+{%- if type == 'classic' -%}
+	{% style %}
+		.menu-link.menu-item--mango {
+			--mango: #f59e0b;
+			--mango-deep: #ea580c;
+			position: relative;
+			isolation: isolate;
+			transition: transform .28s cubic-bezier(.2,.7,.3,1.5), color .2s ease;
+		}
+		.menu-link.menu-item--mango::before {
+			content: "";
+			position: absolute;
+			inset: -4px -10px;
+			z-index: -1;
+			border-radius: 999px;
+			background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(234,88,12,.20));
+			opacity: 0;
+			transform: scale(.6);
+			transition: opacity .2s ease, transform .28s cubic-bezier(.2,.7,.3,1.5);
+		}
+		.menu-link.menu-item--mango::after {
+			content: "🥭";
+			position: absolute;
+			top: -10px;
+			inset-inline-end: -14px;
+			font-size: 14px;
+			line-height: 1;
+			opacity: 0;
+			transform: scale(0) rotate(-20deg);
+			transition: opacity .2s ease, transform .3s cubic-bezier(.2,.7,.3,1.7);
+			pointer-events: none;
+		}
+		.no-touchevents .menu-link.menu-item--mango:hover {
+			color: var(--mango-deep);
+			transform: translateY(-2px) scale(1.06);
+		}
+		.no-touchevents .menu-link.menu-item--mango:hover::before { opacity: 1; transform: scale(1); }
+		.no-touchevents .menu-link.menu-item--mango:hover::after  { opacity: 1; transform: scale(1) rotate(8deg); }
+		.menu-link.menu-item--mango:active { animation: mango-pop .4s cubic-bezier(.2,.7,.3,1.6); }
+		.menu-link.menu-item--mango:active::before { opacity: 1; transform: scale(1); }
+		.menu-link.menu-item--mango:active::after  { opacity: 1; transform: scale(1.1) rotate(8deg); }
+		@keyframes mango-pop {
+			0%   { transform: scale(1); }
+			35%  { transform: scale(1.18) rotate(2deg); }
+			65%  { transform: scale(.95); }
+			100% { transform: scale(1); }
+		}
+		@media (prefers-reduced-motion: reduce) {
+			.menu-link.menu-item--mango,
+			.menu-link.menu-item--mango::before,
+			.menu-link.menu-item--mango::after,
+			.menu-link.menu-item--mango:hover,
+			.menu-link.menu-item--mango:active {
+				transition: none !important;
+				animation: none !important;
+				transform: none !important;
+			}
+		}
+	{% endstyle %}
+{%- endif -%}
+
 <div class="site-nav style--{{ type }}">
 
 	<div class="site-nav-container">
@@ -220,7 +282,7 @@
 					>
 
 						<a 
-							class="menu-link {% if link.active or link.child_active %} active {% endif %} {% unless link.links != blank or link_is_mega_menu %} no-focus-link {% endunless %}" 
+							class="menu-link {% if link.active or link.child_active %} active {% endif %} {% unless link.links != blank or link_is_mega_menu %} no-focus-link {% endunless %}{% assign menu_key = link.title | handleize %}{% if menu_key == 'mango-delights' %} menu-item--mango{% endif %}"
 							href="{{ link.url }}"
 							{% if link_is_mega_menu or link.links != blank %}
 								aria-controls="SiteNavLabel-{{ link.handle }}-{{ type }}" aria-expanded="false" aria-haspopup="true"
@@ -280,7 +342,7 @@
 													{%- endif -%}
 												{%- endif -%}
 
-												<a class="menu-link {% if link_is_mega_menu == false and childlink.active or childlink.child_active %} active {% endif %} {% unless childlink.links != blank %} no-focus-link {% endunless %}" 
+												<a class="menu-link {% if link_is_mega_menu == false and childlink.active or childlink.child_active %} active {% endif %} {% unless childlink.links != blank %} no-focus-link {% endunless %}{% assign menu_key = childlink.title | handleize %}{% if menu_key == 'mango-delights' %} menu-item--mango{% endif %}"
 													href="{{ childlink.url }}"
 													{% if link_is_mega_menu or childlink.links != blank  %}
 														aria-controls="SiteNavLabel-{{ childlink.handle }}-{{ type }}" aria-expanded="false" aria-haspopup="true"
@@ -306,7 +368,7 @@
 															{%- endif -%}
 
 															{% for babylink in childlink.links %}
-																<li><a title="{{ babylink.title | escape }}" class="menu-link {% if babylink.active %} active {% endif %} no-focus-link" href="{{ babylink.url }}"><span><span class="{{ links_class }}">{{ babylink.title | escape }}</span></span></a></li>
+																<li><a title="{{ babylink.title | escape }}" class="menu-link {% if babylink.active %} active {% endif %} no-focus-link{% assign menu_key = babylink.title | handleize %}{% if menu_key == 'mango-delights' %} menu-item--mango{% endif %}" href="{{ babylink.url }}"><span><span class="{{ links_class }}">{{ babylink.title | escape }}</span></span></a></li>
 															{% endfor %}
 
 														</ul>
