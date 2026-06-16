@@ -8,20 +8,6 @@
 -%}
 <html class="no-js" lang="{{ request.locale.iso_code }}" dir="{{ direction }}">
 <head>
-  <!-- Google Tag Manager -->
-  <script>
-    (function(w,d,s,l,i){
-      w[l]=w[l]||[];
-      w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
-      var f=d.getElementsByTagName(s)[0],
-          j=d.createElement(s),
-          dl=l!='dataLayer'?'&l='+l:'';
-      j.async=true;
-      j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
-      f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-WBWKK5KN');
-  </script>
-  <!-- End Google Tag Manager -->
 
   {%- if content_for_header contains 'tapita-seo-script-tags' -%}
     {%- include 'tapita-seo-schema' -%}
@@ -136,12 +122,6 @@
   {% if settings.shadow_cards_x < 0 %} has-negative-shadow-x {% endif %}
   {% if settings.shadow_cards_y < 0 %} has-negative-shadow-y {% endif %}
 ">
-  <!-- Google Tag Manager (noscript) -->
-  <noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WBWKK5KN"
-      height="0" width="0" style="display:none;visibility:hidden"></iframe>
-  </noscript>
-  <!-- End Google Tag Manager (noscript) -->
 
   <script type="text/javascript">
     if ('ontouchstart' in window || window.DocumentTouch && document instanceof DocumentTouch) {
