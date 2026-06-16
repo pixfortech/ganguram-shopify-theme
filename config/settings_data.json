@@ -47,6 +47,7 @@
     "product_card_aspect_ratio_fit": false,
     "proudct_card_aspect_ratio_padding": 5,
     "product_card_show_secondary_image": true,
+    "product_card_text_alignment": "center",
     "product_card_text_size": "xlarge",
     "product_card_align_buy": false,
     "product_card_show_out_of_stock": false,
