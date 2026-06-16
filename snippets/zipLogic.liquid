@@ -1,0 +1,273 @@
+<!-- ZIPLOGIC APP DATA START -->
+<script type="application/json" data-ZL-form-settings>
+  {{shop.metafields.zipLogic.formSettings }}
+</script>
+
+<script type="application/json" data-ZL-app-settings>
+  {{shop.metafields.zipLogic.appSettings }}
+</script>
+<!-- ZIPLOGIC APP DATA END -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+
+	// ZIPLOGIC APP FUNCTIONS START
+	function setCookie(cname, cvalue, exdays) {
+	  const d = new Date();
+	  d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+	  let expires = "expires="+d.toUTCString();
+	  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+	}
+	function getCookie(cname) {
+	  let name = cname + "=";
+	  let ca = document.cookie.split(';');
+	  for(let i = 0; i < ca.length; i++) {
+	    let c = ca[i];
+	    while (c.charAt(0) == ' ')
+	      c = c.substring(1);
+	    if (c.indexOf(name) == 0)
+	      return c.substring(name.length, c.length);
+	  }
+	  return "";
+	}
+	function localStoreStatus() {
+    let test = "test";
+    try {
+      localStorage.setItem("test", test);
+      localStorage.removeItem("test");
+    }
+    catch(e){
+      if (e.name === "QUATA_EXCEEDED_ERR" || e.name === "NS_ERROR_DOM_QUATA_REACHED")
+      	return "full";
+      else {
+        try{
+          if(localStorage.remainingSpace === 0)
+          	return "full";
+        }
+        catch (e) {}
+        return "unavailable";
+      }
+    }   
+    return "available";
+	}
+	function validateZipcode(checkFrom){
+		var zipCodeVal = getCookie("zipCodeVal"), zipCodeStatus = getCookie("zipCodeStatus"), zipIs = getCookie("zipIs"), uniqueAvailProdsId = getCookie("availProdsId"), uniqueAvailCollsId = getCookie("availCollsId"), uniqueAvailProds = getCookie("availProds"), uniqueAvailColls = getCookie("availColls"), uniqueAvailProdsLen = getCookie("availProdsLen"), uniqueAvailCollsLen = getCookie("availCollsLen"), customMsg = successMsg,msgColor = successColor, savedCollIds = uniqueAvailCollsId.split(","), prodCollectionIdsData = prodCollectionIds.split(",");
+		prodCollectionIdsData.pop();
+		prodCollectionIdsData = prodCollectionIdsData.map(Number);
+		savedCollIds = savedCollIds.map(Number);
+		$(".innerZipcode").text(zipCodeVal);
+		if(localStorageStatus=="available"){
+			if(localStorage.zipLogicZipCodes!="" && localStorage.zipLogicZipCodes!=undefined)
+				appProdZips = JSON.parse(localStorage.zipLogicZipCodes);
+		}
+		else
+			appProdZips = window.zipLogicZipCodes;
+		if(zipIs=="PB" && uniqueAvailProdsId.indexOf(productId)==-1)
+			(customMsg = "Zipcode Available for Few products only.", msgColor = faliureColor);
+		else if(zipIs=="CB"){
+			var collAvailFlag = 0;
+			for(var ind=0; ind<savedCollIds.length;ind++){
+				if(prodCollectionIdsData.indexOf(savedCollIds[ind])>-1){
+					collAvailFlag = 1;
+					break;
+				}
+			}
+			if(collAvailFlag==0)
+				(customMsg = "Zipcode Available for Few collections only.", msgColor = faliureColor);
+		}
+		if(checkFrom=="direct"){
+			if(zipIs!=""){
+				$(".prodPageZipIp").hide();
+				$(".prodPageZipChecked").show();
+				if(zipIs=="NA")
+					$(".zipCheckedStatus").show().text(failureMsg).css("color",faliureColor);
+	    	else
+					$(".zipCheckedStatus, .zipStatus").show().text(customMsg).css("color",msgColor);
+	    }
+		}
+		else{
+			if(zipIs!=""){
+				if(zipIs!="NA"){
+	    		$(".prodPageZipChecked").show();
+					$(".zipCheckedStatus, .zipStatus").show().text(customMsg).css("color",msgColor);
+	    	}
+	    }
+		}
+		$(".checkZipcodeZL").prop("disabled",false).html('Check');
+	}
+	var localStorageStatus = localStoreStatus();
+	// ZIPLOGIC APP FUNCTIONS END
+
+	// SET ZIPCODES TO LOCAL AND WINDOW START
+	if(localStorageStatus=="available"){
+		$.getJSON("/a/zipLogic?action=getZipCodes", function(result){
+	    window.zipLogicZipCodes = result;
+	    window.productZipcodes = zipLogicZipCodes.product, window.collZipcodes = zipLogicZipCodes.collection, window.globalZipcodes = zipLogicZipCodes.global;
+	    localStorage.setItem("zipLogicZipCodes",JSON.stringify(result));
+	  });
+	}
+	else{
+		$.getJSON("/a/zipLogic?action=getZipCodes", function(result){
+	    window.zipLogicZipCodes = result;
+	    window.productZipcodes = zipLogicZipCodes.product, window.collZipcodes = zipLogicZipCodes.collection, window.globalZipcodes = zipLogicZipCodes.global;
+	  });
+	}
+	// SET ZIPCODES TO LOCAL AND WINDOW END
+
+	var productId = "{{ product.id }}"; // PRODUCT INFO VARS
+
+  var zipLogicForm = JSON.parse(document.querySelector('[data-ZL-form-settings]').innerHTML);// ZIPLOGIC APP FORM CUSTOMIZATION SETTINGS
+
+  // SET FORM CUSTIMIZATION VARS START
+  var inputBorderColor = (zipLogicForm.border_color=="") ? "#f0f0f0" : zipLogicForm.border_color,
+  inputRadius = (zipLogicForm.border_radius=="") ? "0px" : zipLogicForm.border_radius+"px",
+  inputPlaceholder = (zipLogicForm.place_text=="") ? "Enter Zip Code" : zipLogicForm.place_text,
+  inputBorderStyle = (zipLogicForm.border_style=="") ? "solid" : zipLogicForm.border_style,
+  successMsg = (zipLogicForm.success_name=="") ? "Delivery Available in Your Area" : zipLogicForm.success_name,
+  successColor = (zipLogicForm.success_color=="") ? "#28a745" : zipLogicForm.success_color,
+  failureMsg = (zipLogicForm.faliure_name=="") ? "Delivery Not Available in your Area" : zipLogicForm.faliure_name,
+  faliureColor = (zipLogicForm.faliure_color=="") ? "#dc3545" : zipLogicForm.faliure_color;
+  // SET FORM CUSTIMIZATION VARS END
+
+  var zipCodeInputBox = '<div class="row pt-2 prodPageZipIp pb-2" style="display:none;"><div class="col-sm-12 h5 my-0 py-0 pb-1"><i class="fas fa-truck"></i>  Delivery Options</div><div class="col-10 col-md-8"> <input type="text" name="zipZL" value="" placeholder="'+inputPlaceholder+'" style="outline: 0;width: 100%;border-radius: '+inputRadius+';border: 2px '+inputBorderStyle+' '+inputBorderColor+';" autofocus="on" /></div><div class="col-4 col-md-4"> <button type="button" class="btn btn-secondary checkZipcodeZL" style="border-radius: 0;padding-bottom: 7px;width: 100%;">Check</button></div><div class="zipStatus col-sm-12 pt-1" style="display:none;"></div></div><div class="row p-2 prodPageZipChecked" style="display:none;"><div class="col-sm-6 pt-1"><a role="button" class="checkZipAgain"><i class="fas fa-map-marker-alt"></i> Deliver to <span class="innerZipcode"></span></a></div><div class="zipCheckedStatus col-sm-12 pb-2"></div></div>';// BUILD PRODUCT PAGE FORM INPUT
+
+  var zipLogicApp = JSON.parse(document.querySelector('[data-ZL-app-settings]').innerHTML);// ZIPLOGIC APP SETTINGS
+	var caseSensitive = zipLogicApp.caseSensitiveZip, zipTrack = zipLogicApp.tracking;// APP SETTINGS VARS
+	var prodCollectionIds = "{% for collection in product.collections %}{{ collection.id }},{% endfor %}";
+	if(productId!="" && zipLogicApp.appStatus=="on" && (zipLogicApp.inpBoxPos=="both" || zipLogicApp.inpBoxPos=="prodPage")){
+		var productFormSelectors = "#product_form_"+productId+', [action="/cart/add"]'+", #AddToCartForm-"+productId+", #addToCartForm-product-template, .addToCartForm, #AddToCartForm, #AddToCartForm--product-template, .addToCartForm--payment-button, [data-product-form], .product-form-product-template, .product-form--payment-button-no-variants, #cart-form_ppr, .nt_cart_form, .variations_form, .variations_form_ppr, .product-single__form, .product-single__form--no-variants, .product-form";
+		productFormSelectors = productFormSelectors.split(",");
+		for(var i=0;i<productFormSelectors.length;i++){
+			var zlFormSelector = productFormSelectors[i];
+			if($(zlFormSelector).is(":visible")) {
+				var zlThisTotalLen = $(zlFormSelector).length;
+				if(zlThisTotalLen==1)
+					$(zlFormSelector).before(zipCodeInputBox);
+				else if(zlThisTotalLen>1)
+					$(zlFormSelector+":eq(0)").before(zipCodeInputBox);
+				break;
+			}
+		}
+		$(".prodPageZipIp").show();
+		validateZipcode("direct");
+	}
+</script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+	var s1 = document.createElement("link"), s0 = document.getElementsByTagName("link")[0];
+	s1.async = true, s1.href = 'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css', s1.rel = 'stylesheet';
+	s0.parentNode.insertBefore(s1,s0);
+</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+<script>
+	$("input[name='zipZL']").keypress(function (e) {
+    if (e.which == 13) {
+      var disableStatus = $(".checkZipcodeZL").is(":disabled");
+      if(!disableStatus)
+      	checkZip();
+    }
+  });
+	$(".checkZipcodeZL").on("click", function(){
+	  checkZip();
+	});
+	$(".checkAgain").on("click", function(){
+		$(".zipStatus").hide();
+	});
+	$(".checkZipAgain").on("click", function(){
+		$(".prodPageZipIp").show();
+		$(".prodPageZipChecked, .zipCheckedStatus, .zipStatus").hide();
+	});
+	function checkZip() {
+		var zipCodeVal = $("input[name='zipZL']").val();
+	  if(zipCodeVal=="")
+	  	$(".zipStatus").show().text("Please Enter a Valid Zipcode it cannot be blank").css("color",faliureColor);
+	  else{
+	  	$(".zipStatus").hide();
+	  	$(".checkZipcodeZL").prop("disabled",true).html('<span class="spinner-border spinner-border-sm"></span> Checking...');
+	  	if((window.zipLogicZipCodes=="" || window.zipLogicZipCodes=="undefined" || window.zipLogicZipCodes==undefined) && localStorageStatus=="available"){
+	  		if(localStorage.zipLogicZipCodes!=undefined){
+					window.zipLogicZipCodes = JSON.parse(localStorage.zipLogicZipCodes);
+				  window.productZipcodes = zipLogicZipCodes.product, window.collZipcodes = zipLogicZipCodes.collection, window.globalZipcodes = zipLogicZipCodes.global;
+				}
+			}
+			if((window.zipLogicZipCodes=="" || window.zipLogicZipCodes=="undefined" || window.zipLogicZipCodes==undefined) && localStorageStatus=="available"){
+				$(".checkZipcodeZL").prop("disabled",false).html('Check');
+				$(".zipStatus").show().text("Some Error Occured Please Reload the Page and try Again.").css("color",faliureColor);
+			}
+			else{
+				$(".innerZipcode").text(zipCodeVal);
+				var prodFlag = 0, collFlag = 0, globFlag = 0, availProds = [], availProdsId = [], availColls = [],availCollsId = [], uniqueAvailProds = [], uniqueAvailColls = [];
+				Object.entries(productZipcodes).forEach(([key, val]) => {
+				  var zipcodes = val['zipCodes'].slice(0, -1).split(",");
+					if(caseSensitive=="" || caseSensitive=="undefined" || caseSensitive==undefined){
+					  zipcodes = val['zipCodes'].slice(0, -1).toLowerCase().split(",");
+					  zipCodeVal = zipCodeVal.toLowerCase();
+					}
+				  if(zipcodes.indexOf(zipCodeVal)!=-1){
+						prodFlag = 1;
+						availProds.push(val['pTitle'].slice(0, -1));
+						availProdsId.push(key);
+					}
+				});
+				if(prodFlag==0){
+					Object.entries(collZipcodes).forEach(([key, val]) => {
+					  var zipcodes = val['zipCodes'].slice(0, -1).split(",");
+						if(caseSensitive=="" || caseSensitive=="undefined" || caseSensitive==undefined){
+						  zipcodes = val['zipCodes'].slice(0, -1).toLowerCase().split(",");
+						  zipCodeVal = zipCodeVal.toLowerCase();
+						}
+					  if(zipcodes.indexOf(zipCodeVal)!=-1){
+							collFlag = 1;
+							availColls.push(val['cTitle'].slice(0, -1));
+							availCollsId.push(key);
+						}
+					});
+				}
+				if(prodFlag==0 && collFlag==0){
+					if(globalZipcodes.length!=0){
+						var zipcodes = globalZipcodes['zipCodes'].split(",");
+						if(caseSensitive=="" || caseSensitive=="undefined" || caseSensitive==undefined){
+						  zipcodes = globalZipcodes['zipCodes'].toLowerCase().split(",");
+						  zipCodeVal = zipCodeVal.toLowerCase();
+						}
+						if(zipcodes.indexOf(zipCodeVal)!=-1)
+							globFlag = 1;
+					}
+				}
+				if(zipTrack=="on"){
+					$.ajax({
+		        type: "POST",
+		        url: "/a/zipLogic",
+		        data: {action:"fetchWaitUsers",zipCode:zipCodeVal},
+		        success: function (data) {}
+		      });
+				}
+  			$(".prodPageZipIp").hide();
+  			var zipIs = (prodFlag==1) ? "PB":(collFlag==1) ? "CB":(globFlag==1) ? "GB":"NA";
+				var zipCodeStatus = (zipIs=="NA") ? 500 : 200;
+				setCookie("zipCodeVal",zipCodeVal,1);
+	      setCookie("zipCodeStatus",zipCodeStatus,1);
+	      setCookie("zipIs",zipIs,1);
+				if(prodFlag==0 && collFlag==0 && globFlag==0){
+					$(".prodPageZipChecked").show();
+          $(".checkZipcodeZL").prop("disabled",false).html('Check');
+          $(".zipCheckedStatus").show().text(failureMsg).css("color",faliureColor);
+				}
+				else{
+					uniqueAvailProds = availProds.filter(function(item, pos){return availProds.indexOf(item)==pos;});
+					uniqueAvailProdsId = availProdsId.filter(function(item, pos){return availProdsId.indexOf(item)==pos;});
+					uniqueAvailColls = availColls.filter(function(item, pos){return availColls.indexOf(item) == pos;});
+					uniqueAvailCollsId = availCollsId.filter(function(item, pos){return availCollsId.indexOf(item) == pos;});
+		      setCookie("availProdsId",uniqueAvailProdsId.join(),1);
+		      setCookie("availCollsId",uniqueAvailCollsId.join(),1);
+		      setCookie("availProds",uniqueAvailProds.join(),1);
+		      setCookie("availColls",uniqueAvailColls.join(),1);
+		      setCookie("availProdsLen",uniqueAvailProds.length,1);
+		      setCookie("availCollsLen",uniqueAvailColls.length,1);
+					validateZipcode("other");
+				}
+			}
+	  }
+	}
+</script>

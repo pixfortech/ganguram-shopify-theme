@@ -1,0 +1,2990 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "shopify": {
+    "sentence": {
+      "two_words_connector": " এবং ",
+      "last_word_connector": ", এবং "
+    },
+    "checkout": {
+      "address_management": {
+        "confirm_address_deletion": "আপনি কি {{address}} ঠিকানাটি মুছতে চান?"
+      },
+      "general": {
+        "page_title": "চেকআউট",
+        "error_page_title": "ত্রুটি",
+        "skip_to_content": "এড়িয়ে যাও কন্টেন্ট",
+        "breadcrumb": "ব্রেডক্রাম্ব",
+        "continue_button_label": "চালিয়ে যান",
+        "complete_purchase_button_label": "সম্পূর্ণ আদেশ",
+        "pay_now_button_label": "এখন পরিশোধ করুন",
+        "authenticate_purchase_button_label": "পেমেন্ট প্রমাণীকরণ",
+        "edit_link_label": "সম্পাদনা করুন",
+        "all_rights_reserved": "সর্বস্বত্ব সংরক্ষিত %{shop_name}",
+        "print_policies_link_label": "ছাপা",
+        "cart": "কার্ট",
+        "close_modal_label": "বন্ধ",
+        "close_notice_label": "বন্ধ",
+        "expand_notice_label": "আরো দেখুন",
+        "continue_to_shipping_method": "শিপিং চালিয়ে যান",
+        "continue_to_payment_method": "পেমেন্ট চালিয়ে যান",
+        "continue_to_review": "পর্যালোচনা আদেশ",
+        "back_to_cart": "কার্টে ফেরত যান",
+        "back_to_contact_information": "তথ্য-এ ফেরত যান",
+        "back_to_shipping_method": "শিপিং এ ফিরে যান",
+        "back_to_payment_method": "পেমেন্টে ফিরে যান",
+        "choose_shipping_method": "একটি শিপিং পদ্ধতি চয়ন করুন",
+        "choose_payment_method": "একটি অর্থপ্রদান পদ্ধতি চয়ন করুন",
+        "choose_billing_address": "একটি বিলিং ঠিকানা চয়ন করুন",
+        "contact_us_html": "আরও তথ্যের জন্য আমাদের সাথে যোগাযোগ করুন",
+        "autocomplete_title": "পরামর্শ",
+        "autocomplete_single_item": "1টি আইটেম উপলব্ধ",
+        "autocomplete_multi_item": "{{number}} টি আইটেম উপলব্ধ৷",
+        "autocomplete_close": "প্রস্তাবনা বন্ধ করুন",
+        "forwarding_indicator": {
+          "new_window": "একটি নতুন উইন্ডোতে খোলে৷",
+          "external": "বাহ্যিক ওয়েবসাইট খোলে।",
+          "external_and_new_window": "একটি নতুন উইন্ডোতে বহিরাগত ওয়েবসাইট খোলে।"
+        },
+        "checkout_context": {
+          "step_one": "%{shop_name} - চেকআউট"
+        },
+        "tooltip_accessibility_label": "অধিক তথ্য",
+        "errors": {
+          "only_empty_terms_accepted": "এই নীতি শুধুমাত্র খালি শর্তাবলী গ্রহণ করে.",
+          "session_identifier_not_unique_error": "আপনার অর্ডারে কিছু ভুল হয়েছে, অনুগ্রহ করে আবার চেক আউট করার চেষ্টা করুন।",
+          "line_item_limit_reached": "লাইন আইটেমগুলির সর্বাধিক সংখ্যায় পৌঁছেছে৷",
+          "session_is_already_finished": "এই চেকআউট অধিবেশন ইতিমধ্যে চূড়ান্ত করা হয়েছে.",
+          "merchandise": {
+            "only_value_constraint": "মার্চেন্ডাইজ ইনপুটে শুধুমাত্র সঠিক মান অনুমোদিত।",
+            "merchandise_not_found": "পণ্য পাওয়া যায়নি.",
+            "merchandise_variant_not_found": "পণ্য বৈকল্পিক পাওয়া যায়নি.",
+            "merchandise_not_applicable": "পণ্য বৈকল্পিক ক্রয় করা যাবে না.",
+            "bundle_products_not_supported_for_b2b": "এই অবস্থানের জন্য B2B অর্ডারে বান্ডেল করা আইটেম যোগ করা যাবে না।",
+            "gift_card_quantity_mismatch": "উপহার কার্ডের কোডগুলি নির্দিষ্ট করার সময়, লাইন আইটেমের পরিমাণ এবং উপহার কার্ডের কোডগুলির সংখ্যা অবশ্যই মিলবে৷",
+            "gift_card_not_supported": "এই চেকআউটে উপহার কার্ড সমর্থিত নয়।",
+            "gift_card_not_unique": "এই চেকআউটে {{code}} কোড সহ উপহার কার্ড একাধিকবার আসে৷ কোড তুলনা করার আগে ফর্ম্যাট করা হয়.",
+            "gift_card_used": "উপহার কার্ড কোড {{code}} ইতিমধ্যেই একটি উপহার কার্ডে বরাদ্দ করা হয়েছে৷ কোড তুলনা করার আগে ফর্ম্যাট করা হয়.",
+            "gift_card_invalid": "উপহার কার্ড কোড {{code}} অবৈধ৷",
+            "gift_card_code_changed": "উপহার কার্ড কোড {{proposed_code}} পরিবর্তন করে {{formatted_code}} করা হয়েছে ফর্ম্যাটিং নিয়ম মেনে চলার জন্য৷",
+            "gift_card_with_attributes_not_supported": "কাস্টম বৈশিষ্ট্য সহ উপহার কার্ড এই চেকআউটে সমর্থিত নয়৷",
+            "gift_card_with_components_not_supported": "উপাদান সহ উপহার কার্ড এই চেকআউটে সমর্থিত নয়।",
+            "selling_plan_mismatch": "সদস্যতা আপডেট করা হয়েছে.",
+            "selling_plan_not_supported": "সদস্যতা সমর্থিত নয়.",
+            "selling_plan_not_supported_b2b": "B2B চেকআউটের জন্য সদস্যতা সমর্থিত নয়।",
+            "price_mismatch": "এই পণ্যদ্রব্যের জন্য পূর্বে প্রস্তাবিত মূল্য অবৈধ ছিল এবং আপডেট করা হয়েছে৷",
+            "inventory_not_found": "এই পণ্যদ্রব্যের জন্য কোনো ইনভেন্টরি পাওয়া যায়নি।",
+            "product_not_published": "পণ্য প্রকাশ করা হয় না.",
+            "duplicated_stable_id": "এই মার্চেন্ডাইজ লাইনে অন্য লাইনের মতো একই স্থিতিশীল-আইডি রয়েছে।",
+            "minimum_quantity_not_met": "এই পণ্যদ্রব্যের পরিমাণ ন্যূনতম {{min}} পরিমাণের প্রয়োজনীয়তা পূরণ করে না৷",
+            "maximum_quantity_exceeded": "এই পণ্যদ্রব্যের পরিমাণ অনুমোদিত সর্বাধিক {{max}} পরিমাণ পূরণ করে না৷",
+            "quantity_increment_not_met": "এই পণ্যদ্রব্যে {{increment}} পরিমাণ বৃদ্ধি অবশ্যই প্রয়োগ করতে হবে৷",
+            "quantity_rules_not_met": "পণ্যের অবৈধ পরিমাণ।",
+            "bundle_requires_components": "এই বান্ডিল পণ্যদ্রব্য কোন উপাদান আছে.",
+            "title_too_long": "মার্চেন্ডাইজ শিরোনাম অনেক বড়।",
+            "title_empty": "মার্চেন্ডাইজ শিরোনাম খালি।"
+          },
+          "buyer_identity": {
+            "business_customer_does_not_match_company": "কোম্পানির পরিচিতির কোম্পানিতে অ্যাক্সেস নেই।",
+            "customer_account_required": "চালিয়ে যেতে গ্রাহককে লগ ইন করতে হবে।",
+            "contact_info_does_not_match_customer_account": "নির্দিষ্ট গ্রাহকের তথ্য লগ ইন করা গ্রাহক অ্যাকাউন্টের সাথে মেলে।",
+            "phone_number_does_not_match_expected_pattern": "নির্দিষ্ট ফোন নম্বরটি প্রত্যাশিত প্যাটার্নের সাথে মেলে না৷",
+            "email_required": "সাবস্ক্রিপশন ব্যবহার করে পণ্যদ্রব্য কেনা হলে একটি ইমেল প্রয়োজন।",
+            "email_domain_is_invalid": "এই নির্দিষ্ট ডোমেন সমাধান করা যাবে না.",
+            "missing_contact_method": "একটি বৈধ যোগাযোগ পদ্ধতি অনুপস্থিত.",
+            "checkout_completion_target_is_missing": "চেকআউট সমাপ্তির লক্ষ্য অনুপস্থিত.",
+            "invalid_customer_profile": "একটি অবৈধ গ্রাহক প্রোফাইল প্রদান করা হয়েছে.",
+            "customer_profile_access_restricted": "চেকআউটের গ্রাহক প্রোফাইল অ্যাক্সেস করার অনুমতি নেই।",
+            "checkout_completion_target_is_invalid_proc": "অবৈধ চেকআউট সমাপ্তি লক্ষ্য."
+          },
+          "delivery": {
+            "only_one_delivery_line_allowed": "কার্টে শুধুমাত্র একটি ডেলিভারি লাইন থাকতে হবে।",
+            "wrong_number_of_delivery_lines": "পণ্যদ্রব্যের প্রতিটি গ্রুপের জন্য একটি ডেলিভারি লাইন নির্দিষ্ট করতে হবে।",
+            "external_delivery_promise_error": "একটি বহিরাগত বিতরণ প্রতিশ্রুতি ত্রুটি আনা.",
+            "options_instructions_invalid": "নির্দিষ্ট নির্দেশাবলী প্রত্যাশিত প্যাটার্নের সাথে মেলে না।",
+            "destination_address_required": "চালিয়ে যাওয়ার জন্য একটি গন্তব্য ঠিকানা প্রয়োজন৷",
+            "pickup_points_unavailable": "পিক আপ পয়েন্ট বর্তমানে অনুপলব্ধ.",
+            "local_pickup_delivery_line_detail_changed": "চালিয়ে যাওয়ার জন্য বর্তমান স্থানীয় পিকআপ ডেলিভারি কৌশল পরিবর্তন করতে হবে।",
+            "local_pickup_no_delivery_strategy_available": "স্থানীয় পিকআপ ডেলিভারি কৌশল পাওয়া যায়নি।",
+            "origin_location_id_required": "রিটেইল ডেলিভারি পদ্ধতির অনুরোধ করা হলে একটি মূল অবস্থান আইডি প্রয়োজন।",
+            "invalid_origin_location_id": "মূল অবস্থান আইডির সাথে মেলে এমন একটি অবস্থান খুঁজে পাওয়া যায়নি৷",
+            "origin_location_id_not_allowed": "অনুরোধ করা ডেলিভারি পদ্ধতি একটি মূল অবস্থান আইডি সমর্থন করে না.",
+            "auto_fulfill_not_allowed": "এই অধিবেশন পরিপূর্ণ আচরণ ওভাররাইড করার জন্য অনুমোদিত নয়.",
+            "auto_fulfill_required": "রিটেইল ডেলিভারি পদ্ধতির অনুরোধ করা হলে স্বয়ংক্রিয়ভাবে পূরণ করা প্রয়োজন।",
+            "prefetch_shipping_rates_used": "প্রিফেচড শিপিং রেট কখনই হার ফেরত দেওয়া উচিত নয়।",
+            "fulfillment_constraints_not_satisfied": "এক বা একাধিক পূর্ণতা সীমাবদ্ধতা সন্তুষ্ট ছিল না.",
+            "must_fulfill_from_constraint_not_satisfied": "পূর্ণতা সীমাবদ্ধতা সন্তুষ্ট নয় কারণ প্রয়োজনীয় অবস্থান থেকে আইটেম পূরণ করা যাবে না।",
+            "must_fulfill_from_same_location_constraint_not_satisfied": "পূর্ণতা সীমাবদ্ধতা সন্তুষ্ট নয় কারণ আইটেম একই অবস্থান থেকে পূরণ করা যাবে না.",
+            "delivery_strategy_conditions_not_satisfied": "এই অবস্থানের জন্য ডেলিভারি কৌশলগুলি উপলব্ধ, কিন্তু তাদের শর্তগুলি সন্তুষ্ট নয়৷",
+            "out_of_stock_at_origin_location": "মূল অবস্থানে কোন স্টক.",
+            "invalid_signature": "অবৈধ ডিসকাউন্ট স্বাক্ষর।"
+          },
+          "discount": {
+            "discounts_not_allowed_for_b2b": "B2B স্টোরগুলিতে ডিসকাউন্ট অনুমোদিত নয়।",
+            "custom_discount_not_honoured": "সরবরাহকৃত কাস্টম ডিসকাউন্টকে সম্মানিত করা হয়নি।",
+            "unsupported_expectation": "সরবরাহকৃত ডিসকাউন্ট লাইনে এমন একটি প্রত্যাশা রয়েছে যা নীতিটি ব্যাখ্যা করতে পারেনি৷",
+            "additional_requested_discount_code_discarded": "অনুরোধ করা অতিরিক্ত কোড ডিসকাউন্ট বাতিল করা হয়েছে.",
+            "allocations_mismatch": "প্রত্যাশিত ডিসকাউন্ট বরাদ্দ প্রকৃত ডিসকাউন্ট বরাদ্দের সাথে মেলে না।",
+            "discount_code_not_honoured": "ডিসকাউন্ট কোড প্রয়োগ করা হয়নি."
+          },
+          "tax": {
+            "new_tax_must_be_accepted": "চালিয়ে যাওয়ার জন্য বিক্রেতার প্রস্তাবে একটি নতুন ট্যাক্স লাইন অবশ্যই গ্রহণ করতে হবে।",
+            "unresolvable_tax_terms": "বর্তমান আলোচনার প্রেক্ষাপটে প্রস্তাবিত শর্তাবলী অমীমাংসিত।",
+            "delivery_price_is_abstract": "সম্পর্কিত বিতরণ মূল্য বিমূর্ত.",
+            "tax_inclusivity_mismatch": "কংক্রিট totalTaxAndDutyAmount বা totalAmountIncludedInTarget মানের সাথে পুনরায় আলোচনা করুন।",
+            "tax_exemption_not_supported": "বর্তমান আলোচনার অধিবেশনের জন্য কর ছাড় সমর্থিত নয়।",
+            "delivery_tax_exemption_not_supported": "ডেলিভারি লাইনের জন্য ট্যাক্স ছাড় বর্তমানে সমর্থিত নয়।",
+            "proposed_allocations_required": "'প্রস্তাবিত বরাদ্দ' ক্ষেত্র অনুপস্থিত।",
+            "merchandise_terms_must_be_defined": "পণ্যদ্রব্য শর্তাবলী সংজ্ঞায়িত করা আবশ্যক.",
+            "delivery_terms_must_be_defined": "ডেলিভারি শর্তাবলী সংজ্ঞায়িত করা আবশ্যক.",
+            "merchandise_discount_terms_must_be_defined": "মার্চেন্ডাইজ ডিসকাউন্ট শর্তাবলী সংজ্ঞায়িত করা আবশ্যক.",
+            "delivery_discount_terms_must_be_defined": "ডেলিভারি ডিসকাউন্ট শর্তাবলী সংজ্ঞায়িত করা আবশ্যক.",
+            "allocated_required": "অনুপস্থিত 'বরাদ্দ' ক্ষেত্র৷",
+            "value_required": "অনুপস্থিত 'মান' ক্ষেত্র।",
+            "line_splits_not_supported": "'মার্চেন্ডাইজ লাইন' ক্ষেত্রটি অবশ্যই বিভক্ত করা উচিত যাতে বিক্রেতার প্রস্তাবে প্রতিটির একটি একক লাইন উপাদান থাকে৷"
+          },
+          "payment": {
+            "manual_payments_not_allowed_for_b2b": "B2B দোকানে ম্যানুয়াল পেমেন্ট অনুমোদিত নয়।",
+            "positive_amount_expected": "অর্থপ্রদানের পরিমাণ অবশ্যই 0-এর বেশি হতে হবে।",
+            "total_amount_mismatch": "অর্থপ্রদানের মোট পরিমাণ অর্থপ্রদানের পরিমাণের সাথে মেলে না।",
+            "subscription_terms_not_accepted": "সাবস্ক্রিপশন শর্তাবলী গ্রহণ করা হয় না.",
+            "missing_session_id": "ক্রেডিট কার্ড সেশন তথ্য অনুপস্থিত.",
+            "gateway_not_supported": "পেমেন্ট গেটওয়ে অর্থপ্রদানের পদ্ধতি সংরক্ষণ করা সমর্থন করে না।",
+            "credit_card_last_name_required": "'শেষ নাম' শূন্য হতে পারে না।",
+            "credit_card_update_failed": "ক্রেডিট কার্ড আপডেট ব্যর্থ হয়েছে.",
+            "installments_amount_invalid": "কিস্তি লেনদেনের জন্য অবৈধ পরিমাণ।",
+            "installments_test_mode_not_allowed": "পরীক্ষা মোড অনুমোদিত নয়.",
+            "installments_gift_card_not_allowed": "কিস্তি উপহার কার্ড ব্যবহার করার অনুমতি দেয় না.",
+            "installments_unsupported_currency": "কিস্তি এই মুদ্রা সমর্থন করে না.",
+            "installments_unsupported_shipping": "কিস্তি এই ঠিকানায় শিপিং সমর্থন করে না.",
+            "installments_unsupported_billing": "কিস্তি এই বিলিং ঠিকানা সমর্থন করে না.",
+            "installments_unsupported_subscriptions": "কিস্তি সাবস্ক্রিপশন সমর্থন করে না।",
+            "installments_ineligible_line_item": "এই ক্রয়ের একটি লাইন আইটেমের জন্য কিস্তি নিষ্ক্রিয় করা হয়েছে।",
+            "shop_cash_not_allowed": "শপ পে ছাড়া শপ ক্যাশ অনুমোদিত নয়।",
+            "shop_cash_unsupported_checkout_source": "শপ ক্যাশ এই চেকআউট সমর্থন করে না।",
+            "shop_cash_gift_card_not_allowed": "শপ ক্যাশ উপহার কার্ড কেনার অনুমতি দেয় না।",
+            "shop_cash_not_enabled": "শপ ক্যাশ এই দোকানের জন্য সক্ষম নয়।",
+            "shop_cash_unsupported_subscriptions": "শপ ক্যাশ সাবস্ক্রিপশন সমর্থন করে না।",
+            "shop_cash_unsupported_shipping": "শপ ক্যাশ কোনো শিপিং ছাড়াই পণ্যদ্রব্য সমর্থন করে না।",
+            "invalid_address_type": "প্রদত্ত ঠিকানার ধরন এই অর্থপ্রদান পদ্ধতির জন্য অবৈধ৷",
+            "missing_retail_attributions": "ম্যানুয়ালি প্রবেশ করা ক্রেডিট কার্ডের অর্থপ্রদানের জন্য খুচরা বৈশিষ্ট্য প্রয়োজন।",
+            "unexpected_retail_attributions": "ক্রেডিট কার্ড পেমেন্টের জন্য অপ্রত্যাশিতভাবে রিটেল অ্যাট্রিবিউশন দেওয়া হয়েছে।",
+            "invalid_card_source": "এই সেশনে এই কার্ড উৎস ব্যবহার করার অনুমতি নেই।",
+            "wallet_content_missing": "ওয়ালেট সামগ্রী অনুপস্থিত৷",
+            "payment_instrument_not_found": "পেমেন্ট পদ্ধতি খুঁজে পাওয়া যায়নি",
+            "unauthorized_capture_method": "অর্থপ্রদান ক্যাপচার পদ্ধতি কনফিগার করা অনুমোদিত নয়৷",
+            "saved_payment_methods_not_allowed": "সংরক্ষিত অর্থপ্রদানের পদ্ধতি অনুমোদিত নয়।",
+            "saved_payment_methods_not_enabled": "এই দোকানের জন্য সংরক্ষিত অর্থপ্রদান পদ্ধতি সক্ষম করা নেই৷",
+            "saved_payment_methods_cvv_verification_disabled": "নির্বাচিত অর্থপ্রদানের পদ্ধতির জন্য CVV যাচাইকরণ প্রয়োজন যা এই দোকানের জন্য সক্ষম নয়৷ একটি ভিন্ন অর্থপ্রদানের পদ্ধতি নির্বাচন করুন৷",
+            "store_credit_not_enabled": "এই দোকানের জন্য স্টোর ক্রেডিট সক্ষম নয়।",
+            "store_credit_account_not_found": "দোকান ক্রেডিট অ্যাকাউন্ট পাওয়া যায়নি.",
+            "store_credit_account_mismatch": "স্টোর ক্রেডিট অ্যাকাউন্ট ক্রেতা পরিচয়ের সাথে মেলে না।",
+            "store_credit_mismatched_currency": "দোকান ক্রেডিট অ্যাকাউন্টের মুদ্রা চেকআউট মুদ্রার সাথে মেলে না।",
+            "store_credit_insufficient_funds": "স্টোর ক্রেডিট অ্যাকাউন্টে পর্যাপ্ত তহবিল নেই।",
+            "store_credit_buying_gift_card": "আপনি একটি উপহার কার্ড কিনতে দোকান ক্রেডিট ব্যবহার করতে পারবেন না.",
+            "gift_cards_not_allowed_for_b2b": "B2B স্টোরগুলিতে উপহার কার্ড অনুমোদিত নয়।",
+            "method_required": "একটি অর্থপ্রদান পদ্ধতি প্রস্তাব করা আবশ্যক.",
+            "paypal_express_address_invalid": "পেপ্যাল ​​একটি অবৈধ ঠিকানা ফেরত দিয়েছে৷",
+            "shop_cash_unsupported_currency": "শপ ক্যাশ এই মুদ্রা সমর্থন করে না।",
+            "market_manager_blocks_wallet_payments": "পেমেন্ট পদ্ধতি মার্কেট ম্যানেজার দ্বারা সমর্থিত নয়।"
+          },
+          "tip": {
+            "not_accepted_by_shop": "দোকান টিপস গ্রহণ করে না.",
+            "only_one_tip_line_allowed": "একাধিক টিপ লাইন সমর্থিত নয়।",
+            "tips_not_allowed_for_b2b": "B2B দোকানে টিপস অনুমোদিত নয়।",
+            "currency_change_reset": "মুদ্রা পরিবর্তনের কারণে টিপ রিসেট করা হয়েছে।",
+            "tips_not_allowed_for_deferred_purchase_options": "বিলম্বিত ক্রয় বিকল্পগুলির জন্য টিপস এখনও সমর্থিত নয়।"
+          },
+          "sale_attribution": {
+            "draft_order_not_exist": "এই খসড়া অর্ডার বর্তমান দোকানে বিদ্যমান নেই।",
+            "staff_member_not_exist": "এই স্টাফ বর্তমান দোকানে বিদ্যমান নেই.",
+            "location_not_exist": "বর্তমান দোকানে এই অবস্থানটি নেই।",
+            "point_of_sale_device_not_exist": "বর্তমান দোকানে এই পয়েন্ট অফ সেল ডিভাইসটি বিদ্যমান নেই৷",
+            "unresolvable_target_merchandise_lines": "বর্তমান আলোচনার প্রেক্ষাপটে প্রস্তাবিত বিক্রয় বৈশিষ্ট্যগুলি অমীমাংসিত৷"
+          },
+          "non_negotiable": {
+            "missing_non_negotiable_terms": "আপনার ক্রেতার প্রস্তাবে অ-আলোচনাযোগ্য_ শর্তাবলী থাকা উচিত।",
+            "invalid_signature": "{{target_terms}} এর স্বাক্ষরটি অবৈধ৷"
+          },
+          "inventory": {
+            "missing_quantity_value": "ক্রেতার ইনভেন্টরি লাইনে পরিমাণ ক্ষেত্র অনুপস্থিত।",
+            "changing_behavior_not_allowed": "এই ক্লায়েন্টের ইনভেন্টরি আচরণ পরিবর্তন করার অনুমতি নেই।",
+            "only_one_inventory_behavior_allowed": "বর্তমানে প্রতি চেকআউটে শুধুমাত্র একটি ইনভেন্টরি আচরণ অনুমোদিত।"
+          },
+          "optional_duties": {
+            "optional_duties_not_permitted": "এই চেকআউটের জন্য দায়িত্ব অস্বীকার করা অনুমোদিত নয়।"
+          },
+          "attribution": {
+            "retail_attribution_not_allowed": "এই চেকআউটের জন্য খুচরা অ্যাট্রিবিউশন অনুমোদিত নয়।",
+            "retail_attribution_required": "এই চেকআউটের জন্য খুচরা অ্যাট্রিবিউশন প্রয়োজন৷"
+          },
+          "captcha": {
+            "metadata_missing": "এই চেকআউটের জন্য একটি ক্যাপচা সম্পূর্ণ করা প্রয়োজন৷",
+            "metadata_mismatch": "প্রদত্ত ক্যাপচা প্রদানকারী এবং প্রকার প্রত্যাশিত মানগুলির সাথে মেলে না৷",
+            "token_missing": "এই চেকআউটটি সম্পূর্ণ করতে একটি ক্যাপচা টোকেন প্রদান করতে হবে।",
+            "job_enqueue_failed": "ক্যাপচা যাচাইকরণ কাজটি সারিবদ্ধ হতে ব্যর্থ হয়েছে৷",
+            "job_already_queued": "এই ক্যাপচা টোকেনের জন্য ক্যাপচা যাচাইকরণ ইতিমধ্যেই সারিবদ্ধ হয়েছে৷",
+            "token_expired": "প্রদত্ত ক্যাপচা টোকেনের মেয়াদ শেষ হয়ে গেছে। চেকআউট চালিয়ে যেতে একটি নতুন ক্যাপচা সম্পূর্ণ করুন।",
+            "token_invalid": "প্রদত্ত ক্যাপচা টোকেনটি অবৈধ ছিল৷ চেকআউট চালিয়ে যেতে একটি নতুন ক্যাপচা সম্পূর্ণ করুন।",
+            "token_not_valid_for_session": "প্রদত্ত ক্যাপচা এই চেকআউটের সাথে ব্যবহার করা যাবে না।"
+          },
+          "fx_reconciliation_override": {
+            "shop_currency_mismatch": "প্রাপ্ত পরিমাণ দোকান মুদ্রা হতে হবে."
+          }
+        },
+        "back_button_label": "প্রত্যাবর্তন",
+        "choose_delivery_strategy": "একটি বিতরণ পদ্ধতি চয়ন করুন",
+        "autocomplete_zero_item": "কোন আইটেম উপলব্ধ",
+        "autocomplete_powered_by_google": "{{brandName}} দ্বারা চালিত",
+        "submit": "জমা দিন",
+        "processing": "প্রক্রিয়া করা হচ্ছে...",
+        "stepper": {
+          "increase": "{{type}} বাড়ান",
+          "decrease": "{{type}} কমান",
+          "minimum_reached": "ন্যূনতম {{value}} এ পৌঁছেছে৷",
+          "maximum_reached": "সর্বাধিক {{value}} এ পৌঁছেছে৷"
+        },
+        "remove_item": "%{label} সরান",
+        "remove_tag": "ট্যাগ সরান",
+        "dates": {
+          "weekdays": {
+            "monday": "সোমবার",
+            "tuesday": "মঙ্গলবার",
+            "wednesday": "বুধবার",
+            "thursday": "বৃহস্পতিবার",
+            "friday": "শুক্রবার",
+            "saturday": "শনিবার",
+            "sunday": "রবিবার"
+          },
+          "weekdays_abbreviation": {
+            "monday": "মো",
+            "tuesday": "তু",
+            "wednesday": "আমরা",
+            "thursday": "ম",
+            "saturday": "সা",
+            "sunday": "সু"
+          },
+          "months": {
+            "january": "জানুয়ারি",
+            "february": "ফেব্রুয়ারি",
+            "march": "মার্চ",
+            "april": "এপ্রিল",
+            "may": "মে",
+            "june": "জুন",
+            "july": "জুলাই",
+            "august": "আগস্ট",
+            "september": "সেপ্টেম্বর",
+            "october": "অক্টোবর",
+            "november": "নভেম্বর",
+            "december": "ডিসেম্বর"
+          }
+        },
+        "datepicker": {
+          "show_previous_month": "আগের মাস দেখান, {{month}} {{year}}",
+          "show_next_month": "পরের মাসে দেখান, {{month}} {{year}}",
+          "range_start": "পরিসীমা শুরু",
+          "in_range": "সীমার মধ্যে",
+          "range_end": "পরিসীমা শেষ"
+        },
+        "map": {
+          "cluster_title": {
+            "one": "{{number}} মার্কারের ক্লাস্টার",
+            "other": "{{number}} টি চিহ্নিতকারীর ক্লাস্টার"
+          }
+        },
+        "full_price": "পূর্ণ মূল্য:",
+        "title": "চেকআউট - {{shopName}}",
+        "full_title": "{{pageTitle}} - {{shopName}} - চেকআউট৷",
+        "loading_title": "চেকআউট - {{shopName}}",
+        "google_map_title": "গুগল মানচিত্র",
+        "submit_order_button_label": "অর্ডার জমা",
+        "submit_for_review_button_label": "পর্যালোচনার জন্য জমা",
+        "submit_for_review_notice_label": "আপনার অর্ডার পর্যালোচনা না হওয়া পর্যন্ত পেমেন্ট বকেয়া হবে না",
+        "continue_to_payment_plans_button_label": "অর্থপ্রদানের পরিকল্পনা চালিয়ে যান"
+      },
+      "contact": {
+        "title": "তথ্য",
+        "address_title": "ঠিকানা",
+        "shipping_used_as_billing_notice": "এটি এই অর্ডারের জন্য আপনার বিলিং ঠিকানা হিসাবেও ব্যবহার করা হবে৷",
+        "delivery_option_title": "ডেলিভারি পদ্ধতি",
+        "contact_method_title": "যোগাযোগ",
+        "email_label": "ইমেইল",
+        "email_placeholder": "ইমেইল",
+        "email_or_phone_label": "ইমেইল বা মোবাইল ফোন নম্বর",
+        "email_or_phone_placeholder": "ইমেইল বা মোবাইল ফোন নম্বর",
+        "stored_addresses_label": "সংরক্ষিত ঠিকানা",
+        "new_address_label": "একটি নতুন ঠিকানা ব্যবহার করুন",
+        "first_name_label": "নামের প্রথম অংশ",
+        "optional_first_name_label": "প্রথম নাম (ঐচ্ছিক)",
+        "last_name_label": "নামের শেষাংশ",
+        "company_label": "প্রতিষ্ঠান",
+        "company_attention_label": "কোম্পানি/মনোযোগ",
+        "optional_company_attention_label": "কোম্পানি/মনোযোগ (ঐচ্ছিক)",
+        "optional_company_label": "কোম্পানি (ঐচ্ছিক)",
+        "address1_label": "ঠিকানা",
+        "address2_label": "অ্যাপার্টমেন্ট, স্যুট, ইত্যাদি",
+        "optional_address2_label": "অ্যাপার্টমেন্ট, স্যুট, ইত্যাদি (ঐচ্ছিক)",
+        "city_label": "শহর",
+        "country_label": "দেশ/অঞ্চল",
+        "country_code": "দেশ/অঞ্চল কোড",
+        "province_label": "প্রদেশ",
+        "province_placeholder": "প্রদেশ",
+        "county_label": "কাউন্টি",
+        "county_placeholder": "কাউন্টি",
+        "state_label": "অবস্থা",
+        "state_placeholder": "অবস্থা",
+        "region_label": "অঞ্চল",
+        "region_placeholder": "অঞ্চল",
+        "region_none": "এবং কিন্তুএবং কিন্তুএবং কিন্তুএবং কিন্তুএবং কিন্তু",
+        "prefecture_label": "প্রিফেকচার",
+        "prefecture_placeholder": "প্রিফেকচার",
+        "governorate_label": "গভর্নরেট",
+        "governorate_placeholder": "গভর্নরেট",
+        "emirate_label": "আমিরাত",
+        "emirate_placeholder": "আমিরাত",
+        "state_and_territory_label": "রাজ্য/অঞ্চল",
+        "state_and_territory_placeholder": "রাজ্য/অঞ্চল",
+        "phone_label": "ফোন",
+        "optional_phone_label": "ঐচ্ছিক ফোন)",
+        "phone_placeholder": "ফোন",
+        "phone_tooltip": "যদি আমাদের আপনার অর্ডার সম্পর্কে আপনার সাথে যোগাযোগ করতে হয়",
+        "zip_code_label": "জিপ কোড",
+        "zip_code_placeholder": "জিপ কোড",
+        "postal_code_label": "পোস্ট অফিসের নাম্বার",
+        "postal_code_placeholder": "পোস্ট অফিসের নাম্বার",
+        "postcode_label": "পোস্টকোড",
+        "postcode_placeholder": "পোস্টকোড",
+        "pincode_label": "পিনকোড",
+        "pincode_placeholder": "পিনকোড",
+        "civic_number_warning": "আপনার কাছে থাকলে একটি বাড়ির নম্বর যোগ করুন",
+        "optional_last_name_label": "পদবি (ঐচ্ছিক)",
+        "optional_recipient_label": "মনোযোগ (ঐচ্ছিক)",
+        "different_shipping_address_label": "অন্য ঠিকানায় পাঠান",
+        "different_shipping_address_text": "এই অর্ডারের জন্য একটি এককালীন ঠিকানা ব্যবহার করুন",
+        "change_company_location_link_label": "কোম্পানির অবস্থান পরিবর্তন করুন",
+        "change_location_link_label": "অবস্থান পরিবর্তন করুন",
+        "ship_to_company": "{{companyName}} এ পাঠান"
+      },
+      "payment": {
+        "card_fields": {
+          "errors": {
+            "required": {
+              "issue_number": "একটি বৈধ ইস্যু নম্বর লিখুন"
+            },
+            "invalid": {
+              "verification_value": "একটি বৈধ CVV বা নিরাপত্তা কোড লিখুন"
+            }
+          }
+        },
+        "simulated_checkout": "পূর্বরূপ শীঘ্রই আসছে",
+        "vaulting_agreement_label": "দ্রুত চেকআউটের জন্য আমার পেমেন্টের তথ্য %{company}-এর সাথে সংরক্ষণ করুন।",
+        "business_customer_vaulting_payment_label": "চেকআউট করার সময় এই কার্ডটি সংরক্ষণ করুন এবং %{company} কে এই অবস্থানের জন্য ভবিষ্যতের কেনাকাটার জন্য এই কার্ডটি চার্জ করার অনুমতি দিন৷ এই অবস্থানে নির্ধারিত যেকোন গ্রাহক এই কার্ড ব্যবহার করার জন্য অনুমোদিত হবে।",
+        "purchase_options_and_vaulting_agreement_label": "আপনার কার্টে এক বা একাধিক আইটেম একটি বিলম্বিত বা সদস্যতা ক্রয়। আপনার অর্থপ্রদান চালিয়ে যাওয়ার মাধ্যমে, আপনি সম্মত হন যে আপনার অর্থপ্রদানের পদ্ধতিটি শেষ না হওয়া পর্যন্ত বা আপনি বাতিল না হওয়া পর্যন্ত এই পৃষ্ঠায় তালিকাভুক্ত মূল্য এবং ফ্রিকোয়েন্সিতে স্বয়ংক্রিয়ভাবে চার্জ করা হবে। সমস্ত বাতিলকরণ %{cancellation_policy_label} সাপেক্ষে।",
+        "purchase_options_cancellation_policy_label": "বাতিলকরণ নীতি",
+        "use_different_credit_card_label": "একটি ভিন্ন কার্ড ব্যবহার করুন",
+        "saved_credit_card": "আপনার সংরক্ষিত ক্রেডিট কার্ড",
+        "saved_credit_card_info": "শেষ চার অঙ্ক",
+        "saved_credit_card_cvv_verification": "যাচাইকরণের উদ্দেশ্যে, অনুগ্রহ করে আপনার কার্ডের নিরাপত্তা কোড লিখুন।",
+        "saved_credit_card_actions": {
+          "edit": "সম্পাদনা করুন",
+          "delete": "মুছে ফেলা"
+        },
+        "saved_credit_cards_modal": {
+          "view_all_label": "সব সংরক্ষিত কার্ড দেখুন",
+          "done": "সম্পন্ন",
+          "cancel": "বাতিল করুন"
+        },
+        "add_credit_card_modal": {
+          "title": "কার্ড যোগ করুন",
+          "save": "সংরক্ষণ",
+          "cancel": "বাতিল করুন"
+        },
+        "delete_credit_card_modal": {
+          "title": "কার্ড মুছুন",
+          "confirmation": "আপনি কি {{lastDigits}} এ শেষ হওয়া {{brandName}} মুছতে চান?",
+          "cancel": "বাতিল করুন",
+          "delete": "মুছে ফেলা"
+        },
+        "edit_credit_card_modal": {
+          "title": "কার্ড সম্পাদনা করুন",
+          "done": "সম্পন্ন",
+          "cancel": "বাতিল করুন",
+          "description": "আপনি শুধুমাত্র আপনার কার্ডের বিলিং ঠিকানা পরিবর্তন করতে পারেন।",
+          "fields": {
+            "default": "ডিফল্ট হিসেবে সেট করুন",
+            "card_number": "কার্ড নম্বর",
+            "expiry": "মেয়াদ শেষ হওয়ার তারিখ",
+            "security_code": "নিরাপত্তা কোড",
+            "name": "কার্ডের ওপর নাম",
+            "billing": "বিল করতে"
+          }
+        },
+        "expired_cards_info": {
+          "one": "এখানে %{count} মেয়াদোত্তীর্ণ কার্ড রয়েছে, যা আপনি আপনার অ্যাকাউন্টে দেখতে এবং সম্পাদনা করতে পারেন৷",
+          "other": "মেয়াদোত্তীর্ণ %{count} কার্ড আছে, যেগুলো আপনি আপনার অ্যাকাউন্টে দেখতে এবং সম্পাদনা করতে পারেন।"
+        },
+        "local_payment_method_receiver_notice": "আপনার অর্ডার দেওয়ার পরে, আপনি পেমেন্টের বিবরণ পাবেন। {{dueDays}} দিনের মধ্যে একটি ATM বা অনলাইনে অর্থপ্রদান করুন৷",
+        "order_edit_banner_title": "{{amount_owed}} পেমেন্ট প্রয়োজন",
+        "order_edit_banner_subtitle": "আপনার অর্ডার {{order_number}} আপডেট করা হয়েছে। এই পরিবর্তনগুলি পর্যালোচনা করুন, তারপর আপনার অর্ডার নিশ্চিত করতে অর্থপ্রদান করুন।",
+        "order_edit_banner_items_added": {
+          "one": "যোগ করা হয়েছে",
+          "other": "%{count} যোগ করা হয়েছে"
+        },
+        "order_edit_banner_items_removed": {
+          "in_full": "সরানো হয়েছে",
+          "with_quantities": "{ {{quantity}} এর { {{delta}} } সরানো হয়েছে"
+        },
+        "order_edit_banner_items_returned": {
+          "in_full": "ফিরে এসেছে",
+          "with_quantities": "{ {{quantity}} {{delta}} ফেরত এসেছে৷"
+        },
+        "order_edit_banner_items_return_line_item_removed": {
+          "in_full": "প্রত্যাবর্তন থেকে সরানো হয়েছে",
+          "with_quantities": "রিটার্ন থেকে {{delta}} সরানো হয়েছে"
+        },
+        "order_edit_banner_single_item_added": "যোগ করা হয়েছে",
+        "order_edit_banner_multiple_items_added": "{{amount}} যোগ করা হয়েছে",
+        "order_edit_banner_single_item_removed": "সরানো হয়েছে",
+        "order_edit_banner_multiple_items_removed": "{{amount}} সরানো হয়েছে",
+        "order_edit_banner_single_item_returned": "ফিরে এসেছে",
+        "order_edit_banner_multiple_items_returned": "{{amount}} ফেরত দেওয়া হয়েছে৷",
+        "order_edit_banner_single_item_return_line_item_removed": "প্রত্যাবর্তন থেকে সরানো হয়েছে",
+        "order_edit_banner_multiple_items_return_line_item_removed": "রিটার্ন থেকে {{amount}} সরানো হয়েছে",
+        "order_edit_banner_updated_order_label": "আপডেট করা অর্ডার",
+        "gift_card_wrapper": {
+          "heading": "উপহার কার্ড",
+          "apply_gift_card_label": "একটি উপহার কার্ড প্রয়োগ করুন",
+          "apply_another_gift_card_label": "আরেকটি উপহার কার্ড প্রয়োগ করুন",
+          "gift_card_label": "উপহার কার্ড %{identifier}",
+          "payment_tag": "উপহার কার্ড",
+          "add_label": "একটি উপহার কার্ড যোগ করুন",
+          "manage_label": "উপহার কার্ড পরিচালনা করুন"
+        },
+        "gift_card_store_credit": {
+          "add_label": "একটি উপহার কার্ড বা দোকান ক্রেডিট যোগ করুন",
+          "manage_label": "উপহার কার্ড বা স্টোর ক্রেডিট পরিচালনা করুন"
+        },
+        "custom_onsite_payment_method_modal": {
+          "title": "কাস্টম অনসাইট পেমেন্ট নিশ্চিতকরণ"
+        },
+        "markets_pro_disclaimer_label": "নীচে ক্লিক করে এবং আপনার অর্ডার সম্পূর্ণ করার মাধ্যমে, আপনি Global-e-এর %{markets_pro_terms} এবং %{privacy_policy}-এ এই লেনদেনের জন্য রেকর্ডের মার্চেন্ট হিসাবে Global-e থেকে আপনার আইটেম(গুলি) ক্রয় করতে সম্মত হন। গ্লোবাল-ই হল %{shop_name}-এর একটি আন্তর্জাতিক পরিপূর্ণতা পরিষেবা প্রদানকারী",
+        "markets_pro_disclaimer_terms_and_conditions": "শর্তাবলী",
+        "markets_pro_disclaimer_privacy_policy": "গোপনীয়তা নীতি",
+        "markets_pro_disclaimer_terms_and_conditions_title": "রেকর্ডের শর্তাবলীর ব্যবসায়ী",
+        "markets_pro_disclaimer_privacy_policy_title": "রেকর্ড গোপনীয়তা নীতির ব্যবসায়ী",
+        "purchase_order_number": {
+          "title": "পি ও নম্বর",
+          "label": "PO নম্বর (ঐচ্ছিক)"
+        },
+        "alternative_payment_currency_total_notice": "দ্রষ্টব্য: আপনাকে %{amount_due} চার্জ করা হবে।",
+        "waiting_on_taxes_message": "যদি আপনার ট্যাক্স পরবর্তী কয়েক সেকেন্ডের মধ্যে গণনা না হয়, তাহলে পৃষ্ঠাটি রিফ্রেশ করুন।",
+        "waiting_on_taxes_notice": "কর গণনা করা",
+        "payment_method": "মূল্যপরিশোধ পদ্ধতি",
+        "expired_payment_method": "নির্বাচিত অর্থপ্রদানের পদ্ধতির মেয়াদ শেষ হয়ে গেছে",
+        "proposed_gateway_unavailable": "প্রস্তাবিত পেমেন্ট গেটওয়ে অনুপলব্ধ"
+      },
+      "billing": {
+        "billing_address_title": "বিল করতে",
+        "same_as_shipping": "বাজারের ঠিকানা",
+        "add_address": "একটি ভিন্ন ঠিকানা ব্যবহার করুন",
+        "edit": "সম্পাদনা করুন",
+        "delete": "মুছে ফেলা",
+        "address_more": "এই ঠিকানার জন্য আরো কর্ম",
+        "address_edit": "ঠিকানা সম্পাদনা করুন",
+        "address_delete": "ঠিকানা মুছুন",
+        "address_confirm": "আপনি কি আপনার অ্যাকাউন্ট থেকে এই ঠিকানাটি মুছে ফেলার বিষয়ে নিশ্চিত?",
+        "address_form": {
+          "add_address": "ঠিকানা যোগ করুন",
+          "save": "সংরক্ষণ",
+          "cancel": "বাতিল করুন"
+        }
+      },
+      "company_location": {
+        "location_title": "অবস্থান"
+      },
+      "payment_summary": {
+        "gift_card_current_balance_notice": "বর্তমান ব্যালেন্স %{amount}",
+        "credit_card_expires_on_notice": "%{মাস}/%{বছর} তারিখে মেয়াদ শেষ হবে",
+        "express_payment_gateway_label": "প্রকাশ করা",
+        "manual_payment_gateway_label": "ম্যানুয়াল",
+        "billing_address_title": "বিলিং ঠিকানা",
+        "free_label": "বিনামূল্যে"
+      },
+      "field_errors": {
+        "handle_phone_invalid": "একটি বৈধ ফোন নম্বর লিখুন",
+        "handle_email_invalid": "একটি বৈধ ইমেল লিখুন",
+        "email_invalid": "একটি বৈধ ইমেল লিখুন"
+      },
+      "failed_payment": {
+        "payment_not_processed_text": "আপনাকে চার্জ করা হয়নি। আপনার ক্রয় সম্পূর্ণ করতে আপনার কার্টে ফিরে যান।",
+        "return_to_cart_button_label": "কার্টে ফেরত যান",
+        "page_title": "পেমেন্ট প্রক্রিয়া করা যায়নি",
+        "title": "পেমেন্ট প্রক্রিয়া করা যায়নি",
+        "payment_not_processed_title": "আপনার পেমেন্ট প্রক্রিয়া করা যায়নি"
+      },
+      "payment_gateway": {
+        "credit_card_label": "ক্রেডিট কার্ড",
+        "bank_deposit_label": "ব্যাংক আমানত",
+        "cash_on_delivery_label": "ক্যাশ অন ডেলিভারি (সিওডি)",
+        "money_order_label": "মানি অর্ডার",
+        "debit_card_label": "ডেবিট কার্ড",
+        "deferred_payment_label": "পরে অর্থপ্রদানের পদ্ধতি বেছে নিন",
+        "fixed_payment_label": "আপনার পেমেন্ট {{dueDate}} তারিখে বকেয়া হবে।",
+        "generic_payment_terms": "আপনি {{translatedName}} শর্তে আছেন। আপনার পেমেন্ট {{dueDate}} তারিখে বকেয়া হবে।",
+        "login_prompt": {
+          "no_access": {
+            "message": "সংরক্ষিত অর্থপ্রদানের পদ্ধতি যোগ করতে বা ব্যবহার করতে এই অবস্থানে অ্যাক্সেস সহ একটি অ্যাকাউন্টে {{logIn}} ।",
+            "link": "প্রবেশ করুন"
+          }
+        },
+        "direct_payment_terms": "আপনি {{translatedName}} শর্তে আছেন। আপনার কার্ড থেকে {{dueDate}} তারিখে চার্জ করা হবে।",
+        "fixed_direct_payment_terms": "আপনার কার্ডটি {{dueDate}} তারিখে চার্জ করা হবে।",
+        "order_due_on_fulfillment_choose_later": "আপনার অর্ডার পূরণ হয়ে গেলে আপনার পেমেন্ট বকেয়া হবে।",
+        "order_due_on_fulfillment_payment": "আপনার অর্ডার পূরণ হয়ে গেলে আপনার কার্ড থেকে চার্জ করা হবে।",
+        "draft_order_payment_due_later_no_terms": "আপনার অর্ডার নিশ্চিত হওয়ার পরে আপনার অর্থ প্রদান করা হবে।",
+        "draft_order_payment_due_later_no_terms_payment_selected": "আপনার অর্ডার নিশ্চিত হয়ে গেলে আপনার কার্ড চার্জ করা হবে।",
+        "draft_order_payment_due_later_terms": "আপনার অর্ডার নিশ্চিত হয়ে গেলে আপনি {{translatedName}} শর্তে থাকবেন।",
+        "draft_order_payment_due_on_fulfillment": "আপনার অর্ডার নিশ্চিত এবং পূরণ হয়ে গেলে আপনার পেমেন্ট বকেয়া হবে।"
+      },
+      "thank_you": {
+        "title": "আপনার ক্রয় করার জন্য আপনাকে ধন্যবাদ!",
+        "confirmation_email_sent_text": "একটি নিশ্চিতকরণ ইমেল %{email}-এ পাঠানো হয়েছে",
+        "return_to_store_link_label": "কেনাকাটা চালিয়ে যান",
+        "print_link_label": "প্রিন্ট রসিদ",
+        "payment_information_title": "পেমেন্ট তথ্য",
+        "shipping_information_title": "হস্তান্তর তথ্য",
+        "page_title": "ধন্যবাদ, %{display_name}!",
+        "page_title_no_name": "ধন্যবাদ!",
+        "purchase_order_number_title": "PO নম্বর #%{purchase_order_number}",
+        "cancelled_page_title": "অর্ডার বাতিল",
+        "failed_pending_payment_page_title": "আপনার পেমেন্টে সমস্যা আছে",
+        "customer_information_title": "আদেশ বিবরণী",
+        "contact_information_title": "যোগাযোগের তথ্য",
+        "billing_address_title": "বিলিং ঠিকানা",
+        "company_location_title": "অবস্থান",
+        "shipping_address_title": "প্রেরণের ঠিকানা",
+        "shipping_address_map_title": "Google ম্যাপ শিপিং ঠিকানার পিন পয়েন্ট প্রদর্শন করছে: %{address}",
+        "payment_method_title": "মূল্যপরিশোধ পদ্ধতি",
+        "shipping_method_title": "পরিবহণ মাধ্যম",
+        "tracking_number": "ট্র্যাকিং নম্বর:",
+        "company_tracking_number": "%{company} ট্র্যাকিং নম্বর:",
+        "estimated_arrival": "সম্ভাব্য প্রসব তারিখ: ",
+        "estimated_delivery": "বর্তমান ডেলিভারি অনুমান: ",
+        "re-order": "একই আইটেম পুনরায় অর্ডার",
+        "confirmed": "নিশ্চিত করা হয়েছে",
+        "gift_card_confirmation_by_text": "যদি আপনি এটি গ্রহণ না করেন, তাহলে পাঠ্যটি পুনরায় পাঠান বা আমাদের সাথে যোগাযোগ করুন৷",
+        "gift_card_confirmation_by_email": "যদি আপনি এটি না পান, ইমেলটি আবার পাঠান বা আমাদের সাথে যোগাযোগ করুন৷",
+        "gift_card_title": "উপহার কার্ড",
+        "resend_gift_cards": "উপহার কার্ড পুনরায় পাঠান",
+        "thank_you_title": "আপনার অর্ডার নিশ্চিত করা হয়েছে",
+        "thank_you_title_payment": "আপনার পেমেন্ট নিশ্চিত করা হয়েছে",
+        "thank_you_title_review": "আপনার অর্ডার পর্যালোচনার জন্য জমা দেওয়া হয়েছে",
+        "thank_you_title_payments_app_pending_default": "আপনার পেমেন্ট প্রক্রিয়া করা হচ্ছে",
+        "thank_you_title_payments_app_pending_buyer_action_required": "আপনার আদেশ গৃহীত হয়েছে",
+        "thank_you_title_payments_app_failed_pending_payment": "আপনার পেমেন্ট প্রক্রিয়া করা যায়নি",
+        "thank_you_confirmed_order_with_email": "আপনি শীঘ্রই আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ ইমেল পাবেন।",
+        "thank_you_confirmed_order_with_phone": "আপনি শীঘ্রই আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ পাঠ্য পাবেন।",
+        "thank_you_confirmed_order_with_email_and_phone": "আপনি শীঘ্রই আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ ইমেল পাবেন।",
+        "thank_you_confirmed_order_with_email_payment": "আপনি আপনার অর্ডার %{date} এ অর্থপ্রদান করেছেন।",
+        "thank_you_confirmed_order_with_phone_payment": "আপনি আপনার অর্ডার %{date} এ অর্থপ্রদান করেছেন।",
+        "thank_you_confirmed_order_with_email_and_phone_payment": "আপনি আপনার অর্ডার %{date} এ অর্থপ্রদান করেছেন।",
+        "thank_you_confirmed_order_with_email_pick_up": "আপনার অর্ডার পিকআপের জন্য প্রস্তুত হলে আপনি একটি ইমেল পাবেন।",
+        "thank_you_confirmed_order_with_phone_pick_up": "আপনার অর্ডার পিকআপের জন্য প্রস্তুত হলে আপনি একটি টেক্সট পাবেন।",
+        "thank_you_confirmed_order_with_email_and_phone_pick_up": "আপনার অর্ডার পিকআপের জন্য প্রস্তুত হলে আপনি একটি ইমেল পাবেন।",
+        "thank_you_confirmed_order_with_missing": "একটি অর্ডার নিশ্চিতকরণ পেতে ইমেল বা ফোনের মাধ্যমে আমাদের সাথে যোগাযোগ করুন।",
+        "thank_you_confirmed_order_with_missing_payment": "একটি অর্ডার নিশ্চিতকরণ পেতে ইমেল বা ফোনের মাধ্যমে আমাদের সাথে যোগাযোগ করুন।",
+        "thank_you_confirmed_order_with_missing_pick_up": "একটি অর্ডার নিশ্চিতকরণ পেতে ইমেল বা ফোনের মাধ্যমে আমাদের সাথে যোগাযোগ করুন।",
+        "thank_you_confirmed_order_with_draft": "আমাদের আরও তথ্যের প্রয়োজন হলে বা আপনার অর্ডার নিশ্চিত হলে আমরা আপনাকে জানাব।",
+        "thank_you_confirmed_order_with_draft_payment": "আমাদের আরও তথ্যের প্রয়োজন হলে বা আপনার অর্ডার নিশ্চিত হলে আমরা আপনাকে জানাব।",
+        "thank_you_confirmed_order_with_draft_pick_up": "আমাদের আরও তথ্যের প্রয়োজন হলে বা আপনার অর্ডার নিশ্চিত হলে আমরা আপনাকে জানাব।",
+        "thank_you_payments_app_failed_pending_payment": "আপনার অর্ডারের জন্য আপনাকে চার্জ করা হয়নি। আপনার অর্ডার পর্যালোচনা করতে আপনার কার্টে ফিরে যান এবং আবার অর্থ প্রদান করুন৷",
+        "thank_you_payments_app_failed_pending_payment_payment": "আপনার অর্ডারের জন্য আপনাকে চার্জ করা হয়নি। আপনার অর্ডার পর্যালোচনা করতে আপনার কার্টে ফিরে যান এবং আবার অর্থ প্রদান করুন।",
+        "thank_you_payments_app_failed_pending_payment_pick_up": "আপনার অর্ডারের জন্য আপনাকে চার্জ করা হয়নি। আপনার অর্ডার পর্যালোচনা করতে আপনার কার্টে ফিরে যান এবং আবার অর্থ প্রদান করুন৷",
+        "thank_you_payments_app_pending_payment_description_default_with_missing": "একটি অর্ডার নিশ্চিতকরণ পেতে ইমেল বা ফোনের মাধ্যমে আমাদের সাথে যোগাযোগ করুন।",
+        "thank_you_payments_app_pending_payment_description_default_with_missing_payment": "একটি অর্ডার নিশ্চিতকরণ পেতে ইমেল বা ফোনের মাধ্যমে আমাদের সাথে যোগাযোগ করুন।",
+        "thank_you_payments_app_pending_payment_description_default_with_missing_pick_up": "একটি অর্ডার নিশ্চিতকরণ পেতে ইমেল বা ফোনের মাধ্যমে আমাদের সাথে যোগাযোগ করুন।",
+        "thank_you_payments_app_pending_payment_description_default_with_email_and_phone": "আপনি শীঘ্রই আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ ইমেল পাবেন।",
+        "thank_you_payments_app_pending_payment_description_default_with_email_and_phone_payment": "আপনি শীঘ্রই আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ ইমেল পাবেন।",
+        "thank_you_payments_app_pending_payment_description_default_with_email_and_phone_pick_up": "আপনি শীঘ্রই আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ ইমেল পাবেন।",
+        "thank_you_payments_app_pending_payment_description_default_with_email": "আপনি শীঘ্রই আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ ইমেল পাবেন।",
+        "thank_you_payments_app_pending_payment_description_default_with_email_payment": "আপনি শীঘ্রই আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ ইমেল পাবেন।",
+        "thank_you_payments_app_pending_payment_description_default_with_email_pick_up": "আপনি শীঘ্রই আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ ইমেল পাবেন।",
+        "thank_you_payments_app_pending_payment_description_default_with_phone": "আপনি শীঘ্রই আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ পাঠ্য পাবেন।",
+        "thank_you_payments_app_pending_payment_description_default_with_phone_payment": "আপনি শীঘ্রই আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ পাঠ্য পাবেন।",
+        "thank_you_payments_app_pending_payment_description_default_with_phone_pick_up": "আপনি শীঘ্রই আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ পাঠ্য পাবেন।",
+        "thank_you_payments_app_pending_payment_description_buyer_action_required_with_missing": "একটি অর্ডার নিশ্চিতকরণ পেতে ইমেল বা ফোনের মাধ্যমে আমাদের সাথে যোগাযোগ করুন।",
+        "thank_you_payments_app_pending_payment_description_buyer_action_required_with_missing_payment": "একটি অর্ডার নিশ্চিতকরণ পেতে ইমেল বা ফোনের মাধ্যমে আমাদের সাথে যোগাযোগ করুন।",
+        "thank_you_payments_app_pending_payment_description_buyer_action_required_with_missing_pick_up": "একটি অর্ডার নিশ্চিতকরণ পেতে ইমেল বা ফোনের মাধ্যমে আমাদের সাথে যোগাযোগ করুন।",
+        "thank_you_payments_app_pending_payment_description_buyer_action_required_with_email_and_phone": "আপনার অর্থপ্রদান সম্পূর্ণ করার পরে, আপনি আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ ইমেল পাবেন।",
+        "thank_you_payments_app_pending_payment_description_buyer_action_required_with_email_and_phone_payment": "আপনার অর্থপ্রদান সম্পূর্ণ করার পরে, আপনি আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ ইমেল পাবেন।",
+        "thank_you_payments_app_pending_payment_description_buyer_action_required_with_email_and_phone_pick_up": "আপনার অর্থপ্রদান সম্পূর্ণ করার পরে, আপনি আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ ইমেল পাবেন।",
+        "thank_you_payments_app_pending_payment_description_buyer_action_required_with_email": "আপনার অর্থপ্রদান সম্পূর্ণ করার পরে, আপনি আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ ইমেল পাবেন।",
+        "thank_you_payments_app_pending_payment_description_buyer_action_required_with_email_payment": "আপনার অর্থপ্রদান সম্পূর্ণ করার পরে, আপনি আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ ইমেল পাবেন।",
+        "thank_you_payments_app_pending_payment_description_buyer_action_required_with_email_pick_up": "আপনার অর্থপ্রদান সম্পূর্ণ করার পরে, আপনি আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ ইমেল পাবেন।",
+        "thank_you_payments_app_pending_payment_description_buyer_action_required_with_phone": "আপনার অর্থপ্রদান সম্পূর্ণ করার পরে, আপনি আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ পাঠ্য পাবেন।",
+        "thank_you_payments_app_pending_payment_description_buyer_action_required_with_phone_payment": "আপনার অর্থপ্রদান সম্পূর্ণ করার পরে, আপনি আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ পাঠ্য পাবেন।",
+        "thank_you_payments_app_pending_payment_description_buyer_action_required_with_phone_pick_up": "আপনার অর্থপ্রদান সম্পূর্ণ করার পরে, আপনি আপনার অর্ডার নম্বর সহ একটি নিশ্চিতকরণ পাঠ্য পাবেন।",
+        "order_status_confirmed_order_with_email": "আপনার অর্ডার প্রস্তুত হলে আপনি একটি ইমেল পাবেন।",
+        "order_status_confirmed_order_with_phone": "আপনার অর্ডার প্রস্তুত হলে আপনি একটি টেক্সট পেতে পারেন।",
+        "order_status_confirmed_order_with_email_and_phone": "আপনার অর্ডার প্রস্তুত হলে আপনি একটি ইমেল পাবেন।",
+        "order_status_confirmed_order_with_email_payment": "আপনি আপনার অর্ডার %{date} এ অর্থপ্রদান করেছেন।",
+        "order_status_confirmed_order_with_phone_payment": "আপনি আপনার অর্ডার %{date} এ অর্থপ্রদান করেছেন।",
+        "order_status_confirmed_order_with_email_and_phone_payment": "আপনি আপনার অর্ডার %{date} এ অর্থপ্রদান করেছেন।",
+        "order_status_confirmed_order_with_email_pick_up": "আপনার অর্ডার পিকআপের জন্য প্রস্তুত হলে আপনি একটি ইমেল পাবেন।",
+        "order_status_confirmed_order_with_phone_pick_up": "আপনার অর্ডার পিকআপের জন্য প্রস্তুত হলে আপনি একটি টেক্সট পাবেন।",
+        "order_status_confirmed_order_with_email_and_phone_pick_up": "আপনার অর্ডার পিকআপের জন্য প্রস্তুত হলে আপনি একটি ইমেল এবং টেক্সট পাবেন।",
+        "order_status_payments_app_pending_payment_description_default_with_missing": "একটি অর্ডার নিশ্চিতকরণ পেতে ইমেল বা ফোনের মাধ্যমে আমাদের সাথে যোগাযোগ করুন।",
+        "order_status_payments_app_pending_payment_description_default_with_missing_payment": "একটি অর্ডার নিশ্চিতকরণ পেতে ইমেল বা ফোনের মাধ্যমে আমাদের সাথে যোগাযোগ করুন।",
+        "order_status_payments_app_pending_payment_description_default_with_missing_pick_up": "একটি অর্ডার নিশ্চিতকরণ পেতে ইমেল বা ফোনের মাধ্যমে আমাদের সাথে যোগাযোগ করুন।",
+        "order_status_payments_app_pending_payment_description_default_with_email_and_phone": "আপনি শীঘ্রই একটি নিশ্চিতকরণ ইমেল পাবেন। শপ অ্যাপ ব্যবহার করে আপনার অর্ডার ট্র্যাক করুন।",
+        "order_status_payments_app_pending_payment_description_default_with_email_and_phone_payment": "আপনি শীঘ্রই একটি নিশ্চিতকরণ ইমেল পাবেন। শপ অ্যাপ ব্যবহার করে আপনার অর্ডার ট্র্যাক করুন।",
+        "order_status_payments_app_pending_payment_description_default_with_email_and_phone_pick_up": "আপনি শীঘ্রই একটি নিশ্চিতকরণ ইমেল পাবেন। শপ অ্যাপ ব্যবহার করে আপনার অর্ডার ট্র্যাক করুন।",
+        "order_status_payments_app_pending_payment_description_default_with_email": "আপনি শীঘ্রই একটি নিশ্চিতকরণ ইমেল পাবেন। শপ অ্যাপ ব্যবহার করে আপনার অর্ডার ট্র্যাক করুন।",
+        "order_status_payments_app_pending_payment_description_default_with_email_payment": "আপনি শীঘ্রই একটি নিশ্চিতকরণ ইমেল পাবেন। শপ অ্যাপ ব্যবহার করে আপনার অর্ডার ট্র্যাক করুন।",
+        "order_status_payments_app_pending_payment_description_default_with_email_pick_up": "আপনি শীঘ্রই একটি নিশ্চিতকরণ ইমেল পাবেন। শপ অ্যাপ ব্যবহার করে আপনার অর্ডার ট্র্যাক করুন।",
+        "order_status_payments_app_pending_payment_description_default_with_phone": "আপনি শীঘ্রই একটি নিশ্চিতকরণ পাঠ্য পাবেন। শপ অ্যাপ ব্যবহার করে আপনার অর্ডার ট্র্যাক করুন।",
+        "order_status_payments_app_pending_payment_description_default_with_phone_payment": "আপনি শীঘ্রই একটি নিশ্চিতকরণ পাঠ্য পাবেন। শপ অ্যাপ ব্যবহার করে আপনার অর্ডার ট্র্যাক করুন।",
+        "order_status_payments_app_pending_payment_description_default_with_phone_pick_up": "আপনি শীঘ্রই একটি নিশ্চিতকরণ পাঠ্য পাবেন। শপ অ্যাপ ব্যবহার করে আপনার অর্ডার ট্র্যাক করুন।",
+        "order_status_payments_app_pending_payment_description_buyer_action_required_with_missing": "একটি অর্ডার নিশ্চিতকরণ পেতে ইমেল বা ফোনের মাধ্যমে আমাদের সাথে যোগাযোগ করুন।",
+        "order_status_payments_app_pending_payment_description_buyer_action_required_with_missing_payment": "একটি অর্ডার নিশ্চিতকরণ পেতে ইমেল বা ফোনের মাধ্যমে আমাদের সাথে যোগাযোগ করুন।",
+        "order_status_payments_app_pending_payment_description_buyer_action_required_with_missing_pick_up": "একটি অর্ডার নিশ্চিতকরণ পেতে ইমেল বা ফোনের মাধ্যমে আমাদের সাথে যোগাযোগ করুন।",
+        "order_status_payments_app_pending_payment_description_buyer_action_required_with_email_and_phone": "আপনার অর্থপ্রদান সম্পূর্ণ করার পরে, আপনি একটি নিশ্চিতকরণ ইমেল পাবেন। শপ অ্যাপ ব্যবহার করে আপনার অর্ডার ট্র্যাক করুন।",
+        "order_status_payments_app_pending_payment_description_buyer_action_required_with_email_and_phone_payment": "আপনার অর্থপ্রদান সম্পূর্ণ করার পরে, আপনি একটি নিশ্চিতকরণ ইমেল পাবেন। শপ অ্যাপ ব্যবহার করে আপনার অর্ডার ট্র্যাক করুন।",
+        "order_status_payments_app_pending_payment_description_buyer_action_required_with_email_and_phone_pick_up": "আপনার অর্থপ্রদান সম্পূর্ণ করার পরে, আপনি একটি নিশ্চিতকরণ ইমেল পাবেন। শপ অ্যাপ ব্যবহার করে আপনার অর্ডার ট্র্যাক করুন।",
+        "order_status_payments_app_pending_payment_description_buyer_action_required_with_email": "আপনার অর্থপ্রদান সম্পূর্ণ করার পরে, আপনি একটি নিশ্চিতকরণ ইমেল পাবেন। শপ অ্যাপ ব্যবহার করে আপনার অর্ডার ট্র্যাক করুন।",
+        "order_status_payments_app_pending_payment_description_buyer_action_required_with_email_payment": "আপনার অর্থপ্রদান সম্পূর্ণ করার পরে, আপনি একটি নিশ্চিতকরণ ইমেল পাবেন। শপ অ্যাপ ব্যবহার করে আপনার অর্ডার ট্র্যাক করুন।",
+        "order_status_payments_app_pending_payment_description_buyer_action_required_with_email_pick_up": "আপনার অর্থপ্রদান সম্পূর্ণ করার পরে, আপনি একটি নিশ্চিতকরণ ইমেল পাবেন। শপ অ্যাপ ব্যবহার করে আপনার অর্ডার ট্র্যাক করুন।",
+        "order_status_payments_app_pending_payment_description_buyer_action_required_with_phone": "আপনার অর্থপ্রদান সম্পূর্ণ করার পরে, আপনি একটি নিশ্চিতকরণ পাঠ্য পাবেন। শপ অ্যাপ ব্যবহার করে আপনার অর্ডার ট্র্যাক করুন।",
+        "order_status_payments_app_pending_payment_description_buyer_action_required_with_phone_payment": "আপনার অর্থপ্রদান সম্পূর্ণ করার পরে, আপনি একটি নিশ্চিতকরণ পাঠ্য পাবেন। শপ অ্যাপ ব্যবহার করে আপনার অর্ডার ট্র্যাক করুন।",
+        "order_status_payments_app_pending_payment_description_buyer_action_required_with_phone_pick_up": "আপনার অর্থপ্রদান সম্পূর্ণ করার পরে, আপনি একটি নিশ্চিতকরণ পাঠ্য পাবেন। শপ অ্যাপ ব্যবহার করে আপনার অর্ডার ট্র্যাক করুন।",
+        "order_status_payments_app_failed_pending_payment": "আপনার অর্ডারের জন্য আপনাকে চার্জ করা হয়নি। আপনার অর্ডার পর্যালোচনা করতে আপনার কার্টে ফিরে যান এবং আবার অর্থ প্রদান করুন৷",
+        "order_status_payments_app_failed_pending_payment_payment": "আপনার অর্ডারের জন্য আপনাকে চার্জ করা হয়নি। আপনার অর্ডার পর্যালোচনা করতে আপনার কার্টে ফিরে যান এবং আবার অর্থ প্রদান করুন৷",
+        "order_status_payments_app_failed_pending_payment_pick_up": "আপনার অর্ডারের জন্য আপনাকে চার্জ করা হয়নি। আপনার অর্ডার পর্যালোচনা করতে আপনার কার্টে ফিরে যান এবং আবার অর্থ প্রদান করুন৷",
+        "order_status_confirmed_order_local": "আমরা আপনার অর্ডার ডেলিভারির জন্য প্রস্তুত করছি।",
+        "order_status_confirmed_order_local_pick_up": "আমরা আপনার অর্ডার প্রস্তুত করছি.",
+        "order_status_confirmed_order_local_payment": "আমরা আপনার অর্ডার প্রস্তুত করছি.",
+        "order_status_updates_with_email": "আপনি ইমেলের মাধ্যমে শিপিং এবং ডেলিভারি আপডেট পাবেন।",
+        "order_status_updates_with_phone": "আপনি পাঠ্য দ্বারা শিপিং এবং বিতরণ আপডেট পেতে পারেন.",
+        "order_status_updates_with_email_and_phone": "আপনি ইমেলের মাধ্যমে শিপিং এবং ডেলিভারি আপডেট পাবেন।",
+        "order_status_updates_with_missing": "আপনি কীভাবে শিপিং আপডেট পেতে চান তা চয়ন করুন৷",
+        "order_status_confirmed_with_installments_payment_return": "অনুগ্রহ করে আপনার মনোযোগ বিক্রয় সহযোগীর দিকে ফিরিয়ে দিন।",
+        "order_status_confirmed_with_installments_payment_confirm": "আপনি শীঘ্রই আপনার অর্ডার নম্বর এবং আপনার কিস্তির সময়সূচীর বিবরণ সহ একটি নিশ্চিতকরণ ইমেল পাবেন।",
+        "confirmed_title": "আপনার অর্ডার নিশ্চিত করা হয়েছে",
+        "confirmed_description": "আমরা আপনার অর্ডার গ্রহণ করেছি, এবং আমরা এটি প্রস্তুত করছি। আপনার চালানের অবস্থার আপডেটের জন্য এই পৃষ্ঠায় ফিরে আসুন।",
+        "ready_for_pickup_title": "আপনার অর্ডার পিক আপ জন্য প্রস্তুত",
+        "ready_for_pickup_description": "আপনার অর্ডার পিক আপ জন্য প্রস্তুত. আপনার অর্ডার নেওয়ার সময় অনুগ্রহ করে আপনার অর্ডার নিশ্চিতকরণ আনুন।",
+        "ready_for_delivery_title": "আপনার অর্ডার ডেলিভারির জন্য প্রস্তুত",
+        "ready_for_delivery_description": "আমরা আপনার অর্ডার প্রস্তুত করেছি।",
+        "order_updates_title": "অর্ডার আপডেট",
+        "shop_phone_description": "আপনার অর্ডার ট্র্যাক করতে সহায়তা করার জন্য আপনি শপ অ্যাপের লিঙ্ক সহ একটি পাঠ্য পাবেন।",
+        "order_updates_description_html": "আপডেটগুলি %{customer_contact}-এ পাঠানো হবে",
+        "order_updates_current_step_prefix": "বর্তমান পদক্ষেপ:",
+        "order_updates_past_step_prefix": "বিগত পদক্ষেপ:",
+        "order_updates_upcoming_step_prefix": "আসন্ন পদক্ষেপ:",
+        "in_transit": "তার পথে",
+        "in_transit_title": "আপনার অর্ডার তার পথে আছে",
+        "in_transit_description": "আপনি এর অগ্রগতির আপডেট পাবেন।",
+        "in_transit_description_days": "আগামী %{number} দিনের মধ্যে আপনার অর্ডার পাওয়া উচিত।",
+        "in_transit_description_today": "আপনি আজ আপনার অর্ডার গ্রহণ করা উচিত.",
+        "in_transit_description_tomorrow": "আপনি পরের দিন আপনার অর্ডার পাবেন.",
+        "no_tracking_number": "এই অর্ডারের জন্য কোন ট্র্যাকিং নম্বর নেই।",
+        "out_for_delivery": "ডেলিভারির জন্য আউট",
+        "out_for_delivery_title": "আপনার অর্ডার ডেলিভারির জন্য আউট",
+        "out_for_delivery_description_html": "আপনার অর্ডার তার পথে এবং আজ পৌঁছা উচিত. যদি এটি পরবর্তী 2 দিনের মধ্যে বিতরণ না করা হয়, %{contact_us}।",
+        "out_for_delivery_local_title": "আপনার অর্ডার ডেলিভারির জন্য আউট",
+        "out_for_delivery_local_description_html": "আপনার অর্ডার শীঘ্রই পৌঁছে যাবে.",
+        "attempted_delivery": "ডেলিভারির চেষ্টা করা হয়েছে",
+        "attempted_delivery_title": "আপনার অর্ডার সরবরাহ করার চেষ্টা করা হয়েছে",
+        "attempted_delivery_description_html": "আপনার অর্ডার বিতরণ করার চেষ্টা করা হয়েছিল কিন্তু এটি ব্যর্থ হয়েছে। %{contact_us} আরেকটি ডেলিভারি প্রচেষ্টার ব্যবস্থা করতে।",
+        "attempted_delivery_local_title": "মিস ডেলিভারি",
+        "attempted_delivery_local_description_html": "আমরা আপনার অর্ডার বিতরণ করতে সক্ষম ছিল না. অন্য ডেলিভারি শিডিউল করতে, %{contact_us}।",
+        "delivered": "বিতরণ করা হয়েছে",
+        "delivered_title": "আপনার অর্ডার বিতরণ করা হয়েছে",
+        "delivered_description_html": "আপনার অর্ডার আপনার দেওয়া ঠিকানায় পৌঁছে দেওয়া হয়েছে। আপনি যদি এটি না পেয়ে থাকেন, বা আপনার যদি অন্য কোনো সমস্যা থাকে, %{contact_us}।",
+        "delivered_local_title": "আপনার অর্ডার বিতরণ করা হয়েছে",
+        "delivered_local_description_html": "আপনার অর্ডার পাননি? %{আমাদের জানতে দাও}.",
+        "payment_method_draft_order": "আদেশ পর্যালোচনা করা হয় পরে",
+        "choose_payment_method_later": "পরে অর্থপ্রদানের পদ্ধতি বেছে নিন",
+        "picked_up_title": "আপনার অর্ডার নেওয়া হয়েছে",
+        "picked_up_description_html": "আপনার অর্ডারটি %{date} তারিখে %{location_name} এ তোলা হয়েছে।",
+        "contact_us": "যোগাযোগ করুন",
+        "contact_us_lowercase": "যোগাযোগ করুন",
+        "contact_us_html": "সাহায্য দরকার? %{যোগাযোগ করুন}",
+        "updated_time": "%{time_ago} আগে আপডেট করা হয়েছে",
+        "failure": "বিতরণ করা হয়নি",
+        "failed_title": "আপনার অর্ডার বিতরণ করা যায়নি",
+        "failed_contact_merchant": "ডেলিভারির ব্যবস্থা করতে %{company}-এর সাথে যোগাযোগ করুন।",
+        "failed_contact_merchant_no_company": "ডেলিভারির ব্যবস্থা করতে আমাদের সাথে যোগাযোগ করুন।",
+        "non_shippable_title": "আপনার অর্ডার সম্পূর্ণ",
+        "let_us_know": "আমাদের জানতে দাও",
+        "login_title": "সমস্ত অর্ডার বিবরণ দেখতে লগ ইন করুন",
+        "login_description": "আপনি ইমেলের মাধ্যমে প্রাপ্ত রসিদে আপনার অর্ডার নম্বর খুঁজে পেতে পারেন।",
+        "login_description_phone": "আপনি টেক্সট মেসেজের মাধ্যমে প্রাপ্ত রসিদে আপনার অর্ডার নম্বর খুঁজে পেতে পারেন।",
+        "login_not_customer_html": "%{name} না? আপনি %{link} করতে পারেন",
+        "login_reorder_link_text": {
+          "one": "এই পণ্যটিও কিনুন",
+          "other": "এই পণ্যগুলিও কিনুন"
+        },
+        "customer_information_hidden_fields_message": "সমস্ত গ্রাহক তথ্য দেখতে লগ ইন করুন.",
+        "cancelled_title": "আপনার অর্ডার বাতিল করা হয়েছে",
+        "cancelled_description": "আপনার অর্ডার %{date} তারিখে বাতিল করা হয়েছে। আপনার কোনো প্রশ্ন থাকলে আমাদের সাথে যোগাযোগ করুন.",
+        "order_number_label": "অর্ডার নম্বর"
+      },
+      "pickup_point": {
+        "business_hours": "খোলার সময়",
+        "title": "সংগ্রহের স্থান",
+        "or": "বা",
+        "search_button": "অনুসন্ধান করুন",
+        "selector_tabs": "পিকআপ পয়েন্ট নির্বাচক",
+        "selector_tab_map": "মানচিত্র",
+        "selector_tab_list": "তালিকা",
+        "could_not_resolve_address": "আপনার ঠিকানা সনাক্ত করা যায়নি. আবার চেষ্টা করুন বা অন্য ঠিকানা ব্যবহার করুন",
+        "no_pickup_points_near_you": "নির্বাচিত ঠিকানার কাছাকাছি কোনো পিকআপ পয়েন্ট পাওয়া যায়নি",
+        "no_pickup_points_near_location": "আপনার অবস্থানের কাছাকাছি কোনো পিকআপ পয়েন্ট পাওয়া যায়নি",
+        "no_pickup_points_found": "কোনো পিকআপ পয়েন্ট পাওয়া যায়নি",
+        "paginator": {
+          "next_accessibility_label": "পরবর্তী পৃষ্ঠা",
+          "previous_accessibility_label": "আগের পৃষ্ঠা",
+          "header": {
+            "one": "দেখানো হচ্ছে %{first} - %{last} of %{count} পয়েন্ট",
+            "other": "দেখানো হচ্ছে %{first} - %{last} of %{count} পয়েন্ট"
+          },
+          "selected_pickup_point_label": {
+            "one": "%{count} পয়েন্টের %{pickup_point_index}",
+            "other": "%{count} পয়েন্টের %{pickup_point_index}"
+          },
+          "selected_page": {
+            "one": "%{first} - %{last} %{count} পয়েন্ট",
+            "other": "%{first} - %{last} %{count} পয়েন্ট"
+          }
+        },
+        "number_of_pickup_points_near_location": {
+          "one": "আপনার অবস্থানের কাছে %{count} পিকআপ পয়েন্ট",
+          "other": "আপনার অবস্থানের কাছাকাছি %{count} পিকআপ পয়েন্ট"
+        },
+        "change": "পরিবর্তন",
+        "waiting_on_pickup_point_location_notice": "পিকআপ পয়েন্টের জন্য অনুসন্ধান করা হচ্ছে...",
+        "geolocation": {
+          "shared_location_button": "আমার অবস্থান ব্যবহার করুন",
+          "errors": {
+            "unsuported_by_browser": "ভূ-অবস্থান পাওয়া আপনার ব্রাউজার দ্বারা সমর্থিত নয়। আবার চেষ্টা করুন বা একটি ভিন্ন ব্রাউজার ব্যবহার করুন.",
+            "permission_not_allowed": "আপনার অবস্থান শেয়ার করার অনুমতি দিন।",
+            "permission_denied": "আপনার অবস্থান পাওয়া যায়নি. আবার চেষ্টা কর."
+          }
+        },
+        "location_is_currently_closed": "বন্ধ"
+      },
+      "error_page": {
+        "terminal": {
+          "title": "আমাদের চেকআউটে একটি সমস্যা ছিল",
+          "message": "এই পৃষ্ঠাটি রিফ্রেশ করুন বা কয়েক মিনিটের মধ্যে আবার চেষ্টা করুন৷",
+          "action": {
+            "cta": "সতেজ পৃষ্ঠা"
+          },
+          "request_id": "অনুরোধ আইডি: {{requestId}}"
+        }
+      },
+      "notice_banner": {
+        "return_to_cart_link_text": "কার্টে ফেরত যান",
+        "return_to_cart_to_update_quantities": "পরিমাণ আপডেট করতে %{return_to_cart_link_text}",
+        "subscription_changed": "আপনার সদস্যতার একটি পরিবর্তিত হয়েছে.",
+        "company_location_changed": "আপনার কার্ট আপডেট করা হয়েছে. আপনার অর্ডারটি জমা দেওয়ার আগে পর্যালোচনা করুন।",
+        "company_location_changed_product_removed": "আপনার কার্ট আপডেট করা হয়েছে কারণ কিছু পণ্য এই অবস্থানে উপলব্ধ নেই৷ আপনার অর্ডারটি জমা দেওয়ার আগে পর্যালোচনা করুন।",
+        "violations_title": "{{violation}} অনুপস্থিত বা অবৈধ",
+        "individual_violations_title": {
+          "DeliveryViolations": "প্রেরণের ঠিকানা",
+          "PaymentViolations": "বিলিং ঠিকানা",
+          "OtherViolations": "আদেশ তথ্য",
+          "UnhandledViolations": "আদেশ তথ্য"
+        },
+        "all_violations_content": "এই তথ্য আপডেট করতে এবং আপনার অর্ডার সম্পূর্ণ করতে আমাদের কল করুন বা {{emailLink}} করুন:",
+        "all_violations_email_link": "ইমেইল",
+        "editable_shipping_address_violations_message_title": "আপনার অর্ডার সম্পূর্ণ করতে এই তথ্য যোগ করুন:",
+        "editable_shipping_address_violations_message_footer": "এই অবস্থানের ঠিকানা স্থায়ীভাবে আপডেট করতে, {{emailLink}} ।",
+        "editable_shipping_address_violations_email_link": "যোগাযোগ করুন",
+        "shipping_address_incomplete_title": "শিপিং ঠিকানা অসম্পূর্ণ",
+        "calculating_shipping": "শিপিং এখনও গণনা করা হচ্ছে. কয়েক সেকেন্ডের মধ্যে আবার চেষ্টা করুন। আপনাকে চার্জ করা হয়নি।",
+        "calculating_taxes": "ট্যাক্স এখনও গণনা করা হচ্ছে. কয়েক সেকেন্ডের মধ্যে আবার চেষ্টা করুন। আপনাকে চার্জ করা হয়নি।"
+      },
+      "marketplaces": {
+        "legal_notice": {
+          "legal_text": "পুনঃমূল্যায়ন",
+          "link_label": "{{partnerDisplayName}} নিয়ম ও শর্তাবলী৷"
+        }
+      },
+      "online_store_chat": {
+        "title": "প্রশ্ন? আমাদের সাথে খোস গল্প কর"
+      },
+      "local_pickup": {
+        "location_information": {
+          "one": "%{address}-এর কাছাকাছি স্টক সহ %{count} স্টোর আছে",
+          "other": "%{address}-এর কাছাকাছি স্টক সহ %{count} দোকান আছে"
+        },
+        "toggle_location": "আমার অবস্থান পরিবর্তন করুন",
+        "or": "বা",
+        "cancel": "বাতিল করুন",
+        "your_location": "তোমার অবস্থান",
+        "search_button": "দোকান খুঁজুন",
+        "no_stores_found": "কোন দোকান পাওয়া যায়নি",
+        "could_not_resolve_address": "আপনার ঠিকানা সনাক্ত করা যায়নি. আবার চেষ্টা করুন বা অন্য ঠিকানা ব্যবহার করুন",
+        "paginator": {
+          "accessibility_label": "স্থানীয় পিক-আপ পেজিনেশন",
+          "previous": "আগের পৃষ্ঠা",
+          "next": "পরবর্তী পৃষ্ঠা",
+          "label": {
+            "one": "%{first} - %{last} %{count} স্টোর",
+            "other": "%{first} - %{last} %{count} স্টোর"
+          }
+        },
+        "reveal_more_label": {
+          "one": "আরও %{count} লোকেশন দেখান",
+          "other": "আরও %{count}টি অবস্থান দেখান৷"
+        }
+      },
+      "captcha": {
+        "title": "চালিয়ে যেতে ক্যাপচা সম্পূর্ণ করুন",
+        "errors": {
+          "not_solved": "চালিয়ে যেতে ক্যাপচা সম্পূর্ণ করুন"
+        }
+      },
+      "discount_errors": {
+        "generic_error": "আপনার ডিসকাউন্ট কোড আর উপলব্ধ না থাকার কারণে আপনার অর্ডার প্রক্রিয়া করা যায়নি। আপনার মোট অর্ডার পর্যালোচনা করুন এবং আবার চেষ্টা করুন."
+      },
+      "shop_pay_external": {
+        "errors": {
+          "problem_loading": "Shop Pay লোড করতে সমস্যা হয়েছে",
+          "try_again_later": "আপনার সংযোগ পরীক্ষা করুন বা এই উইন্ডোটি বন্ধ করুন এবং কয়েক মুহূর্তের মধ্যে আবার চেষ্টা করুন৷",
+          "checkout_has_expired": "আপনার চেকআউটের মেয়াদ শেষ হয়ে গেছে। এই উইন্ডোটি বন্ধ করুন এবং {{shopName}} থেকে আবার চেক আউট করার চেষ্টা করুন।"
+        },
+        "return_to_store": "{{shopName}} এ ফিরে যান"
+      },
+      "wallets": {
+        "return_to_store": "দোকানে ফিরে যান",
+        "redirect_hint": "আপনাকে {{walletName}} দিয়ে লগইন করতে বলা হবে।",
+        "logged_in": "{{email}} এর সাথে সংযুক্ত",
+        "shipping_line_label": "পাঠানো",
+        "payment_in_progress_title": "পেমেন্ট চলছে",
+        "payment_in_progress_body": "আপনার পেমেন্ট প্রক্রিয়া করা হচ্ছে. আপনার অর্ডার শীঘ্রই সম্পন্ন হবে.",
+        "call_to_action": "{{walletName}} দিয়ে পেমেন্ট করুন",
+        "redirection_notice": "\" {{buttonLabel}} \" ক্লিক করার পর, আপনার কেনাকাটা নিরাপদে সম্পূর্ণ করতে আপনাকে {{walletName}} এ পুনঃনির্দেশিত করা হবে৷",
+        "errors": {
+          "unavailable": {
+            "title": "{{walletName}} উপলব্ধ নেই৷",
+            "description": "{{walletName}} উপলব্ধ ছিল না৷ একটি ভিন্ন অর্থপ্রদানের পদ্ধতি ব্যবহার করুন বা পরে আবার চেষ্টা করুন।",
+            "instructions": "{{walletName}} এর সাথে একটি সমস্যা ছিল। আবার চেষ্টা করতে স্টোরে ফিরে যান বা অন্য উপায়ে চেক আউট করুন।"
+          },
+          "generic": "{{walletName}} এর সাথে একটি সমস্যা ছিল। আবার চেষ্টা করুন বা অন্য কোনো পেমেন্ট পদ্ধতি ব্যবহার করুন।",
+          "terminal": "{{walletName}} এর সাথে একটি সমস্যা ছিল। একটি ভিন্ন অর্থপ্রদান পদ্ধতি ব্যবহার করুন.",
+          "detour": {
+            "stock_problems": "কিছু আইটেম আর উপলব্ধ নেই. {{walletName}} বন্ধ করুন এবং আবার চেষ্টা করুন।",
+            "price_change": "কিছু জিনিসের দাম পরিবর্তন হয়েছে। আপনার অর্ডার পর্যালোচনা করতে {{walletName}} বন্ধ করুন এবং আবার চেষ্টা করুন।",
+            "queue": "আপনাকে চেকআউট করার জন্য একটি সারিতে রাখা হয়েছে। চালিয়ে যেতে {{walletName}} বন্ধ করুন।"
+          },
+          "unsupported": {
+            "address": "বণিক এই ঠিকানায় বিতরণ করতে পারবেন না",
+            "postal_code": "এই অবস্থান সমর্থিত নয়"
+          },
+          "outdated": {
+            "shipping_method": "আপনার অর্ডারের জন্য শিপিং বিকল্পগুলি পরিবর্তিত হয়েছে৷ আপনার নির্বাচন পর্যালোচনা করুন."
+          },
+          "invalid": {
+            "shipping_address": "একটি বৈধ শিপিং ঠিকানা লিখুন",
+            "billing_address": "একটি বৈধ বিলিং ঠিকানা লিখুন",
+            "shipping_option": "একটি বৈধ শিপিং বিকল্প চয়ন করুন",
+            "email": "একটি বৈধ ইমেল লিখুন",
+            "zone": "একটি বৈধ রাষ্ট্র/প্রদেশ লিখুন",
+            "postal_code": "একটি বৈধ জিপ / পোস্টাল কোড লিখুন",
+            "reduction_code": "একটি বৈধ ডিসকাউন্ট কোড বা উপহার কার্ড লিখুন",
+            "billing_must_match_shipping": "শিপিং ঠিকানার সাথে মিল থাকতে হবে"
+          },
+          "missing": {
+            "first_name": "একটি প্রথম নাম লিখুন",
+            "last_name": "একটি পদবি লিখুন",
+            "address1": "একটি ঠিকানা লিখুন",
+            "address2": "একটি অ্যাপার্টমেন্ট, স্যুট, ইত্যাদি লিখুন",
+            "city": "একটি শহরে প্রবেশ করুন",
+            "province": "একটি রাজ্য/প্রদেশ নির্বাচন করুন",
+            "country": "একটি দেশ/অঞ্চল নির্বাচন করুন",
+            "zip": "একটি জিপ / পোস্টাল কোড লিখুন",
+            "phone": "একটি ফোন নম্বর লিখুন"
+          },
+          "formatting": {
+            "name_contains_emojis": "আপনার নাম থেকে ইমোজি মুছুন",
+            "postal_code_contains_emoji": "আপনার পোস্টাল কোড থেকে ইমোজি মুছুন",
+            "first_name_too_long": "প্রথম নামটিতে অনেকগুলি অক্ষর রয়েছে৷",
+            "last_name_too_long": "পদবিতে অনেকগুলো অক্ষর রয়েছে"
+          },
+          "select_different_shipping_address_to_resolve_errors": "আপনার শিপিং ঠিকানা অবৈধ. একটি ভিন্ন ঠিকানা নির্বাচন করুন বা একটি নতুন ব্যবহার করুন৷"
+        }
+      },
+      "delivery_options": {
+        "free_total_label": "বিনামূল্যে",
+        "ship": "জাহাজ",
+        "ship_to_address": "জাহাজের ঠিকানা",
+        "shipping_address": "প্রেরণের ঠিকানা",
+        "pick_up": "পিক আপ",
+        "pick_up_from_store": "দোকান থেকে পিক আপ",
+        "pick_up_locations": "পিক আপ অবস্থান",
+        "pick_up_in_one_hour": "সাধারণত 1 ঘন্টার মধ্যে প্রস্তুত",
+        "pick_up_in_two_hours": "সাধারণত 2 ঘন্টার মধ্যে প্রস্তুত",
+        "pick_up_in_four_hours": "সাধারণত 4 ঘন্টার মধ্যে প্রস্তুত",
+        "pick_up_in_twenty_four_hours": "সাধারণত 24 ঘন্টার মধ্যে প্রস্তুত",
+        "pick_up_in_two_to_four_days": "সাধারণত 2-4 দিনের মধ্যে প্রস্তুত",
+        "pick_up_in_five_or_more_days": "সাধারণত 5+ দিনের মধ্যে প্রস্তুত",
+        "pick_up_in_zero_to_two_hours": "2 ঘন্টার মধ্যে পিকআপের জন্য প্রস্তুত",
+        "pick_up_in_two_to_four_hours": "4 ঘন্টার মধ্যে পিকআপের জন্য প্রস্তুত",
+        "pick_up_immediately": "এখন পিকআপের জন্য প্রস্তুত",
+        "pick_up_next_day": "পরের দিন পিকআপের জন্য প্রস্তুত",
+        "pickup_point_method_definition": "পিক আপ পয়েন্ট জাহাজ",
+        "retail_method_definition": "খুচরা শিপিং",
+        "none_method_definition": "কোন শিপিং",
+        "subscription_pickup_information": "এই ডেলিভারি পদ্ধতি এই অর্ডারের সমস্ত আইটেম এবং এই সদস্যতার জন্য ভবিষ্যতের সমস্ত অর্ডারগুলিতে প্রযোজ্য হবে৷"
+      },
+      "customer_account": {
+        "not_user_label": "%{first_name} না?",
+        "have_an_account_label": "একাউন্ট আছে?",
+        "sign_in_link_label": "প্রবেশ করুন",
+        "sign_out_link_label": "প্রস্থান",
+        "save_my_information_label": "পরবর্তী সময়ের জন্য এই তথ্য সংরক্ষণ করুন",
+        "invalid_address": "নির্বাচিত ঠিকানা অবৈধ। %{update_address_link} অথবা একটি ভিন্ন ঠিকানা নির্বাচন করুন।",
+        "incomplete_address": "নির্বাচিত ঠিকানা অসম্পূর্ণ. %{update_address_link} অথবা একটি ভিন্ন ঠিকানা নির্বাচন করুন।",
+        "rollup_label": "হিসাব",
+        "invalid_shipping_method_summary": "উপলব্ধ শিপিং পদ্ধতি দেখতে একটি বৈধ শিপিং ঠিকানা নির্বাচন করুন৷"
+      },
+      "stock": {
+        "page_title": "ইনভেন্টরি সমস্যা",
+        "title": "স্টক শেষ",
+        "items_unavailable_notice": "কিছু আইটেম আর উপলব্ধ নেই.",
+        "product_column_header": "পণ্য",
+        "quantity_column_header": "পরিমাণ",
+        "price_column_header": "দাম",
+        "status_column_header": "স্ট্যাটাস",
+        "removed_from_cart_notice": "কার্ট থেকে সরানো হয়েছে",
+        "sold_out_label": "বিক্রি শেষ",
+        "reduced_label": "হ্রাস করা হয়েছে",
+        "reduced_with_quantity_label": "শুধুমাত্র %{quantity_available} বাকি",
+        "remove_from_cart_button_label": "কার্ট থেকে সরান",
+        "continue_shopping_button_label": "চালিয়ে যান",
+        "go_back_to_cart_button_label": "আমার কার্টে ফিরে যান",
+        "remove": "অপসারণ",
+        "return_to_store_label": "দোকানে ফিরে যান",
+        "continue_cta_label": "চেকআউট চালিয়ে যান",
+        "item_label": {
+          "one": "{{count}} টি আইটেম",
+          "other": "{{count}} টি আইটেম"
+        },
+        "empty_cart_label": "তোমার থলে তো খালি",
+        "quantity_update": {
+          "page_title": "পরিমাণ আপডেট",
+          "title": "পরিমাণ আপডেট",
+          "description": "এই আইটেমগুলির জন্য উপলব্ধ পরিমাণ পরিবর্তিত হয়েছে এবং আপনার কার্টে আপডেট করা হয়েছে৷"
+        },
+        "unpurchasable_product": {
+          "title": "ক্রয় অযোগ্য পণ্য",
+          "header": "কিছু আইটেম আপনার কার্ট থেকে সরানো হয়েছে",
+          "message": "এই আইটেম B2B অর্ডার জন্য উপলব্ধ নয়.",
+          "status_column_header": "পাওয়া যায় না"
+        },
+        "unpurchasable_product_generic": {
+          "title": "ক্রয় অযোগ্য পণ্য",
+          "header": "কিছু আইটেম আপনার কার্ট থেকে সরানো হয়েছে",
+          "message": "এই আইটেম পাওয়া যায় না.",
+          "status_column_header": "পাওয়া যায় না"
+        },
+        "unshippable_product": {
+          "title": "কোনো ডেলিভারি পাওয়া যায় না",
+          "header": {
+            "one": "%{count} আইটেমের জন্য কোনো ডেলিভারি উপলব্ধ নেই৷",
+            "other": "%{count}টি আইটেমের জন্য কোনো ডেলিভারি উপলব্ধ নেই৷"
+          },
+          "message": {
+            "one": "এই আইটেমটি আপনার কার্ট থেকে সরানো হবে কারণ আপনার ঠিকানার জন্য কোনো ডেলিভারি পদ্ধতি উপলব্ধ নেই৷",
+            "other": "এই আইটেমগুলি আপনার কার্ট থেকে সরানো হবে কারণ আপনার ঠিকানার জন্য কোনো ডেলিভারি পদ্ধতি উপলব্ধ নেই৷"
+          },
+          "status_column_header": "বিতরণ নাই"
+        },
+        "price_update": {
+          "title": "মূল্য আপডেট",
+          "description": "এই আইটেমগুলির দাম পরিবর্তিত হয়েছে এবং আপনার কার্টে আপডেট করা হয়েছে৷"
+        },
+        "out_of_stock": {
+          "description": "এই আইটেমগুলি আর উপলব্ধ নেই এবং আপনার কার্ট থেকে সরানো হয়েছে৷",
+          "items_unavailable": "কিছু আইটেম আর উপলব্ধ নেই এবং আপনার কার্ট থেকে সরানো হয়েছে৷"
+        }
+      },
+      "contextual_availability": {
+        "title": {
+          "one": "অনুপলব্ধ পণ্য",
+          "other": "অনুপলব্ধ পণ্য"
+        },
+        "products_not_available": {
+          "one": "এই পণ্যটি আপনার কার্ট থেকে সরানো হবে কারণ এটি আপনার দেশে/অঞ্চলে উপলব্ধ নয়৷",
+          "other": "এই পণ্যগুলি আপনার কার্ট থেকে সরানো হবে কারণ সেগুলি আপনার দেশে/অঞ্চলে উপলব্ধ নয়৷"
+        },
+        "all_products_in_cart_unavailable": {
+          "one": "এই পণ্যটি আপনার দেশ/অঞ্চলে উপলব্ধ নয়।",
+          "other": "এই পণ্যগুলি আপনার দেশে/অঞ্চলে উপলব্ধ নয়৷"
+        },
+        "unavailable_label": "অনুপলব্ধ"
+      },
+      "deliverability": {
+        "not_deliverable": {
+          "title": {
+            "one": "%{count} আইটেমের জন্য কোনো ডেলিভারি উপলব্ধ নেই৷",
+            "other": "%{count}টি আইটেমের জন্য কোনো ডেলিভারি উপলব্ধ নেই৷"
+          },
+          "message": {
+            "one": "এই আইটেমটি আপনার কার্ট থেকে সরানো হবে কারণ আপনার ঠিকানার জন্য কোনো ডেলিভারি পদ্ধতি উপলব্ধ নেই৷",
+            "other": "এই আইটেমগুলি আপনার কার্ট থেকে সরানো হবে কারণ আপনার ঠিকানার জন্য কোনো ডেলিভারি পদ্ধতি উপলব্ধ নেই৷"
+          },
+          "label": "বিতরণ নাই"
+        }
+      },
+      "order_summary": {
+        "title": "অর্ডার সারাংশ",
+        "group_title_label": "\"%{group_title}\" এর অংশ",
+        "order_name_label": "অর্ডার %{name}",
+        "shopping_cart_label": "বাজারের ব্যাগ",
+        "discount_title": "ছাড়",
+        "discount_title_stacking": {
+          "one": "ছাড়",
+          "other": "ছাড়"
+        },
+        "discount_order_stacking": {
+          "one": "ছাড়",
+          "other": "অর্ডার ডিসকাউন্ট"
+        },
+        "discount_label": "মূল্যহ্রাসের কোড",
+        "discount_not_found": "প্রবেশ করা কোডের সাথে মেলে একটি বৈধ ডিসকাউন্ট খুঁজে পাওয়া যায়নি৷",
+        "due_on_fulfillment": "পূর্ণতার উপর বকেয়া",
+        "subscriptions": "সদস্যতা",
+        "duties_label": "কর্তব্য",
+        "duties_and_taxes_label": "কর্তব্য এবং কর",
+        "error_duties_tooltip": "এই অর্ডার অন্য দেশ থেকে পাঠানো হচ্ছে, তাই শুল্ক এবং ট্যাক্স ডেলিভারি চার্জ করা হতে পারে.",
+        "may_be_charged_on_delivery": "ডেলিভারি চার্জ করা হতে পারে",
+        "total_updated_label_with_price": "আপডেট করা মোট মূল্য: %{totalPrice}",
+        "updated_shipping_method": "আপডেট করা শিপিং পদ্ধতি: %{shipping_method}",
+        "recurring_payments": "আবর্তক পেমেন্ট",
+        "recurring_total_multiple_label": "এই অর্ডারে একাধিক আইটেমের জন্য একটি পুনরাবৃত্ত চার্জ রয়েছে৷",
+        "deferred_total_due_date_label": "মোট বকেয়া {{date}}",
+        "full_price": "সম্পূর্ণ মূল্য: %{price}",
+        "custom_discount": "কাস্টম ডিসকাউন্ট",
+        "expand_component_information": {
+          "one": "%{count} আইটেম দেখান",
+          "other": "%{count}টি আইটেম দেখান"
+        },
+        "collapse_component_information": {
+          "one": "%{count} আইটেম লুকান",
+          "other": "%{count}টি আইটেম লুকান"
+        },
+        "component_quantity_title": "%{পরিমাণ} × %{product_title}",
+        "discount_discovery": {
+          "add_code": "ছাড় যোগ করুন",
+          "merchandise_quantity_label": {
+            "one": "%{count}টি আইটেম",
+            "other": "%{count}টি আইটেম"
+          }
+        },
+        "alternative_payment_currency_total": "%{amount_due} হিসাবে চার্জ করা হয়েছে"
+      },
+      "shop_policies": {
+        "refund_policy": "প্রত্যর্পণ নীতি",
+        "privacy_policy": "গোপনীয়তা নীতি",
+        "terms_of_service": "সেবা পাবার শর্ত",
+        "legal_notice": "আইনি নোটিশ",
+        "shipping_policy": "চালান নীতি",
+        "terms_of_sale": "বিক্রয় শর্তাবলী",
+        "subscription_policy": "সদস্যতা নীতি",
+        "purchase_options_policy": "ক্রয় বিকল্প নীতি",
+        "contact_information": "যোগাযোগের তথ্য",
+        "purchase_options_cancellation_policy": "বাতিলকরণ নীতি"
+      },
+      "mor_policies": {
+        "terms_and_conditions": "রেকর্ডের শর্তাবলীর ব্যবসায়ী",
+        "privacy_policy": "রেকর্ড গোপনীয়তা নীতির ব্যবসায়ী"
+      },
+      "markets": {
+        "invalid_market_manager_error": "অর্থপ্রদান সম্পূর্ণ করার আগে আপনার যোগাযোগের তথ্য পর্যালোচনা করুন"
+      },
+      "notifications": {
+        "title": "বিজ্ঞপ্তি"
+      },
+      "order_payment_collection": {
+        "custom_line_item_description": "অর্ডারের জন্য অর্থপ্রদানের পরিমাণ %{order_name}",
+        "changes_summary": {
+          "added": {
+            "one": "যোগ করা হয়েছে",
+            "other": "%{count} যোগ করা হয়েছে"
+          },
+          "removed": "সরানো হয়েছে",
+          "subtracted": "%{count} সরানো হয়েছে",
+          "returned": "%{count} ফেরত এসেছে",
+          "return_line_item_removed": "রিটার্ন থেকে %{count} সরানো হয়েছে"
+        },
+        "additional_payment_requested": "%{total_outstanding} পেমেন্ট প্রয়োজন",
+        "checkout_review_and_pay": "আপনার অর্ডার %{order_name} আপডেট করা হয়েছে। এই পরিবর্তনগুলি পর্যালোচনা করুন, তারপর আপনার অর্ডার নিশ্চিত করতে অর্থপ্রদান করুন।",
+        "order_updated_on": "আপনার অর্ডার %{last_edited_at} এ আপডেট করা হয়েছে।",
+        "order_review_and_pay": "আপনার অর্ডার আপডেট করা হয়েছে. আপনার অর্ডার নিশ্চিত করতে পর্যালোচনা করুন এবং অর্থ প্রদান করুন।",
+        "pay_now": "এখন পরিশোধ করুন"
+      },
+      "change_currency": {
+        "credit_card_will_be_charged_html": "আপনার ক্রেডিট কার্ড চার্জ করা হবে %{amount}",
+        "payment_total_label": "পেমেন্ট মোট",
+        "change_currency_link": "%{currency_name} এ পরিবর্তন করুন",
+        "card_provider_fx_charges_warning": "আপনার কার্ড প্রদানকারী %{currency_code} লেনদেনে ফি নিতে পারে।",
+        "currency_not_supported_by_shop": "আপনার নির্বাচিত মুদ্রা আর উপলব্ধ নেই৷ সব দাম এখন %{currency_code}-এ আছে।"
+      },
+      "change_country": {
+        "cart_updated_based_on_country": "আপনার শিপিং দেশের উপর ভিত্তি করে আপনার কার্ট আপডেট করা হয়েছে।",
+        "cart_and_currency_updated_based_on_country": "আপনার শিপিং দেশের উপর ভিত্তি করে আপনার কার্ট এবং মুদ্রা আপডেট করা হয়েছে।"
+      },
+      "change_cart_localization": {
+        "verify_shipping_address": "আপনার দেশ/অঞ্চল আপডেট করা হয়েছে। চেকআউট চালিয়ে যেতে আপনার শিপিং ঠিকানা লিখুন।"
+      },
+      "tips": {
+        "title": "টিপ যোগ করুন",
+        "description": "%{shop_name} এ টিমের জন্য আপনার সমর্থন দেখান",
+        "presets_description": "একটি টিপ শতাংশ নির্বাচন করুন",
+        "custom_label": "কাস্টম টিপ",
+        "add_tip": "টিপ যোগ করুন",
+        "update_tip": "আপডেট টিপ",
+        "message": "আপনাকে ধন্যবাদ, আমরা এটির প্রশংসা করি।",
+        "no_tip_label": "কোনোটিই নয়"
+      },
+      "open_graph_meta_tag": {
+        "title_with_products": {
+          "zero": "কিনুন %{product_name}",
+          "one": "%{product_name} এবং %{count}টি অন্যান্য আইটেম কিনুন",
+          "other": "%{product_name} এবং %{count}টি অন্যান্য আইটেম কিনুন"
+        }
+      },
+      "subscriptions": {
+        "recurring_total_intervals": {
+          "day": {
+            "one": "দিন",
+            "other": "%{count} দিন"
+          },
+          "week": {
+            "one": "সপ্তাহ",
+            "other": "%{count} সপ্তাহ"
+          },
+          "month": {
+            "one": "মাস",
+            "other": "%{count} মাস"
+          },
+          "year": {
+            "one": "বছর",
+            "other": "%{count} বছর"
+          }
+        },
+        "recurring_totals": "%{total_price} প্রতি %{interval}",
+        "recurring_totals_with_initial_order_shipping_discount": "প্রথমে পেমেন্ট %{total_price_with_discount}, তারপর %{recurring_total}",
+        "recurring_totals_with_policies": {
+          "first_cycles": {
+            "one": "প্রথম অর্থপ্রদান %{total_price}",
+            "other": "প্রথম %{count} পেমেন্ট %{total_price} প্রতিটি"
+          },
+          "following_cycles": ", তারপর %{total_price} প্রতি %{interval}"
+        },
+        "recurring_totals_with_initial_order_shipping_discount_with_policies": {
+          "first_cycles": {
+            "one": ", তারপর %{count} পেমেন্ট %{total_price} এ",
+            "other": ", তারপর %{count} পেমেন্ট %{total_price} প্রতিটিতে"
+          }
+        }
+      },
+      "customer_payment_methods": {
+        "page_title": "মুল্য পরিশোধ পদ্ধতি",
+        "title": "মুল্য পরিশোধ পদ্ধতি",
+        "update_card_button_label": "কার্ড আপডেট করা",
+        "delete_customer_mandate": {
+          "generic_error": "আপনার অনুরোধ প্রক্রিয়াকরণে একটি সমস্যা ছিল।",
+          "success_message": "আপনার অর্থপ্রদানের পদ্ধতি সফলভাবে মুছে ফেলা হয়েছে"
+        }
+      },
+      "throttle": {
+        "too_many_attempts": {
+          "message": "অনেক প্রচেষ্টা",
+          "description": "কয়েক মিনিটের মধ্যে আবার চেষ্টা করুন"
+        },
+        "line_to_check_out": "আপনি চেক আউট করার জন্য লাইনে আছেন",
+        "cart_summary_heading": "আপনার কার্ট",
+        "merchandise": {
+          "available": "পাওয়া যায়",
+          "sold_out": "বিক্রি শেষ"
+        },
+        "inventory": {
+          "partial_inventory_banner": "আপনার কার্টের কিছু অংশ বিক্রি হয়ে গেছে এবং চেকআউটে কেনার জন্য উপলব্ধ হবে না।",
+          "sold_out": {
+            "heading": "আপনার কার্ট বিক্রি হয়ে গেছে",
+            "storefront_body": "কেনাকাটা চালিয়ে যেতে দোকানে ফিরে যান",
+            "no_storefront_body": "দুর্ভাগ্যবশত আপনি যে আইটেমটি কিনতে চান সেটি আর উপলব্ধ নেই৷",
+            "link": "স্টোরে ফিরে যান"
+          }
+        },
+        "title": "কিউ",
+        "time_to_checkout_title": "চেক আউট করার সময় - {{shopName}}",
+        "estimated_wait_time": {
+          "calculating": "আনুমানিক অপেক্ষার সময় গণনা করা হচ্ছে",
+          "less_than_one": "আনুমানিক অপেক্ষার সময়: এক মিনিটেরও কম",
+          "one": "আনুমানিক অপেক্ষার সময়: {{count}} মিনিট",
+          "other": "আনুমানিক অপেক্ষার সময়: {{count}} মিনিট"
+        },
+        "last_checked": "(শেষ পরীক্ষা করা হয়েছে: {{time}} )",
+        "footer": {
+          "heading": "এই পৃষ্ঠাটি রিফ্রেশ করবেন না, এটি স্বয়ংক্রিয়ভাবে আপডেট হবে।",
+          "body": "আপনি চেকআউট সম্পূর্ণ না করা পর্যন্ত আপনার কার্টের আইটেমগুলি সংরক্ষিত হয় না।"
+        }
+      },
+      "cart_checkout_validation": {
+        "runtime_error": "আপনার অনুরোধ প্রক্রিয়াকরণে একটি সমস্যা হয়েছে, অনুগ্রহ করে দোকানের মালিকের সাথে যোগাযোগ করুন৷"
+      },
+      "no_address_location": {
+        "title": "কোন ঠিকানা ছাড়া অবস্থান",
+        "header": "এই অবস্থানের জন্য আপনার কাছে কোনো শিপিং ঠিকানা নেই৷",
+        "alt_header": "শিপিং ঠিকানা অনুপস্থিত",
+        "message": "চেকআউট সম্পূর্ণ করতে এই অবস্থানের জন্য একটি ঠিকানা যোগ করতে আমাদের সাথে যোগাযোগ করুন।",
+        "email_us_button_label": "আমাদের একটি ইমেইল পাঠান"
+      },
+      "order_errors": {
+        "creation_failure": "আপনার অর্ডার তৈরিতে একটি সমস্যা হয়েছে৷ আবার চেষ্টা করুন, অথবা আরো বিস্তারিত জানার জন্য আমাদের সাথে যোগাযোগ করুন.",
+        "network_failure": "নেটওয়ার্ক ত্রুটির কারণে আপনার অর্ডার জমা দেওয়া যায়নি। আপনার সংযোগ পরীক্ষা করুন এবং আবার চেষ্টা করুন.",
+        "inventory_reservation_failure": "কিছু আইটেম আর উপলব্ধ নেই."
+      },
+      "session_errors": {
+        "session_not_unique": "আপনার অর্ডার প্রক্রিয়াকরণে একটি সমস্যা হয়েছে৷ দোকানে ফিরে যেতে এই পৃষ্ঠাটি রিফ্রেশ করুন।",
+        "session_already_finished": "এই আদেশ ইতিমধ্যে জমা দেওয়া হয়েছে. আপনি একটি নতুন অর্ডার শুরু করতে দোকানে ফিরে যেতে পারেন।"
+      },
+      "note": {
+        "length_exceeds_maximum": "নোটের আকার 5000 বা তার কম অক্ষরে কমিয়ে দিন।"
+      },
+      "one": {
+        "errors": {
+          "merchandise": {
+            "gift_card_price_must_be_greater_than_zero": "উপহার কার্ডের মূল্য অবশ্যই 0-এর বেশি হতে হবে।"
+          }
+        }
+      },
+      "store_credit_errors": {
+        "generic_error": "আপনার স্টোর ক্রেডিট নিয়ে একটি সমস্যা ছিল। আবার চেষ্টা করুন বা পৃষ্ঠাটি পুনরায় লোড করুন৷"
+      },
+      "redeemable_errors": {
+        "gift_card": {
+          "duplicate": "উপহার কার্ড ইতিমধ্যে আপনার অর্ডার প্রয়োগ করা হয়েছে",
+          "insufficient_funds": "এই উপহার কার্ডের কোন তহবিল অবশিষ্ট নেই",
+          "expired": "এই উপহার কার্ডের মেয়াদ শেষ হয়ে গেছে",
+          "not_available": "এই উপহার কার্ডটি আর উপলব্ধ নেই৷",
+          "invalid": "একটি বৈধ উপহার কার্ড লিখুন",
+          "currency_mismatch": "শুধুমাত্র %{shop_currency}-এর উপহার কার্ড গ্রহণ করা হয়",
+          "generic": "উপহার কার্ড চেকআউট যোগ করা যাবে না",
+          "throttle_limit_exceeded": "আপনি চেষ্টার সর্বোচ্চ সংখ্যা অতিক্রম করেছেন৷ পরে আবার চেষ্টা করুন."
+        }
+      },
+      "payment_errors": {
+        "amount_too_small": "ন্যূনতম অর্থপ্রদানের পরিমাণ অবশ্যই $0.50 USD-এর বেশি হতে হবে। অনুগ্রহ করে বেশি পরিমাণে আবার চেষ্টা করুন।",
+        "method_not_available": "অনুরোধকৃত অর্থপ্রদানের পদ্ধতি উপলব্ধ নেই৷",
+        "available_methods_updated": "উপলব্ধ পেমেন্ট পদ্ধতি আপডেট করা হয়েছে.",
+        "generic_error": "আপনার পেমেন্ট প্রক্রিয়াকরণে একটি সমস্যা হয়েছে। আবার চেষ্টা করুন বা অন্য কোনো পেমেন্ট পদ্ধতি ব্যবহার করুন।",
+        "rejected_transaction": "আপনার পেমেন্ট প্রত্যাখ্যান করা হয়েছে. আবার চেষ্টা করুন বা অন্য কোনো পেমেন্ট পদ্ধতি ব্যবহার করুন।",
+        "credit_card_processing": "প্রযুক্তিগত কারণে আপনার অর্থপ্রদান প্রক্রিয়া করা যাবে না। কয়েক মিনিটের মধ্যে আবার চেষ্টা করুন বা অন্য একটি পেমেন্ট পদ্ধতি ব্যবহার করুন।",
+        "checkout_amount_changed": "আপনার অর্থপ্রদান প্রক্রিয়া করা যায়নি কারণ চেকআউটে বকেয়া পরিমাণ পরিবর্তিত হয়েছে৷ আপনার অর্ডার চেক করুন এবং আবার চেষ্টা করুন.",
+        "deferred_payment_not_allowed": "বিলম্বিত পেমেন্ট অনুমোদিত নয়. আপনার অর্ডার চেক করুন এবং আবার চেষ্টা করুন.",
+        "deferred_payment_required": "এই অর্ডার একটি বিলম্বিত পেমেন্ট প্রয়োজন. আপনার অর্ডার চেক করুন এবং আবার চেষ্টা করুন.",
+        "deferred_amount_changed": "আপনার পেমেন্ট প্রক্রিয়া করা যায়নি কারণ বিলম্বিত অর্থপ্রদানের পরিমাণ পরিবর্তিত হয়েছে। আপনার অর্ডার চেক করুন এবং আবার চেষ্টা করুন.",
+        "deferred_date_changed": "আপনার অর্থপ্রদান প্রক্রিয়া করা যায়নি কারণ বিলম্বিত অর্থপ্রদানের তারিখ পরিবর্তিত হয়েছে৷ আপনার অর্ডার চেক করুন এবং আবার চেষ্টা করুন.",
+        "order_total_changed": "আপনার অর্থপ্রদান প্রক্রিয়া করা যায়নি কারণ আপনার অর্ডারের মোট পরিবর্তিত হয়েছে৷ আপনার অর্ডার মোট চেক করুন এবং আবার চেষ্টা করুন.",
+        "payment_processing": "প্রযুক্তিগত কারণে আপনার অর্থপ্রদান প্রক্রিয়া করা যাবে না। আবার চেষ্টা করুন বা অন্য কোনো পেমেন্ট পদ্ধতি ব্যবহার করুন।",
+        "payment_processing_no_retry": "প্রযুক্তিগত কারণে আপনার অর্থপ্রদান প্রক্রিয়া করা যাবে না। একটি ভিন্ন অর্থপ্রদান পদ্ধতি চেষ্টা করুন.",
+        "paypal_zero_amount": "আপনি %{amount} অর্ডারের জন্য PayPal ব্যবহার করতে পারবেন না। আপনার অর্ডার সঠিক এবং পেপ্যাল ​​ছাড়া চেক আউট নিশ্চিত করুন.",
+        "paypal_invalid_token": "পেপ্যাল ​​উপলব্ধ ছিল না. আবার চেষ্টা করুন বা একটি ভিন্ন চেকআউট বিকল্প ব্যবহার করুন।",
+        "pay_later_failed": "পরে Pay দিয়ে আপনার পেমেন্ট প্রসেস করার সময় একটি সমস্যা হয়েছে। অন্য পেমেন্ট পদ্ধতি বেছে নিন এবং আবার চেষ্টা করুন।",
+        "three_d_secure_failed": "আপনার পেমেন্ট যাচাই করা যায়নি। আবার চেষ্টা করুন বা অন্য কোনো পেমেন্ট পদ্ধতি ব্যবহার করুন।",
+        "three_d_secure_failed_duplicate": "ক্রেডিট কার্ডের 3D সিকিউর প্রমাণীকরণ ব্যর্থ হয়েছে কারণ অন্যটি ইতিমধ্যেই চলছে৷",
+        "three_d_secure_throttled": "অনেক প্রচেষ্টা; আবার চেষ্টা করার আগে অপেক্ষা করুন",
+        "subscription_agreement_blank": "একটি সাবস্ক্রিপশন কিনতে আপনার পেমেন্ট বিশদ সংরক্ষণ করা প্রয়োজন. চালিয়ে যেতে, নিশ্চিত করুন যে আপনি সম্মত হন বা আপনার অর্ডার থেকে সদস্যতা আইটেমগুলি সরিয়ে দিন।",
+        "insufficient_funds": "অপর্যাপ্ত তহবিলের কারণে আপনার অর্থপ্রদান প্রত্যাখ্যান করা হয়েছে। আবার চেষ্টা করুন বা অন্য কোনো পেমেন্ট পদ্ধতি ব্যবহার করুন।",
+        "multiple_deferred_payment_not_allowed": "অনুরোধ প্রতি শুধুমাত্র একটি বিলম্বিত পেমেন্ট অনুমোদিত. আপনার অনুরোধ চেক করুন এবং আবার চেষ্টা করুন.",
+        "shipping_must_match_billing": "বিলিং ঠিকানা শিপিং ঠিকানার সাথে মেলে। একটি ভিন্ন অর্থপ্রদান পদ্ধতি ব্যবহার করুন.",
+        "decision_rule_block": "আপনার পেমেন্ট প্রক্রিয়াকরণে একটি সমস্যা হয়েছে। দোকান মালিকের সাথে যোগাযোগ করুন.",
+        "pick_up_card": "আপনার কার্ড অস্বীকার করা হয়। আবার চেষ্টা করুন বা অন্য কোনো পেমেন্ট পদ্ধতি ব্যবহার করুন।",
+        "cannot_verify": "আপনার পেমেন্টের বিবরণ যাচাই করা যায়নি। আপনার কার্ডের বিশদ বিবরণ পরীক্ষা করুন এবং আবার চেষ্টা করুন।",
+        "invalid_number": "একটি বৈধ কার্ড নম্বর লিখুন",
+        "invalid_expiry_date": "একটি বৈধ মেয়াদ শেষ হওয়ার তারিখ লিখুন",
+        "invalid_cvc": "একটি বৈধ নিরাপত্তা কোড লিখুন",
+        "expired_card": "আপনার কার্ডের মেয়াদ শেষ হয়ে গেছে। একটি ভিন্ন অর্থপ্রদানের পদ্ধতি ব্যবহার করুন।",
+        "card_declined": "আপনার কার্ড অস্বীকার করা হয়। আবার চেষ্টা করুন বা অন্য কোনো পেমেন্ট পদ্ধতি ব্যবহার করুন।",
+        "processing_error": "আপনার পেমেন্ট প্রক্রিয়াকরণে একটি সমস্যা হয়েছে। আবার চেষ্টা করুন বা অন্য কোনো পেমেন্ট পদ্ধতি ব্যবহার করুন।",
+        "processing_error_checkout_as_guest": "আপনার পেমেন্ট প্রক্রিয়াকরণে একটি সমস্যা হয়েছে। একটি ভিন্ন অর্থপ্রদানের পদ্ধতি বা {{checkout_as_guest_link}} দিয়ে আবার চেষ্টা করুন।",
+        "selected_payment_method": "আপনার নির্বাচিত অর্থপ্রদানের পদ্ধতিতে একটি সমস্যা ছিল এবং আপনাকে চার্জ করা হয়নি। আবার চেষ্টা করুন বা অন্য কোনো পেমেন্ট পদ্ধতি ব্যবহার করুন।",
+        "payment_method_billing_address": "আপনার নির্বাচিত অর্থপ্রদান পদ্ধতির বিলিং ঠিকানার সাথে একটি সমস্যা ছিল এবং আপনাকে চার্জ করা হয়নি৷ ঠিকানা চেক করুন এবং আবার চেষ্টা করুন বা অন্য একটি পেমেন্ট পদ্ধতি ব্যবহার করুন।",
+        "call_issuer": "আপনার কার্ড অস্বীকার করা হয়। একটি ভিন্ন অর্থপ্রদানের পদ্ধতি ব্যবহার করুন বা আরও তথ্যের জন্য আপনার ব্যাঙ্কের সাথে যোগাযোগ করুন।",
+        "test_mode_live_card": "এই স্টোরটি আসল অর্ডার বা আসল অর্থপ্রদান গ্রহণ করতে পারে না।",
+        "transient_error": "আপনার অর্থপ্রদান প্রক্রিয়াকরণে একটি সমস্যা হয়েছে৷ এই পৃষ্ঠাটি রিফ্রেশ করার চেষ্টা করুন বা আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন৷",
+        "missing_shipping_address": "আপনার শিপিং ঠিকানা অনুপস্থিত থাকার কারণে আপনার অর্থপ্রদান প্রক্রিয়া করা যায়নি। একটি শিপিং ঠিকানা যোগ করুন এবং আবার চেষ্টা করুন.",
+        "invalid_shipping_address": "আপনার অর্থপ্রদান প্রক্রিয়া করা যায়নি কারণ আমরা আপনার শিপিং ঠিকানা খুঁজে পাইনি৷ আপনার শিপিং ঠিকানা চেক করুন এবং আবার চেষ্টা করুন.",
+        "successful_offsite_with_gift_card_error": "আপনার উপহার কার্ডের পেমেন্ট প্রক্রিয়াকরণে একটি সমস্যা হয়েছে। আবার চেষ্টা করুন বা অন্য কোনো পেমেন্ট পদ্ধতি ব্যবহার করুন।",
+        "development_store_order_limit_reached": "আপনি এই পেমেন্ট প্রসেসরের মাধ্যমে ডেভেলপমেন্ট স্টোর অর্ডারের সীমাতে পৌঁছে গেছেন। অন্য অর্ডার দেওয়ার জন্য, আপনাকে একটি টেস্ট পেমেন্ট গেটওয়ে ব্যবহার করতে হবে। %{development_store_order_testing_docs_link} সম্পর্কে আরও জানুন।",
+        "development_store_with_order_limit": "একটি টেস্ট অর্ডার দেওয়ার জন্য, আপনাকে একটি টেস্ট পেমেন্ট গেটওয়ে ব্যবহার করতে হবে। %{development_store_order_testing_docs_link} সম্পর্কে আরও জানুন।",
+        "development_store_order_testing_docs_link": "ডেভেলপমেন্ট স্টোরগুলিতে পরীক্ষার আদেশ"
+      },
+      "shipping_errors": {
+        "shipping_method": "আপনার অর্ডারের জন্য শিপিং বিকল্পগুলি পরিবর্তিত হয়েছে৷ আপনার নির্বাচন পর্যালোচনা করুন এবং আবার চেষ্টা করুন.",
+        "shipping_method_not_available": "আপনার কার্ট আপডেট করা হয়েছে এবং আপনার যোগ করা আইটেমগুলি আপনার ঠিকানায় পাঠানো যাবে না। আপনার অর্ডার সম্পূর্ণ করতে আইটেম সরান.",
+        "shipping_method_not_available_generic": {
+          "one": "আপনার অর্ডার নির্বাচিত ঠিকানায় পাঠানো যাবে না. আপনার ঠিকানাটি সঠিক কিনা তা নিশ্চিত করতে পর্যালোচনা করুন এবং আবার চেষ্টা করুন বা একটি ভিন্ন ঠিকানা নির্বাচন করুন৷",
+          "other": "আপনার কার্টের কিছু আইটেম আপনার দেওয়া ঠিকানায় পাঠানো যাবে না। আপনার ঠিকানাটি সঠিক কিনা তা নিশ্চিত করতে পর্যালোচনা করুন এবং আবার চেষ্টা করুন বা একটি ভিন্ন ঠিকানা নির্বাচন করুন৷"
+        },
+        "shipping_method_not_available_due_to_unsatisfied_conditions": "শিপিংয়ের জন্য যোগ্যতা অর্জনের জন্য কার্টের আইটেমগুলি মূল্য বা ওজনের প্রয়োজনীয়তাগুলি পূরণ করে না। আপনার কার্ট আপডেট করুন এবং আবার চেষ্টা করুন.",
+        "shipping_method_not_available_updated": {
+          "one": "আপনার যোগ করা আইটেমটি আপনার অবস্থানে পাঠানো হয় না। চেক আউট করতে এটি সরান, বা দোকানে যোগাযোগ করুন।",
+          "other": "আপনার যোগ করা এক বা একাধিক আইটেম আপনার অবস্থানে পাঠানো হয় না। চেক আউট করতে তাদের সরান, বা দোকানে যোগাযোগ করুন."
+        },
+        "payment_method_not_supported": "আপনি %{country}-এর জন্য এই অর্থপ্রদানের পদ্ধতি ব্যবহার করতে পারবেন না। এই দেশে পাঠানোর জন্য একটি ভিন্ন অর্থপ্রদান পদ্ধতি ব্যবহার করুন.",
+        "empty_state": "উপলব্ধ শিপিং পদ্ধতি দেখতে আপনার শিপিং ঠিকানা লিখুন.",
+        "title": "শিপিং উপলব্ধ নেই"
+      },
+      "alternative_payment_method_banner": {
+        "express_checkout": "এক্সপ্রেস চেকআউট",
+        "or": "বা",
+        "show_more_options": "আরও বিকল্প দেখান",
+        "hide_more_options": "আরও অপশন লুকান"
+      },
+      "post_purchase": {
+        "page_title": "কিনা পোস্ট",
+        "title": "কিনা পোস্ট",
+        "escape_confirmation": "আপনি আপনার অর্ডারের জন্য অর্থ প্রদান করেছেন।",
+        "escape_action": "অর্ডার নিশ্চিতকরণ দেখুন ›",
+        "components": {
+          "close": "বন্ধ",
+          "expand": "আরো দেখুন",
+          "processing": "প্রক্রিয়া করা হচ্ছে...",
+          "submit": "জমা দিন"
+        }
+      },
+      "processing": {
+        "redirecting_page_title": "পুনঃনির্দেশ করা হচ্ছে...",
+        "redirecting_title": "পুনঃনির্দেশ করা হচ্ছে...",
+        "redirecting_notice": "আমরা আপনাকে পুনঃনির্দেশ করা পর্যন্ত অপেক্ষা করুন।",
+        "complete_your_purchase_title": "আপনার ক্রয় সম্পূর্ণ করুন",
+        "continue_to_payment_gateway_notice": "আপনার অর্থপ্রদানের তথ্য যোগ করতে অর্থপ্রদান করা চালিয়ে যান।",
+        "continue_to_payment_gateway_button_label": "পেমেন্ট চালিয়ে যান",
+        "complete_your_purchase_title_error": "আপনার পেমেন্ট তথ্য ঠিক করুন",
+        "continue_to_payment_gateway_notice_error": "আপনার অর্থপ্রদানের তথ্য যাচাই করা যায়নি।",
+        "continue_to_payment_gateway_button_label_error": "পেমেন্টের তথ্য আপডেট করুন",
+        "page_title": "প্রসেসিং অর্ডার",
+        "title": "প্রসেসিং অর্ডার",
+        "your_order_has_been_received_title": "তোমার আদেশের জন্য ধন্যবাদ",
+        "you_will_receive_confirmation": "আমরা এখন অনেক অর্ডার পাচ্ছি। আপনি শীঘ্রই ইমেল বা টেক্সট দ্বারা নিশ্চিতকরণ পাবেন। আপনি যদি পরের ঘন্টার মধ্যে এটি না পান তবে আমাদের জানান।",
+        "you_will_not_be_charged": "আপনাকে এখনও চার্জ করা হবে না",
+        "wait": {
+          "short": "আপনার অর্ডার প্রক্রিয়া করা হচ্ছে.",
+          "medium": {
+            "one": "আপনার অর্ডার প্রক্রিয়া করা হচ্ছে. আনুমানিক অপেক্ষার সময় হল %{count} মিনিট৷",
+            "other": "আপনার অর্ডার প্রক্রিয়া করা হচ্ছে. আনুমানিক অপেক্ষার সময় হল %{count} মিনিট।"
+          },
+          "long": "আপনার অর্ডার প্রক্রিয়া হওয়ার সাথে সাথে আপনি একটি ইমেল পাবেন। বর্তমানে প্রচুর পরিমাণে অর্ডার রয়েছে।",
+          "no_auto_refresh_html": "যদি আপনি স্বয়ংক্রিয়ভাবে পুনঃনির্দেশিত না হন, %{link}।",
+          "refresh_this_page": "এই পৃষ্ঠাটি রিফ্রেশ করুন"
+        },
+        "action_required": "অ্যাকশন প্রয়োজন"
+      },
+      "shipping": {
+        "title": "ডেলিভারি",
+        "delivery_title": "ডেলিভারি",
+        "shipping_method_title": "পরিবহণ মাধ্যম",
+        "shipping_method_one_time_purchase_group_title": "এককালীন কেনাকাটা",
+        "shipping_method_subscription_group_title": "সাবস্ক্রিপশন",
+        "subscription_shipping": "সাবস্ক্রিপশন শিপিং",
+        "subscription_local_delivery": "সদস্যতা স্থানীয় বিতরণ",
+        "subscription_pickup": "সাবস্ক্রিপশন পিকআপ",
+        "waiting_on_rate_notice": "উপলব্ধ শিপিং রেট পাওয়া যাচ্ছে...",
+        "waiting_on_pickup_location_notice": "উপলব্ধ পিক আপ অবস্থান পাওয়া যাচ্ছে...",
+        "no_rates_for_cart_or_destination_notice": "আপনার কার্ট বা ঠিকানার জন্য কোন শিপিং পদ্ধতি উপলব্ধ নেই",
+        "no_pickup_location_notice": "আপনার পণ্যের অন্তত একটি পিক আপ জন্য উপলব্ধ নয়",
+        "no_rates_for_country_notice": "এই ঠিকানার জন্য কোন শিপিং হার পাওয়া যায়নি.",
+        "no_rates_contact_notice": "আরও তথ্যের জন্য আমাদের সাথে যোগাযোগ করুন",
+        "free_rate_label": "বিনামূল্যে",
+        "cheapest_rate_label": "সবচেয়ে সস্তা",
+        "please_enter_your_shipping_information_notice": "আপনার শিপিং তথ্য লিখুন দয়া করে.",
+        "estimated_delivery_date": {
+          "one": "%{count} ব্যবসায়িক দিন",
+          "other": "%{count} ব্যবসায়িক দিন"
+        },
+        "estimated_delivery_date_range": "%{মিনিমাম} থেকে %{সর্বোচ্চ} ব্যবসায়িক দিন",
+        "estimated_delivery_time": "আনুমানিক ডেলিভারি সময়}",
+        "estimated_delivery_time_range": "আনুমানিক ডেলিভারি %{min_time}–%{max_time}",
+        "delivery_today": "একই দিনে ডেলিভারি %{time}",
+        "delivery_tomorrow": "পরের দিন ডেলিভারি %{time}",
+        "two_day_delivery": "2-দিনের ডেলিভারি %{time}",
+        "delivery": "ডেলিভারি %{time}",
+        "arrives_time": "পৌঁছাবে %{time}",
+        "arrives_time_range": "পৌঁছাবে %{min_time}–%{max_time}",
+        "estimated_time": "আনুমানিক সময়}",
+        "estimated_time_range": "আনুমানিক %{min_time}–%{max_time}",
+        "shipping_line_phone_label": "মোবাইল ফোন নম্বর (প্রয়োজনীয়)",
+        "shipping_line_phone": "আপনার কুরিয়ার আপনার সাথে যোগাযোগ করতে এই নম্বর ব্যবহার করতে পারে.",
+        "shipping_line_delivery_phone_label": "মোবাইল ফোন নম্বর",
+        "shipping_line_delivery_phone": "আপনার ডেলিভারির আপডেটের সাথে আপনার সাথে যোগাযোগ করা হতে পারে।",
+        "split_cart_merchandise_quantity_label_standard": "%{পরিমাণ} আইটেম",
+        "split_cart_merchandise_quantity_label_additional": "+%{পরিমাণ} আরও",
+        "split_cart_merchandise_shipment_number": "%{total} এর %{number} চালান",
+        "split_cart_ships_now": "এখন জাহাজ",
+        "split_cart_ships_later": "পরে জাহাজ",
+        "split_cart_ships_date": "জাহাজ %{date}",
+        "split_cart_shipped_by_amazon_prime": "অ্যামাজন প্রাইম দ্বারা পাঠানো হয়েছে",
+        "split_cart_shipped_by_shop": "%{shop_name} দ্বারা পাঠানো হয়েছে",
+        "split_cart_multiple_shipment_label": "একাধিক চালান",
+        "split_cart_shipping_label": "পদ্ধতি",
+        "split_cart_multiple_shipment_quantity_label": "%{পরিমাণ} চালান",
+        "split_cart_multiple_shipment_notice": "আপনার অর্ডার একাধিক চালানে পৌঁছাবে",
+        "merchandise_quantity_label_inline_primary": "পরিমাণ: %{quantity}",
+        "merchandise_quantity_label_inline": "%{merchandise_title} ×%{পরিমাণ}",
+        "optional_shipping_line_delivery_instructions_label": "বিতরণ নির্দেশাবলী (ঐচ্ছিক)",
+        "shipping_line_delivery_instructions": "দরজা কোড বা ড্রপ-অফ নির্দেশাবলী মত প্রয়োজনীয় তথ্য লিখুন.",
+        "other_method": {
+          "zero": "অন্য কোন পদ্ধতি উপলব্ধ নেই",
+          "one": "%{count} অন্যান্য পদ্ধতি এখানে উপলব্ধ",
+          "other": "%{count} অন্যান্য পদ্ধতি থেকে শুরু করে উপলব্ধ"
+        },
+        "shipping_rate_discounted_amount": "ছিল: %{original_amount}। এখন: %{amount}",
+        "local_delivery": "লোকাল ডেলিভারি",
+        "subscription_delivery_description": {
+          "prepaid_delivery_frequency": {
+            "one": "%{count} ডেলিভারির জন্য",
+            "other": "%{count} ডেলিভারির জন্য"
+          },
+          "subscription_delivery_frequency": {
+            "day": {
+              "one": "প্রতিদিন",
+              "other": "প্রতি %{count} দিনে"
+            },
+            "week": {
+              "one": "প্রতি সপ্তাহে",
+              "other": "প্রতি %{count} সপ্তাহে"
+            },
+            "month": {
+              "one": "প্রতি মাসে",
+              "other": "প্রতি %{count} মাসে"
+            },
+            "year": {
+              "one": "প্রত্যেক বছর",
+              "other": "প্রতি %{count} বছরে"
+            }
+          },
+          "multiple_subscriptions_shipping_price_label": "প্রতি ডেলিভারি %{shipping_price}",
+          "prepaid_shipping_price_label": "%{শিপিং_প্রাইস} প্রতি ডেলিভারি x %{delivery_interval_count}",
+          "initial_order_discounted": "প্রথম শিপিং খরচ %{discounted_shipping_cost}, তারপর %{frequency_description}",
+          "prepaid_initial_order_discounted": "প্রথম শিপিং খরচ %{discounted_shipping_price} %{prepaid_delivery_frequency}",
+          "prepaid_initial_order_discounted_with_per_delivery_price": "প্রথম শিপিং খরচ %{discounted_shipping_price} %{prepaid_delivery_frequency} (%{discounted_cost_per_delivery})",
+          "prepaid_initial_order_discounted_with_renewal": "প্রথম শিপিং খরচ %{discounted_shipping_price} %{prepaid_delivery_frequency}, তারপর %{shipping_price} %{billing_cycle}",
+          "prepaid_initial_order_discounted_with_per_delivery_price_and_renewal": "প্রথম শিপিং খরচ %{discounted_shipping_price} %{prepaid_delivery_frequency} (%{discounted_cost_per_delivery}), তারপর %{shipping_price} %{billing_cycle}",
+          "shipping_price_included": "অন্তর্ভুক্ত",
+          "recurring_order_shipping_price": "এর পরে %{recurring_order_shipping_price}",
+          "first_order_shipping_price_included": "প্রথম অর্ডার অন্তর্ভুক্ত, তারপর %{recurring_order_shipping_price}",
+          "first_order_different_shipping_price": "%{first_order_shipping_price} (%{per_delivery_price} প্রতি ডেলিভারি), তারপরে %{recurring_order_shipping_price}"
+        }
+      }
+    },
+    "errors": {
+      "shop_404": {
+        "owner_ctas": {
+          "fix_domain": "আপনার নতুন ওয়েব ঠিকানা সেট আপ করা শেষ করুন, %{domain_settings_link}-এ যান। \"কানেক্ট ডোমেন\" এ ক্লিক করুন এবং লিখুন: %{domain}।<br> আপনার দোকানে যেতে সমস্যা হলে, %{forgot_your_store_link} পৃষ্ঠাটি চেষ্টা করুন।",
+          "fix_domain_link_text": "আপনার ডোমেন সেটিংস",
+          "forgot_your_store_link_text": "আপনার দোকান ভুলে গেছি",
+          "add_storefront": "আপনি আপনার %{admin_link} এ অনলাইন স্টোর চ্যানেল যোগ করে আপনার ওয়েবসাইট সেট আপ করতে পারেন। আপনার দোকানে যেতে সমস্যা হলে, %{forgot_your_store_link} পৃষ্ঠাটি চেষ্টা করুন।",
+          "admin_link_text": "অ্যাডমিন",
+          "header": "আপনি কি দোকানের মালিক?"
+        },
+        "ctas": {
+          "sell_in_person": {
+            "header": "ব্যক্তিগতভাবে বিক্রি করুন",
+            "caption": "আপনার খুচরা দোকান চালানোর জন্য আপনার প্রয়োজনীয় বৈশিষ্ট্যগুলি পান যে আপনি শুরু করছেন বা স্কেল করছেন।",
+            "link_text": "বিনামূল্যে ট্রায়াল শুরু করুন"
+          },
+          "open_a_store": {
+            "header": "একটি নতুন Shopify স্টোর খুলুন",
+            "caption": "একটি 3-দিনের বিনামূল্যের ট্রায়াল শুরু করুন, তারপর পরবর্তী 3 মাসের জন্য $1/মাস চালিয়ে যান৷",
+            "link_text": "এখন সাইন আপ করুন"
+          },
+          "editions": {
+            "header": "Shopify সংস্করণ দেখুন",
+            "caption": "100+ পণ্য আপডেটের মাধ্যমে, আপনি আরও বেশি উত্পাদনশীল এবং সৃজনশীল এবং বাণিজ্যে আপনার কল্পনার চেয়ে শক্তিশালী হতে পারেন।",
+            "link_text": "সর্বশেষ সংস্করণ অন্বেষণ"
+          },
+          "store_owner": {
+            "header": "আপনি কি দোকানের মালিক?",
+            "caption": "আপনি আপনার দোকানে পেতে সমস্যা হচ্ছে? %{forgot_your_store_link} বৈশিষ্ট্যটি ব্যবহার করে দেখুন। আপনি যদি আপনার দোকান পুনরায় সক্রিয় করতে চান তাহলে %{shopify_support_link}-এ যোগাযোগ করুন।",
+            "shopify_support_link_text": "Shopify সমর্থন"
+          }
+        },
+        "title": "একটি ইকমার্স ওয়েবসাইট তৈরি করুন এবং অনলাইনে বিক্রি করুন! Shopify দ্বারা ইকমার্স সফ্টওয়্যার",
+        "heros": {
+          "store_unavailable": "দুঃখিত, এই দোকান বর্তমানে অনুপলব্ধ.",
+          "store_not_exist": "এই দোকান বিদ্যমান নেই.",
+          "no_storefront": "এই দোকানের এখনও একটি ওয়েবসাইট নেই."
+        },
+        "links": {
+          "explore_other_stores": "অন্যান্য দোকান অন্বেষণ",
+          "start_free_trial": "একটি বিনামূল্যে ট্রায়াল শুরু করুন"
+        }
+      },
+      "blank": "ফাঁকা হতে পারে না",
+      "blocked_address": "এই অবস্থান সমর্থিত নয়.",
+      "credit_card_session_expired": "ক্রেডিট কার্ড অনুমোদনের মেয়াদ শেষ হয়ে গেছে, অনুগ্রহ করে আপনার পেমেন্টের তথ্য আবার লিখুন। আপনার কার্ড চার্জ করা হয়নি.",
+      "empty": "খালি হতে পারে না",
+      "invalid_email": "একটি বৈধ ইমেইল ঠিকানা আবশ্যক",
+      "discount_disabled": "এই ডিসকাউন্ট নিষ্ক্রিয় করা হয়েছে",
+      "discount_expired": "এই ছাড় আর বৈধ নয়",
+      "discount_limit_reached": "এই ছাড় তার ব্যবহারের সীমায় পৌঁছেছে",
+      "discount_not_found": "প্রবেশ করা কোডের সাথে মিলে একটি বৈধ ডিসকাউন্ট খুঁজে পাওয়া যায়নি৷",
+      "customer_already_used_once_per_customer_discount_notice": "এই ছাড় তার ব্যবহারের সীমায় পৌঁছেছে",
+      "gift_card_already_applied": "কোড ইতিমধ্যে আপনার চেকআউট প্রয়োগ করা হয়েছে",
+      "gift_card_code_invalid": "কোড অবৈধ",
+      "gift_card_currency_mismatch": "আপনার উপহার কার্ডটি %{gift_card_currency}-এ আছে। এটি %{checkout_currency} এ পুনরায় জারি করতে আমাদের সাথে যোগাযোগ করুন।",
+      "gift_card_depleted": "এই উপহার কার্ডে কোন তহবিল অবশিষ্ট নেই",
+      "gift_card_disabled": "উপহার কার্ড নিষ্ক্রিয় করা হয়েছে",
+      "gift_card_expired": "উপহার কার্ডের মেয়াদ শেষ",
+      "invalid": "অবৈধ",
+      "bad_domain": "একটি অবৈধ ডোমেন নাম রয়েছে৷",
+      "taken": "আগেই নেয়া হয়েছে",
+      "contains_html_tags": "HTML ট্যাগ থাকতে পারে না",
+      "too_short": "খুবই ছোট (সর্বনিম্ন %{count}টি অক্ষর)",
+      "too_long": "খুব দীর্ঘ (সর্বোচ্চ %{count}টি অক্ষর)",
+      "password_mismatch": "প্রদত্ত পাসওয়ার্ডের সাথে মিল থাকতে হবে",
+      "contains_spaces": "শূন্যস্থান দিয়ে শুরু বা শেষ হয়।",
+      "email_domain_invalid": "প্রদানকারী সমর্থিত নয়",
+      "invalid_for_country": "%{country} এর জন্য বৈধ নয়",
+      "invalid_for_country_and_province": "%{province} এবং %{country}-এর জন্য বৈধ নয়",
+      "invalid_province_in_country": "%{country}-এ একটি বৈধ প্রদেশ নয়",
+      "invalid_state_in_country": "%{country} এ একটি বৈধ রাষ্ট্র নয়",
+      "invalid_region_in_country": "%{country}-এর একটি বৈধ অঞ্চল নয়",
+      "less_than_or_equal_to": "%{count} এর থেকে কম বা সমান হতে হবে",
+      "not_supported": "সমর্থিত নয়",
+      "full_name_required": "একটি প্রথম নাম এবং পদবি লিখুন",
+      "invalid_for_card_type": "বৈধ নয়",
+      "invalid_type": "দুঃখিত, আমরা এই ধরনের কার্ড গ্রহণ করি না",
+      "invalid_format": "বিন্যাস বৈধ নয়",
+      "expired": "মেয়াদ শেষ হয়ে গেছে",
+      "invalid_start_date_or_issue_number_for_debit": "একটি বৈধ শুরুর তারিখ বা ইস্যু নম্বর প্রয়োজন",
+      "invalid_expiry_year": "একটি বৈধ মেয়াদ শেষ হওয়ার বছর নয়",
+      "reset_password_html": "এই ইমেল ঠিকানাটি ইতিমধ্যেই একটি অ্যাকাউন্টের সাথে যুক্ত৷ এই অ্যাকাউন্টটি আপনার হলে, আপনি <a href=\"/account/login#recover\">আপনার পাসওয়ার্ড পুনরায় সেট</a> করতে পারেন৷",
+      "verify_email": "আমরা %{customer_email}-এ একটি ইমেল পাঠিয়েছি, অনুগ্রহ করে আপনার ইমেল ঠিকানা যাচাই করতে অন্তর্ভুক্ত লিঙ্কটিতে ক্লিক করুন।",
+      "product_not_available": "পণ্য এই গ্রাহকের জন্য প্রকাশ করা হয় না."
+    },
+    "notices": {
+      "customer": {
+        "password_reset_error": "পাসওয়ার্ড রিসেট ত্রুটি",
+        "no_account_found": "সেই ইমেলের সাথে কোনো অ্যাকাউন্ট পাওয়া যায়নি।",
+        "invalid_credentials": "ভুল ইমেল বা পাসওয়ার্ড.",
+        "denylisted_reset_password": "আপনার অ্যাকাউন্ট অ্যাক্সেস করা যায়নি কারণ বর্তমান পাসওয়ার্ড নিরাপদ নয়। আপনি আপনার পাসওয়ার্ড আপডেট করার জন্য একটি ইমেল পাবেন।",
+        "signup_disabled": "গ্রাহক অ্যাকাউন্ট তৈরি নিষ্ক্রিয় করা হয়েছে."
+      },
+      "address": {
+        "updated": "ঠিকানা সফলভাবে আপডেট করা হয়েছে।",
+        "error_updating": "ঠিকানা আপডেট করার সময় ত্রুটি",
+        "created": "সফলভাবে ঠিকানা তৈরি করা হয়েছে৷",
+        "error_creating": "ঠিকানা তৈরিতে ত্রুটি৷",
+        "deleted": "ঠিকানা সফলভাবে মুছে ফেলা হয়েছে",
+        "error_deleting": "ঠিকানা মোছার সময় ত্রুটি।"
+      },
+      "line_item": {
+        "item_status": {
+          "add_variant": "যোগ করা হয়েছে %{delta}",
+          "increment_item": "যোগ করা হয়েছে %{delta}",
+          "decrement_item": "%{total} এর %{delta} সরানো হয়েছে",
+          "decrement_fulfilled_line_item": "%{total} এর %{delta} ফেরত",
+          "decrement_return_line_item": "রিটার্ন থেকে %{delta} সরানো হয়েছে"
+        }
+      },
+      "order": {
+        "not_available": "এই আদেশ পাওয়া যায় না",
+        "financial_status": {
+          "authorized": "অনুমোদিত",
+          "pending": "বিচারাধীন",
+          "paid": "পেড",
+          "unpaid": "অবৈতনিক",
+          "voided": "অকার্যকর",
+          "partially_paid": "আংশিক অর্থ প্রদান করা হয়েছে",
+          "partially_refunded": "আংশিকভাবে ফেরত দেওয়া হয়েছে",
+          "refunded": "ফেরত দেওয়া হয়েছে",
+          "expired": "মেয়াদোত্তীর্ণ"
+        },
+        "fulfillment_status": {
+          "fulfilled": "পূর্ণ হয়েছে",
+          "complete": "সম্পূর্ণ",
+          "partial": "আংশিক",
+          "unfulfilled": "অপূর্ণ",
+          "restocked": "পুনরুদ্ধার করা হয়েছে"
+        },
+        "transaction_status": {
+          "success": "সফলতা",
+          "pending": "বিচারাধীন",
+          "failure": "ব্যর্থতা",
+          "error": "ত্রুটি"
+        },
+        "cancel_reason": {
+          "declined": "পেমেন্ট প্রত্যাখান",
+          "inventory": "আইটেম অনুপলব্ধ",
+          "fraud": "প্রতারণামূলক আদেশ",
+          "customer": "গ্রাহক পরিবর্তিত/বাতিল অর্ডার",
+          "staff": "কর্মীদের ত্রুটি",
+          "other": "অন্যান্য"
+        },
+        "cash_on_delivery": "ক্যাশ অন ডেলিভারি (সিওডি)"
+      },
+      "cart": {
+        "only_n_items_available": "আপনি কার্টে শুধুমাত্র %{count} %{name} যোগ করতে পারেন।",
+        "too_many_items_in_cart": "আপনি কার্টে আর %{name} যোগ করতে পারবেন না।",
+        "less_than_minimum": "এই আইটেমটিতে ন্যূনতম %{min} আছে।",
+        "more_than_maximum": "এই আইটেমটিতে সর্বাধিক %{max} আছে৷",
+        "not_respect_step": "আপনি শুধুমাত্র %{step} এর বৃদ্ধিতে এই আইটেমটি যোগ করতে পারেন।",
+        "all_items_in_cart": "সমস্ত %{count} %{name} আপনার কার্টে রয়েছে৷",
+        "empty_update": "খালি কার্ট আপডেট করতে পারবেন না",
+        "missing_parameters": "কোনো বৈধ আইডি বা লাইন প্যারামিটার নেই",
+        "generic_error": "কার্ট ত্রুটি",
+        "product_not_available": "পণ্য উপলব্ধ নেই",
+        "too_many_line_items_error": "আপনার কার্টে %{max} এর বেশি আইটেম থাকতে পারে না।",
+        "link_expired": "লিঙ্কের মেয়াদ শেষ",
+        "link_no_longer_exists": "লিঙ্ক আর বিদ্যমান নেই.",
+        "stock_problems_html": "এক বা একাধিক আইটেম আর উপলব্ধ নেই৷ আমরা একটি <a href=\"%{link}\">আপডেট কার্ট</a> প্রদান করেছি।",
+        "changed": "কার্ট পরিবর্তন করা হয়েছে",
+        "items_changed": "এক বা একাধিক আইটেম পরিবর্তিত হয়েছে.",
+        "product_sold_out": "'%{name}' পণ্যটি ইতিমধ্যেই বিক্রি হয়ে গেছে।",
+        "variant_not_found": "বৈকল্পিক খুঁজে পাচ্ছি না",
+        "variant_requires_selling_plan": "ভেরিয়েন্ট শুধুমাত্র একটি বিক্রয় পরিকল্পনার সাথে কেনা যাবে।",
+        "selling_plan_not_available_for_company_locations": "B2B অর্ডারের জন্য শুধুমাত্র এককালীন কেনাকাটা উপলব্ধ",
+        "digital_product_not_available_for_company_locations": "এই আইটেমটি B2B অর্ডারে যোগ করা যাবে না",
+        "selling_plan_not_applicable": "ভেরিয়েন্টে বিক্রয় পরিকল্পনা প্রয়োগ করা যাবে না",
+        "shipping_address_not_required": "এই কার্ট শিপিং প্রয়োজন হয় না",
+        "shipping_address_invalid": "আপনার শিপিং রেট গণনা করতে একটি সমস্যা হয়েছে৷ আপনার অর্ডার সম্পূর্ণ করার আগে একটি শিপিং রেট চয়ন করতে চেকআউট চালিয়ে যান।",
+        "bundle_requires_components": "বান্ডেল পণ্য '%{name}' কার্টে যোগ করা যাবে না।",
+        "gift_card_with_components_not_supported": "বান্ডেল পণ্য '%{name}' কার্টে যোগ করা যাবে না।",
+        "gift_card_price_must_be_greater_than_zero": "বান্ডেল পণ্য '%{name}' কার্টে যোগ করা যাবে না।",
+        "bundle_products_not_supported_for_b2b_draft": "এই অবস্থানের জন্য B2B অর্ডারে বান্ডেল করা আইটেম যোগ করা যাবে না।",
+        "view_lines_limit_reached": "লাইন অবশ্যই %{limit} এর কম হতে হবে",
+        "merchandise_line_transformers": {
+          "run_error": "আপনার কার্টে একটি ত্রুটি ঘটেছে."
+        }
+      },
+      "storefront": {
+        "invalid_password": "পাসওয়ার্ড ভুল, আবার চেষ্টা করুন."
+      },
+      "tags": {
+        "add_articles": "%{tag} ট্যাগ সহ নিবন্ধগুলিতে সংকীর্ণ অনুসন্ধান",
+        "add_products": "%{tag} ট্যাগের সাথে মেলা পণ্যের সংকীর্ণ নির্বাচন",
+        "remove_articles": "%{tag} ট্যাগ করা নেই এমন নিবন্ধগুলিতে বিস্তৃত অনুসন্ধান করুন",
+        "remove_products": "ট্যাগ %{tag} সরান"
+      }
+    },
+    "email_marketing": {
+      "subscribed": {
+        "confirmation": "আমাদের মেইলিং তালিকা সদস্যতা জন্য আপনাকে ধন্যবাদ.",
+        "disclaimer": "আপনি যে কোনো সময় ত্যাগ করতে পারেন।",
+        "unsubscribe": "সদস্যতা ত্যাগ করুন"
+      },
+      "unsubscribed": {
+        "confirmation": "আপনি আমাদের মেলিং তালিকা থেকে সদস্যতা ত্যাগ করেছেন।",
+        "disclaimer": "আপনি আমাদের থেকে আর কোন মার্কেটিং আপডেট পাবেন না। আপনি যে কোনো সময় আবার সদস্যতা নিতে পারেন.",
+        "preview": "গ্রাহকরা সদস্যতা ত্যাগ করলে তারা কী দেখতে পাবে তা আপনি প্রিভিউ করছেন।"
+      },
+      "open_tracking": {
+        "opt_in": {
+          "opted_in_html": "<b>আপনি ইমেল খোলা ট্র্যাকিং নির্বাচন করেছেন.</b>",
+          "visibility": "ইমেল খোলা হার বেনামে রিপোর্ট করা হবে. আপনি একটি সমষ্টিগত ইমেল খোলার হারের অংশ হিসাবে একটি ইমেল খুলেছেন কিনা তা আমরা কেবল দেখব।",
+          "opt_out_html": "আপনি যদি এই তথ্য শেয়ার করতে না চান তাহলে আপনি ইমেল খোলা ট্র্যাকিং <a style=\"text-decoration:underline;\" href=\"%{link}\">অপ্ট আউট</a> করতে পারেন৷",
+          "preview_bar": "গ্রাহকরা যখন ইমেল ওপেন ট্র্যাকিং বেছে নেবে তখন তারা কী দেখতে পাবে তা আপনি প্রিভিউ করছেন।"
+        },
+        "opt_out": {
+          "opted_out_html": "<b>আপনি ইমেল খোলা ট্র্যাকিং অপ্ট আউট করেছেন৷</b>",
+          "visibility": "আপনি আমাদের ইমেলগুলি খুলেছেন কিনা তা আমরা দেখব না।",
+          "opt_in_html": "ইমেল খোলা ট্র্যাকিং <a style=\"text-decoration:underline;\" href=\"%{link}\">নির্বাচন করুন</a> .",
+          "preview_bar": "গ্রাহকরা ইমেল ওপেন ট্র্যাকিং থেকে অপ্ট আউট করলে তারা কী দেখতে পাবে তা আপনি প্রিভিউ করছেন৷"
+        },
+        "no_longer_track": {
+          "status_html": "<b>আমরা আর কোনো ইমেল খোলার ট্র্যাক করি না।</b>",
+          "privacy_policy": "এই ইমেলটি পাঠানোর পরে, আমরা আমাদের গোপনীয়তা নীতি আপডেট করেছি এবং আমরা আর খোলার ট্র্যাক করি না।"
+        },
+        "track": {
+          "status_html": "<b>ইমেল খোলা ট্র্যাকিং রিপোর্ট করা হয়.</b>",
+          "visibility": "মোট ইমেল খোলার হারের অংশ হিসাবে আপনি ইমেলটি খুলেছেন কিনা তা আমরা কেবল দেখব।"
+        },
+        "updated_policy": {
+          "status_html": "<b>ইমেল খোলা ট্র্যাকিং রিপোর্ট করা হয়.</b>",
+          "visibility": "আমরা আমাদের নীতি আপডেট করেছি, এবং এখন ট্র্যাক ইমেল খোলে। ইমেল খোলা হার বেনামে রিপোর্ট করা হবে. আপনি মোট ইমেল খোলার হারের অংশ হিসাবে একটি ইমেল খুলেছেন কিনা তা আমরা কেবল দেখব।",
+          "opt_out_html": "আপনি এই তথ্য শেয়ার করতে না চাইলে, আপনি <a style=\"text-decoration:underline;\" href=\"%{link}\">সদস্যতা ত্যাগ করতে পারেন।</a>"
+        }
+      }
+    },
+    "pagination": {
+      "previous": "আগে",
+      "next": "পরবর্তী"
+    },
+    "links": {
+      "powered_by_shopify": "Shopify দ্বারা চালিত",
+      "learn_more": "আরও জানুন"
+    },
+    "feed": {
+      "more": "আরও"
+    },
+    "attributes": {
+      "email": "ইমেইল",
+      "password": "পাসওয়ার্ড",
+      "password_confirmation": "পাসওয়ার্ড নিশ্চিতকরণ",
+      "first_name": "নামের প্রথম অংশ",
+      "last_name": "নামের শেষাংশ",
+      "body": "শরীর",
+      "signature": "ঠিকানা"
+    },
+    "addresses": {
+      "zip_code": "জিপ কোড",
+      "postal_code": "পোস্ট অফিসের নাম্বার",
+      "postcode": "পোস্টকোড",
+      "pincode": "পিনকোড",
+      "region": "অঞ্চল",
+      "prefecture": "প্রিফেকচার",
+      "province": "প্রদেশ",
+      "state": "অবস্থা",
+      "state_and_territory": "রাজ্য/অঞ্চল",
+      "county": "কাউন্টি",
+      "emirate": "আমিরাত",
+      "governorate": "গভর্নরেট",
+      "confirm": "আপনি কি নিশ্চিত আপনি এই ঠিকানা মুছে ফেলতে চান?"
+    },
+    "collections": {
+      "sorting": {
+        "manual": "বৈশিষ্ট্যযুক্ত",
+        "best_selling": "সেরা বিক্রয়",
+        "az": "বর্ণানুক্রমিকভাবে, AZ",
+        "za": "বর্ণানুক্রমিকভাবে, ZA",
+        "price_ascending": "দাম, কম থেকে বেশি",
+        "price_descending": "দাম, উচ্চ থেকে কম",
+        "date_ascending": "তারিখ, পুরানো থেকে নতুন",
+        "date_descending": "তারিখ, নতুন থেকে পুরাতন"
+      }
+    },
+    "filters": {
+      "availability": {
+        "value": {
+          "in_stock": "স্টকে",
+          "out_of_stock": "স্টক শেষ"
+        }
+      },
+      "boolean": {
+        "true_label": "হ্যাঁ",
+        "false_label": "না"
+      }
+    },
+    "search": {
+      "sorting": {
+        "relevance": "প্রাসঙ্গিকতা",
+        "price_ascending": "দাম, কম থেকে বেশি",
+        "price_descending": "দাম, উচ্চ থেকে কম"
+      }
+    },
+    "page_titles": {
+      "blog_or_article_with_error": "ত্রুটি - %{title}",
+      "products": "পণ্য",
+      "shopping_cart": "আপনার শপিং কার্ট",
+      "account": "হিসাব",
+      "create_account": "হিসাব তৈরি কর",
+      "reset_account": "অ্যাকাউন্ট রিসেট করুন",
+      "addresses": "ঠিকানা",
+      "order": "অর্ডার %{name}",
+      "search": "অনুসন্ধান করুন",
+      "search_results": {
+        "one": "অনুসন্ধান: \"%{terms}\" এর জন্য %{count} ফলাফল পাওয়া গেছে",
+        "other": "অনুসন্ধান: \"%{terms}\" এর জন্য %{count} ফলাফল পাওয়া গেছে"
+      },
+      "collections": "সংগ্রহ",
+      "not_found": "404 পাওয়া যায়নি",
+      "challenge": "চ্যালেঞ্জ",
+      "checkpoint": "চেকপয়েন্ট"
+    },
+    "cart": {
+      "discounts_with_count": "%{count} ডিসকাউন্ট প্রয়োগ করা হয়েছে"
+    },
+    "challenge": {
+      "message": "চালিয়ে যেতে, আমাদের জানান আপনি রোবট নন।",
+      "error": "আপনার উত্তর সঠিক ছিল না, আবার চেষ্টা করুন.",
+      "submit_button_text": "জমা দিন"
+    },
+    "checkpoint": {
+      "message": "চালিয়ে যেতে ক্যাপচা সমাধান করুন",
+      "error": "ক্যাপচা যাচাইকরণ ব্যর্থ হয়েছে৷",
+      "submit_button_text": "জমা দিন"
+    },
+    "store_availability": {
+      "pick_up_time": {
+        "one_hour": "সাধারণত 1 ঘন্টার মধ্যে প্রস্তুত",
+        "two_hours": "সাধারণত 2 ঘন্টার মধ্যে প্রস্তুত",
+        "four_hours": "সাধারণত 4 ঘন্টার মধ্যে প্রস্তুত",
+        "twenty_four_hours": "সাধারণত 24 ঘন্টার মধ্যে প্রস্তুত",
+        "two_to_four_days": "সাধারণত 2-4 দিনের মধ্যে প্রস্তুত",
+        "five_or_more_days": "সাধারণত 5+ দিনের মধ্যে প্রস্তুত",
+        "zero_to_two_hours": "সাধারণত 2 ঘন্টার মধ্যে প্রস্তুত",
+        "two_to_four_hours": "সাধারণত 4 ঘন্টার মধ্যে প্রস্তুত",
+        "immediately": "এখন পিকআপের জন্য প্রস্তুত",
+        "next_day": "পরের দিন পিকআপের জন্য প্রস্তুত"
+      }
+    }
+  },
+  "customer_accounts": {
+    "account_information": {
+      "add_button": "যোগ করুন",
+      "loading_accessibility_message": "অ্যাকাউন্টের তথ্য লোড হচ্ছে",
+      "loading_finished_accessibility_message": "অ্যাকাউন্ট তথ্য লোড হয়েছে",
+      "profile_card": {
+        "cancel": "বাতিল করুন",
+        "cancel_accessibility_label": "প্রোফাইল সম্পাদনা বাতিল করুন",
+        "edit": "সম্পাদনা করুন",
+        "edit_accessibility_label": "জীবন বৃত্তান্ত সম্পাদনা",
+        "email_help_text": "লগইন করার জন্য ব্যবহৃত ইমেল পরিবর্তন করা যাবে না",
+        "first_name": "নামের প্রথম অংশ",
+        "last_name": "নামের শেষাংশ",
+        "no_name_provided_accessibility_label": "কোনো নাম যোগ করা হয়নি",
+        "phone_number_help_text": "লগইন করার জন্য ব্যবহৃত ফোন নম্বর পরিবর্তন করা যাবে না",
+        "save": "সংরক্ষণ",
+        "save_accessibility_label": "প্রোফাইল সংরক্ষণ",
+        "title": "প্রোফাইল"
+      },
+      "profile_update_confirmation_message": "প্রোফাইল আপডেট",
+      "title": "প্রোফাইল",
+      "people": {
+        "pagination": {
+          "load_more": "আর ঢুকাও",
+          "load_more_accessibility_label": "আরো মানুষ লোড",
+          "loading_accessibility_label": "মানুষ লোড হচ্ছে"
+        }
+      }
+    },
+    "orders": {
+      "list_layout_accessibility_label": "লেআউট বিকল্প",
+      "list_title": "আদেশ",
+      "order_list": {
+        "column_headers": {
+          "order": "অর্ডার",
+          "items": "আইটেম",
+          "total": "মোট"
+        },
+        "delivered": "বিতরণ করা হয়েছে {{date}}",
+        "empty_state_order_source_description": "শুধুমাত্র {{email}} দ্বারা দেওয়া অর্ডারগুলি এখানে দেখাবে৷",
+        "empty_state_subtitle": "একটি অর্ডার দিতে দোকান যান.",
+        "empty_state_title": "এখনও কোন আদেশ নেই",
+        "empty_state_title_for_pending_orders": "কোন মুলতুবি আদেশ",
+        "estimated_shortform": "অনুমান। {{date}}",
+        "estimated_delivery": "সম্ভাব্য প্রসব {{date}}",
+        "one_images_accessibility_label": "অর্ডারের মধ্যে রয়েছে {{lineItemName1}}",
+        "two_images_accessibility_label": "অর্ডারের মধ্যে রয়েছে {{lineItemName1}} , {{lineItemName2}}",
+        "three_images_accessibility_label": "অর্ডারের মধ্যে রয়েছে {{lineItemName1}} , {{lineItemName2}} , {{lineItemName3}}",
+        "four_images_accessibility_label": "অর্ডারের মধ্যে রয়েছে {{lineItemName1}} , {{lineItemName2}} , {{lineItemName3}} , {{lineItemName4}}",
+        "more_than_three_products_accessibility_label": "অর্ডারে {{lineItemName1}} , {{lineItemName2}} , এবং আরও {{numberOfAdditionalProducts}} টি পণ্য রয়েছে",
+        "more_than_four_products_accessibility_label": "অর্ডারের মধ্যে রয়েছে {{lineItemName1}} , {{lineItemName2}} , {{lineItemName3}} , এবং {{numberOfAdditionalProducts}} আরও পণ্য",
+        "plus_more": "+ {{numberOfAdditionalProducts}}",
+        "plus_more_products": "+ {{numberOfAdditionalProducts}} টি পণ্য",
+        "carousel": {
+          "one_products_accessibility_label": "অর্ডারে রয়েছে {{lineItemName1}} পরিমাণ {{lineItemQuantity1}}",
+          "two_products_accessibility_label": "অর্ডারে {{lineItemName1}} পরিমাণ {{lineItemQuantity1}} , {{lineItemName2}} পরিমাণ {{lineItemQuantity2}} অন্তর্ভুক্ত",
+          "three_products_accessibility_label": "অর্ডারে {{lineItemName1}} পরিমাণ {{lineItemQuantity1}} , {{lineItemName2}} পরিমাণ {{lineItemQuantity2}} , {{lineItemName3}} পরিমাণ {{lineItemQuantity3}} অন্তর্ভুক্ত",
+          "four_products_accessibility_label": "অর্ডারের মধ্যে রয়েছে {{lineItemName1}} পরিমাণ {{lineItemQuantity1}} , {{lineItemName2}} পরিমাণ {{lineItemQuantity2}} , {{lineItemName3}} পরিমাণ {{lineItemQuantity3}} , {{lineItemName4}} Item {{lineItemQuantity4}}",
+          "five_products_accessibility_label": "অর্ডারের মধ্যে রয়েছে {{lineItemName1}} পরিমাণ {{lineItemQuantity1}} , {{lineItemName2}} পরিমাণ {{lineItemQuantity2}} , {{lineItemName3}} পরিমাণ {{lineItemQuantity3}} , {{lineItemName4}} {{lineItemQuantity4}} পরিমাণ {{lineItemName5}} পরিমাণ {{lineItemQuantity5}}",
+          "six_products_accessibility_label": "অর্ডারের মধ্যে রয়েছে {{lineItemName1}} পরিমাণ {{lineItemQuantity1}} , {{lineItemName2}} পরিমাণ {{lineItemQuantity2}} , {{lineItemName3}} পরিমাণ {{lineItemQuantity3}} , {{lineItemName4}} {{lineItemQuantity4}} পরিমাণ {{lineItemName5}} পরিমাণ {{lineItemQuantity5}} , {{lineItemName6}} পরিমাণ {{lineItemQuantity6}}",
+          "six_and_more_products_accessibility_label": "অর্ডারের মধ্যে রয়েছে {{lineItemName1}} পরিমাণ {{lineItemQuantity1}} , {{lineItemName2}} পরিমাণ {{lineItemQuantity2}} , {{lineItemName3}} পরিমাণ {{lineItemQuantity3}} , {{lineItemName4}} {{lineItemQuantity4}} পরিমাণ {{lineItemName5}} পরিমাণ {{lineItemQuantity5}} , {{lineItemName6}} পরিমাণ {{lineItemQuantity6}} এবং আরও",
+          "view_order_details": "বিস্তারিত নির্দেশিকা দেখো",
+          "previous": "আগে",
+          "next": "পরবর্তী"
+        },
+        "items": {
+          "one": "{{count}} টি আইটেম",
+          "other": "{{count}} টি আইটেম"
+        },
+        "list_view": "তালিকার দৃশ্য দেখান",
+        "no_filtered_results_description": "আপনার অর্ডারগুলি দেখতে ফিল্টারগুলি সরান বা সামঞ্জস্য করুন",
+        "no_filtered_results_title": "কোন ফিল্টার করা ফলাফল",
+        "order_link": "অর্ডার দেখুন {{name}}",
+        "order_number": "অর্ডার {{name}}",
+        "orders_title": "নিশ্চিত করা হয়েছে",
+        "pagination": {
+          "nav_accessibility_label": "অর্ডার নেভিগেশন বোতাম",
+          "next": "পরবর্তী",
+          "next_accessibility_label": "পরবর্তী আদেশ",
+          "previous": "পূর্ববর্তী",
+          "previous_accessibility_label": "পূর্ববর্তী আদেশ",
+          "load_more": "আর ঢুকাও",
+          "load_more_accessibility_label": "আরো অর্ডার লোড"
+        },
+        "order_status_message": {
+          "list_view": {
+            "view_order_for_details": "বিস্তারিত জানার জন্য অর্ডার দেখুন",
+            "estimated_delivery": "সম্ভাব্য প্রসব {{date}}",
+            "last_updated": "সর্বশেষ আপডেট করা হয়েছে {{date}}"
+          },
+          "table_view": {
+            "estimated_delivery": "অনুমান। প্রসবের {{date}}"
+          }
+        },
+        "payment_status": {
+          "list_view": {
+            "overdue": "পরিশোধসময়াতীত পেমেন্ট",
+            "due": "পরিশোধযোগ্য {{date}}",
+            "due_today": "আজ পেমেন্ট বকেয়া",
+            "due_without_date": "বাকি টাকা",
+            "due_on_fulfillment": "পূরণের জন্য পেমেন্ট",
+            "pay_to_confirm": "নিশ্চিত করতে অর্থ প্রদান করুন",
+            "payment_not_due": "পেমেন্ট এখনও বকেয়া"
+          },
+          "table_view": {
+            "overdue": "ওভারডিউ",
+            "due": "নির্দিষ্ট {{date}}",
+            "due_today": "আজ বাকি",
+            "paid": "পেড",
+            "due_without_date": "বাকি",
+            "due_on_fulfillment": "পূর্ণতার উপর বকেয়া",
+            "pay_to_confirm": "নিশ্চিত করতে অর্থ প্রদান করুন",
+            "payment_not_due": "এখনো বকেয়া হয়নি"
+          }
+        },
+        "sort_by": "অনুসারে সাজান: {{option}}",
+        "sort_hide_options_accessibility_label": "নিশ্চিত অর্ডারের জন্য সাজানোর বিকল্প লুকান।",
+        "sort_show_options_accessibility_label": "নিশ্চিত অর্ডারের জন্য সাজানোর বিকল্প দেখান।",
+        "sort_currently_sorted_by_accessibility_label": "বর্তমানে এই অনুসারে সাজানো হয়েছে: {{option}}",
+        "sort_title": "সাজান",
+        "sort": {
+          "date": {
+            "newest": "নতুন থেকে পুরাতন",
+            "oldest": "প্রাচীন থেকে নতুন"
+          },
+          "location": {
+            "ascending": "অবস্থান (AZ)",
+            "descending": "অবস্থান (ZA)"
+          },
+          "order_number": {
+            "ascending": "অর্ডার নম্বর (নিম্ন থেকে উচ্চ)",
+            "descending": "অর্ডার নম্বর (উচ্চ থেকে কম)"
+          },
+          "order_total": {
+            "ascending": "মোট অর্ডার (নিম্ন থেকে উচ্চ)",
+            "descending": "মোট অর্ডার (উচ্চ থেকে কম)"
+          }
+        },
+        "filter_title": "ছাঁকনি",
+        "filter": {
+          "clear_section": "বিভাগ পরিষ্কার করুন",
+          "clear_all": "সব পরিষ্কার করে দাও",
+          "apply": "আবেদন করুন",
+          "date": {
+            "start_date": "শুরুর তারিখ",
+            "end_date": "শেষ তারিখ",
+            "title": "অর্ডারের তারিখ",
+            "today": "আজ",
+            "last_7_days": "গত ৭ দিন",
+            "last_30_days": "শেষ 30 দিন",
+            "last_90_days": "গত ৯০ দিন",
+            "last_365_days": "গত 12 মাস",
+            "custom": "কাস্টম"
+          }
+        },
+        "table_view": "টেবিল ভিউ দেখান",
+        "show_order_actions_accessibility_label": "অর্ডার {{name}} এর জন্য অর্ডার ক্রিয়া দেখান"
+      },
+      "order_status": {
+        "attempted_delivery_label": "ডেলিভারির চেষ্টা করা হয়েছে",
+        "attempted_delivery_description": "বিতরণ প্রচেষ্টা ব্যর্থ হয়েছে.",
+        "attempted_to_deliver_label": "পৌঁছে দেওয়ার চেষ্টা করা হয়েছে",
+        "confirmed_description": "আমরা আপনার অর্ডার পেয়েছি।",
+        "on_its_way_description": "এই চালান তার পথে আছে.",
+        "out_for_delivery_description": "এই চালান ডেলিভারির জন্য আউট.",
+        "preparing_for_shipping_label": "শিপিং জন্য প্রস্তুতি",
+        "preparing_for_shipping_description": "এই আইটেম শিপিং জন্য প্রস্তুত করা হচ্ছে.",
+        "ready_for_pickup_label": "উঠানোর জন্য প্রস্তুত",
+        "ready_for_pickup_description": "এই আইটেমগুলি পিক আপ জন্য প্রস্তুত. আপনার অর্ডার নেওয়ার সময় অনুগ্রহ করে আপনার অর্ডার নিশ্চিতকরণ আনুন।",
+        "ready_for_pickup_location": "আপনার অর্ডার লোকেশনে পিকআপের জন্য প্রস্তুত",
+        "picked_up_label": "পিক আপ",
+        "picked_up_description": "এসব আইটেম তোলা হয়েছে।",
+        "canceled_description": "আপনার অর্ডার বাতিল করা হয়েছে {{date}} তারিখে।",
+        "canceled_label": "বাতিল",
+        "canceled_title": "আপনার অর্ডার বাতিল করা হয়েছে",
+        "come_back": "আপনার চালানের অবস্থার আপডেটের জন্য এই পৃষ্ঠায় ফিরে আসুন।",
+        "company_tracking_number": "{{company}} ট্র্যাকিং নম্বর:",
+        "confirmed_label": "নিশ্চিত করা হয়েছে",
+        "confirmed_title": "আপনার অর্ডার নিশ্চিত করা হয়েছে",
+        "confirmed_description_pickup": "আপনার অর্ডার পিকআপের জন্য প্রস্তুত হলে আপনি একটি ইমেল পাবেন।",
+        "confirmed_description_digital": "আপনার অর্ডার প্রস্তুত হলে আপনি একটি ইমেল পাবেন।",
+        "confirmed_description_gift_card_text": "আপনার অর্ডার প্রস্তুত হলে আপনি একটি টেক্সট পাবেন।",
+        "delivered_description": "এই চালান বিতরণ করা হয়েছে.",
+        "delivered_label": "বিতরণ করা হয়েছে",
+        "delivered_title": "আপনার চালান বিতরণ করা হয়েছে",
+        "delivered_description_digital": "আপনার অর্ডার সম্পূর্ণ.",
+        "delivered_description_gift_card": {
+          "one": "উপহার কার্ড ইমেল দ্বারা পাঠানো হয়েছে.",
+          "other": "উপহার কার্ড ইমেল দ্বারা পাঠানো হয়েছে."
+        },
+        "delivered_description_gift_card_text": {
+          "one": "টেক্সট দ্বারা উপহার কার্ড পাঠানো হয়েছে.",
+          "other": "টেক্সট দ্বারা উপহার কার্ড পাঠানো হয়েছে."
+        },
+        "gift_card_label": {
+          "one": "উপহার কার্ড",
+          "other": "উপহার কার্ড"
+        },
+        "gift_card_resend": {
+          "one": "ইমেল পুনরায় পাঠান",
+          "other": "ইমেল পুনরায় পাঠান"
+        },
+        "gift_card_resend_text": {
+          "one": "পাঠ্য পুনরায় পাঠান",
+          "other": "টেক্সট আবার পাঠান"
+        },
+        "gift_resend_success": {
+          "one": "উপহার কার্ড আবার পাঠানো হয়েছে",
+          "other": "উপহার কার্ড পুনরায় পাঠানো হয়েছে"
+        },
+        "gift_resend_failure": {
+          "one": "আপনার উপহার কার্ড পুনরায় পাঠাতে একটি সমস্যা হয়েছে৷ আবার চেষ্টা করুন বা আমাদের সাথে যোগাযোগ করুন.",
+          "other": "আপনার উপহার কার্ড পুনরায় পাঠাতে একটি সমস্যা হয়েছে৷ আবার চেষ্টা করুন বা আমাদের সাথে যোগাযোগ করুন."
+        },
+        "gift_card_resend_description": {
+          "one": "এটি প্রাপ্ত না হলে, ইমেল পুনরায় পাঠান বা",
+          "other": "যদি তারা প্রাপ্ত না হয়, ইমেল পুনরায় পাঠান বা"
+        },
+        "gift_card_resend_description_text": {
+          "one": "এটি প্রাপ্ত না হলে, টেক্সট আবার পাঠান বা",
+          "other": "যদি তারা প্রাপ্ত না হয়, টেক্সট পুনরায় পাঠান বা"
+        },
+        "confirmed_gift_card_additional_description": {
+          "one": "উপহার কার্ড একটি পৃথক ইমেল পাঠানো হবে.",
+          "other": "প্রতিটি উপহার কার্ড একটি পৃথক ইমেল পাঠানো হবে."
+        },
+        "confirmed_gift_card_additional_description_text": {
+          "one": "উপহার কার্ডটি একটি পৃথক পাঠ্যে পাঠানো হবে।",
+          "other": "প্রতিটি উপহার কার্ড একটি পৃথক পাঠ্য পাঠানো হবে."
+        },
+        "estimated_delivery": "সম্ভাব্য প্রসব {{date}}",
+        "in_review_description": "আমাদের আরও তথ্যের প্রয়োজন হলে বা আপনার অর্ডার নিশ্চিত হলে আমরা আপনাকে জানাব।",
+        "in_review_label": "পর্যালোচনা",
+        "in_review_title": "আপনার অর্ডার পর্যালোচনা করা হচ্ছে",
+        "last_updated": "সর্বশেষ আপডেট করা হয়েছে {{date}}",
+        "multiple_shipments_label": "একাধিক চালান",
+        "no_tracking_number": "এই চালানের জন্য কোন ট্র্যাকিং নম্বর নেই.",
+        "on_its_way_label": "তার পথে",
+        "on_its_way_title": "আপনার চালান পথে আছে",
+        "out_for_delivery_label": "ডেলিভারির জন্য আউট",
+        "out_for_delivery_title": "আপনার চালান ডেলিভারির জন্য আউট",
+        "resume_tracking": "ট্র্যাকিং পুনরায় শুরু করুন",
+        "submitted_label": "জমা দেওয়া হয়েছে",
+        "submitted_description": "অর্ডার এবং পেমেন্টের বিবরণ পর্যালোচনা করুন।",
+        "there_was_a_problem_label": "একটা সমস্যা ছিল",
+        "track_shipment": "ট্রাকে পরিবহন করা",
+        "request_return": "রিটার্নের অনুরোধ করুন",
+        "view_order_for_details": "বিস্তারিত জানার জন্য অর্ডার দেখুন",
+        "amazon_buy_with_prime": {
+          "order_tracking_link": {
+            "text": "প্রাইম অর্ডার দিয়ে কিনুন ট্র্যাক এবং পরিচালনা করুন",
+            "new_window_disclaimer": "(একটি নতুন উইন্ডো খোলে)"
+          }
+        }
+      },
+      "status_mark_as_delivered": "বিতরণ করা হিসাবে চিহ্নিত করুন",
+      "status_title": "অর্ডারের অবস্থা",
+      "buy_again": "আবার কিনুন",
+      "buy_again_accessibility_label": "অর্ডারের জন্য আবার কিনুন {{orderId}}",
+      "manage": "পরিচালনা করুন",
+      "manage_accessiblity_label": "অর্ডার পরিচালনা করুন {{orderId}}",
+      "group_title_label": "এর অংশ: {{groupTitle}}",
+      "havent_received_your_delivery": "আপনার ডেলিভারি পাননি?",
+      "didnt_pick_up_order": "আপনার অর্ডার নিতে না?",
+      "if_you_didnt_receive_this": "আপনি যদি এটি না পান,",
+      "if_not_received": {
+        "one": "যদি না পাওয়া যেত,",
+        "other": "যদি তারা গ্রহণ না করা হয়,"
+      },
+      "let_us_know": "আমাদের জানতে দাও",
+      "contact_us": "যোগাযোগ করুন."
+    },
+    "B2B": {
+      "addresses": {
+        "save_new_billing_address_accessibility_label": "বিলিং ঠিকানা সংরক্ষণ করুন",
+        "save_new_shipping_address_accessibility_label": "শিপিং ঠিকানা সংরক্ষণ করুন",
+        "shipping_address_card_title": "প্রেরণের ঠিকানা"
+      },
+      "orders": {
+        "draft_order_list": {
+          "hide_all": "সব লুকাও",
+          "show_all": "সব দেখান",
+          "hide_all_accessibility_label": "পর্যালোচনা সব আদেশ লুকান",
+          "show_all_accessibility_label": "পর্যালোচনা সব আদেশ দেখান",
+          "show_all_orders_in_review": "পর্যালোচনা সব আদেশ দেখান",
+          "show_less_orders_in_review": "পর্যালোচনায় কম অর্ডার দেখান",
+          "title": "বিচারাধীন",
+          "pending_tab_accessibility_label": {
+            "no_pending_orders": "আপনার কোন মুলতুবি আদেশ নেই",
+            "pending_orders": {
+              "one": "আপনার {{count}} টি অর্ডার বাকি আছে",
+              "other": "আপনার {{count}} টি অর্ডার বাকি আছে"
+            },
+            "more_than_pagination_length": "আপনার {{count}} টির বেশি মুলতুবি অর্ডার আছে"
+          },
+          "pending_orders_count_more_than_pagination_length": "{{count}} +",
+          "pagination": {
+            "nav_accessibility_label": "রিভিউ নেভিগেশন বোতামে অর্ডার"
+          }
+        },
+        "order_list_column_headers_location": "অবস্থান",
+        "order_list_column_headers_contact": "যোগাযোগ",
+        "removed_company_contact_tooltip": "কোম্পানি থেকে সরানো হয়েছে"
+      },
+      "draft_order_details": {
+        "draft_order_subtitle": "অর্ডার {{draftOrderName}} থেকে {{date}} নিশ্চিত করা হয়েছে",
+        "loading": "অর্ডার বিশদ লোড হচ্ছে",
+        "loading_finished_accessibility_message": "অর্ডার বিশদ লোড করা হয়েছে",
+        "payment_status": {
+          "pending": {
+            "banner_overdue": {
+              "one": "আপনার পেমেন্ট {{count}} দিন শেষ",
+              "other": "আপনার অর্থপ্রদান {{count}} দিন অতিবাহিত"
+            },
+            "banner_due": {
+              "one": "আপনার পেমেন্ট {{count}} দিনের মধ্যে দিতে হবে",
+              "other": "আপনার পেমেন্ট {{count}} দিনের মধ্যে দিতে হবে"
+            },
+            "banner_due_today": "আপনার পেমেন্ট আজ বকেয়া",
+            "title": "বাকি টাকা",
+            "title_with_date": "পরিশোধযোগ্য {{date}}",
+            "title_due_on_receipt": "পেমেন্ট এখনও বকেয়া",
+            "title_due_on_fulfillment": "পূরণের জন্য পেমেন্ট",
+            "description_overdue": "আপনার পেমেন্ট দেরী হয়.",
+            "description_partially_paid": "এই আদেশ আংশিক অর্থ প্রদান করা হয়েছে. আপনার একটি অবশিষ্ট ব্যালেন্স আছে.",
+            "description_authorized": "আপনার অর্থপ্রদানের পদ্ধতি নির্ধারিত তারিখে চার্জ করা হবে, অথবা আপনি এখনই অর্থ প্রদান করতে পারেন।",
+            "description_waiting_for_manual_payment": "পেমেন্ট পাওয়া গেলে অর্ডারটি প্রদত্ত হিসাবে চিহ্নিত করা হবে।",
+            "description_due_on_receipt": "অর্থপ্রদান শেষ হলে আপনি একটি চালান পাবেন।",
+            "description_due_on_receipt_partially_paid": "এই আদেশ আংশিক অর্থ প্রদান করা হয়েছে. আপনার একটি অবশিষ্ট ব্যালেন্স আছে. অর্থপ্রদান শেষ হলে আপনি একটি চালান পাবেন।",
+            "description_due_on_fulfillment": "এই অর্ডারের সমস্ত আইটেম পূরণ হয়ে গেলে পেমেন্ট দিতে হবে।",
+            "description_due_on_fulfillment_partially_paid": "এই আদেশ আংশিক অর্থ প্রদান করা হয়েছে. আপনার একটি অবশিষ্ট ব্যালেন্স আছে. এই অর্ডারের সমস্ত আইটেম পূরণ হয়ে গেলে পেমেন্ট দিতে হবে।"
+          },
+          "draft": {
+            "description": "অর্ডার নিশ্চিত হলে পেমেন্টের বিশদ সিদ্ধান্ত নেওয়া হয়।",
+            "title": "পেমেন্ট এখনও বকেয়া",
+            "in_review": {
+              "description": "অর্ডার নিশ্চিত হলে পেমেন্টের বিশদ সিদ্ধান্ত নেওয়া হয়।",
+              "title": "পেমেন্ট এখনও বকেয়া"
+            },
+            "submitted": {
+              "description": "এই অর্ডার নিশ্চিত করতে পেমেন্ট জমা দিন.",
+              "title": "নিশ্চিত করতে অর্থ প্রদান করুন"
+            }
+          },
+          "paid": {
+            "title": "পেড",
+            "title_with_date": "{{date}} টাকা দেওয়া হয়েছে",
+            "description": "আপনার অর্ডার সম্পূর্ণ অর্থ প্রদান করা হয়."
+          },
+          "refund": {
+            "title": "ফেরত দেওয়া হয়েছে",
+            "title_with_date": "ফেরত দেওয়া হয়েছে {{date}}",
+            "description_full_refund": "আপনি এই অর্ডারের জন্য সম্পূর্ণ অর্থ ফেরত পেয়েছেন।",
+            "description_single_refund": "আপনি এই অর্ডারের জন্য একটি আংশিক ফেরত পেয়েছেন।",
+            "description_multiple_refunds": "আপনি এই অর্ডারের জন্য আংশিক ফেরত পেয়েছেন।"
+          },
+          "canceled": {
+            "title": "পেমেন্ট বাতিল করা হয়েছে",
+            "description": "আপনাকে চার্জ করা হয়নি।"
+          },
+          "pay_now": "এখন পরিশোধ করুন",
+          "pay_now_accessibility_label": "অর্ডারের জন্য এখনই পেমেন্ট করুন {{orderName}}",
+          "title": "লেনদেনের অবস্থা"
+        },
+        "order_timeline": {
+          "expand_events_label": "বিস্তারিত দেখাও",
+          "expand_events_accessibility_label": "খসড়া অর্ডার বিবরণ দেখান",
+          "hide_events_label": "আড়াল বিস্তারিত",
+          "hide_events_accessibility_label": "খসড়া অর্ডার বিবরণ লুকান"
+        },
+        "subtitle": "দাখিল {{date}}",
+        "title": "অর্ডার {{name}}"
+      },
+      "payment_methods": {
+        "payment_delete": {
+          "description_without_replacement": "এই স্থান থেকে ভবিষ্যতে কেনাকাটার জন্য এই অর্থপ্রদানের পদ্ধতি আর উপলব্ধ হবে না।",
+          "description_with_replacement": "এই অর্থপ্রদানের পদ্ধতি মুছে ফেলার ফলে এই অবস্থানের জন্য প্রাক-অনুমোদিত অর্থপ্রদানগুলি প্রভাবিত হবে। আসন্ন অর্ডারগুলি পাওয়া চালিয়ে যেতে এটিকে একটি বিকল্প অর্থপ্রদানের পদ্ধতি দিয়ে প্রতিস্থাপন করুন।"
+        },
+        "payment_details": {
+          "order_label": "অর্ডার {{name}}",
+          "draft_label": "খসড়া অর্ডার {{name}}"
+        }
+      },
+      "purchase_order_number": {
+        "add_accessibility_label": "PO নম্বর যোগ করুন",
+        "add_modal_title": "PO নম্বর যোগ করুন",
+        "cancel": "বাতিল করুন",
+        "close_modal_accessibility_label": "PO নম্বর মডেল বন্ধ করুন",
+        "discard": "বাতিল করা",
+        "discard_changes_modal_title": "পরিবর্তন বাতিল?",
+        "edit_accessibility_label": "PO নম্বর সম্পাদনা করুন",
+        "edit_modal_title": "PO নম্বর সম্পাদনা করুন",
+        "empty_state": "পিও নম্বর নেই",
+        "modal_po_number_input_label": "পি ও নম্বর",
+        "modal_po_number_input_max_length_error": "PO সংখ্যায় সর্বাধিক {{maxLength}} অক্ষর থাকে৷",
+        "save": "সংরক্ষণ",
+        "title": "PO # {{poNumber}}"
+      }
+    },
+    "errors": {
+      "address_deletion_error": {
+        "description": "এই ঠিকানাটি মুছে ফেলার সময় একটি সমস্যা হয়েছে৷ আবার চেষ্টা করুন বা পৃষ্ঠাটি রিফ্রেশ করুন।"
+      },
+      "addresses_loading_issue": {
+        "description": "সংযোগ ত্রুটি. আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন এবং আবার চেষ্টা করুন।"
+      },
+      "banner_title": {
+        "one": "{{count}} ত্রুটি আছে",
+        "other": "{{count}} টি ত্রুটি আছে৷"
+      },
+      "failed_address_creation": {
+        "description": "আপনার ঠিকানা তৈরিতে একটি সমস্যা হয়েছে৷ এই পৃষ্ঠাটি রিফ্রেশ করার চেষ্টা করুন বা আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন৷"
+      },
+      "failed_address_update": {
+        "description": "আপনার ঠিকানা আপডেট করতে একটি সমস্যা হয়েছে৷ এই পৃষ্ঠাটি রিফ্রেশ করার চেষ্টা করুন বা আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন৷"
+      },
+      "load_orders_error": {
+        "title": "অর্ডার লোড করতে অক্ষম",
+        "description": "আবার চেষ্টা করুন বা পরে ফিরে আসুন।",
+        "retry_button": "পুনরায় চেষ্টা করা"
+      },
+      "load_paypal_error": {
+        "description": "PayPal লোড করার সময় একটি সমস্যা হয়েছে। অনুগ্রহপূর্বক আবার চেষ্টা করুন."
+      },
+      "logout_everywhere": {
+        "description": "লগ আউট করার সময় কিছু ভুল হয়েছে৷ অনুগ্রহপূর্বক আবার চেষ্টা করুন."
+      },
+      "no_access": {
+        "back_to_authentication_link": "একটি ভিন্ন অ্যাকাউন্টে লগ ইন করুন",
+        "description": "আপনি {{shopName}} -এর সাথে B2B গ্রাহক হিসাবে নিবন্ধিত নন",
+        "title": "প্রবেশধিকার নেই"
+      },
+      "no_access_to_locations": {
+        "description": "আপনার কোনো অবস্থানে অ্যাক্সেস নেই৷"
+      },
+      "not_found": {
+        "description": "URL চেক করুন বা কয়েক মিনিটের মধ্যে আবার চেষ্টা করুন।",
+        "title": "এই পৃষ্ঠাটি লোড করার সময় একটি সমস্যা হয়েছে৷"
+      },
+      "order_not_found": {
+        "description": "এই অর্ডারটি বিদ্যমান নেই বা আপনার কাছে এটি দেখার অনুমতি নেই৷",
+        "title": "অর্ডার পাওয়া যায়নি"
+      },
+      "profile_update_error": {
+        "description": "আপনার প্রোফাইল আপডেট করতে একটি সমস্যা হয়েছে৷ এই পৃষ্ঠাটি রিফ্রেশ করার চেষ্টা করুন বা আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন৷"
+      },
+      "retry_action_label": "পুনরায় চেষ্টা করা",
+      "load_extension_error": {
+        "title": "ত্রুটি",
+        "description": "এই পৃষ্ঠাটি রিফ্রেশ করুন বা কয়েক মিনিটের মধ্যে আবার চেষ্টা করুন৷",
+        "refresh_button": "সতেজ পৃষ্ঠা"
+      }
+    },
+    "order_details": {
+      "shipment_timeline": {
+        "expand_events_label": "বিস্তারিত দেখাও",
+        "expand_events_accessibility_label": "অর্ডার চালান বিবরণ দেখান",
+        "hide_events_label": "আড়াল বিস্তারিত",
+        "hide_events_accessibility_label": "অর্ডার চালান বিবরণ লুকান"
+      },
+      "addresses_section_title": "বিলিং এবং শিপিং",
+      "order_details": "আদেশ বিবরণী",
+      "order_details_skeleton_accessibility_label": "সমস্ত অর্ডার বিবরণ দেখতে লগ ইন করুন.",
+      "billing_address": "বিলিং ঠিকানা",
+      "card_ending_with": "{{lastDigits}} দিয়ে শেষ",
+      "contact": "যোগাযোগ",
+      "contact_information": "যোগাযোগের তথ্য",
+      "company": "প্রতিষ্ঠান",
+      "fully_refunded_label": "ফেরত দেওয়া হয়েছে",
+      "group_title_label": "এর অংশ: {{groupTitle}}",
+      "discount": "ছাড়",
+      "hide_items": "আইটেম লুকান",
+      "loading": "অর্ডার বিশদ লোড হচ্ছে",
+      "loading_finished_accessibility_message": "অর্ডার বিশদ লোড করা হয়েছে",
+      "location": "অবস্থান",
+      "image_gallery": {
+        "next": "পরবর্তী আইটেম দেখান",
+        "previous": "পূর্ববর্তী আইটেম দেখান"
+      },
+      "mobile_summary_toggle_button": {
+        "open": "অর্ডার সারাংশ দেখান",
+        "closed": "অর্ডার সারাংশ লুকান"
+      },
+      "no_data": "কোনোটিই নয়",
+      "no_data_provided_accessibility_label": "{{fieldName}} খালি",
+      "paid_amount": "পেড",
+      "partially_refunded_label": "আংশিকভাবে ফেরত দেওয়া হয়েছে",
+      "payment": {
+        "status_in_review": "রিভিউ পরে পেমেন্ট বকেয়া",
+        "status_unpaid": "পেমেন্ট বকেয়া {{date}} তারিখে",
+        "title": "পেমেন্ট",
+        "card_payment_details": "{{lastDigits}} - {{formattedTransactionAmount}} দিয়ে শেষ",
+        "gift_card_payment_details": "{{lastDigits}} - {{formattedTransactionAmount}} দিয়ে শেষ",
+        "store_credit_payment_details": "স্টোর ক্রেডিট - {{formattedTransactionAmount}}",
+        "shop_pay_installments": {
+          "paid_in_installments": "শপ পে কিস্তি দিয়ে পরিশোধ করা হয়",
+          "view_schedule": "সময়সূচী দেখুন"
+        },
+        "manual_payment_methods": {
+          "money_order": "মানি অর্ডার - {{formattedTransactionAmount}}",
+          "cash_on_delivery": "ক্যাশ অন ডেলিভারি (COD) - {{formattedTransactionAmount}}",
+          "bank_deposit": "ব্যাঙ্ক ডিপোজিট - {{formattedTransactionAmount}}",
+          "manual": "ম্যানুয়াল - {{formattedTransactionAmount}}"
+        },
+        "transactions": {
+          "show_all": "সব দেখাও",
+          "show_less": "প্রদর্শন কম"
+        }
+      },
+      "paid_with_shop_pay_installments_card": {
+        "paid_with_shop_pay_installments": "শপ পে কিস্তি দিয়ে পরিশোধ করা হয়",
+        "description": "শপ অ্যাপে রিমাইন্ডার সহ আপনার পেমেন্টের সময়সূচীর উপরে থাকুন।",
+        "payment_reminders_button": "পেমেন্ট অনুস্মারক পান",
+        "desktop_qr_code_content": {
+          "title": "অনুস্মারক জন্য স্ক্যান করুন",
+          "description": "দোকানের সাথে আপনার কিস্তির অনুস্মারক পান।"
+        }
+      },
+      "refunded_amount": "ফেরত দেওয়া হয়েছে",
+      "request_return_failed": "আপনার অনুরোধ প্রক্রিয়াকরণে একটি সমস্যা ছিল। অনুগ্রহপূর্বক আবার চেষ্টা করুন.",
+      "remaining_amount": "অবশিষ্ট",
+      "marketing_section_title": "খবর এবং অফার",
+      "marketing_description": "আপনি মার্কেটিং ইমেল পাবেন. আপনি যে কোনো সময় ত্যাগ করতে পারেন।",
+      "marketing_checkbox_label": "খবর এবং অফার সহ আমাকে ইমেল করুন",
+      "marketing_checkmark_label": "আপনি ইমেল খবর এবং অফার পেতে সাবস্ক্রাইব করা হয়েছে",
+      "returns": {
+        "expand_events_label": "বিস্তারিত দেখাও",
+        "hide_events_label": "আড়াল বিস্তারিত",
+        "ineligible_return_message": "এই অর্ডারের কোনো আইটেম ফেরত পাওয়ার যোগ্য নয়।",
+        "ineligible_return_message_when_returned": "এই অর্ডারে কোনো অতিরিক্ত আইটেম ফেরত পাওয়ার যোগ্য নয়।",
+        "print_shipping_label": "শিপিং লেবেল প্রিন্ট করুন",
+        "return_and_refund_modal_header": "প্রত্যর্পণ নীতি",
+        "tracking_number": "ট্র্যাকিং নম্বর:"
+      },
+      "shipping": {
+        "address": "প্রেরণের ঠিকানা",
+        "address_map_marker": "প্রেরণের ঠিকানা",
+        "method": "পরিবহণ মাধ্যম",
+        "summary": "পাঠানো",
+        "free": "বিনামূল্যে",
+        "free_shipping_discount": "বিনামূল্যে পরিবহন",
+        "one_time": "এককালীন শিপিং",
+        "subscription": "সাবস্ক্রিপশন শিপিং"
+      },
+      "pickup": {
+        "pickup": "পিকআপ",
+        "pickup_location": "অবস্থান নিতে",
+        "pickup_point": "সংগ্রহের স্থান"
+      },
+      "show_items": "আইটেম দেখান",
+      "show_order_summary": "অর্ডার সারাংশ দেখান",
+      "hide_order_summary": "অর্ডার সারাংশ লুকান",
+      "subtitle": "নিশ্চিত করা হয়েছে {{date}}",
+      "subtotal": "সাবটোটাল",
+      "summary_list_title_accessibility_label": "অর্ডার আইটেম",
+      "summary_title": "অর্ডার সারাংশ",
+      "summary_totals_title_accessibility_label": "মোট অর্ডার",
+      "shop_order_tracking": {
+        "download_shop_to_track": "প্যাকেজ ট্র্যাক করতে দোকান ডাউনলোড করুন",
+        "track_order_with_shop": "দোকানের সাথে অর্ডার ট্র্যাক করুন",
+        "title_header": "আপনার ফোন দিয়ে স্ক্যান করুন",
+        "real_time_delivery_updates": "আপনার অর্ডার পাঠানো হলে দোকান আপনাকে রিয়েল-টাইম ডেলিভারি আপডেট পাঠাবে।"
+      },
+      "edit_summary": {
+        "added": "যোগ করা হয়েছে",
+        "added_with_quantity": "{{quantity}} যোগ করা হয়েছে",
+        "removed": "সরানো হয়েছে",
+        "removed_with_quantity": "{{quantity}} সরানো হয়েছে",
+        "updated_at": "আপনার অর্ডার {{date}} তারিখে আপডেট করা হয়েছে",
+        "returned": "ফিরে এসেছে",
+        "returned_with_quantities": "{ {{total}} {{delta}} ফেরত এসেছে৷",
+        "removed_with_quantities": "{{total}} {{delta}} সরানো হয়েছে",
+        "return_line_item_removed": "প্রত্যাবর্তন থেকে সরানো হয়েছে",
+        "return_line_item_removed_with_quantities": "রিটার্ন থেকে {{delta}} সরানো হয়েছে"
+      },
+      "shop_pay": {
+        "order_completed_with": "সঙ্গে অর্ডার সম্পন্ন",
+        "learn_more": "আরও জানুন"
+      },
+      "taxes": "করের",
+      "duties": "কর্তব্য",
+      "ok_duties_tooltip": "এই অর্ডারটি অন্য দেশ থেকে পাঠানো হচ্ছে, তাই আপনার মোট অর্ডারে শুল্ক যোগ করা হয়েছে।",
+      "error_duties_tooltip": "এই অর্ডার অন্য দেশ থেকে পাঠানো হচ্ছে, তাই শুল্ক এবং ট্যাক্স ডেলিভারি চার্জ করা হতে পারে.",
+      "zero_duties_tooltip": "এই অর্ডার অন্য দেশ থেকে পাঠানো হচ্ছে. এই মানের অর্ডারে শুল্ক নেওয়া হয় না।",
+      "tip": "টিপ",
+      "title": "অর্ডার {{name}}",
+      "total": "মোট",
+      "unit_price": "{{price}} /ea",
+      "pagination": {
+        "load_more": "আর ঢুকাও",
+        "load_more_accessibility_label": "আরো আইটেম লোড",
+        "loading_accessibility_label": "আইটেম লোড হচ্ছে"
+      },
+      "login_to_view_all_order_details": "সমস্ত অর্ডার বিবরণ দেখতে লগ ইন করুন.",
+      "log_in": "প্রবেশ করুন",
+      "logged_in_account_no_permission_to_order": "আপনি {{email}} হিসাবে লগ ইন করেছেন। এই অ্যাকাউন্টের এই অর্ডার পরিচালনা করার অনুমতি নেই।",
+      "log_in_to_a_different_account": "একটি ভিন্ন অ্যাকাউন্টে লগ ইন করুন",
+      "fees": {
+        "restocking_fee": "রিস্টকিং ফি",
+        "return_shipping_fee": "শিপিং ফেরত"
+      }
+    },
+    "addresses": {
+      "add_button": "ঠিকানা যোগ করুন",
+      "add_button_text": "যোগ করুন",
+      "add_button_accessibility_label": "ঠিকানা যোগ করুন",
+      "back_button": "পেছনে",
+      "back_button_accessibility_label": "ঠিকানা সম্পাদনায় ফিরে যান {{address}}",
+      "add_address_banner": "চেকআউটে ব্যবহার করার জন্য ঠিকানা যোগ করুন",
+      "no_addresses_banner": "কোন ঠিকানা যোগ করা হয়নি",
+      "address_deleted_notification": "ঠিকানা মুছে ফেলা হয়েছে",
+      "cancel_adding_address_accessibility_label": "ঠিকানা যোগ করা বাতিল করুন",
+      "cancel_deletion_button": "বাতিল করুন"
+    },
+    "payment_methods": {
+      "title": "মুল্য পরিশোধ পদ্ধতি",
+      "add_payment_method_button": "অর্থপ্রদানের পদ্ধতি যোগ করুন",
+      "add_payment_method_banner": "দ্রুত চেকআউট বা প্রাক-অনুমোদিত পরিষেবার জন্য অর্থপ্রদানের পদ্ধতি যোগ করুন",
+      "no_payment_methods_banner": "কোনো পেমেন্ট পদ্ধতি যোগ করা হয়নি",
+      "edit_payment_method_button_accessibility_label": "{ {{lastDigits}} {{paymentMethodName}} } সম্পাদনা করুন",
+      "edit_payment_method_brand_button_accessibility_label": "সম্পাদনা করুন {{paymentMethodName}}",
+      "delete_payment_method_button": "মুছে ফেলা",
+      "delete_payment_method_button_accessibility_label": "মুছুন {{paymentMethodName}}",
+      "back_button": "পেছনে",
+      "back_button_accessibility_label": "{{paymentMethodStepTitle}} এ ফিরে যান",
+      "default": "ডিফল্ট",
+      "generic_card": "কার্ড",
+      "expiration_warning_button_accessibility_label": "{{lastDigits}} -এ শেষ হওয়া {{paymentMethodName}} এর মেয়াদ শেষ হওয়ার সতর্কতা দেখান",
+      "expires_soon": "এই কার্ডের মেয়াদ শীঘ্রই শেষ হচ্ছে",
+      "expired": "এই কার্ডের মেয়াদ শেষ",
+      "card_update_consent": "এই অর্থপ্রদানের পদ্ধতি ভবিষ্যতের কেনাকাটার জন্য সংরক্ষণ করা হবে।",
+      "digital_wallet_title": "ডিজিটাল ওয়ালেট",
+      "credit_or_debit_card_title": "ক্রেডিট অথবা ডেবিট কার্ড",
+      "google_pay": {
+        "loading": "Google Pay লোড হচ্ছে",
+        "errors": {
+          "generic": "Google Pay-তে সমস্যা হয়েছে। আবার চেষ্টা করুন বা অন্য কোনো পেমেন্ট পদ্ধতি ব্যবহার করুন।",
+          "missing_billing_address": "Google Pay-এর জন্য একটি বিলিং ঠিকানা প্রয়োজন। আপনার অ্যাকাউন্টে একটি যোগ করুন."
+        }
+      },
+      "apple_pay": {
+        "loading": "অ্যাপল পে লোড হচ্ছে",
+        "errors": {
+          "generic": "অ্যাপল পে এর সাথে একটি সমস্যা ছিল। আবার চেষ্টা করুন বা অন্য কোনো পেমেন্ট পদ্ধতি ব্যবহার করুন।",
+          "not_available": "অ্যাপল পে এই ডিভাইসে উপলব্ধ নেই।",
+          "missing_billing_address": "Apple Pay-এর জন্য একটি বিলিং ঠিকানা প্রয়োজন৷ আপনার অ্যাকাউন্টে একটি যোগ করুন."
+        }
+      },
+      "payment_details": {
+        "title": "পেমেন্ট পদ্ধতির বিশদ বিবরণ",
+        "credit_card_details_accessibility_label": "{{lastDigits}} এ শেষ",
+        "billing_title": "বিলিং ঠিকানা",
+        "card_info_title": "কার্ড তথ্য",
+        "payment_method_expiring_on": "মেয়াদ শেষ হচ্ছে {{expiryDate}} তারিখে",
+        "payment_method_expired_on": "{{expiryDate}} তারিখে মেয়াদ শেষ হয়েছে",
+        "preauthorized_payments": "প্রাক-অনুমোদিত অর্থপ্রদান",
+        "close_payment_modal": "বন্ধ",
+        "close_payment_modal_accessibility_label": "পেমেন্ট পদ্ধতির বিবরণ মোডাল বন্ধ করুন",
+        "payment_method_not_found_error": "অর্থপ্রদানের পদ্ধতি খুঁজে পাওয়া যায়নি",
+        "payment_details_loading": "অর্থপ্রদান পদ্ধতির বিশদ বিবরণ লোড হচ্ছে",
+        "pre_authorized_payments": "প্রাক-অনুমোদিত অর্থপ্রদান",
+        "total_amount_of_subscription_line_items_left": "এবং আরও {{total}}",
+        "total_amount_of_subscription_line_items_left_accessibility_label": "মোট {{totalItems}} টি আইটেম, {{totalItemsToDisplay}} টি আইটেম প্রদর্শন করছে।",
+        "next_payment_due": "পরবর্তী পেমেন্ট বাকি {{dueDateInMonthDayYear}}",
+        "edit_payment_method_button": "সম্পাদনা করুন",
+        "edit_payment_method_button_accessibility_label": "{{lastDigits}} এ শেষ হওয়া অর্থপ্রদানের পদ্ধতি সম্পাদনা করুন",
+        "loading_shop_pay": "দোকান বেতন লোড হচ্ছে",
+        "invalid_payment_method": "অবৈধ অর্থপ্রদানের পদ্ধতি",
+        "invalid_payment_method_message": "আসন্ন অর্ডার গ্রহণ চালিয়ে যেতে একটি নতুন ক্রেডিট কার্ড ব্যবহার করুন।",
+        "replace_payment_method": "অর্থপ্রদানের পদ্ধতি প্রতিস্থাপন করুন",
+        "checkout_card_banner": "এই অর্থপ্রদানের পদ্ধতি শুধুমাত্র প্রাক-অনুমোদিত অর্থপ্রদানের জন্য ব্যবহার করা যেতে পারে। আপনি যদি এই দোকানে লগ ইন করেন তবে চেকআউটে এটি প্রদর্শিত হবে না৷",
+        "default_checkbox": "ডিফল্ট হিসেবে সেট করুন",
+        "default_checkbox_accessibility_label": "এই পেমেন্ট পদ্ধতিটি ডিফল্ট হিসাবে সেট করুন"
+      },
+      "edit_payment_method": {
+        "title": "অর্থপ্রদানের পদ্ধতি সম্পাদনা করুন",
+        "save_payment_method_button": "সংরক্ষণ",
+        "cancel_edit_payment_method_button": "বাতিল করুন",
+        "payment_method_updated_toast": "পেমেন্ট পদ্ধতি আপডেট করা হয়েছে",
+        "billing_address": "বিলিং ঠিকানা",
+        "billing_address_add_new": "নতুন যোগ করুন",
+        "billing_address_choose_from_list": "তালিকা থেকে চয়ন করুন",
+        "future_purchases_notice": "এই অর্থপ্রদানের পদ্ধতি ভবিষ্যতের কেনাকাটার জন্য সংরক্ষণ করা হবে।",
+        "generic_error": "আপডেট করতে সমস্যা হয়েছে৷ অনুগ্রহপূর্বক আবার চেষ্টা করুন."
+      },
+      "card_fields": {
+        "card_number_label": "কার্ড নম্বর",
+        "card_number_placeholder": "কার্ড নম্বর",
+        "name_on_card_label": "কার্ডের ওপর নাম",
+        "name_on_card_placeholder": "কার্ডের ওপর নাম",
+        "card_expiry_label": "মেয়াদ শেষ হওয়ার তারিখ (MM/YY)",
+        "card_expiry_placeholder": "মেয়াদ শেষ হওয়ার তারিখ (MM/YY)",
+        "card_verification_value_label": "নিরাপত্তা কোড",
+        "card_verification_value_placeholder": "নিরাপত্তা কোড",
+        "card_start_label": "ইস্যু তারিখ (MM/YY)",
+        "card_start_placeholder": "ইস্যু তারিখ (MM/YY)",
+        "tooltip": {
+          "tooltip_accessibility_label": "অধিক তথ্য",
+          "card_verification_value_explanation_amex": "আপনার কার্ডের সামনে 4-সংখ্যার নিরাপত্তা কোড",
+          "card_verification_value_explanation_other": "আপনার কার্ডের পিছনে 3-সংখ্যার নিরাপত্তা কোড",
+          "card_verification_value_explanation": "3-সংখ্যার নিরাপত্তা কোড সাধারণত আপনার কার্ডের পিছনে পাওয়া যায়। আমেরিকান এক্সপ্রেস কার্ডের সামনে একটি 4-সংখ্যার কোড থাকে।",
+          "card_security_notice": "সমস্ত লেনদেন নিরাপদ এবং এনক্রিপ্ট করা হয়।"
+        },
+        "field_errors": {
+          "credit_card_name_invalid": "আপনার কার্ডে যেমন লেখা আছে ঠিক তেমনি আপনার নাম লিখুন",
+          "credit_card_number_invalid": "একটি বৈধ কার্ড নম্বর লিখুন",
+          "credit_card_expiry_invalid": "একটি বৈধ কার্ডের মেয়াদ শেষ হওয়ার তারিখ লিখুন",
+          "credit_card_verification_value_blank": "আপনার কার্ডে CVV বা নিরাপত্তা কোড লিখুন"
+        }
+      },
+      "payment_delete": {
+        "title": "অর্থপ্রদানের পদ্ধতি মুছুন",
+        "description_without_replacement": "এই অর্থপ্রদানের পদ্ধতি ভবিষ্যতে কেনাকাটার জন্য আর উপলব্ধ হবে না।",
+        "description_with_replacement": "এই অর্থপ্রদানের পদ্ধতিটি মুছে ফেলা হলে তা প্রাক-অনুমোদিত অর্থপ্রদানকে প্রভাবিত করবে। আসন্ন অর্ডারগুলি পাওয়া চালিয়ে যেতে আপনি ঐচ্ছিকভাবে এটিকে অন্য অর্থপ্রদানের পদ্ধতি দিয়ে প্রতিস্থাপন করতে পারেন।",
+        "warning_message_with_replacement": {
+          "with_pending_orders_and_subscriptions": "এই অর্থপ্রদানের পদ্ধতিটি মুছে ফেলা হলে তা প্রাক-অনুমোদিত অর্থপ্রদানকে প্রভাবিত করবে। আপনি একটি বিকল্প অর্থপ্রদানের পদ্ধতি নির্বাচন না করা পর্যন্ত, এই অর্থপ্রদানের পদ্ধতিটি এখনও বিদ্যমান অর্ডারগুলিতে কোনো বকেয়া ব্যালেন্সের জন্য চার্জ করা হবে। একটি বিকল্প অর্থপ্রদানের পদ্ধতি নির্বাচন করা আপনাকে কোনো বাধা ছাড়াই আসন্ন সাবস্ক্রিপশন অর্ডার পেতে অনুমতি দেবে।",
+          "with_pending_orders": "এই অর্থপ্রদানের পদ্ধতিটি মুছে দিলে এটি আপনার অ্যাকাউন্ট থেকে মুছে যাবে এবং ভবিষ্যতে কেনাকাটার জন্য আর উপলব্ধ থাকবে না। আপনি একটি বিকল্প অর্থপ্রদানের পদ্ধতি নির্বাচন না করা পর্যন্ত, বিদ্যমান অর্ডারগুলিতে কোনো বকেয়া ব্যালেন্সের জন্য এটি এখনও চার্জ করা হবে।",
+          "with_subscriptions": "এই অর্থপ্রদানের পদ্ধতিটি মুছে ফেলা হলে তা প্রাক-অনুমোদিত অর্থপ্রদানকে প্রভাবিত করবে। আসন্ন অর্ডারগুলি পাওয়া চালিয়ে যেতে এটিকে একটি বিকল্প অর্থপ্রদানের পদ্ধতি দিয়ে প্রতিস্থাপন করুন।"
+        },
+        "warning_message_without_replacement": {
+          "with_pending_orders_and_subscriptions": "এই অর্থপ্রদানের পদ্ধতিটি মুছে ফেলা হলে তা প্রাক-অনুমোদিত অর্থপ্রদানকে প্রভাবিত করবে। এই অর্থপ্রদানের পদ্ধতিটি এখনও বিদ্যমান অর্ডারগুলিতে কোনও বকেয়া ব্যালেন্সের জন্য চার্জ করা হবে, তবে আপনি আসন্ন সাবস্ক্রিপশন অর্ডারগুলি পাবেন না। সাবস্ক্রিপশন অর্ডার গ্রহণ চালিয়ে যেতে একটি বিকল্প অর্থপ্রদানের পদ্ধতি যোগ করুন।",
+          "with_pending_orders": "এই অর্থপ্রদানের পদ্ধতিটি মুছে দিলে এটি আপনার অ্যাকাউন্ট থেকে মুছে যাবে এবং ভবিষ্যতে কেনাকাটার জন্য আর উপলব্ধ থাকবে না। এটি এখনও বিদ্যমান অর্ডারে কোনো বকেয়া ব্যালেন্সের জন্য চার্জ করা হবে।",
+          "with_subscriptions": "এই অর্থপ্রদানের পদ্ধতিটি মুছে ফেলা হলে তা প্রাক-অনুমোদিত অর্থপ্রদানকে প্রভাবিত করবে। আসন্ন অর্ডার গ্রহণ চালিয়ে যেতে একটি বিকল্প অর্থপ্রদানের পদ্ধতি যোগ করুন।"
+        },
+        "payment_method_selector_placeholder": "একটি প্রতিস্থাপন পেমেন্ট পদ্ধতি নির্বাচন করুন (ঐচ্ছিক)",
+        "payment_method_selector_no_alternative_payment": "প্রতিস্থাপন পদ্ধতি নেই",
+        "replace_method_with_new_method_description": "আপনার {{currentPaymentMethodName}} মুছে ফেলা হবে এবং আপনার {{newPaymentMethodName}} দিয়ে প্রতিস্থাপিত হবে।",
+        "error_when_deleting": "আমরা ক্ষমাপ্রার্থী কিন্তু কিছু ভুল হয়েছে এবং আমরা এই অর্থপ্রদানের পদ্ধতিটি মুছতে পারিনি৷ অনুগ্রহ করে পরে আবার চেষ্টা করুন বা পৃষ্ঠা রিফ্রেশ করুন।",
+        "delete_and_replace_button": "মুছুন এবং প্রতিস্থাপন করুন",
+        "delete_and_replace_button_accessibility_label": "{{currentPaymentMethodName}} মুছুন এবং {{newPaymentMethodName}} দিয়ে প্রতিস্থাপন করুন।",
+        "deleted_successfully": "পেমেন্ট পদ্ধতি সফলভাবে মুছে ফেলা হয়েছে.",
+        "loading_available_payment_methods_accessibility_label": "উপলব্ধ অর্থপ্রদানের পদ্ধতি লোড হচ্ছে"
+      },
+      "add_payment_method": {
+        "title": "অর্থপ্রদানের পদ্ধতি যোগ করুন"
+      }
+    },
+    "enable_javascript": "আপনার অ্যাকাউন্ট দেখতে, আপনার ব্রাউজার সেটিংসে JavaScript সক্ষম করুন বা অন্য ব্রাউজার দিয়ে লগ ইন করুন৷",
+    "navigation_and_structure": {
+      "account_menu": {
+        "hide_accessibility_label": "অ্যাকাউন্ট মেনু লুকান",
+        "label": "হিসাব",
+        "show_accessibility_label": "অ্যাকাউন্ট মেনু দেখান",
+        "nav_accessibility_label": "অ্যাকাউন্ট নেভিগেশন",
+        "open_menu_accessibility_label": "অ্যাকাউন্ট নেভিগেশন খুলুন",
+        "close_menu_accessibility_label": "অ্যাকাউন্ট নেভিগেশন বন্ধ করুন",
+        "loading_message": "অ্যাকাউন্ট নেভিগেশন লোড হচ্ছে"
+      },
+      "action_menu_accessibility_label": "আরও কাজ",
+      "close_menu_accessibility_label": "প্রধান নেভিগেশন বন্ধ করুন",
+      "contact_email_subject": "{{shopName}} অনলাইন স্টোর থেকে যোগাযোগ করুন",
+      "contact_link": "যোগাযোগ করুন",
+      "delete_confirmation": {
+        "cancel": "বাতিল করুন",
+        "delete": "মুছে ফেলা"
+      },
+      "dismiss_toast": "খারিজ",
+      "document_title": "{{sectionName}} - {{shopName}} - অ্যাকাউন্ট",
+      "go_to_store_link": "দোকানে যাও",
+      "loading_message": "লোড হচ্ছে",
+      "log_out_link": "প্রস্থান",
+      "logout_overlay_label": "আপনাকে লগ আউট করা হচ্ছে...",
+      "nav_label_accessibility_label": "প্রধান নেভিগেশান",
+      "navigation_accessibility_message": "আপনি {{sectionName}} -এ নেভিগেট করেছেন",
+      "open_menu_accessibility_label": "প্রধান নেভিগেশন খুলুন",
+      "orders_link_label": "আদেশ",
+      "shop_logo_accessibility_label": "{{shopName}} লোগো",
+      "subscriptions_link_label": "সদস্যতা",
+      "settings_link": "সেটিংস"
+    }
+  },
+  "blog": {
+    "article": {
+      "comments_form_message_label": "বার্তা",
+      "comments_form_submit_label": "মন্তব্য জমা দিন",
+      "comments_notice": "অনুগ্রহ করে নোট করুন: মন্তব্যগুলি প্রকাশিত হওয়ার আগে অবশ্যই অনুমোদিত হতে হবে",
+      "previous_article_link": "পূর্ববর্তী নিবন্ধ",
+      "next_article_link": "পরবর্তী নিবন্ধ"
+    },
+    "view_all_articles": "ব্লগে যান"
+  },
+  "search": {
+    "form": {
+      "placeholder": "সন্ধান করা...",
+      "responsive_placeholder": "একটি কীওয়ার্ড টাইপ করুন এবং এন্টার টিপুন...",
+      "submit": "জমা দিন",
+      "collection_results_title": "সংগ্রহ",
+      "page_results_title": "পাতা",
+      "article_results_title": "ব্লগ এর লেখাগুলো",
+      "search_for_html": "\" {{ terms }} \" অনুসন্ধান করুন",
+      "product_results_title": "পণ্য"
+    },
+    "page": {
+      "title": "অনুসন্ধান ফলাফল",
+      "subtitle": "পণ্য খুঁজে পেতে নীচের অনুসন্ধান বার ব্যবহার করুন:",
+      "no_results": "\" {{ terms }} \" এর জন্য কোনো ফলাফল পাওয়া যায়নি",
+      "results": "\" {{ terms }} {{ count }} ফলাফল পাওয়া গেছে",
+      "products_found": "পণ্য ( {{ count }} )",
+      "pages_and_articles_found": "\" {{ terms }} \" এর জন্য পৃষ্ঠা এবং নিবন্ধ",
+      "results_count": {
+        "zero": "কোন ফলাফল নেই",
+        "one": "{{ count }} ফলাফল দেখানো হচ্ছে",
+        "other": "{{ count }} ফলাফলের মধ্যে {{ offset }} - {{ page_size }} দেখানো হচ্ছে৷"
+      },
+      "form_placeholder": "এখানে কীওয়ার্ড লিখুন",
+      "search_button_label": "অনুসন্ধান করুন",
+      "search_again_button_label": "আবার খুঁজুন",
+      "continue_browsing": "ব্রাউজিং অবিরত"
+    }
+  },
+  "customers": {
+    "account_page": {
+      "title": "আমার অ্যাকাউন্ট",
+      "subtitle": "অর্ডার ইতিহাস",
+      "orders_table": {
+        "order": "অর্ডার",
+        "date": "তারিখ",
+        "payment_status": "লেনদেনের অবস্থা",
+        "fulfillment_status": "পূর্ণতা স্থিতি",
+        "total": "মোট"
+      },
+      "no_orders_message": "আপনি এখনও কোনো অর্ডার স্থাপন করেননি.",
+      "account_details_title": "বিস্তারিত হিসাব",
+      "account_details_subtitle": "ঠিকানা",
+      "view_addresses_link": "ঠিকানা দেখুন"
+    },
+    "account_activation_page": {
+      "title": "অ্যাকাউন্ট সক্রিয়",
+      "subtitle": "আপনার অ্যাকাউন্ট সক্রিয় করতে আপনার পাসওয়ার্ড তৈরি করুন.",
+      "form_password_label": "পাসওয়ার্ড",
+      "form_password_confirm_label": "পাসওয়ার্ড নিশ্চিতকরণ",
+      "form_activate_button": "অ্যাকাউন্ট সক্রিয়",
+      "form_decline_button": "আমন্ত্রণ প্রত্যাখ্যান করুন"
+    },
+    "login_page": {
+      "title": "গ্রাহক লগইন",
+      "form_email_label": "ইমেইল",
+      "form_password_label": "পাসওয়ার্ড",
+      "form_login_button": "প্রবেশ করুন",
+      "form_logout_button": "প্রস্থান",
+      "forgot_password_check": "আপনি কি পাসওয়ার্ড ভুলে গেছেন?",
+      "new_customer_button": "নতুন গ্রাহক? নিবন্ধন করুন!",
+      "guest_check": "অতিথি হিসাবে অবিরত থাকুন",
+      "guest_button": "চলো যাই",
+      "password_reset": {
+        "title": "আপনার পাসওয়ার্ড পুনরায় সেট করুন",
+        "subtitle": "আপনার পাসওয়ার্ড রিসেট করার জন্য আমরা আপনাকে একটি ইমেল পাঠাব।",
+        "email_label": "ইমেইল",
+        "submit_button": "জমা দিন",
+        "cancel_button": "বাতিল করুন",
+        "success_message": "আমরা আপনাকে আপনার পাসওয়ার্ড আপডেট করার জন্য একটি লিঙ্ক সহ একটি ইমেল পাঠিয়েছি৷"
+      }
+    },
+    "password_reset_page": {
+      "title": "আপনার পাসওয়ার্ড পুনরায় সেট করুন",
+      "subtitle": "{{ email }} এর জন্য একটি নতুন পাসওয়ার্ড লিখুন",
+      "password_label": "পাসওয়ার্ড",
+      "password_confirm_label": "পাসওয়ার্ড নিশ্চিত করুন",
+      "submit": "পাসওয়ার্ড রিসেট করুন"
+    },
+    "register_page": {
+      "title": "একটি অ্যাকাউন্ট তৈরি করুন",
+      "login_text": "ইতিমধ্যে একটি সদস্যপদ আছে?",
+      "form": {
+        "first_name_label": "নামের প্রথম অংশ",
+        "last_name_label": "নামের শেষাংশ",
+        "email_label": "ইমেইল",
+        "password_label": "পাসওয়ার্ড",
+        "submit_button": "সৃষ্টি"
+      }
+    },
+    "addresses_page": {
+      "title": "আমার অ্যাকাউন্ট",
+      "subtitle": "ঠিকানা বই",
+      "add_address_link": "নতুন ঠিকানা যোগ করুন",
+      "edit_address_link": "সম্পাদনা করুন",
+      "delete_address_link": "মুছে ফেলা",
+      "add_address_title": "নতুন ঠিকানা যোগ করুন",
+      "edit_address_title": "ঠিকানা সম্পাদনা করুন",
+      "default_address": "(ডিফল্ট)",
+      "form": {
+        "first_name_label": "নামের প্রথম অংশ",
+        "last_name_label": "নামের শেষাংশ",
+        "company_label": "প্রতিষ্ঠান",
+        "address_1_label": "ঠিকানা লাইন 1",
+        "address_2_label": "ঠিকানা লাইন ২",
+        "city_label": "শহর",
+        "country_label": "দেশ",
+        "province_label": "প্রদেশ",
+        "zip_label": "পোস্টকোড / জিপকোড",
+        "phone_label": "ফোন",
+        "add_button": "ঠিকানা যোগ করুন",
+        "update_button": "ঠিকানা আপডেট করুন",
+        "set_as_default_check": "ডিফল্ট ঠিকানা হিসেবে সেট করবেন?",
+        "delete_check": "আপনি কি নিশ্চিত আপনি এই ঠিকানা মুছে ফেলতে চান?"
+      },
+      "return": "অ্যাকাউন্ট পৃষ্ঠায় ফিরে যান"
+    },
+    "orders_page": {
+      "title": "আমার অ্যাকাউন্ট",
+      "subtitle": "অর্ডার",
+      "placed_order": "স্থাপিত",
+      "cancelled": "অর্ডার বাতিল করা হয়েছে {{ date }} তারিখে",
+      "cancelled_reason": "কারণ: {{ reason }}",
+      "orders_table": {
+        "product": "পণ্য",
+        "sku": "এসকেইউ",
+        "price": "দাম",
+        "total": "মোট",
+        "fulfilled_at": "এ পূরণ হয়েছে",
+        "subtotal": "সাবটোটাল",
+        "discount": "ছাড়",
+        "shipping": "পাঠানো",
+        "tax": "ট্যাক্স"
+      },
+      "billing_title": "বিল সংক্রান্ত তথ্য",
+      "billing_status": "লেনদেনের অবস্থা:",
+      "shipping_title": "হস্তান্তর তথ্য",
+      "shipping_status": "পূর্ণতা স্থিতি:"
+    }
+  },
+  "gift_card": {
+    "title": "এখানে আপনার উপহার কার্ড!",
+    "disabled": "এটি একটি বৈধ উপহার কার্ড নয়৷",
+    "expired": "{{ expiry }} তারিখে মেয়াদ শেষ হয়েছে",
+    "active": "মেয়াদ শেষ হবে {{ expiry }}",
+    "balance_left": "বাম",
+    "redeem": "আপনার উপহার কার্ড রিডিম করতে চেকআউট করার সময় এই কোডটি ব্যবহার করুন",
+    "shop_link": "কেনাকাটা শুরু করুন",
+    "print": "ছাপা",
+    "recipient": {
+      "checkbox": "আমি এটি একটি উপহার হিসাবে পাঠাতে চাই",
+      "email_label": "প্রাপক ই - মেইল",
+      "name_label": "প্রাপকের নাম (ঐচ্ছিক)",
+      "message_label": "বার্তা (ঐচ্ছিক)",
+      "max_characters": "সর্বোচ্চ {{ max_chars }} অক্ষর"
+    }
+  },
+  "store_availability": {
+    "view_store_info": "দোকানের তথ্য দেখুন",
+    "check_other_stores": "অন্যান্য দোকানে উপলব্ধতা পরীক্ষা করুন",
+    "pick_up_available": "পিকআপ উপলব্ধ",
+    "pick_up_currently_unavailable": "পিকআপ বর্তমানে অনুপলব্ধ",
+    "pick_up_available_at_html": "পিকআপ <strong>{{ location_name }}</strong> এ উপলব্ধ",
+    "pick_up_unavailable_at_html": "পিকআপ বর্তমানে <strong>{{ location_name }}</strong> এ অনুপলব্ধ",
+    "invalid_location_address": "ঠিকানা নিশ্চিত করতে দোকানে যোগাযোগ করুন",
+    "refresh": "রিফ্রেশ",
+    "general": {
+      "available_for_pickup": "পিক আপ জন্য উপলব্ধ",
+      "unavailable_for_pickup": "পিক-আপের জন্য অনুপলব্ধ"
+    },
+    "store_selector": {
+      "picking_up": "গোছগাছ?",
+      "my_store": "আমার ভান্ডার",
+      "select_store_label": "দোকান নির্বাচন করুন",
+      "select_pickup_location_title": "পিক আপ অবস্থান নির্বাচন করুন",
+      "single_pickup_location_title": "অবস্থান নিতে",
+      "set_store_label": "আমার দোকান হিসাবে সেট করুন",
+      "change_store_label": "পছন্দের দোকান পরিবর্তন করুন",
+      "google_maps_link_label": "দিকনির্দেশ পান"
+    },
+    "compact_widget": {
+      "checking_availability": "স্থানীয় প্রাপ্যতা পরীক্ষা করা হচ্ছে",
+      "available_at_selected_store": "পিকআপের জন্য {{ store }} এ উপলব্ধ",
+      "unavailable_at_selected_store": "{{ store }} এ স্টক নেই",
+      "choose_location": "স্থানীয় উপলব্ধতা দেখতে একটি দোকান চয়ন করুন"
+    },
+    "extended_widget": {
+      "available_for_pickup": "এ পিকআপের জন্য উপলব্ধ",
+      "unavailable_for_pickup": "এই পণ্যটি কোনো দোকানে পিকআপের জন্য উপলব্ধ নয়",
+      "view_store_info": "স্টোরের বিবরণ",
+      "check_other_stores": "অন্যান্য দোকানে উপলব্ধতা পরীক্ষা করুন"
+    }
+  },
+  "pagefly": {
+    "products": {
+      "product": {
+        "regular_price": "নিয়মিত দাম",
+        "sold_out": "বিক্রি শেষ",
+        "unavailable": "অনুপলব্ধ",
+        "on_sale": "বিক্রয়",
+        "add_to_cart": "কার্টে যোগ করুন",
+        "back_to_collection": "{{ title }} এ ফিরে যান",
+        "view_details": "বিস্তারিত দেখুন"
+      }
+    },
+    "article": {
+      "tags": "ট্যাগ:",
+      "all_topics": "সব বিষয়",
+      "by_author": "{{ author }} দ্বারা",
+      "posted_in": "পোস্ট করা হয়েছে",
+      "read_more": "আরও পড়ুন",
+      "back_to_blog": "{{ title }} এ ফিরে যান"
+    },
+    "comments": {
+      "title": "মতামত দিন",
+      "name": "নাম",
+      "email": "ইমেইল",
+      "message": "বার্তা",
+      "post": "মন্তব্য প্রকাশ করুন",
+      "moderated": "অনুগ্রহ করে মনে রাখবেন, মন্তব্যগুলি প্রকাশ করার আগে অবশ্যই অনুমোদিত হতে হবে",
+      "success_moderated": "আপনার মন্তব্য সফলভাবে পোস্ট করা হয়েছে. আমরা কিছুক্ষণের মধ্যে এটি প্রকাশ করব, কারণ আমাদের ব্লগটি সংযত।",
+      "success": "আপনার মন্তব্য সফলভাবে পোস্ট করা হয়েছে! ধন্যবাদ!",
+      "comments_with_count": {
+        "one": "{{ count }} মন্তব্য",
+        "other": "{{ count }} মন্তব্য৷"
+      }
+    },
+    "password_page": {
+      "login_form_message": "পাসওয়ার্ড ব্যবহার করে দোকানে প্রবেশ করুন:",
+      "login_form_password_label": "পাসওয়ার্ড",
+      "login_form_password_placeholder": "আপনার পাসওয়ার্ড",
+      "login_form_submit": "প্রবেশ করুন",
+      "signup_form_email_label": "ইমেইল",
+      "signup_form_success": "আমরা খোলার আগে আপনাকে একটি ইমেল পাঠাব!",
+      "password_link": "পাসওয়ার্ড ব্যবহার করে লিখুন"
+    }
+  },
+  "sections": {
+    "ecom-default-template-quickview": {
+      "preorder_text_phpd2kxein8_html": "প্রি-অর্ডার টেক্সট",
+      "product_option_swatch_mopm0qumv6_html": "রঙ",
+      "add_to_cart_boa4cnsk0z_html": "কার্টে যোগ করুন",
+      "pre_order_boa4cnsk0z_html": "পূর্বাদেশ",
+      "product_unavailable_boa4cnsk0z_html": "অনুপলব্ধ",
+      "out_stock_boa4cnsk0z_html": "আউট স্টক",
+      "added_cart_text_boa4cnsk0z_html": "কার্টে যোগ করা হয়েছে",
+      "added_cart_message_boa4cnsk0z_html": "কার্টে যোগ করা হয়েছে",
+      "headingtext_ke5l5ure39_html": "<b>গ্যারান্টি নিরাপদ</b> <i>এবং নিরাপদ চেকআউট</i>",
+      "headingtext_qx9733j8ss_html": "শেয়ার করুন:"
+    }
+  },
+  "general": {
+    "404": {
+      "title": "পৃষ্ঠা খুঁজে পাওয়া যায়নি",
+      "subtitle": "আপনি যে পৃষ্ঠাটি খুঁজছেন তা খুঁজে পাওয়া যাচ্ছে না",
+      "search_placeholder": "পণ্য অনুসন্ধান করুন...",
+      "continue_browsing": "ব্রাউজিং অবিরত"
+    },
+    "sharing": {
+      "title": "শেয়ার করুন",
+      "facebook": "ফেসবুক",
+      "twitter": "এক্স (টুইটার)"
+    },
+    "newsletter": {
+      "email_label": "তুমার ইমেইল প্রবেশ করাও",
+      "submit_label": "জমা দিন",
+      "confirmation": "সাবস্ক্রাইব করার জন্য ধন্যবাদ!"
+    },
+    "contact_form": {
+      "title": "আমাদের একটি লাইন ড্রপ",
+      "name_label": "নাম",
+      "email_label": "ইমেইল",
+      "phone_label": "ফোন নম্বর",
+      "message_label": "বার্তা",
+      "subject_label": "বিষয়",
+      "submit_label": "জমা দিন",
+      "success_message": "আমাদের সাথে যোগাযোগ করার জন্য ধন্যবাদ! আমরা যত তাড়াতাড়ি সম্ভব আপনার কাছে ফিরে আসব।"
+    },
+    "password_page": {
+      "login_form_heading": "পাসওয়ার্ড ব্যবহার করে দোকানে প্রবেশ করুন",
+      "login_form_password_label": "পাসওয়ার্ড",
+      "login_form_password_placeholder": "আপনার পাসওয়ার্ড",
+      "login_form_submit": "প্রবেশ করুন",
+      "signup_form_heading": "আমরা খুললে খুঁজে বের করুন",
+      "signup_form_email_label": "ইমেইল",
+      "signup_form_email_placeholder": "তোমার ইমেইল",
+      "signup_form_submit": "জমা দিন",
+      "signup_form_success": "আমরা খোলার আগে আপনাকে একটি ইমেল পাঠাব!",
+      "admin_link_html": "আপনি কি দোকানের মালিক? <a href=\"/admin\">এখানে লগইন করুন</a>",
+      "password_link": "পাসওয়ার্ড ব্যবহার করে লিখুন",
+      "powered_by_shopify_html": "এই দোকানটি {{ shopify }} দ্বারা চালিত হবে"
+    },
+    "prefixes": {
+      "by": "দ্বারা"
+    },
+    "account_link": {
+      "logged_in": "আমার অ্যাকাউন্ট",
+      "logged_out": "প্রবেশ করুন"
+    },
+    "breadcrumb": {
+      "homepage": "বাড়ি",
+      "collections": "সংগ্রহ",
+      "search": "\" {{ terms }} \" এর জন্য অনুসন্ধান ফলাফল",
+      "blog": "ব্লগ",
+      "account": "হিসাব",
+      "cart": "কার্ট"
+    },
+    "copyright": "কপিরাইট",
+    "meta": {
+      "tags": "ট্যাগ করা হয়েছে \" {{ tags }} \"",
+      "page": "পৃষ্ঠা {{ page }}"
+    },
+    "share_on": "শেয়ার করুন",
+    "accessibility_labels": {
+      "menu": "তালিকা",
+      "item_added": "আইটেম আপনার কার্ট যোগ করা হয়েছে",
+      "increase_quantity": "পরিমাণ বাড়ান",
+      "decrease_quantity": "পরিমাণ হ্রাস করুন",
+      "open_menu": "মেনু খুলুন",
+      "open_filters": "ফিল্টার খুলুন",
+      "open_search": "অনুসন্ধান খুলুন",
+      "open_cart": "খোলা কার্ট",
+      "close_sidebar": "সাইডবার বন্ধ করুন",
+      "close_popup": "পপআপ বন্ধ করুন",
+      "skip_to_content": "এড়িয়ে যাও কন্টেন্ট",
+      "next": "পরবর্তী",
+      "previous": "আগে",
+      "close": "বন্ধ",
+      "back": "পেছনে",
+      "play_video": "ভিডিও দেখাও",
+      "language_dropdown_label": "ভাষা",
+      "country_dropdown_label": "দেশ/অঞ্চল",
+      "price": {
+        "regular": "নিয়মিত দাম",
+        "sale": "বিক্রয় মূল্য",
+        "unit": "একক দাম"
+      },
+      "share": {
+        "facebook": "ফেসবুকে ভাগ কেরো",
+        "twitter": "X এ শেয়ার করুন",
+        "pinterest": "Pinterest এ শেয়ার করুন"
+      },
+      "rating": "রেটিং",
+      "rating_info": "রেটিং: {{ rating_value }} এর মধ্যে {{ rating_max }}",
+      "form_error": "ত্রুটি",
+      "go_to_top": "উপরে যান",
+      "top": "শীর্ষ"
+    },
+    "cookies_popup": {
+      "title": "কুকিজ",
+      "content": "আপনি আপনার ডিভাইসে সেরা অভিজ্ঞতা পান তা নিশ্চিত করতে এই ওয়েবসাইটটি কুকিজ ব্যবহার করে।",
+      "button_label": "সব কুকি গ্রহণ করুন",
+      "button_label_decline": "সব কুকি প্রত্যাখ্যান"
+    },
+    "onboarding": {
+      "product_title": "পণ্য শিরোনাম",
+      "collection_title": "সংগ্রহ শিরোনাম",
+      "author_name": "লেখকের নাম",
+      "article_title": "প্রবন্ধের শিরোনাম",
+      "seven_comments": "7 মন্তব্য"
+    }
+  },
+  "collections": {
+    "title": "সংগ্রহ",
+    "apply": "আবেদন করুন",
+    "clear": "পরিষ্কার",
+    "clear_all": "সব পরিষ্কার করে দাও",
+    "empty": "কোন পণ্য পাওয়া যায়নি",
+    "from": "থেকে",
+    "filter_and_sort": "ফিল্টার এবং সাজান"
+  }
+}

@@ -1,0 +1,421 @@
+<!doctype html>
+{%- liquid
+  assign direction = 'ltr'
+  assign rtl_iso_codes = 'ar,he,ur,fa,pa,sd,ku' | split: ','
+  if rtl_iso_codes contains request.locale.iso_code
+    assign direction = 'rtl'
+  endif
+-%}
+<html class="no-js" lang="{{ request.locale.iso_code }}" dir="{{ direction }}">
+<head>
+  <!-- Google Tag Manager -->
+  <script>
+    (function(w,d,s,l,i){
+      w[l]=w[l]||[];
+      w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+      var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),
+          dl=l!='dataLayer'?'&l='+l:'';
+      j.async=true;
+      j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+      f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WBWKK5KN');
+  </script>
+  <!-- End Google Tag Manager -->
+
+  {%- if content_for_header contains 'tapita-seo-script-tags' -%}
+    {%- include 'tapita-seo-schema' -%}
+  {%- endif -%}
+
+  {%- render 'ecom_header' -%}
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0">
+
+  {%- if settings.favicon -%}
+    <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 48, height: 48 }}" type="image/png" />
+  {%- endif -%}
+
+  {%- capture seo_title -%}
+    {%- if template contains 'search' -%}
+      {{ search.terms | replace: '*', '' | split: ' AND ' | last }} - {{ shop.name | escape }}
+    {%- else -%}
+      {{ page_title }}
+      {% if current_tags %}
+        {% assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags }}
+      {% endif %}
+      {% if current_page != 1 %}
+        &ndash; {{ 'general.meta.page' | t: page: current_page }}
+      {% endif %}
+      {% unless page_title contains shop.name %}
+        &ndash; {{ shop.name | escape }}
+      {% endunless %}
+    {%- endif -%}
+  {%- endcapture -%}
+
+  <title>{{ seo_title }}</title>
+
+  {%- if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+
+  {%- liquid
+    render 'open-graph'
+    unless settings.disable_microdata
+      render 'microdata-schema'
+    endunless
+  -%}
+
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  <link rel="preconnect" href="https://cdn.shopify.com">
+  {%- unless settings.headings_font.system? and settings.body_font.system? -%}
+    <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+  {%- endunless -%}
+
+  {%- render 'head-preloader' -%}
+  {%- render 'head-variables', direction: direction -%}
+
+  <link rel="stylesheet" href="{{ 'component-modal.css' | asset_url }}">
+  <link rel="stylesheet" href="{{ 'component-popup.css' | asset_url }}">
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+
+  {{ content_for_header }}
+
+  <script>
+    const rbi = [];
+    const ribSetSize = (img) => {
+      if (img.offsetWidth / img.dataset.ratio < img.offsetHeight) {
+        img.setAttribute('sizes', `${Math.ceil(img.offsetHeight * img.dataset.ratio)}px`);
+      } else {
+        img.setAttribute('sizes', `${Math.ceil(img.offsetWidth)}px`);
+      }
+    };
+
+    const debounce = (fn, wait) => {
+      let t;
+      return (...args) => {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(this, args), wait);
+      };
+    };
+
+    window.KEYCODES = {
+      TAB: 9,
+      ESC: 27,
+      DOWN: 40,
+      RIGHT: 39,
+      UP: 38,
+      LEFT: 37,
+      RETURN: 13
+    };
+
+    window.addEventListener('resize', debounce(() => {
+      for (let img of rbi) {
+        ribSetSize(img);
+      }
+    }, 250));
+  </script>
+
+  {%- if template == 'customers/addresses' or request.design_mode -%}
+    <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer></script>
+  {%- endif -%}
+
+  <noscript>
+    <link rel="stylesheet" href="{{ 'theme-noscript.css' | asset_url }}">
+  </noscript>
+
+  {% render 'hulkapps-reorder-css' %}
+  
+{% include 'pagefly-app-header' %}</head>
+
+<body id="{{ page_title | handle }}" class="no-touchevents 
+  {% if customer %} customer-logged-in {% endif %} 
+  template-{{ template.name }} template-{{ template | replace: '.', ' ' | handle }} 
+  {% if settings.shadow_cards_x < 0 %} has-negative-shadow-x {% endif %}
+  {% if settings.shadow_cards_y < 0 %} has-negative-shadow-y {% endif %}
+">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WBWKK5KN"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <script type="text/javascript">
+    if ('ontouchstart' in window || window.DocumentTouch && document instanceof DocumentTouch) {
+      document.querySelector('body').classList.remove('no-touchevents');
+      document.querySelector('body').classList.add('touchevents');
+    }
+  </script>
+
+  <a href="#main" class="visually-hidden skip-to-content" tabindex="0" data-js-inert>
+    {{ 'general.accessibility_labels.skip_to_content' | t }}
+  </a>
+  <div id="screen-reader-info" aria-live="polite" class="visually-hidden"></div>
+
+  {{ 'section-header.css' | asset_url | stylesheet_tag }}
+  {%- sections 'header-group' -%}
+
+  {{ 'component-slider.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'component-product-form.js' | asset_url }}" defer></script>
+
+  <main id="main" class="main-content {% if settings.product_card_align_buy %} main-content--align-product-items {% endif %}">
+    {%- render 'breadcrumb' -%}
+    {{ content_for_layout }}
+  </main>
+
+  {%- sections 'footer-group' -%}
+  {%- section 'popups' -%}
+  {%- section 'popup-age-verification' -%}
+  {%- section 'store-selector' -%}
+
+  <script src="{{ 'component-modal.js' | asset_url }}" defer></script>
+
+  <script type="text/javascript">
+    KROWN = {
+      themeName: "Local",
+      themeVersion: "2.3.2",
+      settings: {
+        shop_money_format: '{{ shop.money_format }}',
+        cart_action: "{{ settings.cart_action }}",
+        google_maps_api_key: "{{ settings.google_maps_api_key }}",
+        routes: {
+          cart_url: "{{ routes.cart_url }}",
+          cart_add_url: "{{ routes.cart_add_url }}",
+          cart_change_url: "{{ routes.cart_change_url }}",
+          predictive_search_url: "{{ routes.predictive_search_url }}",
+          product_recommendations_url: "{{ routes.product_recommendations_url }}"
+        },
+        locales: {
+          products_add_to_cart_button: `{{ 'products.page.add_to_cart_button' | t }}`,
+          products_preorder_button: `{{ 'products.page.preorder_button' | t }}`,
+          products_sold_out_variant: `{{ 'products.page.inventory.sold_out_variant' | t }}`,
+          products_unavailable_variant: `{{ 'products.page.inventory.unavailable_variant' | t }}`,
+          products_one_product: `{{ 'products.page.inventory.one_product' | t }}`,
+          products_few_products: `{{ 'products.page.inventory.few_products' | t }}`,
+          products_many_products: `{{ 'products.page.inventory.many_products' | t }}`,
+          products_no_products: `{{ 'products.page.inventory.no_products' | t }}`,
+          products_preorder: `{{ 'products.page.inventory.preorder' | t }}`,
+          products_enough_products: ``,
+          product_sku: `{{ 'products.page.sku' | t }}`,
+          product_barcode: `{{ 'products.page.barcode' | t }}`,
+          product_compare_price: `{{ 'products.page.sales_amount_html' | t: amount: '$SAVE_PRICE' }}`,
+          cart_add_error: `<span class="alert__icon">{%- render 'theme-symbols', icon: 'alert-error' -%}</span>{{ 'cart.add_error' | t }}`,
+          cart_general_error: `{{ 'cart.general_error' | t }}`,
+          cart_announcement: `{{ 'general.accessibility_labels.item_added' | t }}`,
+          store_selector_title_default: `{{ 'store_availability.store_selector.picking_up' | t }}`,
+          store_selector_title_selected: `{{ 'store_availability.store_selector.my_store' | t }}`,
+          store_selector_label: `{{ 'store_availability.store_selector.select_store_label' | t }}`,
+          shipping_calculator_results_heading_one: `{{ 'cart.shipping_calculator.results_heading_one' | t }}`,
+          shipping_calculator_results_heading_multiple: `{{ 'cart.shipping_calculator.results_heading_multiple' | t }}`,
+          shipping_notice_remaining_to_free: `{{ 'cart.free_shipping_remaining_html' | t }}`,
+          shipping_notice_eligible_for_free: `{{ 'cart.free_shipping_eligible' | t }}`
+        },
+        symbols: {
+          zoom_out: `{%- render 'theme-symbols', icon: 'zoom-out' -%}`,
+          zoom_in: `{%- render 'theme-symbols', icon: 'zoom-in' -%}`,
+          zoom_loader: `<svg class="zoom__loader-element" viewBox="25 25 50 50"><circle cx="50" cy="50" r="20" fill="none" stroke-width="4"/></svg>`,
+          close: `{%- render 'theme-symbols', icon: 'close' -%}`,
+          toggle_pack: `<span class="toggle__icon">{%- render 'theme-symbols', icon: 'chevron' -%}</span>`,
+          toggle_pack_alternate: `<span class="toggle__icon-alternate"><span class="toggle__icon--plus">{%- render 'theme-symbols', icon: 'plus' -%}</span><span class="toggle__icon--minus">{%- render 'theme-symbols', icon: 'minus' -%}</span></span>`
+        },
+        predictive_search_enabled: "true",
+        predictive_search_script: "{{ 'component-predictive-search.js' | asset_url }}",
+        predictive_search_placeholder: `<div class="search-results"><div class="search-block"><a class="search-item search-item--blank"><div class="thumbnail"></div><div class="content"><span class="title"></span><span class="caption"></span></div></a><a class="search-item search-item--blank"><div class="thumbnail"></div><div class="content"><span class="title"></span><span class="caption"></span></div></a><a class="search-item search-item--blank"><div class="thumbnail"></div><div class="content"><span class="title"></span><span class="caption"></span></div></a></div></div>`
+      }
+    };
+  </script>
+
+  <script src="{{ 'component-quick-buy.js' | asset_url }}" defer></script>
+  <script src="{{ 'component-pickup-availability.js' | asset_url }}" defer></script>
+  <script src="{{ 'component-slider.js' | asset_url }}" defer></script>
+
+  {%- if request.design_mode -%}
+    <script src="{{ 'theme-editor.js' | asset_url }}" defer></script>
+  {%- endif -%}
+
+  {%- unless settings.cart_action == "no-overlay" or template.name contains "cart" -%}
+    <sidebar-drawer id="site-cart-sidebar" class="sidebar sidebar--right {% if cart.item_count == 0 %} cart-is-empty {% endif %}" tabindex="-1" role="dialog" aria-modal="true" data-cart-items="{{ cart.item_count }}" style="display:none" data-js-site-cart-sidebar>
+
+      <div class="sidebar__header">
+        <span class="sidebar__title h5">
+          {{ 'cart.title' | t }}
+          (<span data-header-cart-count>{{ cart.item_count }}</span>)
+        </span>
+        <button class="sidebar__close" data-js-close>
+          <span class="visually-hidden">{{ 'general.accessibility_labels.close_sidebar' | t }}</span>
+          <span aria-hidden="true" aria-role="img">{%- render 'theme-symbols', icon: 'close' -%}</span>
+        </button>
+      </div>
+
+      <div class="sidebar__body">
+        <div class="mss_product" style="display:none">
+          <p>Oops! Some items in your cart aren't available at the entered pin code.</p>
+          <span></span>
+          <p>Feel free to update your cart and continue shopping. For assistance, contact our customer support. Thank you!</p>
+          <div class="close-icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17 1L1 17" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M1 1L17 17" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </div>
+        </div>
+
+        <div class="cart-form sidebar-large-padding">
+          {%- render 'cart-form', type: 'sidebar' -%}
+          <a href="{{ routes.all_products_collection_url }}" class="cart-continue button button--fullwidth button--solid button--regular">
+            {{ 'cart.continue_browsing' | t }}
+          </a>
+        </div>
+
+        {%- if settings.cart_recommendations -%}
+          <cart-recommendations id="cart-recommendations" data-section="cart-recommendations" data-limit="6"></cart-recommendations>
+          <script src="{{ 'component-cart-recommendations.js' | asset_url }}" defer></script>
+        {%- endif -%}
+
+        {%- if settings.cart_notes_enable -%}
+          <div class="cart-instructions hide-if-empty-cart">
+            <div class="form-field">
+              <label for="cartSpecialInstructions">{{ 'cart.note' | t }}</label>
+              <textarea name="note" id="cartSpecialInstructions" form="cart">{{ cart.note }}</textarea>
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="sidebar__footer hide-if-empty-cart">
+        {%- render 'cart-subtotal', type: 'sidebar' -%}
+      </div>
+    </sidebar-drawer>
+
+    <script>
+      new MutationObserver((mutations, observer) => {
+        if (document.getElementById('cart').classList.contains('cart--empty')) {
+          document.getElementById('site-cart-sidebar').classList.add('cart-is-empty');
+        } else {
+          document.getElementById('site-cart-sidebar').classList.remove('cart-is-empty');
+        }
+      }).observe(document.querySelector('.cart-form'), {
+        attributes: false,
+        childList: true,
+        subtree: true
+      });
+    </script>
+  {%- endunless -%}
+
+  <link rel="stylesheet" href="{{ 'component-cart.css' | asset_url }}" media="print" onload="this.media='all'">
+
+  <script src="{{ 'component-quantity-selector.js' | asset_url }}" defer></script>
+  {%- if settings.cart_action == "overlay" or template.name contains "cart" -%}
+    <script src="{{ 'component-cart.js' | asset_url }}" defer></script>
+  {%- endif -%}
+
+  <link rel="stylesheet" href="{{ 'component-sidebar.css' | asset_url }}" media="print" onload="this.media='all';">
+  <script src="{{ 'section-header.js' | asset_url }}" defer></script>
+
+  <script>
+    if (document.getElementById('shopify-product-reviews')) {
+      var element = document.createElement("link");
+      element.setAttribute("rel", "stylesheet");
+      element.setAttribute("type", "text/css");
+      element.setAttribute("href", "{{ 'component-shopify-reviews.css' | asset_url }}");
+      document.body.appendChild(element);
+    }
+  </script>
+
+  {%- if settings.cart_notes_enable -%}
+    <script src="{{ 'component-order-instructions.js' | asset_url }}" defer></script>
+  {%- endif -%}
+
+  {%- if request.design_mode -%}
+    <script src="{{ 'section-announcement-bar.js' | asset_url }}" defer></script>
+    <script src="{{ 'component-toggle.js' | asset_url }}" defer></script>
+    <script src="{{ 'section-main-product.js' | asset_url }}" defer></script>
+    <script src="{{ 'component-video.js' | asset_url }}" defer></script>
+    <script src="{{ 'component-store-selector.js' | asset_url }}" defer></script>
+    <script src="{{ 'component-interactive-map.js' | asset_url }}" defer></script>
+    <script src="{{ 'component-image-hotspots.js' | asset_url }}" defer></script>
+    <script src="{{ 'component-localization-form.js' | asset_url }}" defer></script>
+    <script src="{{ 'component-predictive-search.js' | asset_url }}" defer></script>
+    <script src="{{ 'component-shipping-calculator.js' | asset_url }}" defer></script>
+    <script src="{{ 'component-scrolling-text.js' | asset_url }}" defer></script>
+    <script src="{{ 'component-before-after.js' | asset_url }}" defer></script>
+  {%- endif -%}
+
+  <div class="site-overlay" style="display:none"></div>
+
+  <link rel="stylesheet" href="{{ 'section-main-product.css' | asset_url }}" media="print" onload="this.media='all';">
+
+  {%- if settings.show_gotop -%}
+    <span id="go-top" class="main-go-top" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">
+      <span class="visually-hidden">{{ 'general.accessibility_labels.go_to_top' | t }}</span>
+      <span class="main-go-top__icon" aria-hidden="true">{%- render 'theme-symbols', icon: 'chevron' -%}</span>
+    </span>
+    <script>
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 100) {
+          document.getElementById('go-top').classList.add('show');
+        } else {
+          document.getElementById('go-top').classList.remove('show');
+        }
+      }, { passive: true });
+    </script>
+  {%- endif -%}
+
+  <script>
+    document.querySelectorAll('.rte a img').forEach(elm => {
+      elm.parentNode.style.border = 'none';
+    });
+  </script>
+
+  <script>
+    if (localStorage.getItem('Zipcode') != '') {
+      var pc = localStorage.getItem('Zipcode');
+      var kolkata_pincode = '700001,700002,700003,700004,700005,700006,700007,700008,700009,700010,700011,700012,700013,700014,700015,700016,700017,700018,700019,700020,700021,700022,700023,700024,700025,700026,700027,700028,700029,700030,700031,700032,700033,700034,700035,700036,700037,700038,700039,700040,700041,700042,700043,700044,700045,700046,700047,700048,700049,700050,700051,700052,700053,700054,700055,700056,700057,700058,700059,700060,700061,700062,700063,700064,700065,700066,700067,700068,700069,700070,700071,700072,700073,700074,700075,700076,700077,700078,700079,700080,700081,700082,700083,700084,700085,700086,700087,700088,700089,700090,700091,700092,700093,700094,700095,700097,700098,700099,700100,700101,700102,700105,700106,700107,700108,700109,700110,700111,700112,700113,700114,700115,700116,700117,700119,700120,700129,700131,700132,700133,700134,700136,700139,700140,700142,700143,700155,700156,711101,711102,711103,711104,711105,711106,711107,711108,711109,711110,711111,711112,711113,711114,711201,711202,711203,711204,711205,711227,712233,712235,712246,712248,712258';
+      var quick_commerce_pincode = '700001,700002,700003,700004,700005,700006,700007,700009,700010,700011,700012,700013,700014,700015,700016,700017,700019,700020,700021,700022,700023,700025,700027,700028,700029,700030,700035,700036,700037,700042,700043,700046,700048,700050,700054,700055,700057,700059,700062,700064,700065,700067,700069,700071,700072,700073,700074,700076,700077,700080,700085,700087,700089,700090,700091,700097,700101,700102,700105,700106,700108,700109,700136,711101,711102,711104,711105,711106,711107,711108,711202,711204';
+      var tag = [];
+
+      if (kolkata_pincode.indexOf(pc) > -1) {
+        tag.push('Kolkata');
+        $('.delivery-logo').hide();
+      }
+
+      if (quick_commerce_pincode.indexOf(pc) > -1) {
+        tag.push('Quick Commerce');
+        $('.delivery-logo').show();
+      }
+
+      if (kolkata_pincode.indexOf(pc) == -1 && quick_commerce_pincode.indexOf(pc) == -1) {
+        tag.push('PAN India');
+        $('.delivery-logo').hide();
+      }
+
+      var stringTag = tag.join(',');
+      console.log(stringTag, 'stringTag');
+
+      var sliderEle = $('.code-base-slide').filter(function(i, v) {
+        var tagValue = $(v).find('.c-slide').attr('data-tag');
+        return tagValue == stringTag && tagValue != '';
+      });
+
+      if (sliderEle.length > 0) {
+        $('.code-base-slide').hide();
+        $(sliderEle[0]).show();
+
+        if (sliderEle[0].querySelector('css-slider') && typeof sliderEle[0].querySelector('css-slider').destroySlider == 'function') {
+          sliderEle[0].querySelector('css-slider').destroySlider();
+        }
+
+        if (sliderEle[0].querySelector('css-slider') && typeof sliderEle[0].querySelector('css-slider').initSlider == 'function') {
+          sliderEle[0].querySelector('css-slider').initSlider();
+        }
+      }
+    }
+  </script>
+
+  {% include "zipLogic" %}
+  {%- render "ecom_footer" -%}
+</body>
+</html>

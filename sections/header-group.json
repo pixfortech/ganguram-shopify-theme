@@ -1,0 +1,102 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "header",
+  "name": "t:sections.refactor_words.labels.header_group",
+  "sections": {
+    "announcement": {
+      "type": "announcement-bar",
+      "blocks": {
+        "content": {
+          "type": "content",
+          "settings": {
+            "text": "+91 90730 96322 | support@ganguram.com",
+            "link": "",
+            "target": false
+          }
+        }
+      },
+      "block_order": [
+        "content"
+      ],
+      "settings": {
+        "visibility": "all",
+        "show_locale_selector": true,
+        "show_country_selector": true,
+        "show_social_icons": true,
+        "bar_bgcolor": "#49488d",
+        "bar_txtcolor": "#ffffff"
+      }
+    },
+    "header": {
+      "type": "header",
+      "blocks": {
+        "store": {
+          "type": "store-selector",
+          "disabled": true,
+          "settings": {}
+        },
+        "info": {
+          "type": "info",
+          "disabled": true,
+          "settings": {
+            "caption": "Know your",
+            "title": "delivery charges",
+            "link": "shopify://pages/delivery-charges",
+            "link_type": "_blank",
+            "icon": "delivery"
+          }
+        },
+        "pincode_show_iLf4nn": {
+          "type": "pincode_show",
+          "settings": {
+            "zipcode_image": "shopify://shop_images/ganguram-location-icon-square.png",
+            "zipcode_sub_title": "",
+            "zipcode_content": "",
+            "zipcode_title": "Please enter your delivery pin code",
+            "zipcode_list": "700001,700002,700003,700004,700005,700006,700007,700008,700009,700010,700011,700012,700013,700014,700015,700016,700017,700018,700019,700020,700021,700022,700023,700024,700025,700026,700027,700028,700029,700030,700031,700032,700033,700034,700035,700036,700037,700038,700039,700040,700041,700042,700043,700044,700045,700046,700047,700048,700049,700050,700051,700052,700053,700054,700055,700056,700057,700058,700059,700060,700061,700062,700063,700064,700065,700066,700067,700068,700069,700070,700071,700072,700073,700074,700075,700076,700077,700078,700079,700080,700081,700082,700083,700084,700085,700086,700087,700088,700089,700090,700091,700092,700093,700094,700095,700097,700098,700099,700100,700101,700102,700105,700106,700107,700108,700109,700110,700111,700112,700113,700114,700115,700116,700117,700119,700120,700129,700131,700132,700133,700134,700136,700139,700140,700142,700143,700155,700156,711101,711102,711103,711104,711105,711106,711107,711108,711109,711110,711111,711112,711113,711114,711201,711202,711203,711204,711205,711227,712233,712235,712246,712248,712258",
+            "zipcode_url": "/collections/doi,/collections/rabri,/collections/rosher-mishti,/collections/doodher-mishti,/collections/baked-mishti,/collections/tattya,/collections/hot-snacks,/collections/snacks,/collections/cakes,/collections/muffins,/collections/pastries,/collections/pudding,/collections/confectioneries,/collections/gift-items,/collections/gift-boxes,/collections/sweets-tray,/collections/4-hour-delivery",
+            "zipcode_handle": "Here is the list arranged alphabetically, with each item separated by a comma:\n\n2-in-1-jalbhara-sandesh-chocolate, 2-in-1-jalbhara-sandesh-strawberry, 2-in-1-sandesh-chocolate-1, 2-in-1-sandesh-mango-strawberry, 2-in-1-sandesh-strawberry-1, 4-in-1-sandesh-1, aashirvaad, abar-khabo, annaprasan, badam-barfi, baked-badam-jalebi-1, baked-cham-cham, baked-kalakand, baked-mihidana, baked-mishti-dahi, baked-rosogolla, balushahi-2, bati-sandesh, besan-laddu-1, bijoya, black-forest-cake, black-forest-pastry, boondia-1, buro-buri, butterfly, chandrakala-1, chandrapuli-1, chinese-singhara, chingri-maach, chitrakoot, chocolate-cake, chocolate-candy, chocolate-jalbhara-sandesh, chocolate-pastry, chocolate-pudding, corn-patties, corn-sandwich, corn-singhara, dhokla, flower-bouquet, ganesha, gatra-haridra, gift-box-extra-large, gift-box-extra-small, gift-box-large, gift-box-medium, gift-box-small, gond-laddu, gulab-jamun, gulab-patti-sandesh, imarty-1, indrani, kaju-barfi-1, kaju-pista-roll-1, kalakand, kasi-cham-cham, kesaria-aata-sandesh-1, kesaria-jalbhara-sandesh, kesaria-khir-cham-cham, kesaria-maharani-sandesh, kesaria-manohara-sandesh-1, kesaria-paradise-1, kesaria-pata-sandesh-1, kesaria-ratabi-sandesh-1, kesaria-rasmalai, kesaria-shankh-sandesh-1, kesar-malai-roll, khirer-chop-1, khir-cham-cham, khir-kadam, khowa-gujiya-1, kulo, laddoo-gopal, lat-cham-cham, lengcha, malai-cham-cham, malai-chop, mangal-ghat, mango-doi-cup, mango-jalbhara-sandesh, mango-sandesh-1, mihidana-1, mihidana-laddu-1, mishti-doi-cup, mishti-doi-handi, mixed-fruit-cake, mixed-fruit-khowa, mixed-fruit-pastry, milk-crown, nolen-gurer-aata-sandesh-1, nolen-gurer-jalbhara-sandesh-1, nolen-gurer-manohara-sandesh-1, nolen-gurer-maharani-sandesh, nolen-gurer-pata-sandesh, nolen-gurer-ratabi-sandesh, nolen-gurer-shankh-sandesh-1, paneer-bread-twist, paneer-patties, paneer-roll, patal-mishti, patisa-papdi, peacock, phool-sajja, pineapple-jalbhara-sandesh, pineapple-pudding, pineapple-sandesh, plain-rabri, radha-ballavi-with-alu-dum, radha-krishna, rasmadhuri, rosogolla, ruhi-maach, sada-doi-cup, sada-doi-dabba, sada-jalbhara-sandesh, sada-maharani-sandesh, sada-manohara-sandesh-1, sada-pata-sandesh-1, sada-ratabi-sandesh-1, sada-shankh-sandesh-1, shankh, shor-bhaja, shubh-vivah, sikh-warrior, singhara, sitabhog, sitting-bor-bou, soan-papdi-1, special-mihidana-laddu-1, standing-bor-bou, strawberry-jalbhara-sandesh, strawberry-kaju-barfi, strawberry-pastry, sugarfree-kalakand, sugarfree-rabri, sugarfree-sandesh, sweets-dala-large, sweets-dala-medium, sweets-dala-oval, sweets-dala-small, sweets-dala-square, truffle-cake, vanilla-cake, vanilla-pastry, vegetable-burger, vegetable-patties, vegetable-sandwich",
+            "icon": "delivery"
+          }
+        }
+      },
+      "block_order": [
+        "store",
+        "info",
+        "pincode_show_iLf4nn"
+      ],
+      "settings": {
+        "logo_src": "shopify://shop_images/ganguram-packing-slip-logo.png",
+        "logo_height": 45,
+        "main_linklist": "main-menu",
+        "show_search": true,
+        "sticky_header": true,
+        "select_header_actions_on_mobile": "show_always",
+        "show_header_actions": true,
+        "show_locale_selector": true,
+        "show_country_selector": false,
+        "show_social_icons": true
+      }
+    },
+    "1707059998a71d567e": {
+      "type": "apps",
+      "settings": {
+        "full_width": true,
+        "remove_margin": true
+      }
+    }
+  },
+  "order": [
+    "announcement",
+    "header",
+    "1707059998a71d567e"
+  ]
+}

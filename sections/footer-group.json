@@ -1,0 +1,73 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "footer",
+  "name": "t:sections.refactor_words.labels.footer_group",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "text-1": {
+          "type": "text",
+          "settings": {
+            "title": "Socials",
+            "size": "h4",
+            "content": "",
+            "show_social_icons": true,
+            "enable_follow_on_shop": false
+          }
+        },
+        "menu-1": {
+          "type": "menu",
+          "settings": {
+            "title": "Quick links",
+            "menu": "footer-menu",
+            "open_in_new_window": false
+          }
+        },
+        "text-2": {
+          "type": "text",
+          "settings": {
+            "title": "Contact information",
+            "size": "h5",
+            "content": "<p><strong>Ganguram Sweets</strong></p><p><a href=\"https://www.google.com/maps/dir/22.5872668,88.3733924/ganguram-sweets-beadon-street/@22.587207,88.3707329,17z/data=!3m1!4b1!4m9!4m8!1m1!4e1!1m5!1m1!1s0x3a027647f0712d4f:0x5c08b46094f1e3cd!2m2!1d88.3732233!2d22.5871473?entry=ttu\" target=\"_blank\" title=\"Ganguram Sweets Beadon Street\">123/2, Acharya Prafulla Chandra Road, opposite Scottish Church Collegiate School, Kolkata, West Bengal, 700006</a></p><p>+91 90730 96322</p>",
+            "show_social_icons": false,
+            "enable_follow_on_shop": true
+          }
+        },
+        "menu-2": {
+          "type": "menu",
+          "disabled": true,
+          "settings": {
+            "title": "Quick links",
+            "menu": "footer",
+            "open_in_new_window": false
+          }
+        }
+      },
+      "block_order": [
+        "text-1",
+        "menu-1",
+        "text-2",
+        "menu-2"
+      ],
+      "settings": {
+        "layout": "grid-4 grid-portable-2 grid-lap-1",
+        "show_locale_selector": false,
+        "show_country_selector": true,
+        "remove_margin": false,
+        "seo_h_tag": "h4"
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

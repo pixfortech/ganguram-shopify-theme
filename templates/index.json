@@ -1,0 +1,1105 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "1653646142d6a7c886": {
+      "type": "slideshow",
+      "blocks": {
+        "image_9Lyj6G": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/banner_1_jpg.jpg",
+            "mobile_image": "shopify://shop_images/banner_2_jpg.jpg",
+            "caption": "",
+            "title": "",
+            "link": "",
+            "open_in_new_window": false,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_8q87gq": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/ganguram-shelf-products-banner-auto-height_18b26aff-1d55-47ed-a292-4cdf5ceaa74d.jpg",
+            "mobile_image": "shopify://shop_images/ganguram-shelf-banner-square.png",
+            "caption": "",
+            "title": "",
+            "link": "",
+            "open_in_new_window": true,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        }
+      },
+      "block_order": [
+        "image_9Lyj6G",
+        "image_8q87gq"
+      ],
+      "settings": {
+        "tag": "PAN India",
+        "desktop_height": "80vh",
+        "mobile_height": "60vh",
+        "is_auto_height": true,
+        "autorotate_enable": true,
+        "autorotate_interval": 5,
+        "alignment": "horizontal-center align-content--vertical-middle",
+        "text_size": "regular",
+        "title_size": "h1",
+        "button_size": "large",
+        "button_style": "solid",
+        "is_fullwidth": true,
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": true,
+        "color_hide_borders": false,
+        "color_hide_shadow": true
+      }
+    },
+    "slideshow_fKri9b": {
+      "type": "slideshow",
+      "blocks": {
+        "image_FQ746j": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/banner_1_jpg.jpg",
+            "mobile_image": "shopify://shop_images/banner_2_jpg.jpg",
+            "caption": "Introducing",
+            "title": "Your best promotion yet",
+            "link": "",
+            "open_in_new_window": false,
+            "button_label": "Show more",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_jrhTP3": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/ganguram-shelf-products-banner-auto-height_18b26aff-1d55-47ed-a292-4cdf5ceaa74d.jpg",
+            "mobile_image": "shopify://shop_images/ganguram-shelf-banner-square.png",
+            "caption": "",
+            "title": "",
+            "link": "",
+            "open_in_new_window": true,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        }
+      },
+      "block_order": [
+        "image_FQ746j",
+        "image_jrhTP3"
+      ],
+      "custom_css": [
+        "{display: none;}"
+      ],
+      "settings": {
+        "tag": "Kolkata",
+        "desktop_height": "80vh",
+        "mobile_height": "60vh",
+        "is_auto_height": true,
+        "autorotate_enable": true,
+        "autorotate_interval": 5,
+        "alignment": "horizontal-center align-content--vertical-middle",
+        "text_size": "regular",
+        "title_size": "h1",
+        "button_size": "large",
+        "button_style": "solid",
+        "is_fullwidth": true,
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": true,
+        "color_hide_borders": false,
+        "color_hide_shadow": true
+      }
+    },
+    "slideshow_kT8cdb": {
+      "type": "slideshow",
+      "blocks": {
+        "image_eT7fpa": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/1920x1080_Kolkata_theme.jpg",
+            "mobile_image": "shopify://shop_images/1920x1920_Kolkata_theme.jpg",
+            "caption": "",
+            "title": "",
+            "link": "",
+            "open_in_new_window": false,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_MM8mMz": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/ganguram-shelf-products-banner-auto-height_18b26aff-1d55-47ed-a292-4cdf5ceaa74d.jpg",
+            "mobile_image": "shopify://shop_images/ganguram-shelf-banner-square.png",
+            "caption": "",
+            "title": "",
+            "link": "",
+            "open_in_new_window": true,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_4yFmz3": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/ganguram-awards-2024-2025-banner.jpg",
+            "mobile_image": "shopify://shop_images/ganguram-awards-2024-2025-banner-square.jpg",
+            "caption": "",
+            "title": "",
+            "link": "",
+            "open_in_new_window": false,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_J36icX": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/gauri-patali-gur-banner.jpg",
+            "mobile_image": "shopify://shop_images/gauri-patali-gur-mobile.jpg",
+            "caption": "",
+            "title": "",
+            "link": "shopify://products/patali-gur",
+            "open_in_new_window": false,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_KqahzA": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/gauri-kalo-jam-banner.jpg",
+            "mobile_image": "shopify://shop_images/gauri-kalo-jam-banner-mobile.jpg",
+            "caption": "",
+            "title": "",
+            "link": "shopify://products/tin-kalo-jam-1-kilogram-20-pieces",
+            "open_in_new_window": true,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "#ffffff",
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_QMnkC3": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/strawberry-rosogolla-banner.jpg",
+            "mobile_image": "shopify://shop_images/gauri-strawberry-rosogolla-banner-mobile.jpg",
+            "caption": "",
+            "title": "",
+            "link": "shopify://products/tin-kamala-bhog-1-kilogram-20-pieces-copy",
+            "open_in_new_window": false,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        }
+      },
+      "block_order": [
+        "image_eT7fpa",
+        "image_MM8mMz",
+        "image_4yFmz3",
+        "image_J36icX",
+        "image_KqahzA",
+        "image_QMnkC3"
+      ],
+      "disabled": true,
+      "settings": {
+        "tag": "Kolkata,Quick Commerce",
+        "desktop_height": "80vh",
+        "mobile_height": "60vh",
+        "is_auto_height": true,
+        "autorotate_enable": true,
+        "autorotate_interval": 5,
+        "alignment": "horizontal-center align-content--vertical-middle",
+        "text_size": "regular",
+        "title_size": "h1",
+        "button_size": "large",
+        "button_style": "solid",
+        "is_fullwidth": true,
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": true,
+        "color_hide_borders": false,
+        "color_hide_shadow": true
+      }
+    },
+    "slideshow_76ERrT": {
+      "type": "slideshow",
+      "blocks": {
+        "image_4KbT9B": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/1920x1080_4_hours_delivery_theme.jpg",
+            "mobile_image": "shopify://shop_images/1920x1920_4_hours_delivery_theme.jpg",
+            "caption": "",
+            "title": "",
+            "link": "",
+            "open_in_new_window": false,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_QH8tQE": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/ganguram-shelf-products-banner-auto-height_18b26aff-1d55-47ed-a292-4cdf5ceaa74d.jpg",
+            "mobile_image": "shopify://shop_images/ganguram-shelf-banner-square.png",
+            "caption": "",
+            "title": "",
+            "link": "",
+            "open_in_new_window": true,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_WL4pi9": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/ganguram-awards-2024-2025-banner.jpg",
+            "mobile_image": "shopify://shop_images/ganguram-awards-2024-2025-banner-square.jpg",
+            "caption": "",
+            "title": "",
+            "link": "",
+            "open_in_new_window": false,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_ypXMiz": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/gauri-patali-gur-banner.jpg",
+            "mobile_image": "shopify://shop_images/gauri-patali-gur-mobile.jpg",
+            "caption": "",
+            "title": "",
+            "link": "shopify://products/patali-gur",
+            "open_in_new_window": false,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_VQgKBM": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/gauri-kalo-jam-banner.jpg",
+            "mobile_image": "shopify://shop_images/gauri-kalo-jam-banner-mobile.jpg",
+            "caption": "",
+            "title": "",
+            "link": "shopify://products/tin-kalo-jam-1-kilogram-20-pieces",
+            "open_in_new_window": true,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "#ffffff",
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_wwEYEj": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/strawberry-rosogolla-banner.jpg",
+            "mobile_image": "shopify://shop_images/gauri-strawberry-rosogolla-banner-mobile.jpg",
+            "caption": "",
+            "title": "",
+            "link": "shopify://products/tin-kamala-bhog-1-kilogram-20-pieces-copy",
+            "open_in_new_window": false,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        }
+      },
+      "block_order": [
+        "image_4KbT9B",
+        "image_QH8tQE",
+        "image_WL4pi9",
+        "image_ypXMiz",
+        "image_VQgKBM",
+        "image_wwEYEj"
+      ],
+      "disabled": true,
+      "custom_css": [
+        "{display: none;}"
+      ],
+      "settings": {
+        "tag": "Quick Commerce",
+        "desktop_height": "80vh",
+        "mobile_height": "60vh",
+        "is_auto_height": true,
+        "autorotate_enable": true,
+        "autorotate_interval": 5,
+        "alignment": "horizontal-center align-content--vertical-middle",
+        "text_size": "regular",
+        "title_size": "h1",
+        "button_size": "large",
+        "button_style": "solid",
+        "is_fullwidth": true,
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": true,
+        "color_hide_borders": false,
+        "color_hide_shadow": true
+      }
+    },
+    "slideshow_ww4zpT": {
+      "type": "slideshow",
+      "blocks": {
+        "image_gaRJik": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/ganguram-shelf-products-banner-auto-height_18b26aff-1d55-47ed-a292-4cdf5ceaa74d.jpg",
+            "mobile_image": "shopify://shop_images/ganguram-shelf-banner-square.png",
+            "caption": "",
+            "title": "",
+            "link": "",
+            "open_in_new_window": true,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_p9EyT6": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/ganguram-awards-2024-2025-banner.jpg",
+            "mobile_image": "shopify://shop_images/ganguram-awards-2024-2025-banner-square.jpg",
+            "caption": "",
+            "title": "",
+            "link": "",
+            "open_in_new_window": false,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_6czX3L": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/gauri-patali-gur-banner.jpg",
+            "mobile_image": "shopify://shop_images/gauri-patali-gur-mobile.jpg",
+            "caption": "",
+            "title": "",
+            "link": "shopify://products/patali-gur",
+            "open_in_new_window": false,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_waTzbh": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/gauri-kalo-jam-banner.jpg",
+            "mobile_image": "shopify://shop_images/gauri-kalo-jam-banner-mobile.jpg",
+            "caption": "",
+            "title": "",
+            "link": "shopify://products/tin-kalo-jam-1-kilogram-20-pieces",
+            "open_in_new_window": true,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "#ffffff",
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_yJtnQQ": {
+          "type": "image",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/strawberry-rosogolla-banner.jpg",
+            "mobile_image": "shopify://shop_images/gauri-strawberry-rosogolla-banner-mobile.jpg",
+            "caption": "",
+            "title": "",
+            "link": "shopify://products/tin-kamala-bhog-1-kilogram-20-pieces-copy",
+            "open_in_new_window": false,
+            "button_label": "",
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        }
+      },
+      "block_order": [
+        "image_gaRJik",
+        "image_p9EyT6",
+        "image_6czX3L",
+        "image_waTzbh",
+        "image_yJtnQQ"
+      ],
+      "disabled": true,
+      "custom_css": [
+        "{display: none;}"
+      ],
+      "settings": {
+        "tag": "Quick Commerce",
+        "desktop_height": "80vh",
+        "mobile_height": "60vh",
+        "is_auto_height": true,
+        "autorotate_enable": true,
+        "autorotate_interval": 5,
+        "alignment": "horizontal-center align-content--vertical-middle",
+        "text_size": "regular",
+        "title_size": "h1",
+        "button_size": "large",
+        "button_style": "solid",
+        "is_fullwidth": true,
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": true,
+        "color_hide_borders": false,
+        "color_hide_shadow": true
+      }
+    },
+    "featured-collection": {
+      "type": "featured-collection",
+      "blocks": {
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "2fe5312e-e69f-45d1-bac2-bcdf636d2cf0": {
+          "type": "rating",
+          "settings": {}
+        },
+        "quick_buy": {
+          "type": "quick_buy",
+          "settings": {}
+        },
+        "0732fb3a-f464-4724-9427-62214bde5409": {
+          "type": "local_availability",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "price",
+        "title",
+        "2fe5312e-e69f-45d1-bac2-bcdf636d2cf0",
+        "quick_buy",
+        "0732fb3a-f464-4724-9427-62214bde5409"
+      ],
+      "disabled": true,
+      "settings": {
+        "heading": "Featured collection",
+        "subheading": "",
+        "show_view_all": true,
+        "section_heading_layout": "section-heading--left",
+        "style": "grid",
+        "layout": "grid-4 grid-portable-3 grid-lap-2 grid-tiny-1",
+        "products_number": 4,
+        "collection": "packed-mishti",
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "1655121489db318f96": {
+      "type": "shop-the-look",
+      "blocks": {
+        "1655121489da0fd0f2-0": {
+          "type": "price",
+          "settings": {}
+        },
+        "1655121489da0fd0f2-1": {
+          "type": "title",
+          "settings": {}
+        },
+        "ffd8f1c9-28ad-4008-a0c2-02d31f483ede": {
+          "type": "rating",
+          "settings": {}
+        },
+        "1655121489da0fd0f2-2": {
+          "type": "quick_buy",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "1655121489da0fd0f2-0",
+        "1655121489da0fd0f2-1",
+        "ffd8f1c9-28ad-4008-a0c2-02d31f483ede",
+        "1655121489da0fd0f2-2"
+      ],
+      "disabled": true,
+      "settings": {
+        "heading": "Shop the look",
+        "subheading": "",
+        "section_heading_layout": "section-heading--left",
+        "product_list": [
+          "",
+          ""
+        ],
+        "color_background_main": "#efefef",
+        "color_borders_main": "rgba(0,0,0,0)",
+        "color_hide_borders": true,
+        "color_hide_shadow": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "165406738229739f4d": {
+      "type": "promotion-cards",
+      "blocks": {
+        "16540673826052f668-0": {
+          "type": "card",
+          "settings": {
+            "caption": "",
+            "title": "Emphasize a collection",
+            "subtitle": "",
+            "link": "",
+            "open_in_new_window": false,
+            "button_label": "Show more",
+            "color_background_main": "#f4ede1",
+            "color_text_main": "rgba(0,0,0,0)",
+            "color_accent_main": "rgba(0,0,0,0)",
+            "color_borders_main": "#e1e1e1",
+            "color_shadow_main": "rgba(0,0,0,0)",
+            "color_hide_borders": true,
+            "color_hide_shadow": false,
+            "seo_h_tag": "h3"
+          }
+        },
+        "16540673826052f668-1": {
+          "type": "card",
+          "settings": {
+            "caption": "Show a product",
+            "title": "Superfoods",
+            "subtitle": "",
+            "link": "",
+            "open_in_new_window": false,
+            "button_label": "Show more",
+            "color_background_main": "#f4e5e5",
+            "color_text_main": "rgba(0,0,0,0)",
+            "color_accent_main": "rgba(0,0,0,0)",
+            "color_borders_main": "#e1e1e1",
+            "color_shadow_main": "rgba(0,0,0,0)",
+            "color_hide_borders": true,
+            "color_hide_shadow": false,
+            "seo_h_tag": "h3"
+          }
+        },
+        "16540673826052f668-2": {
+          "type": "card",
+          "settings": {
+            "caption": "",
+            "title": "Write your story",
+            "subtitle": "",
+            "link": "",
+            "open_in_new_window": false,
+            "button_label": "Show more",
+            "color_background_main": "#e5edf1",
+            "color_text_main": "rgba(0,0,0,0)",
+            "color_accent_main": "rgba(0,0,0,0)",
+            "color_borders_main": "#e1e1e1",
+            "color_shadow_main": "rgba(0,0,0,0)",
+            "color_hide_borders": true,
+            "color_hide_shadow": false,
+            "seo_h_tag": "h3"
+          }
+        }
+      },
+      "block_order": [
+        "16540673826052f668-0",
+        "16540673826052f668-1",
+        "16540673826052f668-2"
+      ],
+      "disabled": true,
+      "settings": {
+        "heading": "Promotion cards",
+        "subheading": "",
+        "section_heading_layout": "section-heading--left",
+        "layout": "grid-3 grid-lap-1",
+        "image_aspect_ratio": "1",
+        "text_alignment": "text-align--horizontal-left",
+        "caption_size": "large",
+        "title_size": "h3",
+        "subtitle_size": "regular",
+        "button_size": "large",
+        "button_style": "outline",
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "featured_product_GNr4cJ": {
+      "type": "featured-product",
+      "blocks": {
+        "title_d8EphK": {
+          "type": "title",
+          "settings": {
+            "seo_h_tag": "h2"
+          }
+        },
+        "price_Hg6RTW": {
+          "type": "price",
+          "settings": {}
+        },
+        "variant_picker_kyjfVN": {
+          "type": "variant_picker",
+          "settings": {
+            "variants_style": "radio",
+            "show_quantities": "no"
+          }
+        },
+        "space_MAnUzn": {
+          "type": "space",
+          "settings": {}
+        },
+        "buy_buttons_HjjMGw": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_price": true,
+            "show_quantity_selector": true,
+            "show_preorder": false,
+            "show_dynamic_checkout": true,
+            "show_gift_card_recipient": false
+          }
+        },
+        "space_CkgyyR": {
+          "type": "space",
+          "settings": {}
+        },
+        "description_4FgK6x": {
+          "type": "description",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "title_d8EphK",
+        "price_Hg6RTW",
+        "variant_picker_kyjfVN",
+        "space_MAnUzn",
+        "buy_buttons_HjjMGw",
+        "space_CkgyyR",
+        "description_4FgK6x"
+      ],
+      "disabled": true,
+      "settings": {
+        "product": "tin-kesaria-rajbhog-1-kilogram-10-pieces",
+        "gallery_ratio": "natural",
+        "gallery_fit": false,
+        "show_border": false,
+        "gallery_card_design": false,
+        "gallery_padding": 0,
+        "gallery_pagination": "dots",
+        "enable_zoom": true,
+        "enable_video_looping": false
+      }
+    },
+    "16541619272fee0e4e": {
+      "type": "collection-list",
+      "blocks": {
+        "ee5b7fe5-b950-43ab-bcf9-9f2a564e8c74": {
+          "type": "collection",
+          "settings": {
+            "collection": "sandesh",
+            "image": "shopify://shop_images/nolen-gurer-jalbhara-with-liquid-square_png.jpg"
+          }
+        },
+        "4fd20197-57e5-4687-8996-e9875ddf993f": {
+          "type": "collection",
+          "settings": {
+            "collection": "dry-fruits-mishti",
+            "image": "shopify://shop_images/kaju-pista-roll-3.jpg"
+          }
+        },
+        "74d1d8df-2b25-4fd0-aafa-d887747b7fc1": {
+          "type": "collection",
+          "settings": {
+            "collection": "ghee-mishti",
+            "image": "shopify://shop_images/kanpuri-laddu-2.jpg"
+          }
+        },
+        "ed3e6d73-9210-4605-8cd0-18ae029e2fff": {
+          "type": "collection",
+          "settings": {
+            "collection": "packed-mishti",
+            "image": "shopify://shop_images/tin-sada-rosogolla.jpg"
+          }
+        },
+        "16541619273bcea29e-1": {
+          "type": "collection",
+          "settings": {
+            "collection": "gur-mishti",
+            "image": "shopify://shop_images/patali-gur-container-mockup.jpg"
+          }
+        },
+        "0326ab2b-e4f9-4301-922a-e2e8241f8662": {
+          "type": "collection",
+          "settings": {
+            "collection": "packed-snacks",
+            "image": "shopify://shop_images/masala-kaju-final.png"
+          }
+        },
+        "b61dc1b1-e696-4dca-a9cb-861c88e95be5": {
+          "type": "collection",
+          "disabled": true,
+          "settings": {
+            "collection": ""
+          }
+        },
+        "c84d42d5-b256-44a8-9c2f-9d37ae4012d1": {
+          "type": "collection",
+          "disabled": true,
+          "settings": {
+            "collection": ""
+          }
+        }
+      },
+      "block_order": [
+        "ee5b7fe5-b950-43ab-bcf9-9f2a564e8c74",
+        "4fd20197-57e5-4687-8996-e9875ddf993f",
+        "74d1d8df-2b25-4fd0-aafa-d887747b7fc1",
+        "ed3e6d73-9210-4605-8cd0-18ae029e2fff",
+        "16541619273bcea29e-1",
+        "0326ab2b-e4f9-4301-922a-e2e8241f8662",
+        "b61dc1b1-e696-4dca-a9cb-861c88e95be5",
+        "c84d42d5-b256-44a8-9c2f-9d37ae4012d1"
+      ],
+      "settings": {
+        "heading": "Collection list",
+        "subheading": "",
+        "show_view_all": true,
+        "section_heading_layout": "section-heading--center",
+        "style": "slider",
+        "layout": "grid-6 grid-portable-4 grid-lap-3 grid-palm-2",
+        "image_aspect_ratio": "1",
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "1654161920efe5f084": {
+      "type": "text-columns-icons",
+      "blocks": {
+        "1654161920f21316cf-0": {
+          "type": "image",
+          "settings": {
+            "icon": "favorite",
+            "title": "Authentic Bengali Delicacies",
+            "caption": "Savor the true essence of Bengal's culinary heritage with our time-honored, traditional sweets.",
+            "link": "",
+            "open_in_new_window": false,
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_icons_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "1654161920f21316cf-1": {
+          "type": "image",
+          "settings": {
+            "icon": "delivery",
+            "title": "Nationwide Doorstep Delivery",
+            "caption": "Bringing the sweet essence of Bengal to your doorstep across India, from the city of joy.",
+            "link": "",
+            "open_in_new_window": false,
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_icons_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "1654161920f21316cf-2": {
+          "type": "image",
+          "settings": {
+            "icon": "open-box",
+            "title": "Expert Handcrafted Perfection",
+            "caption": "Meticulously made by expert artisans for a genuine homemade taste in every bite.",
+            "link": "",
+            "open_in_new_window": false,
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_icons_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "1654161920f21316cf-3": {
+          "type": "image",
+          "settings": {
+            "icon": "giftbox",
+            "title": "Celebrate Every Occasion",
+            "caption": "Elevate your special moments with our irresistible range of sweet delights.",
+            "link": "",
+            "open_in_new_window": false,
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_icons_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        }
+      },
+      "block_order": [
+        "1654161920f21316cf-0",
+        "1654161920f21316cf-1",
+        "1654161920f21316cf-2",
+        "1654161920f21316cf-3"
+      ],
+      "settings": {
+        "heading": "",
+        "subheading": "",
+        "section_heading_layout": "section-heading--left",
+        "style": "slider",
+        "layout": "grid-4 grid-portable-3 grid-lap-2",
+        "border_radius": 200,
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "16553621956de397b6": {
+      "type": "testimonials",
+      "blocks": {
+        "16553621951e01132c-0": {
+          "type": "testimonial",
+          "settings": {
+            "author_name": "Author",
+            "author_title": "Customer",
+            "quote": "<p>Add customer reviews and testimonials to showcase your store's happy customers.</p>"
+          }
+        },
+        "16553621951e01132c-1": {
+          "type": "testimonial",
+          "settings": {
+            "author_name": "Author",
+            "author_title": "Customer",
+            "quote": "<p>Add customer reviews and testimonials to showcase your store's happy customers.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "16553621951e01132c-0",
+        "16553621951e01132c-1"
+      ],
+      "disabled": true,
+      "settings": {
+        "heading": "Testimonials",
+        "subheading": "What our clients say",
+        "section_heading_layout": "section-heading--left",
+        "quote_font": "crimson_text_i4",
+        "quote_font_size": 34,
+        "quote_line_height": 1.1,
+        "content_alignment": "center",
+        "color_background_main": "#ebebe5",
+        "color_text_main": "#000000",
+        "color_borders_main": "rgba(0,0,0,0)",
+        "color_shadow_main": "rgba(0,0,0,0)",
+        "color_hide_borders": true,
+        "color_hide_shadow": false,
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "1705478778fcd04e42": {
+      "type": "apps",
+      "settings": {
+        "full_width": false,
+        "remove_margin": false
+      }
+    },
+    "content_toggles_xUDexC": {
+      "type": "content-toggles",
+      "blocks": {
+        "text_ViJhqr": {
+          "type": "text",
+          "settings": {
+            "title": "1. What makes Ganguram Sweets one of the best sweet shops in Kolkata?",
+            "subtitle": "",
+            "icon": "no-icon",
+            "button_label": "",
+            "button_link": "",
+            "body": "<p>Ganguram Sweets is widely regarded as one of the best sweet shops in Kolkata, known for its authentic Bengali sweets, premium ingredients, and heritage dating back to 1885. Popular items include Rosogolla, Jalbhara Sandesh, Mishti Doi, and Kaju Katli.</p>",
+            "hide_block_if": false
+          }
+        },
+        "text_tGFxWf": {
+          "type": "text",
+          "settings": {
+            "title": "2. Does Ganguram Sweets offer sweets for festivals and special occasions?",
+            "subtitle": "",
+            "icon": "no-icon",
+            "button_label": "",
+            "button_link": "",
+            "body": "<p>Yes, Ganguram Sweets offers a wide range of festival sweets and premium gift boxes ideal for occasions like Diwali, Durga Puja, weddings, corporate gifting, and celebrations. Customised gift hampers are also available.</p>",
+            "hide_block_if": false
+          }
+        },
+        "text_EVxLhj": {
+          "type": "text",
+          "settings": {
+            "title": "3. Are the sweets at Ganguram Sweets prepared fresh daily?",
+            "subtitle": "",
+            "icon": "no-icon",
+            "button_label": "",
+            "button_link": "",
+            "body": "<p>Yes, all sweets at Ganguram Sweets are prepared fresh daily using high-quality milk, khoya, dry fruits, and traditional recipes to ensure authentic taste and superior quality.</p>",
+            "hide_block_if": false
+          }
+        },
+        "text_BRLUXP": {
+          "type": "text",
+          "settings": {
+            "title": "4. Why is Ganguram Sweets considered the best sweet shop in Kolkata?",
+            "subtitle": "",
+            "icon": "no-icon",
+            "button_label": "",
+            "button_link": "",
+            "body": "<p>Ganguram Sweets is known for its legacy, authentic Bengali recipes, hygienic preparation, consistent taste, and customer trust built over more than a century. Its innovation in sweets and premium packaging also sets it apart.</p>",
+            "hide_block_if": false
+          }
+        },
+        "text_ragMPm": {
+          "type": "text",
+          "settings": {
+            "title": "5. Does Ganguram Sweets provide online sweets delivery?",
+            "subtitle": "",
+            "icon": "no-icon",
+            "button_label": "",
+            "button_link": "",
+            "body": "<p>Yes, Ganguram Sweets offers online delivery across Kolkata and PAN India. Customers can easily order sweets, gift boxes, and hampers through the official website.</p>",
+            "hide_block_if": false
+          }
+        },
+        "text_nHQTjT": {
+          "type": "text",
+          "settings": {
+            "title": "6. What are the most popular sweets at Ganguram Sweets?",
+            "subtitle": "Question subtitle",
+            "icon": "no-icon",
+            "button_label": "",
+            "button_link": "",
+            "body": "<p>Some of the best-selling sweets include:</p><ul><li>Jalbhara Sandesh</li><li>Rosogolla (Tin & Fresh)</li><li>Mishti Doi</li><li>Kaju Katli</li><li>Khirer Chop</li></ul>",
+            "hide_block_if": false
+          }
+        },
+        "text_T3BdmV": {
+          "type": "text",
+          "settings": {
+            "title": "7. Does Ganguram Sweets offer gift packaging?",
+            "subtitle": "Question subtitle",
+            "icon": "no-icon",
+            "button_label": "",
+            "button_link": "",
+            "body": "<p>Yes, premium gift boxes and customised packaging options are available, making them ideal for gifting during festivals, weddings, and corporate events.</p>",
+            "hide_block_if": false
+          }
+        },
+        "text_DeA3XL": {
+          "type": "text",
+          "settings": {
+            "title": "8. Where are Ganguram Sweets stores located?",
+            "subtitle": "Question subtitle",
+            "icon": "no-icon",
+            "button_label": "",
+            "button_link": "",
+            "body": "<p>Ganguram Sweets has multiple outlets across Kolkata, along with online delivery services for customers across India. Our flagship stores are located at <strong>Beadon Street, Alambazar, Ariadaha, and Misti Hub (Eco Park)</strong>.</p>",
+            "hide_block_if": false
+          }
+        }
+      },
+      "block_order": [
+        "text_ViJhqr",
+        "text_tGFxWf",
+        "text_EVxLhj",
+        "text_BRLUXP",
+        "text_ragMPm",
+        "text_nHQTjT",
+        "text_T3BdmV",
+        "text_DeA3XL"
+      ],
+      "custom_css": [
+        ".toggle--faq .toggle__title {}",
+        ".element--border-radius {border: none;}",
+        ".toggle__title {background-color: #49488d; color: #fff;}",
+        ".toggle--faq .toggle__icon-alternate path {fill: #fff;}",
+        "toggle-group {display: flex; flex-direction: column; gap: 10px;}",
+        ".toggle--faq {border: 1px solid #49488d6b; border-radius: 5px; overflow: hidden;}",
+        ".toggle--faq .toggle__subtitle {display: none;}",
+        "@media screen and (max-width: 767px) {.toggle--faq .toggle__title {padding: 15px 15px 8px 15px; }}"
+      ],
+      "name": "t:sections.local-extra-words.sections.content-toggles.name",
+      "settings": {
+        "heading": "Frequently asked question",
+        "subheading": "",
+        "section_heading_layout": "section-heading--center",
+        "open_first": true,
+        "form_enable": false,
+        "form_title": "Contact form",
+        "seo_h_tag": "h2"
+      }
+    }
+  },
+  "order": [
+    "1653646142d6a7c886",
+    "slideshow_fKri9b",
+    "slideshow_kT8cdb",
+    "slideshow_76ERrT",
+    "slideshow_ww4zpT",
+    "featured-collection",
+    "1655121489db318f96",
+    "165406738229739f4d",
+    "featured_product_GNr4cJ",
+    "16541619272fee0e4e",
+    "1654161920efe5f084",
+    "16553621956de397b6",
+    "1705478778fcd04e42",
+    "content_toggles_xUDexC"
+  ]
+}

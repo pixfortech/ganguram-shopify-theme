@@ -1,0 +1,152 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "vendor": {
+          "type": "vendor",
+          "settings": {
+            "text_size": "text-size--regular"
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "variants_style": "radio",
+            "show_quantities": "no"
+          }
+        },
+        "empty_space_1": {
+          "type": "space",
+          "settings": {}
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_price": false,
+            "show_quantity_selector": true,
+            "show_preorder": false,
+            "show_dynamic_checkout": true,
+            "show_gift_card_recipient": false
+          }
+        },
+        "empty_space_2": {
+          "type": "space",
+          "settings": {}
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "empty_space_3": {
+          "type": "space",
+          "settings": {}
+        },
+        "custom_liquid_qddigW": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "<style>\n  .ganguram-nutrition-accordion {\n    margin-top: 20px;\n    border: 1px solid rgba(73, 72, 141, 0.18);\n    border-radius: 14px;\n    overflow: hidden;\n    background: #ffffff;\n  }\n  .ganguram-nutrition-accordion details {\n    border-bottom: 1px solid rgba(73, 72, 141, 0.14);\n  }\n  .ganguram-nutrition-accordion details:last-child {\n    border-bottom: none;\n  }\n  .ganguram-nutrition-accordion summary {\n    cursor: pointer;\n    list-style: none;\n    padding: 15px 18px;\n    font-size: 16px;\n    font-weight: 700;\n    color: #49488D;\n    display: flex;\n    align-items: center;\n    justify-content: space-between;\n    gap: 12px;\n    background: #fafaff;\n  }\n  .ganguram-nutrition-accordion summary::-webkit-details-marker {\n    display: none;\n  }\n  .ganguram-nutrition-accordion summary::after {\n    content: \"+\";\n    font-size: 22px;\n    font-weight: 500;\n    line-height: 1;\n    color: #EA5454;\n  }\n  .ganguram-nutrition-accordion details[open] summary::after {\n    content: \"−\";\n  }\n  .ganguram-nutrition-content {\n    padding: 14px 18px 18px;\n    font-size: 15px;\n    line-height: 1.65;\n    color: #222;\n    background: #ffffff;\n  }\n  .ganguram-nutrition-content p {\n    margin: 0;\n  }\n  .ganguram-nutrition-content ul,\n  .ganguram-nutrition-content ol {\n    margin-top: 8px;\n    margin-bottom: 0;\n    padding-left: 20px;\n  }\n  @media screen and (max-width: 749px) {\n    .ganguram-nutrition-accordion {\n      margin-top: 16px;\n      border-radius: 12px;\n    }\n    .ganguram-nutrition-accordion summary {\n      padding: 13px 14px;\n      font-size: 15px;\n    }\n    .ganguram-nutrition-content {\n      padding: 12px 14px 15px;\n      font-size: 14px;\n      line-height: 1.6;\n    }\n  }\n\n  /* ===== Added: food-type badge (first row) ===== */\n  .ganguram-nutrition-accordion .gn-foodtype {\n    display: flex;\n    align-items: center;\n    gap: 10px;\n    padding: 15px 18px;\n    background: #fafaff;\n    border-bottom: 1px solid rgba(73, 72, 141, 0.14);\n    font-size: 16px;\n    font-weight: 700;\n    line-height: 1;\n  }\n  .ganguram-nutrition-accordion .gn-foodtype svg { flex: 0 0 auto; display: block; }\n  .ganguram-nutrition-accordion .gn-foodtype--veg span { color: #0a8a3e; }\n  .ganguram-nutrition-accordion .gn-foodtype--nonveg span { color: #9b2d1f; }\n\n  /* ===== Added: calorie statement beside Nutrition per 100g ===== */\n  .ganguram-nutrition-accordion .gn-summary-main {\n    display: flex;\n    flex-direction: column;\n    gap: 4px;\n    flex: 1 1 auto;\n    min-width: 0;\n  }\n  .ganguram-nutrition-accordion .gn-calorie-note {\n    font-size: 12.5px;\n    font-weight: 400;\n    line-height: 1.4;\n    color: #6b6b78;\n  }\n  @media screen and (max-width: 749px) {\n    .ganguram-nutrition-accordion .gn-foodtype { padding: 13px 14px; font-size: 15px; }\n    .ganguram-nutrition-accordion .gn-calorie-note { font-size: 12px; }\n  }\n</style>\n\n<div class=\"ganguram-nutrition-accordion\">\n\n  {%- comment -%} Food-type logo as the first row, above Ingredients {%- endcomment -%}\n  {%- assign ft = product.metafields.custom.food_type.value | default: '' | strip -%}\n  {%- assign ftd = ft | downcase -%}\n  {% if ft != blank %}\n    {% if ftd contains 'non' %}\n      <div class=\"gn-foodtype gn-foodtype--nonveg\">\n        <svg viewBox=\"0 0 100 100\" width=\"20\" height=\"20\" aria-hidden=\"true\" focusable=\"false\">\n          <rect x=\"6\" y=\"6\" width=\"88\" height=\"88\" rx=\"12\" fill=\"#ffffff\" stroke=\"#9b2d1f\" stroke-width=\"9\"/>\n          <polygon points=\"50,27 75,73 25,73\" fill=\"#9b2d1f\"/>\n        </svg>\n        <span>{{ ft | escape }}</span>\n      </div>\n    {% elsif ftd == 'vegetarian' %}\n      <div class=\"gn-foodtype gn-foodtype--veg\">\n        <svg viewBox=\"0 0 100 100\" width=\"20\" height=\"20\" aria-hidden=\"true\" focusable=\"false\">\n          <rect x=\"6\" y=\"6\" width=\"88\" height=\"88\" rx=\"12\" fill=\"#ffffff\" stroke=\"#0a8a3e\" stroke-width=\"9\"/>\n          <circle cx=\"50\" cy=\"50\" r=\"26\" fill=\"#0a8a3e\"/>\n        </svg>\n        <span>{{ ft | escape }}</span>\n      </div>\n    {% else %}\n      <div class=\"gn-foodtype\"><span>{{ ft | escape }}</span></div>\n    {% endif %}\n  {% endif %}\n\n  {% if product.metafields.custom.ingredients != blank %}\n    <details>\n      <summary>Ingredients</summary>\n      <div class=\"ganguram-nutrition-content\">\n        {{ product.metafields.custom.ingredients | metafield_tag }}\n      </div>\n    </details>\n  {% endif %}\n\n  {% if product.metafields.custom.nutrition_per_100g != blank %}\n    <details>\n      <summary>\n        <span class=\"gn-summary-main\">\n          <span class=\"gn-summary-title\">Nutrition per 100g</span>\n          {%- assign ca = product.metafields.custom.calorie_advisory.value | default: '' | strip -%}\n          {% if ca != blank %}<span class=\"gn-calorie-note\">{{ ca | escape }}</span>{% endif %}\n        </span>\n      </summary>\n      <div class=\"ganguram-nutrition-content\">\n        {{ product.metafields.custom.nutrition_per_100g | metafield_tag }}\n      </div>\n    </details>\n  {% endif %}\n\n  {% if product.metafields.custom.allergen_information != blank %}\n    <details>\n      <summary>Allergen Information</summary>\n      <div class=\"ganguram-nutrition-content\">\n        {{ product.metafields.custom.allergen_information | metafield_tag }}\n      </div>\n    </details>\n  {% endif %}\n\n  {% if product.metafields.custom.shelf_life != blank %}\n    <details>\n      <summary>Shelf Life</summary>\n      <div class=\"ganguram-nutrition-content\">\n        {{ product.metafields.custom.shelf_life | metafield_tag }}\n      </div>\n    </details>\n  {% endif %}\n\n  {% if product.metafields.custom.storage_instructions != blank %}\n    <details>\n      <summary>Storage Instructions</summary>\n      <div class=\"ganguram-nutrition-content\">\n        {{ product.metafields.custom.storage_instructions | metafield_tag }}\n      </div>\n    </details>\n  {% endif %}\n\n  {% if product.metafields.custom.fssai_note != blank %}\n    <details>\n      <summary>FSSAI Note</summary>\n      <div class=\"ganguram-nutrition-content\">\n        {{ product.metafields.custom.fssai_note | metafield_tag }}\n      </div>\n    </details>\n  {% endif %}\n\n</div>"
+          }
+        },
+        "share": {
+          "type": "share",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "vendor",
+        "title",
+        "price",
+        "variant_picker",
+        "empty_space_1",
+        "buy_buttons",
+        "empty_space_2",
+        "description",
+        "empty_space_3",
+        "custom_liquid_qddigW",
+        "share"
+      ],
+      "settings": {
+        "gallery_style": "slider",
+        "gallery_ratio": "natural",
+        "gallery_fit": false,
+        "show_border": false,
+        "gallery_card_design": false,
+        "gallery_padding": 0,
+        "gallery_pagination": "dots",
+        "enable_zoom": true,
+        "enable_video_looping": false
+      }
+    },
+    "custom_liquid_gCdRBq": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<div class=\"custom-description-section\">\n\n  {% if product.metafields.custom.intro_line %}\n    <h3>What it is</h3>\n    <p>{{ product.metafields.custom.intro_line }}</p>\n  {% endif %}\n\n  {% if product.metafields.custom.key_features %}\n    <h3>Key Features / Ingredients</h3>\n    <ul>\n      {% assign features = product.metafields.custom.key_features | newline_to_br | split: \"<br />\" %}\n      {% for line in features %}\n        <li>{{ line }}</li>\n      {% endfor %}\n    </ul>\n  {% endif %}\n\n  {% if product.metafields.custom.taste_summary %}\n    <h3>Taste & Texture</h3>\n    <p>{{ product.metafields.custom.taste_summary }}</p>\n  {% endif %}\n\n  {% if product.metafields.custom.serving_suggestions %}\n    <h3>Serving Suggestions</h3>\n    <p>{{ product.metafields.custom.serving_suggestions }}</p>\n  {% endif %}\n\n  {% if product.metafields.custom.shelf_life_storage %}\n    <h3>Shelf Life & Storage</h3>\n    <p>{{ product.metafields.custom.shelf_life_storage }}</p>\n  {% endif %}\n\n  {% if product.metafields.custom.allergen_note %}\n    <h3>Allergen Note</h3>\n    <p>{{ product.metafields.custom.allergen_note }}</p>\n  {% endif %}\n\n</div>",
+        "full_width": true,
+        "remove_margin": false
+      }
+    },
+    "product-recommendations": {
+      "type": "product-recommendations",
+      "blocks": {
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "quick_buy": {
+          "type": "quick_buy",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "price",
+        "title",
+        "quick_buy"
+      ],
+      "settings": {
+        "heading": "You may also like",
+        "subheading": "",
+        "section_heading_layout": "section-heading--left",
+        "layout": "grid-4 grid-portable-3 grid-lap-2 grid-tiny-1",
+        "products_number": 4,
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": false
+      }
+    },
+    "1705580536e842fdad": {
+      "type": "apps",
+      "settings": {
+        "full_width": false,
+        "remove_margin": false
+      }
+    }
+  },
+  "order": [
+    "main",
+    "custom_liquid_gCdRBq",
+    "product-recommendations",
+    "1705580536e842fdad"
+  ]
+}

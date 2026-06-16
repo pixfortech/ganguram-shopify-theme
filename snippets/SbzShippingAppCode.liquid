@@ -1,0 +1,96 @@
+<div id="csShippingAppCode"></div>
+{% if content_for_header contains 'sbzstag' %}
+  <script>
+    var csCart = {{ cart | json }};
+    document.addEventListener("DOMContentLoaded", function(event) {
+      if (window.jQuery) {
+        csJq = window.jQuery;
+        if (typeof csShopify !== "undefined") {
+          csDatePickerMinJs(csJq);
+        }
+      } else {
+        csLoadScript("{{ 'sbz_jquery.js' | asset_url }}", function() {
+          csJq = jQuery.noConflict(true);
+          if (typeof csShopify !== "undefined") {
+            csDatePickerMinJs(csJq);
+          }
+          
+        });
+      }
+      function csDatePickerMinJs(csJq) {
+        csLoadCss("{{ 'sbz_csShippingApp.css' | asset_url }}");
+        if (typeof csJq.fn.datepicker != "undefined") {
+          MainCode(csJq);
+        } else {
+          csLoadScript("{{ 'sbz_datepicker.js' | asset_url }}", function() {
+            MainCode(csJq);
+          });
+        }
+      }
+    });
+    
+    var ez = $('.custom-pincode-button').attr('data-code-list');
+    function shipUpdate() {
+      var s = localStorage.getItem("Zipcode");
+      if (ez.indexOf(s) == -1) {
+        $('#csShippingAppCode').remove();
+        $('[name="checkout"]').removeAttr('disabled');
+      } else {
+        $('#csShippingAppCode').remove();
+        $('<div id="csShippingAppCode"></div>').insertAfter('#AjaxCartSubtotal .cart__total');
+        setTimeout(function() {
+          if ($('#csShippingAppCode').children().length == 0) {
+            MainCode(csJq);
+          }
+        }, 1000);
+        $('[name="checkout"]').attr('disabled', 'disabled');
+      }
+    }
+    setTimeout(function() {
+      shipUpdate();
+    }, 1000);
+    function csOuterfunction() {
+      setTimeout(function() {
+        csJq('#postal_code').val($('#zipp_code').val());
+        csJq('#zip_search').trigger('click')
+        if (csJq('#postal_code').length > 0) {
+          $('[name="checkout"]').attr('disabled', 'disabled');
+        } else {
+          $('[name="checkout"]').removeAttr('disabled');
+        }
+      }, 100)
+    }
+    $('body').on('change', '#zipp_code', function(e) {
+      var val = $('#zipp_code').val();
+      if (ez.indexOf(val) == -1) {
+        $('#csShippingAppCode').remove();
+        $('[name="checkout"]').removeAttr('disabled');
+      } else {
+        $('#csShippingAppCode').remove();
+        $('<div id="csShippingAppCode"></div>').insertAfter('#AjaxCartSubtotal .cart__total');
+        $('[name="checkout"]').attr('disabled', 'disabled');
+      }
+      if (typeof MainCode != "undefined") {
+        MainCode(csJq)
+      }
+      setTimeout(function() {
+        csJq('#postal_code').val(val);
+        csJq('#zip_search').trigger('click');
+        if (csJq('#postal_code').length > 0) {
+          $('[name="checkout"]').attr('disabled', 'disabled');
+        } else {
+          $('[name="checkout"]').removeAttr('disabled');
+        }
+      }, 2000);
+    });
+  </script>
+  <script src="https://sbz.cirkleinc.com/assets/js/front/csShippingAppV3.js"></script>
+{% endif %}
+<style>
+  .custom-pincode-button {
+    display: none;
+  }
+  p.order_must {
+    margin-top: 10px;
+  }
+</style>

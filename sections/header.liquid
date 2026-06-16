@@ -1,0 +1,1035 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+{%- liquid
+  assign logo_height = section.settings.logo_height
+  if logo_height > 40
+    assign logo_mobile_height = 40
+  else 
+    assign logo_mobile_height = logo_height
+  endif
+-%}
+{% style %}
+  .header__top {
+    --header-logo: {{ logo_height }}px;
+  }
+  @media screen and (max-width: 767px) {
+    .header__top {
+      --header-logo: {{ logo_mobile_height }}px;
+    }
+  }
+{% endstyle %}
+
+<main-header id="site-header" class="site-header" data-js-inert {% if section.settings.sticky_header %} data-sticky-header {% endif %}>
+
+  <div class="header-container header-container--top {% if section.settings.show_search %} hide-border-on-portable {% endif %}">
+    <div class="header__top container--large">
+
+      <!-- logo -->
+      
+      <div id="logo" class="logo">
+
+        {%- if section.settings.logo_src -%}
+
+          <a class="logo-img" title="{{ shop.name | escape }}" href="{{ routes.root_url }}" style="height:var(--header-logo)">
+            <img src="{{ section.settings.logo_src | image_url }}" alt="{{ shop.name | escape }}" width="{{ section.settings.logo_src.width }}" height="{{ section.settings.logo_src.height }}" 
+              style="width: {{ section.settings.logo_src.aspect_ratio | times: logo_height | round }}px; object-fit:contain"
+            />
+          </a>
+
+        {%- else -%}
+
+          <a class="logo-txt" title="{{ shop.name | escape }}" href="{{ routes.root_url }}">{{ shop.name | escape }}</a>
+
+        {%- endif -%}
+
+      </div>
+
+      <!-- header blocks -->
+
+      <div class="header-actions header-actions--buttons {% if section.settings.show_search %} header-actions--show-search {% endif %} portable-hide">
+
+        {%- if section.settings.show_search -%}
+          <search-form style="position:relative">
+            <div class="button button--outline button--icon button--outline-hover button--no-padding button--no-hover site-search-handle">
+              <span class="button__icon" role="img" aria-hidden="true">{%- render 'theme-symbols', icon: 'search' -%}</span>
+              <form action="{{ routes.search_url }}" method="get" role="search" autocomplete="off">
+                <input name="q" type="search" autocomplete="off" 
+                  placeholder="{{ 'search.form.placeholder' | t }}" 
+                  aria-label="{{ 'search.form.placeholder' | t }}"
+                  data-js-search-input
+                  data-js-focus-overlay="search-results-overlay-desktop"
+                />
+                <button type="submit" style="display:none">{{ 'search.form.submit' | t }}</button>
+              </form>
+            </div>
+            <div class="search-results-overlay" id="search-results-overlay-desktop" onclick="this.classList.remove('active')" style="display:none"></div>
+            <div class="search-results-container" data-js-search-results></div> 
+          </search-form>
+        {%- endif -%}
+
+        {%- if shop.customer_accounts_enabled -%}
+          {%- if customer -%}
+            <a class="button button--outline button--icon" href="{{ routes.account_url }}">
+          {%- else -%}
+            <a class="button button--outline button--icon" href="{{ routes.account_login_url }}">
+          {%- endif -%}
+            <span class="button__icon" role="img" aria-hidden="true">{%- render 'theme-symbols', icon: 'account' -%}</span>
+            {{ 'general.breadcrumb.account' | t }}
+          </a>
+        {%- endif -%}
+        
+        <a 
+          class="button button--solid button--icon no-js-hidden"
+          {% if settings.cart_action == 'overlay' and template != 'cart' %} 
+            data-js-sidebar-handle aria-expanded="false" aria-controls="site-cart-sidebar" role="button"
+          {% else %}
+            href="{{ routes.cart_url }}"
+          {% endif %} 
+          title="{{ 'general.accessibility_labels.open_cart' | t }}" tabindex="0"
+        >
+          <span class="visually-hidden">{{ 'general.accessibility_labels.open_cart' | t }}</span>
+          <span class="button__icon" role="img" aria-hidden="true">{%- render 'theme-symbols', icon: 'cart' -%}</span>
+          <span data-header-cart-total aria-hidden="true">{{ cart.total_price | money }}</span>
+          <span data-header-cart-count aria-hidden="true" class="element--wrap-paranth">{{ cart.item_count }}</span>
+        </a>
+
+        <noscript>
+          <a 
+            class="button button--solid button--icon button--regular data-js-hidden"
+            href="{{ routes.cart_url }}"
+            tabindex="0"
+          >
+            <span class="button__icon" role="img" aria-hidden="true">{%- render 'theme-symbols', icon: 'cart' -%}</span>
+            <span data-header-cart-total aria-hidden="true">{{ cart.total_price | money }}</span>&nbsp;
+            (<span data-header-cart-count aria-hidden="true">{{ cart.item_count }}</span>)
+          </a>
+        </noscript>
+
+      </div>
+
+      <button data-js-sidebar-handle class="mobile-menu-button hide portable-show" aria-expanded="false" aria-controls="site-menu-sidebar">
+        <span class="visually-hidden">{{ 'general.accessibility_labels.open_menu' | t }}</span>
+        {%- render 'theme-symbols', icon: 'burger' -%}
+      </button>
+
+      <a 
+        {% if settings.cart_action == 'overlay' and template != 'cart' %} 
+          data-js-sidebar-handle aria-expanded="false" aria-controls="site-cart-sidebar" role="button"
+        {% else %}
+          href="{{ routes.cart_url }}"
+        {% endif %} 
+        class="mobile-cart-button hide portable-show"
+        title="{{ 'general.accessibility_labels.open_cart' | t }}" tabindex="0"
+      >
+        <span class="visually-hidden">{{ 'general.accessibility_labels.open_cart' | t }}</span>
+        {%- render 'theme-symbols', icon: 'cart' -%}
+        <span data-header-cart-count aria-hidden="true">{{ cart.item_count }}</span>
+      </a>    
+    </div>
+
+  </div>
+
+  <!-- header menu -->
+
+  {%- capture header_blocks -%}
+
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'info' or block.type == 'store-selector' -%}
+
+        {% if block.type == 'store-selector' %}
+
+          <div role="button"
+            data-modal
+            aria-expanded="false" aria-controls="modal-store-selector"
+            id="site-store-selector-handle"
+            tabindex="0"
+
+        {% elsif block.settings.link != blank -%}
+
+          <a href="{{ block.settings.link }}"
+            target="{{ block.settings.link_type }}"
+            id="site-header-block-{{ forloop.index }}"
+
+        {% else %}
+          <div 
+        {% endif %}
+
+          class="header-info-block"
+          data-type="{{ block.type }}"
+            
+        > 
+
+          {%- if block.type == 'store-selector' -%}
+
+            <div class="header-info-block__image">
+              {%- if block.settings.custom_icon != blank -%}
+                <img src="{{ block.settings.custom_icon | image_url: width: 76, height: 76, crop: 'center' }}" width="{{ block.settings.custom_icon.width }}" height="{{ block.settings.custom_icon.height }}" style="width:38px;height:38px" alt="{{ block.settings.custom_icon.alt | escape }}">
+              {%- else -%}
+                {%- render 'icon-pack', icon: 'store' -%}
+              {%- endif -%}
+            </div>
+            <div class="header-info-block__text">
+              <span class="header-info-block__caption text-size--xsmall" data-store-title>{{ 'store_availability.store_selector.picking_up' | t }}</span>
+              <span class="header-info-block__title">
+                <span class="text-animation--underline-in-header" data-store-label>{{ 'store_availability.store_selector.select_store_label' | t }}</span>
+                <span class="icon">{%- render 'theme-symbols', icon: 'chevron' -%}</span>
+              </span>
+            </div>
+
+          {%- else -%}
+
+            {%- if block.settings.icon != 'no-icon' or block.settings.custom_icon != blank -%}
+              <div class="header-info-block__image">
+                {%- if block.settings.custom_icon != blank -%}
+                  <img src="{{ block.settings.custom_icon | image_url: width: 76, height: 76, crop: 'center' }}" width="{{ block.settings.custom_icon.width }}" height="{{ block.settings.custom_icon.height }}" style="width:38px;height:38px" alt="{{ block.settings.custom_icon.alt | escape }}">
+                {%- else -%}
+                  {%- render 'icon-pack', icon: block.settings.icon -%}
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+            
+            <div class="header-info-block__text">
+              {%- if block.settings.caption != blank -%}
+                <span class="header-info-block__caption text-size--xsmall">{{ block.settings.caption | escape }}</span>
+              {%- endif -%}
+              {%- if block.settings.title != blank -%}
+                <span class="header-info-block__title">
+                  <span class="{%- if block.settings.link != blank -%} text-animation--underline-in-header {%- endif -%}">{{ block.settings.title | escape }}</span>
+                </span>
+              {%- endif -%}
+            </div>
+            
+          {%- endif -%}
+
+        {%- if block.settings.link != blank -%} </a> {%- else -%} </div> {%- endif -%}
+       {%- elsif block.type == 'pincode_show' -%}               
+          <div role="button" data-modal="" aria-expanded="false" aria-controls="modal-code-selector" class="header-info-block custom-pincode-button" {% if block.settings.zipcode_handle != blank %}data-search-handle="{{ block.settings.zipcode_handle }}"{% endif %}{% if block.settings.zipcode_url != blank %}data-code-url="{{ block.settings.zipcode_url }}"{% endif %} {% if block.settings.zipcode_list != blank %}data-code-list="{{ block.settings.zipcode_list }}"{% endif %}>                              
+           <div class="header-info-block__text">
+            <span class="header-info-block__caption text-size--xsmall" data-store-title>PIN CODE</span>
+            <span class="header-info-block__title">                            
+              <span class="pincode"></span>
+            </span>
+           </div>
+        </div>                   
+      {%- endif -%}
+    {%- endfor -%}
+
+  {%- endcapture -%}
+
+  <div class="header-container header-container--bottom {% if header_blocks == blank %} no-header-blocks {% endif %}
+    {% liquid
+      if section.settings.select_header_actions_on_mobile == 'show_always' or template == 'index' and section.settings.select_header_actions_on_mobile == 'show_on_homepage'
+        echo "show-header-actions-on-mobile"
+      else
+        echo 'portable-hide'
+      endif
+    %}
+  ">
+
+    <div class="header__bottom container--large">
+
+      <span class="scrollable-navigation-button scrollable-navigation-button--left" aria-hidden="true">{%- render 'theme-symbols', icon: 'chevron' -%}</span>
+      <scrollable-navigation class="header-links">
+        {%- render 'site-nav', linklist: section.settings.main_linklist, blocks: section.blocks, type: 'classic' -%}
+      </scrollable-navigation>
+      <span class="scrollable-navigation-button scrollable-navigation-button--right" aria-hidden="true">{%- render 'theme-symbols', icon: 'chevron' -%}</span>
+
+      <div class="header-actions header-actions--blocks" data-js-header-actions>{{ header_blocks }}</div>
+
+    </div>
+
+  </div>
+
+  <!-- header mobile search -->
+
+  {%- if section.settings.show_search -%}
+
+    <div class="header-container header--container--bottom container--large mobile-search hide portable-show">
+      <search-form style="position:relative">
+        <div class="button button--outline button--icon button--outline-hover button--no-padding button--no-hover site-search-handle">
+          <span class="button__icon" role="img" aria-hidden="true">{%- render 'theme-symbols', icon: 'search' -%}</span>
+          <form action="{{ routes.search_url }}" method="get" role="search" autocomplete="off">
+            <input name="q" type="search" autocomplete="off" 
+              placeholder="{{ 'search.form.placeholder' | t }}" 
+              aria-label="{{ 'search.form.placeholder' | t }}"
+              data-js-search-input 
+              data-js-focus-overlay="search-results-overlay-mobile"
+            />
+            <button type="submit" style="display:none">{{ 'search.form.submit' | t }}</button>
+          </form>
+        </div>
+        <div id="search-results-overlay-mobile" class="search-results-overlay" onclick="this.classList.remove('active')" style="display:none"></div>
+        <div class="search-results-container" data-js-search-results></div> 
+      </search-form>
+    </div>
+
+  {%- endif -%}
+
+</main-header>
+
+<sidebar-drawer id="site-menu-sidebar" class="sidebar sidebar--left" tabindex="-1" role="dialog" aria-modal="true" style="display:none">
+      
+  <div class="sidebar__header">
+    <span class="sidebar__title h5">
+      {{ 'general.accessibility_labels.menu' | t }}
+    </span>
+    <button class="sidebar__close" data-js-close>
+      <span class="visually-hidden">{{ 'general.accessibility_labels.close_sidebar' | t }}</span>
+      <span aria-hidden="true" aria-role="img">{%- render 'theme-symbols', icon: 'close' -%}</span>
+    </button>
+  </div>
+
+  <div class="sidebar__body">
+    <mobile-navigation data-show-header-actions="{{ section.settings.show_header_actions }}">
+      {%- render 'site-nav', linklist: section.settings.main_linklist, blocks: section.blocks, type: 'sidebar' -%}
+    </mobile-navigation>
+  </div>
+
+  <div class="sidebar__footer site-menu-sidebar-footer">
+
+    {%- liquid
+      if section.settings.show_social_icons
+        render 'social-icons'
+      endif
+    -%}
+
+    {%- render 'localization-form', show_country_selector: section.settings.show_country_selector, show_locale_selector: section.settings.show_locale_selector, location: 'header' -%}
+    
+  </div>
+
+  <link rel="stylesheet" href="{{ 'component-mobile-navigation.css' | asset_url }}" media="print" onload="this.media='all'">
+
+</sidebar-drawer>
+
+{% for block in section.blocks %}
+  {%- if block.type == 'pincode_show' -%}     
+    <modal-box id="modal-code-selector" class="modal modal-code toggle-button"  
+      data-options='{
+        "enabled": false,
+        "showOnce": false,
+        "blockTabNavigation": true
+      }'
+      tabindex="-1" role="dialog" aria-modal="true"      
+    >
+      <div class="container--small">    
+        <div class="store-selector-container modal-content">       
+           <div class="zip_wrp">
+             <div class="wrp_code">
+              {%- if block.settings.zipcode_image != blank -%}
+              <div class="header-info-block__image">                     
+                <img src="{{ block.settings.zipcode_image | img_url:'master' }}" alt="{{ block.settings.zipcode_icon.alt | escape }}">                                                      
+              </div>
+              {%- endif -%}
+              <div class="wrp_content">
+              <div class="header-info-block__text">
+                <div class="modal-heading">
+                  <div class="modal-heading__text remove-empty-space">
+                    <span class="text-size--xlarge text-weight--bold">
+                      {{ block.settings.zipcode_title }}
+                    </span>
+                    {% if block.settings.zipcode_content != blank %}
+                      <div class="content_top">
+                        {{ block.settings.zipcode_content }}
+                      </div>
+                    {% endif %}
+                  </div>                                    
+                  <div class="modal-heading__actions">
+                    <button class="modal-close" data-js-close data-js-first-focus>{%- render 'theme-symbols', icon: 'close' -%}</button>
+                  </div>
+                </div>                     
+                <span class="header-info-block__caption text-size--xsmall" data-store-title>{{ block.settings.zipcode_sub_title }}</span>
+               </div> 
+               <div class="get_input">
+                 <input type="text" value="" id="zipp_code" class="zip_input" maxlength="6" pattern="[\d]{9}" onkeyup="myFunction()" onkeypress="return isNumberKey(event)">
+                 
+                 <a href="javascript:void(null)" class="button button--large button--solid code-click">Enter</a>                     
+               </div>
+               <span class="error_code" style="display:none;"></span>
+                </div>
+             </div>
+           </div>
+        </div>
+      </div>
+    </modal-box>   
+  {% endif %}
+{% endfor %}
+{% assign current_hour = 'now' | date: '%H' | plus: 0 %}
+{% assign current_minute = 'now' | date: '%M' | plus: 0 %}
+<script>
+function isNumberKey(evt) {
+    var charCode = (evt.which) ? evt.which : event.keyCode;
+    if ((charCode < 48 || charCode > 57))
+        return false;
+
+    return true;
+}
+function myFunction() {  
+  var pc = document.getElementById("zipp_code").value;
+  var t =  /^\d+$/.test(pc);  
+  //alert(pc);
+  if (pc.length != 6 || t == false) {
+   $('.error_code').html('Invalid Zip Code').show().delay(1000).fadeOut(); 
+   $('.code-click').addClass('button_disabled');   
+    sessionStorage.setItem('ZipAdd', '');
+  } else {
+    $('.code-click').removeClass('button_disabled');
+    sessionStorage.setItem('ZipAdd', pc);
+    //alert(sessionStorage.getItem('ZipAdd'));
+    if (pc != '') {
+      var kolkata_pincode = '700001,700002,700003,700004,700005,700006,700007,700008,700009,700010,700011,700012,700013,700014,700015,700016,700017,700018,700019,700020,700021,700022,700023,700024,700025,700026,700027,700028,700029,700030,700031,700032,700033,700034,700035,700036,700037,700038,700039,700040,700041,700042,700043,700044,700045,700046,700047,700048,700049,700050,700051,700052,700053,700054,700055,700056,700057,700058,700059,700060,700061,700062,700063,700064,700065,700066,700067,700068,700069,700070,700071,700072,700073,700074,700075,700076,700077,700078,700079,700080,700081,700082,700083,700084,700085,700086,700087,700088,700089,700090,700091,700092,700093,700094,700095,700097,700098,700099,700100,700101,700102,700105,700106,700107,700108,700109,700110,700111,700112,700113,700114,700115,700116,700117,700119,700120,700129,700131,700132,700133,700134,700136,700139,700140,700142,700143,700155,700156,711101,711102,711103,711104,711105,711106,711107,711108,711109,711110,711111,711112,711113,711114,711201,711202,711203,711204,711205,711227,712233,712235,712246,712248,712258';
+      var quick_commerce_pincode = '700001,700002,700003,700004,700005,700006,700007,700009,700010,700011,700012,700013,700014,700015,700016,700017,700019,700020,700021,700022,700023,700025,700027,700028,700029,700030,700035,700036,700037,700042,700043,700046,700048,700050,700054,700055,700057,700059,700062,700064,700065,700067,700069,700071,700072,700073,700074,700076,700077,700080,700085,700087,700089,700090,700091,700097,700101,700102,700105,700106,700108,700109,700136,711101,711102,711104,711105,711106,711107,711108,711202,711204';
+      var tag = [];
+      if (kolkata_pincode.indexOf(pc) > -1) {
+        tag.push('Kolkata');
+        $('.delivery-logo').hide();
+      }
+      if (quick_commerce_pincode.indexOf(pc) > -1) {
+        tag.push('Quick Commerce');
+        $('.delivery-logo').show();
+      }
+      if (kolkata_pincode.indexOf(pc) == -1 && quick_commerce_pincode.indexOf(pc) == -1) {
+        tag.push('PAN India');
+        $('.delivery-logo').hide();
+      }
+      var stringTag = tag.join(',');
+      console.log(stringTag, 'stringTag');
+      var sliderEle = $('.code-base-slide').filter(function(i, v) {
+        var tagValue = $(v).find('.c-slide').attr('data-tag');
+        return tagValue == stringTag && tagValue != '';
+      });
+      if (sliderEle.length > 0) {
+        $('.code-base-slide').hide();
+        if (sliderEle[0].querySelector('css-slider') && typeof sliderEle[0].querySelector('css-slider').destroySlider == 'function') {
+          sliderEle[0].querySelector('css-slider').destroySlider();
+        }
+        $(sliderEle[0]).show();
+        if (sliderEle[0].querySelector('css-slider') && typeof sliderEle[0].querySelector('css-slider').initSlider == 'function') {
+          sliderEle[0].querySelector('css-slider').initSlider();
+        }
+      }
+    }
+  }
+  
+}
+document.addEventListener("keydown", (event) => {   
+  if (event.which == 13) {   
+    document.querySelector('.code-click').click();    
+  }
+});
+</script>
+
+<style>
+  .error_code{
+    color:red;
+    width:100%;
+  }
+  .button_disabled{
+    pointer-events: none;
+  }
+  #CollectionProductCount{
+    display:none;
+  }
+  .content_top{
+    padding-top:10px;
+  }
+</style>
+{% schema %}
+  {
+    "name": "t:sections.split-extra-words.sections.header.name",
+    "class": "site-header-container mount-header",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo_src",
+        "label": "t:sections.sidebar.settings.image.label"
+      },
+      {
+        "type": "range",
+        "id": "logo_height",
+        "label": "t:sections.split-extra-words.sections.header.settings.logo_height",
+        "unit": "px",
+        "min": 20,
+        "max": 100,
+        "step": 1,
+        "default": 45
+      },
+      {
+        "type": "link_list",
+        "id": "main_linklist",
+        "label": "t:sections.split-extra-words.sections.header.settings.menu",
+        "default": "main-menu"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_search",
+        "label": "t:sections.sidebar.settings.search.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "sticky_header",
+        "label": "t:sections.local-extra-words.sections.header.settings.sticky.label",
+        "info": "t:sections.local-extra-words.sections.header.settings.sticky.info",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "t:sections.local-extra-words.sections.main-header.settings.mobile.header_info_blocks.header",
+        "info": "t:sections.local-extra-words.sections.main-header.settings.mobile.header_info_blocks.label_1"
+      },
+      {
+        "type": "select",
+        "id": "select_header_actions_on_mobile",
+        "label": "Choose an option",
+        "options": [
+          {
+            "value": "no",
+            "label": "Don't show"
+          },
+          {
+            "value": "show_on_homepage",
+            "label": "Show only on homepage"
+          },
+          {
+            "value": "show_always",
+            "label": "Show always"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "t:sections.local-extra-words.sections.main-header.settings.mobile.name",
+        "info": "t:sections.local-extra-words.sections.main-header.settings.mobile.info"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_header_actions",
+        "label": "t:sections.local-extra-words.sections.main-header.settings.mobile.header_actions",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_locale_selector",
+        "label": "t:sections.footer.settings.language_selector_show.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_country_selector",
+        "label": "t:sections.footer.settings.country_selector_show.label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_social_icons",
+        "label": "t:sections.local-extra-words.sections.announcement-bar.settings.social.label",
+        "default": true
+      }
+    ],
+    "blocks": [
+      {
+        "type": "info",
+        "name": "t:sections.local-extra-words.sections.header.blocks.info.name",
+        "limit": 2,
+        "settings": [
+          {
+            "type": "text",
+            "id": "caption",
+            "label": "t:sections.local-extra-words.sections.headings.caption",
+            "default": "Write some information"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "t:sections.local-extra-words.sections.headings.title",
+            "default": "About your brand"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "t:sections.image-with-text.blocks.image.settings.url.label"
+          },
+          {
+            "type": "select",
+            "id": "link_type",
+            "label": "t:sections.local-extra-words.sections.header.blocks.info.link_type.label",
+            "options": [
+              {
+                "value": "_blank",
+                "label": "t:sections.local-extra-words.sections.header.blocks.info.link_type.option__3"
+              },
+              {
+                "value": "_self",
+                "label": "t:sections.local-extra-words.sections.header.blocks.info.link_type.option__2"
+              }
+            ],
+            "default": "_self"
+          },
+          {
+            "type": "select",
+            "id": "icon",
+            "label": "t:sections.text-columns-with-icons.blocks.icon.settings.icon.label",
+            "info": "t:sections.local-extra-words.sections.text-columns-with-icons.blocks.select_icon.info",
+            "options": [
+              {
+                "value": "no-icon",
+                "label": "No icon"
+              },
+              {
+                "value": "earth-globe",
+                "label": "Earth globe",
+                "group": "Business"
+              },
+              {
+                "value": "favorite",
+                "label": "Favorite",
+                "group": "Business"
+              },
+              {
+                "value": "flag",
+                "label": "Flag",
+                "group": "Business"
+              },
+              {
+                "value": "helpline",
+                "label": "Helpline",
+                "group": "Business"
+              },
+              {
+                "value": "like-hand",
+                "label": "Like hand",
+                "group": "Business"
+              },
+              {
+                "value": "map-marker",
+                "label": "Map marker",
+                "group": "Business"
+              },
+              {
+                "value": "security-shield",
+                "label": "Security shield",
+                "group": "Business"
+              },
+              {
+                "value": "star",
+                "label": "Star",
+                "group": "Business"
+              },
+              {
+                "value": "appointment",
+                "label": "Appointment",
+                "group": "Commerce"
+              },
+              {
+                "value": "archive-box",
+                "label": "Archive box",
+                "group": "Commerce"
+              },
+              {
+                "value": "box",
+                "label": "Box",
+                "group": "Commerce"
+              },
+              {
+                "value": "checkout-cart",
+                "label": "Checkout cart",
+                "group": "Commerce"
+              },
+              {
+                "value": "currency",
+                "label": "Currency",
+                "group": "Commerce"
+              },
+              {
+                "value": "delivery",
+                "label": "Delivery",
+                "group": "Commerce"
+              },
+              {
+                "value": "delivery-time",
+                "label": "Delivery time",
+                "group": "Commerce"
+              },
+              {
+                "value": "giftbox",
+                "label": "Giftbox",
+                "group": "Commerce"
+              },
+              {
+                "value": "label",
+                "label": "Label",
+                "group": "Commerce"
+              },
+              {
+                "value": "open-24-hours",
+                "label": "Open 24 hurs",
+                "group": "Commerce"
+              },
+              {
+                "value": "open-box",
+                "label": "Open box",
+                "group": "Commerce"
+              },
+              {
+                "value": "paper-bag",
+                "label": "Paper bag",
+                "group": "Commerce"
+              },
+              {
+                "value": "shipping-truck",
+                "label": "Shipping truck",
+                "group": "Commerce"
+              },
+              {
+                "value": "store",
+                "label": "Store",
+                "group": "Commerce"
+              },
+              {
+                "value": "time",
+                "label": "Time",
+                "group": "Commerce"
+              },
+              {
+                "value": "time-limit",
+                "label": "Time limit",
+                "group": "Commerce"
+              },
+              {
+                "value": "wallet",
+                "label": "Wallet",
+                "group": "Commerce"
+              }
+            ],
+            "default": "no-icon"
+          },
+          {
+            "type": "image_picker",
+            "id": "custom_icon",
+            "label": "t:sections.local-extra-words.sections.header.blocks.info.custom-icon.label",
+            "info": "t:sections.local-extra-words.sections.header.blocks.info.custom-icon.info"
+          }
+        ]
+      },
+      {
+        "type": "store-selector",
+        "name": "t:sections.local-extra-words.sections.header.blocks.store-selector.name",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "paragraph",
+            "content": "t:sections.local-extra-words.sections.header.blocks.store-selector.content"
+          },
+          {
+            "type": "image_picker",
+            "id": "custom_icon",
+            "label": "t:sections.local-extra-words.sections.header.blocks.info.custom-icon.label",
+            "info": "t:sections.local-extra-words.sections.header.blocks.info.custom-icon.info"
+          }
+        ]
+      },
+      {
+        "type": "pincode_show",
+        "name": "Pincode Show",
+        "limit": 1,
+        "settings": [ 
+         {
+            "type": "image_picker",
+            "id": "zipcode_image",
+            "label": "PinCode Image"            
+          },
+          {
+            "type": "text",
+            "id": "zipcode_sub_title",
+            "label": "SubTitle"            
+          },   
+          {
+            "type": "richtext",
+            "id": "zipcode_content",
+            "label": "Content"            
+          },   
+          {
+            "type": "text",
+            "id": "zipcode_title",
+            "label": "Title"            
+          },
+          {
+            "type": "textarea",
+            "id": "zipcode_list",
+            "label": "Pin Code List"            
+          },
+          {
+            "type": "textarea",
+            "id": "zipcode_url",
+            "label": "Hide Menu Link",
+            "info":"Add Menu URL You Want To Hide ex:'/collections/doi,/collections/sandesh'"
+          },
+          {
+            "type": "textarea",
+            "id": "zipcode_handle",
+            "label": "Hide product search page",
+            "info":"Add product handle that You Want To Hide on the search page"
+          },          
+          {
+            "type": "image_picker",
+            "id": "zipcode_icon",
+            "label": "Pin Code Icon"            
+          },
+           {
+            "type": "select",
+            "id": "icon",
+            "label": "t:sections.text-columns-with-icons.blocks.icon.settings.icon.label",
+            "info": "t:sections.local-extra-words.sections.text-columns-with-icons.blocks.select_icon.info",
+            "options": [
+              {
+                "value": "no-icon",
+                "label": "No icon"
+              },
+              {
+                "value": "earth-globe",
+                "label": "Earth globe",
+                "group": "Business"
+              },
+              {
+                "value": "favorite",
+                "label": "Favorite",
+                "group": "Business"
+              },
+              {
+                "value": "flag",
+                "label": "Flag",
+                "group": "Business"
+              },
+              {
+                "value": "helpline",
+                "label": "Helpline",
+                "group": "Business"
+              },
+              {
+                "value": "like-hand",
+                "label": "Like hand",
+                "group": "Business"
+              },
+              {
+                "value": "map-marker",
+                "label": "Map marker",
+                "group": "Business"
+              },
+              {
+                "value": "security-shield",
+                "label": "Security shield",
+                "group": "Business"
+              },
+              {
+                "value": "star",
+                "label": "Star",
+                "group": "Business"
+              },
+              {
+                "value": "appointment",
+                "label": "Appointment",
+                "group": "Commerce"
+              },
+              {
+                "value": "archive-box",
+                "label": "Archive box",
+                "group": "Commerce"
+              },
+              {
+                "value": "box",
+                "label": "Box",
+                "group": "Commerce"
+              },
+              {
+                "value": "checkout-cart",
+                "label": "Checkout cart",
+                "group": "Commerce"
+              },
+              {
+                "value": "currency",
+                "label": "Currency",
+                "group": "Commerce"
+              },
+              {
+                "value": "delivery",
+                "label": "Delivery",
+                "group": "Commerce"
+              },
+              {
+                "value": "delivery-time",
+                "label": "Delivery time",
+                "group": "Commerce"
+              },
+              {
+                "value": "giftbox",
+                "label": "Giftbox",
+                "group": "Commerce"
+              },
+              {
+                "value": "label",
+                "label": "Label",
+                "group": "Commerce"
+              },
+              {
+                "value": "open-24-hours",
+                "label": "Open 24 hurs",
+                "group": "Commerce"
+              },
+              {
+                "value": "open-box",
+                "label": "Open box",
+                "group": "Commerce"
+              },
+              {
+                "value": "paper-bag",
+                "label": "Paper bag",
+                "group": "Commerce"
+              },
+              {
+                "value": "shipping-truck",
+                "label": "Shipping truck",
+                "group": "Commerce"
+              },
+              {
+                "value": "store",
+                "label": "Store",
+                "group": "Commerce"
+              },
+              {
+                "value": "time",
+                "label": "Time",
+                "group": "Commerce"
+              },
+              {
+                "value": "time-limit",
+                "label": "Time limit",
+                "group": "Commerce"
+              },
+              {
+                "value": "wallet",
+                "label": "Wallet",
+                "group": "Commerce"
+              }
+            ],
+            "default": "no-icon"
+          }
+        ]
+      },
+      {
+        "type": "mega-menu",
+        "name": "t:sections.local-extra-words.sections.header.blocks.mega-menu.name",
+        "settings": [
+          {
+            "type": "text",
+            "id": "menu_handle",
+            "label": "t:sections.local-extra-words.sections.header.blocks.mega-menu.settings.menu_handle.label",
+            "info": "t:sections.local-extra-words.sections.header.blocks.mega-menu.settings.menu_handle.info"
+          },
+          {
+            "type": "header",
+            "content": "t:sections.split-extra-words.sections.header.settings.promotional_block.name"
+          },
+          {
+            "type": "checkbox",
+            "id": "show_promotion_block",
+            "label": "t:sections.split-extra-words.sections.header.settings.promotional_block.settings.show.label",
+            "default": false
+          },
+          {
+            "type": "text",
+            "id": "promotion_title",
+            "label": "t:sections.local-extra-words.sections.main-header.settings.promotion_block.title.label",
+            "default": "Great promotion"
+          },
+          {
+            "type": "select",
+            "id": "promotion_title_size",
+            "label": "t:sections.local-extra-words.sections.main-header.settings.promotion_block.title.size",
+            "options": [
+              {
+                "value": "text-size--large",
+                "label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__1.label"
+              },
+              {
+                "value": "text-size--xlarge",
+                "label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__2.label"
+              },
+              {
+                "value": "text-size--heading",
+                "label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__3.label"
+              }
+            ],
+            "default": "text-size--xlarge"
+          },
+          {
+            "type": "text",
+            "id": "promotion_subtitle",
+            "label": "t:sections.local-extra-words.sections.main-header.settings.promotion_block.subtitle.label",
+            "default": "Write all about it"
+          },
+          {
+            "type": "select",
+            "id": "promotion_subtitle_size",
+            "label": "t:sections.local-extra-words.sections.main-header.settings.promotion_block.subtitle.size",
+            "options": [
+              {
+                "value": "text-size--small",
+                "label": "t:sections.local-extra-words.sections.product-card.blocks.text.settings.size.option__1"
+              },
+              {
+                "value": "text-size--regular",
+                "label": "t:sections.local-extra-words.sections.product-card.blocks.text.settings.size.option__2"
+              }
+            ],
+            "default": "text-size--regular"
+          },
+          {
+            "type": "text",
+            "id": "promotion_button_label",
+            "label": "t:sections.local-extra-words.sections.main-header.settings.promotion_block.button.label"
+          },
+          {
+            "type": "select",
+            "id": "promotion_button_size",
+            "label": "t:sections.local-extra-words.sections.main-header.settings.promotion_block.button.size",
+            "options": [
+              {
+                "value": "regular",
+                "label": "t:sections.rich-text.blocks.button.settings.button_size.options__1.label"
+              },
+              {
+                "value": "large",
+                "label": "t:sections.rich-text.blocks.button.settings.button_size.options__2.label"
+              }
+            ],
+            "default": "regular"
+          },
+          {
+            "type": "url",
+            "id": "promotion_button_link",
+            "label": "t:sections.local-extra-words.sections.main-header.settings.promotion_block.button.link"
+          },
+          {
+            "type": "color",
+            "id": "promotion_color_txt",
+            "label": "t:sections.split-extra-words.sections.header.settings.promotional_block.settings.txt_color.label",
+            "default": "#000000"
+          },
+          {
+            "type": "color",
+            "id": "promotion_color_bg",
+            "label": "t:sections.split-extra-words.sections.header.settings.promotional_block.settings.bg_color.label",
+            "default": "#f3f3f3"
+          },
+          {
+            "type": "image_picker",
+            "id": "promotion_image",
+            "label": "t:sections.split-extra-words.sections.header.settings.promotional_block.settings.image.label"
+          }
+        ]
+      }
+    ],
+    "enabled_on": {
+      "groups": ["header"]
+    }
+  }
+{% endschema %}
