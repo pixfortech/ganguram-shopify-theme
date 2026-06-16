@@ -1,0 +1,91 @@
+{%- comment -%}
+  Renders product badges.
+
+  Accepts:
+  - product: {Object} the product object.
+  - target: {Object} the product or variant object (determines badge context).
+  - text_class: {String} additional classes to add to the text.
+
+  Usage:
+  {% render 'product-badges', product: product, target: product, text_class: 'text-center' %}
+{%- endcomment -%}
+
+{%- assign text_class = text_class | default: '' -%}
+
+<div class="product-item__badges {{ text_class }}">
+
+  {%- if target.available == false -%}
+    <span class="product-item__badge product-item__badge--sold"
+      style="background-color: {{ settings.product_card_badge_sold_out_color }}; color: {{ settings.product_card_badge_sold_out_text_color }}"
+    >
+      {{ 'products.grid.sold_out_product' | t }}
+    </span>
+  {%- endif -%}
+
+  {%- if target.compare_at_price > target.price or target.compare_at_price_varies -%}
+
+    {%- liquid
+      if target.compare_at_price_varies or target.price_varies
+        assign compare_at_price = 0
+        assign price = 0
+      else
+        assign compare_at_price = target.compare_at_price
+        assign price = target.price
+      endif
+    -%}
+
+    {%- if target.compare_at_price_varies or target.price_varies -%}
+
+      <span class="product-item__badge product-item__badge--sale"
+        style="background-color: {{ settings.product_card_badge_sale_color }}; color: {{ settings.product_card_badge_sale_text_color }}"
+      >
+        {{ 'products.grid.on_sale_product' | t }}
+      </span>
+
+    {%- elsif compare_at_price > 0 -%}
+
+      <span class="product-item__badge product-item__badge--sale"
+        style="background-color: {{ settings.product_card_badge_sale_color }}; color: {{ settings.product_card_badge_sale_text_color }}"
+      >
+        {%- liquid
+          if settings.product_card_badge_sale_type == 'percentage'
+            assign saved = compare_at_price | minus: price | times: 100.0 | divided_by: compare_at_price | round | prepend: '-' | append: '%'
+            echo saved
+          elsif settings.product_card_badge_sale_type == 'amount'
+            assign saved = compare_at_price | minus: price | money
+            echo 'products.grid.save_amount_html' | t: amount: saved
+          else
+            echo 'products.grid.on_sale_product' | t
+          endif
+        -%}
+      </span>
+
+    {%- endif -%}
+
+  {%- endif -%}
+
+  {%- if settings.product_card_badge_custom_1_tags != blank and product.tags contains settings.product_card_badge_custom_1_tags -%}
+    <span class="product-item__badge product-item__badge--{{ settings.product_card_badge_custom_1_text | handleize }}"
+      style="background-color: {{ settings.product_card_badge_custom_1_color }}; color: {{ settings.product_card_badge_custom_1_text_color }}"
+    >
+      {{ settings.product_card_badge_custom_1_text }}
+    </span>
+  {%- endif -%}
+
+  {%- if settings.product_card_badge_custom_2_tags != blank and product.tags contains settings.product_card_badge_custom_2_tags -%}
+    <span class="product-item__badge product-item__badge--{{ settings.product_card_badge_custom_2_text | handleize }}"
+      style="background-color: {{ settings.product_card_badge_custom_2_color }}; color: {{ settings.product_card_badge_custom_2_text_color }}"
+    >
+      {{ settings.product_card_badge_custom_2_text }}
+    </span>
+  {%- endif -%}
+
+  {%- if settings.product_card_badge_custom_3_tags != blank and product.tags contains settings.product_card_badge_custom_3_tags -%}
+    <span class="product-item__badge product-item__badge--{{ settings.product_card_badge_custom_3_text | handleize }}"
+      style="background-color: {{ settings.product_card_badge_custom_3_color }}; color: {{ settings.product_card_badge_custom_3_text_color }}"
+    >
+      {{ settings.product_card_badge_custom_3_text }}
+    </span>
+  {%- endif -%}
+
+</div>

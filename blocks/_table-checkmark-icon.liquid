@@ -1,0 +1,17 @@
+<div class="table__item gutter--small" {{ block.shopify_attributes }}>
+  <span class="block-checkmark-icon">
+    {%- render 'theme-symbols', icon: 'check' -%}
+  </span>
+</div>
+
+{% schema %}
+{
+  "name": "t:table-block.checkmark",
+  "tag": null,
+  "presets": [
+    {
+      "name": "t:table-block.checkmark"
+    }
+  ]
+}
+{% endschema %}

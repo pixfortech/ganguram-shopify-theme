@@ -1,0 +1,37 @@
+{%- comment -%}
+  Renders pickup availability data for a product variant. 
+  Only used as a data in the compact pickup availability widget, not for display.
+
+  Accepts:
+  - current_variant: {Object} the current product variant object.
+
+  Usage:
+  {%- render 'pickup-availability-data', current_variant: product.selected_or_first_available_variant -%}
+{%- endcomment -%}
+
+{%- assign pick_up_availabilities = current_variant.store_availabilities | where: 'pick_up_enabled', true -%}
+
+{%- for availability in pick_up_availabilities -%}
+  <div class="pickup-availability-alert" data-store="{{ availability.location.name | handleize }}">
+    <span class="alert alert--circle alert--{%- if availability.available -%} success {%- else -%} note {%- endif -%}">
+      {%- if availability.available -%}
+        {{ 'store_availability.compact_widget.available_at_selected_store' | t }}
+      {%- else -%}
+        {{ 'store_availability.compact_widget.unavailable_at_selected_store' | t }}
+      {%- endif -%}
+    </span>
+    <span class="pickup-availability-alert-store" style="display:none">{{ availability.location.name }}</span>
+  </div>
+{%- endfor -%}
+
+<div class="pickup-availability-alert" data-default-unavailable>
+  <span class="alert alert--note alert--circle">
+    {{ 'store_availability.compact_widget.unavailable_at_selected_store' | t }}
+  </span>
+</div>
+
+<div class="pickup-availability-alert" data-default-store>
+  <span class="alert alert--circle alert--blank" onclick="document.getElementById('modal-store-selector')?.show()">
+    {{ 'store_availability.compact_widget.choose_location' | t }}
+  </span>
+</div>

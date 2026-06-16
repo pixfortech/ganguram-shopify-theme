@@ -1,0 +1,112 @@
+<div class="container {% unless section.settings.remove_margin %} container--vertical-space {% endunless %} {% unless section.settings.full_width %} container--large {% else %} container--fullwidth {% endunless %}">
+  {%- render 'section-heading',
+    heading: section.settings.heading,
+    subheading: section.settings.subheading,
+    heading_tag: section.settings.seo_h_tag,
+    layout: section.settings.section_heading_layout
+  -%}
+  {%- liquid
+    for block in section.blocks
+      render block
+    endfor
+  -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.apps.name",
+  "class": "mount-app",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:local-march-update.labels.heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.local-extra-words.sections.headings.heading"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "t:sections.local-extra-words.sections.headings.subheading"
+    },
+    {
+      "type": "select",
+      "id": "section_heading_layout",
+      "label": "t:sections.rich-text.settings.text_alignment.label",
+      "options": [
+        {
+          "value": "section-heading--left",
+          "label": "t:sections.rich-text.settings.text_alignment.options__1.label"
+        },
+        {
+          "value": "section-heading--center",
+          "label": "t:sections.rich-text.settings.text_alignment.options__2.label"
+        }
+      ],
+      "default": "section-heading--left"
+    },
+    {
+      "type": "header",
+      "content": "t:local-march-update.labels.section_design"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "t:sections.image.fullwidth",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_margin",
+      "label": "t:sections.local-extra-words.sections.rich-text.settings.remove_margin.label",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.refactor_words.seo.name"
+    },
+    {
+      "type": "select",
+      "id": "seo_h_tag",
+      "label": "t:sections.refactor_words.seo.label",
+      "info": "t:sections.refactor_words.seo.info",
+      "options": [
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "h4",
+          "label": "H4"
+        },
+        {
+          "value": "span",
+          "label": "span"
+        }
+      ],
+      "default": "h2"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.apps.presets.name",
+      "category": "t:sections-categories.custom"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,67 @@
+<div
+  class="content-group"
+  {{ block.shopify_attributes }}
+  style="gap:var(--gutter-{{ block.settings.spacing }});"
+>
+  {% content_for 'blocks' %}
+</div>
+
+{% schema %}
+{
+  "name": "t:theme_blocks.group.name",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "button"
+    },
+    {
+      "type": "image"
+    },
+    {
+      "type": "caption"
+    },
+    {
+      "type": "product-add-to-cart-button"
+    }
+  ],
+  "settings": [
+    {
+      "type": "select",
+      "id": "spacing",
+      "label": "t:theme_blocks.grid-text.spacing",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:theme_blocks.divider.option_1"
+        },
+        {
+          "value": "regular",
+          "label": "t:theme_blocks.divider.option_2"
+        }
+      ],
+      "default": "small"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:theme_blocks.group.name",
+      "blocks": [
+        {
+          "type": "button",
+          "settings": {
+            "button_label": "Button label",
+            "button_style": "solid"
+          }
+        },
+        {
+          "type": "button",
+          "settings": {
+            "button_label": "Button label",
+            "button_style": "outline"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

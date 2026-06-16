@@ -1,0 +1,86 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "center": false
+      }
+    },
+    "16548462959c9285f9": {
+      "type": "stores-map",
+      "blocks": {
+        "store_QmNhip": {
+          "type": "store",
+          "settings": {
+            "store_name": "My Store",
+            "store_address": "<p>123 John Doe Street<br/>Your Town, YT 12345</p><p> </p><p><strong>Store Hours<br/></strong>Sun: Closed<br/>Mon-Fri: 9:00 - 17:00<br/>Sat: 10:00 - 13:00</p>",
+            "image_aspect_ratio": "1.33333",
+            "store_map_latitude": "46.7834818",
+            "store_map_longitude": "23.5464733",
+            "store_map_link": ""
+          }
+        },
+        "store_mVaqQB": {
+          "type": "store",
+          "settings": {
+            "store_name": "My Store",
+            "store_address": "<p>123 John Doe Street<br/>Your Town, YT 12345</p><p> </p><p><strong>Store Hours<br/></strong>Sun: Closed<br/>Mon-Fri: 9:00 - 17:00<br/>Sat: 10:00 - 13:00</p>",
+            "image_aspect_ratio": "1.33333",
+            "store_map_latitude": "46.7834818",
+            "store_map_longitude": "23.5464733",
+            "store_map_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "store_QmNhip",
+        "store_mVaqQB"
+      ],
+      "settings": {
+        "heading": "",
+        "subheading": "",
+        "section_heading_layout": "section-heading--left",
+        "map_enable": true,
+        "map_zoom": 10,
+        "map_style": "silver",
+        "seo_h_tag": "h2"
+      }
+    },
+    "1656688769870a0366": {
+      "type": "contact-form",
+      "blocks": {
+        "text_9icjX8": {
+          "type": "text",
+          "settings": {
+            "title": "Contact information",
+            "content": "<p>Write some useful information about your business, contact information or links to various FAQ pages.</p>",
+            "seo_h_tag": "h3"
+          }
+        },
+        "text_wVbHyH": {
+          "type": "text",
+          "settings": {
+            "title": "Contact information",
+            "content": "<p>Write some useful information about your business, contact information or links to various FAQ pages.</p>",
+            "seo_h_tag": "h3"
+          }
+        }
+      },
+      "block_order": [
+        "text_9icjX8",
+        "text_wVbHyH"
+      ],
+      "settings": {
+        "heading": "Drop us a line",
+        "show_phone": true,
+        "show_subject": true,
+        "seo_h_tag": "h2"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "16548462959c9285f9",
+    "1656688769870a0366"
+  ]
+}

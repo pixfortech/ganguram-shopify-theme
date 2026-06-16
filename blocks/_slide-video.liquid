@@ -1,0 +1,117 @@
+<div
+  id="element-{{ block.id }}"
+  class="card card--fullwidth {% if section.settings.is_fullwidth %} card--no-radius card--no-borders card--no-shadow {% endif %} js-slider-item"
+  {{ block.shopify_attributes }}
+>
+  {%- liquid
+    unless section.settings.is_auto_height
+      assign is_video_background = true
+    else
+      assign is_video_background = false
+    endunless
+  -%}
+
+  {%- liquid
+    assign block_index = section.blocks | find_index: 'id', block.id
+    if section.index == 1 and block_index < 2
+      assign preload = true
+    else
+      assign preload = false
+    endif
+  -%}
+
+  <style>
+    #video-{{ block.id }} {
+      --color-text-main: {{ block.settings.color_text_main }};
+    }
+  </style>
+
+  {%- unless section.settings.is_auto_height -%}
+    {%- capture sizes -%}
+      sizes="(max-width: 1023px) calc({{ section.settings.mobile_height }} * {{ block.settings.image.aspect_ratio }}),
+        {%- if block.settings.image.aspect_ratio <= 1 -%}
+            calc({{ section.settings.desktop_height }} * {{ block.settings.image.aspect_ratio }})
+        {%- else -%}
+          {%- if section.settings.is_fullwidth -%}
+            100vw
+          {%- else -%}
+            (max-width: {{ settings.theme_max_width }}px) calc(100vw - 20px), {{ settings.theme_max_width }}px
+          {%- endif -%}
+        {%- endif -%}
+      "
+    {%- endcapture -%}
+  {%- else -%}
+    {%- if section.settings.is_fullwidth -%}
+      {%- assign sizes = 'sizes="100vw"' -%}
+    {%- else -%}
+      {%- capture sizes -%}
+        sizes="(max-width: {{ settings.theme_max_width }}px) calc(100vw - 20px), {{ settings.theme_max_width }}px"
+      {%- endcapture -%}
+    {%- endif -%}
+  {%- endunless -%}
+
+  {%- liquid
+    assign block_index = section.blocks | find_index: 'id', block.id
+    render 'video-component', video_file: block.settings.video_file, video_url_id: block.settings.video.id, video_url_type: block.settings.video.type, autoplay_video: block.settings.autoplay, loop_video: block.settings.loop, is_background: is_video_background, class: 'video-component--fit-container js-slider-animation', image: block.settings.image, id: block.id, preload: preload, sizes: sizes
+  -%}
+
+  <script>
+    window.KrownAssetLoader.loadScript('{{ "component-video.js" | asset_url }}');
+  </script>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.local-extra-words.sections.video.name",
+  "tag": null,
+  "settings": [
+    {
+      "id": "video",
+      "type": "video_url",
+      "label": "t:sections.local-extra-words.sections.video.settings.video.label",
+      "accept": ["youtube", "vimeo"],
+      "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+    },
+    {
+      "type": "video",
+      "id": "video_file",
+      "label": "t:video-extra-functions.video_upload.label",
+      "info": "t:video-extra-functions.video_upload.info"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.local-extra-words.sections.video.settings.image.label",
+      "info": "t:video-extra-functions.poster.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "t:video-extra-functions.autoplay.label",
+      "info": "t:video-extra-functions.autoplay.info",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "t:sections.main-product.settings.enable_video_looping.label",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.local-extra-words.sections.headings.custom_colors"
+    },
+    {
+      "type": "color",
+      "id": "color_text_main",
+      "label": "t:sections.split-extra-words.settings_schema.colors.settings.text",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.local-extra-words.sections.video.name"
+    }
+  ]
+}
+{% endschema %}

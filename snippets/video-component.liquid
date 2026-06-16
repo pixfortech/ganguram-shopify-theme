@@ -1,0 +1,147 @@
+{%- comment -%}
+  Renders video block
+
+  Accepts:
+  - video_file: {Object} Shopify self hosted video object.
+  - video_url_id: {Integer} ID of an external video object (YouTube or Vimeo video ID's accepted).
+  - video_url_type: {String} The type of the external video url (YouTube or Vimeo).
+  - image: {Object} Shopify image object (used as fallback or poster when autoplay is turned off).
+  - autoplay_video: {Boolean} autoplay video if true (will mute video and hide controls automatically).
+  - loop_video: {Boolean} loop video if true.
+  - is_background: {Boolean} set to true if video is used as background (needs width/height of container).
+  - show_video_controls: {Boolean} show video controls even if autoplay is enabled.
+  - js_controlled_video: {Boolean} video will be autoplay+muted but controlled by JavaScript (for slider/carousel).
+  - class: {String} additional CSS classes to add to the video component.
+  - id: {String} unique id (can be section id).
+  - title: {String} (alternative) title text for video.
+  - sizes: {String} (optional) sizes attribute for lazy image.
+
+  Usage:
+  {% render 'video-component', video_url: section.settings.video, image: section.settings.image, autoplay_video: true, loop_video: true, id: section.id, title: 'Custom Video' %}
+{%- endcomment -%}
+
+{%- liquid 
+
+  assign video_auto_mode = false
+
+  if autoplay_video or js_controlled_video
+    assign video_auto_mode = true
+  endif
+  
+  assign controls = ""
+  assign muted = ""
+  assign v_muted = ""
+  assign y_muted = ""
+  assign yv_controls = "&controls=0"
+  assign y_loop = ""
+  assign v_loop = ""
+
+  if video_auto_mode
+    assign muted = "muted"
+    assign v_muted = "&muted=1"
+    assign y_muted = "&mute=1"
+  else
+    assign controls = "controls"
+    assign yv_controls = "&controls=1"
+  endif
+
+  if show_video_controls and video_auto_mode
+    assign controls = "controls"
+    assign yv_controls = "&controls=1"
+  endif
+
+  if loop_video
+    assign loop = "loop"
+    assign y_loop = "&loop=1&playlist=" | append: video_url_id
+    assign v_loop = "&loop=1"
+  endif
+
+  assign video_type = video_url_type
+  if video_file != blank
+    assign video_type = "video"
+    assign video_url = video_file.sources[0].url
+  endif
+  if video_type == 'youtube'
+    assign video_url = 'https://www.youtube.com/watch?v=' | append: video_url_id
+  elsif video_type == 'vimeo'
+    assign video_url = 'https://vimeo.com/' | append: video_url_id
+  endif
+
+  if loop_video
+    assign loop = "loop"
+  endif
+
+-%}
+
+ <video-component id="video-{{ id }}" class="video-component {% if is_background %} video-component--background {% endif %} element--border-radius {{  class }}"
+  data-video data-media-type="{{ video_type }}"
+  data-autoplay="{{ autoplay_video }}"
+  {% if video_file and video_file.sources.size > 0 %} style="--aspect-ratio-padding: {{ 100 | divided_by: video_file.aspect_ratio }}%" {% endif %}
+>
+
+  <template>
+    {% if video_file and video_file.sources.size > 0 %}
+      <video autoplay {{ controls }} {{ muted }} {{ loop }} playsinline
+        {% if image %} poster="{{ image | image_url: width: 1200 }}" {% endif %}
+      >
+        {%- for source in video_file.sources -%}{% # theme-check-disable RemoteAsset %}
+          <source src="{{ source.url }}" type="{{ source.mime_type }}">
+        {% # theme-check-enable RemoteAsset %}{%- endfor -%}
+      </video>
+    {%- elsif video_type == 'youtube' and video_file == nil -%}
+      <iframe src="https://www.youtube.com/embed/{{ video_url_id }}?enablejsapi=1{{ y_muted }}{{ yv_controls }}{{ y_loop }}&autoplay=1&playsinline=1&rel=0" class="js-youtube video-component__iframe" allow="autoplay; encrypted-media" allowfullscreen title="{{ title | escape }}"></iframe>
+    {%- elsif video_type == 'vimeo' and video_file == nil -%}
+      <iframe src="https://player.vimeo.com/video/{{ video_url_id }}?autoplay=1{{ v_muted }}{{ yv_controls }}{{ v_loop }}&playsinline=1&rel=0" class="js-vimeo video-component__iframe" allow="autoplay; encrypted-media" allowfullscreen title="{{ title | escape }}"></iframe>
+    {%- endif -%}
+  </template>
+
+  <div class="video-component__container" data-js-video-component-container>
+
+    <a class="video-component__link" 
+      href="{{ video_url }}" 
+      data-js-video-component-link
+      {% if title != blank %} title="{{ title | escape }}" {% endif %}
+      {% if autoplay_video %} tabindex="-1" {% endif %}
+    >
+
+      {%- unless autoplay_video -%}
+        
+        <span class="video-component__play" aria-hidden="true">
+          {%- render 'theme-symbols', icon: 'play' -%}
+        </span> 
+
+        {%- unless image == blank -%}
+          {% # theme-check-disable UnusedAssign %}{%- liquid
+            if preload == blank
+              if section.index == 1
+                assign preload = true
+              else
+                assign preload = false
+              endif
+            endif
+          -%}{% # theme-check-enable UnusedAssign %}
+          <span class="video-component__background" aria-hidden="true">
+            {%- render 'lazy-image', image: image, type: 'background', sizes: sizes, preload: preload -%}
+          </span>
+        {%- else -%}
+          <span class="video-component__background onboarding-svg onboarding-background">
+            <span style="opacity: .5;">{{ 'lifestyle-1' | placeholder_svg_tag }}</span>
+          </span>
+        {%- endunless -%}
+
+      {%- else -%}
+        <span class="video-component__autoplay-poster lazy-image"></span>
+      {%- endunless -%}
+
+    </a>
+
+  </div>
+
+  {%- unless autoplay_video -%}
+    <button class="video-component__close" data-js-video-component-close>
+      <span class="visually-hidden">{{ 'general.accessibility_labels.close' | t }}</span>
+      <span aria-hidden="true" class="exit">{%- render 'theme-symbols', icon: 'close' -%}</span>
+    </button>
+  {%- endunless -%}
+
+</video-component>

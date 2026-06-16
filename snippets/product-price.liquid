@@ -1,0 +1,73 @@
+{%- comment -%}
+  Renders the product price.
+
+  Accepts:
+  - target: {Object} the target from where we extract the price (can be either a product or the selected variant) object.
+  - variant: {Object} the selected product variant object.
+  - show_saving: {Boolean} show saving amount.
+  - class: {String} additional class.
+
+  Usage:
+  {% render 'product-price', target: product, variant: product.selected_or_first_available_variant, show_saving: true, class: 'product-price--highlight' %}
+{%- endcomment -%}
+
+<div class="product-price {{ class }}">
+
+  {%- liquid
+    if settings.show_currency_codes
+      assign iso_code = localization.country.currency.iso_code | prepend: ' ' 
+    endif
+  -%}
+
+  {%- if product_price_varies -%}
+
+    <span class="product-price--original">
+      <span class="visually-hidden">{{ 'general.accessibility_labels.price.price' | t }}:</span>
+      {%- liquid
+        assign price = target.price | money | append: iso_code
+        if target.compare_at_price > target.price or target.compare_at_price_varies
+          echo 'products.grid.on_sale_from_html' | t: price: price 
+        else
+          echo 'products.grid.from_text_html' | t: price: price 
+        endif
+      -%}
+    </span>
+    
+  {%- else -%}
+
+    <span class="product-price--original {{ text_size_class }}">
+      <span class="visually-hidden">
+        {%- liquid
+          if target.compare_at_price > target.price 
+            echo 'general.accessibility_labels.price.sale' | t
+          else
+            echo 'general.accessibility_labels.price.price' | t
+          endif
+        -%}:
+      </span>
+      {{ target.price | money | append: iso_code }}
+    </span>
+    
+    {%- if target.compare_at_price > target.price -%}
+      <del class="product-price--compare">
+        <span class="visually-hidden">{{ 'general.accessibility_labels.price.regular' | t }}:</span>
+        {%- liquid
+          echo target.compare_at_price | money | append: iso_code | prepend: '<span style="text-decoration: line-through;">' | append: '</span>'
+          if show_saving
+            assign saving = target.compare_at_price | minus: target.price | money | append: iso_code
+            echo 'products.page.sales_amount_html' | t: amount: saving | prepend: '<span>' | append: '</span>'
+          endif
+        -%}
+      </del>
+    {%- endif -%}
+
+  {%- endif -%}
+
+  {%- if variant.unit_price_measurement -%}
+    <span class="product-price--unit text-size--regular">
+      <span class="visually-hidden">{{ 'general.accessibility_labels.price.unit' | t }}:</span>
+      {{ variant.unit_price | money_with_currency | unit_price_with_measurement: variant.unit_price_measurement }}
+    </span>
+  {%- endif -%}
+
+</div>

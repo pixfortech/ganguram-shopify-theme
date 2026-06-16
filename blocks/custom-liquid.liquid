@@ -1,0 +1,23 @@
+{%- if block.settings.custom_liquid != blank -%}
+  <div class="block-custom-liquid" id="element-{{ block.id }}">
+    {{ block.settings.custom_liquid }}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.custom-liquid.name",
+  "settings": [
+    {
+      "type": "liquid",
+      "id": "custom_liquid",
+      "label": "t:sections.custom-liquid.name"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.custom-liquid.name"
+    }
+  ]
+}
+{% endschema %}

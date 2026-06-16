@@ -1,0 +1,179 @@
+{%- if section.settings.enable or request.design_mode -%}
+  <modal-box
+    id="exit-intent-popup"
+    class="modal"
+    data-options='
+      {
+        "show": {% unless request.design_mode %} 1 {% else %} 1000 {% endunless %},
+        "appendToBody": true,
+        "frequency": "{{ section.settings.show_repeat }}",
+        "type": "exit_intent_popup",
+        "enabled": {{ section.settings.enable }}
+      }
+    '
+    style="display:none"
+    tabindex="-1"
+    role="dialog"
+    aria-modal="true"
+    data-modal-box
+  >
+    <div class="container--small">
+      <div class="modal-content" id="modal-{{ section.id }}">
+        <div class="modal-heading">
+          <div class="modal-heading__text remove-empty-space">
+            <span class="h4 popup-title">{{ section.settings.title }}</span>
+          </div>
+          <div class="modal-heading__actions">
+            <button class="modal-close" data-js-close>{%- render 'theme-symbols', icon: 'close' -%}</button>
+          </div>
+        </div>
+
+        <div class="rte">
+          {{ section.settings.text }}
+        </div>
+
+        {%- if section.settings.cta_label != blank -%}
+          <div class="increased-spacing">
+            <a
+              href="{{ section.settings.cta_url }}"
+              class="button button--outline button--regular"
+              {% if section.settings.cta_target %}
+                target="_blank"
+              {% endif %}
+            >
+              {{- section.settings.cta_label | escape -}}
+            </a>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <span class="modal-background" data-js-close></span>
+
+    <style>
+      {%- if section.settings.popup_txtcolor != 'rgba(0,0,0,0)' -%}
+        {%- assign popup_txtcolor = section.settings.popup_txtcolor -%}
+        #modal-{{ section.id }},
+        #modal-{{ section.id }} a {
+          color: {{ popup_txtcolor }};
+        }
+        #modal-{{ section.id }} svg path {
+          stroke: {{ popup_txtcolor }};
+        }
+        #modal-{{ section.id }} .button,
+        #modal-{{ section.id }} input {
+          border-color: {{ popup_txtcolor }};
+          color: {{ popup_txtcolor }};
+          background: transparent;
+        }
+        #modal-{{ section.id }} .button--solid {
+          border-color: {{ popup_txtcolor }};
+          color: {{ section.settings.popup_bgcolor }};
+          background: {{ popup_txtcolor }};
+        }
+
+        #modal-{{ section.id }} .button--solid:hover svg path {
+          stroke: {{ section.settings.popup_bgcolor }} ;
+        }
+        #modal-{{ section.id }} input::placeholder {
+          color: {{ popup_txtcolor }};
+        }
+      {%- endif -%}
+
+      {%- if section.settings.popup_bgcolor != 'rgba(0,0,0,0)' -%}
+        #modal-{{ section.id }} {
+          background: {{ section.settings.popup_bgcolor }};
+          border: none;
+        }
+      {%- endif -%}
+    </style>
+  </modal-box>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:settings_schema.exit_intent.exit_intent_popup",
+  "class": "element--has-section-borders mount-exit-intent-popup",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable",
+      "label": "t:sections.popup.settings.enable.label",
+      "default": false
+    },
+    {
+      "type": "paragraph",
+      "content": "t:settings_schema.exit_intent.exit_intent_popup_info"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.local-extra-words.sections.headings.title",
+      "default": "Before you leave"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:sections.rich-text.blocks.text.settings.text.label",
+      "default": "<p>Be the first to know about new collections and exclusive offers.</p>"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "t:sections.local-extra-words.sections.main-header.settings.promotion_block.button.label"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "t:sections.local-extra-words.sections.main-header.settings.promotion_block.button.link"
+    },
+    {
+      "type": "checkbox",
+      "id": "cta_target",
+      "label": "t:sections.local-extra-words.sections.announcement-bar.blocks.content.settings.target",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.popup.settings.functionality.content"
+    },
+    {
+      "type": "select",
+      "id": "show_repeat",
+      "label": "t:sections.popup.settings.frequency.label",
+      "options": [
+        {
+          "value": "day",
+          "label": "t:sections.popup.settings.frequency.options__1.label"
+        },
+        {
+          "value": "week",
+          "label": "t:sections.popup.settings.frequency.options__2.label"
+        },
+        {
+          "value": "once",
+          "label": "t:sections.popup.settings.frequency.options__3.label"
+        }
+      ],
+      "default": "week"
+    },
+    {
+      "type": "header",
+      "content": "t:settings_schema.colors.name"
+    },
+    {
+      "type": "color",
+      "id": "popup_bgcolor",
+      "label": "t:sections.announcement-bar.settings.bar_bgcolor.label",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "popup_txtcolor",
+      "label": "t:sections.announcement-bar.settings.bar_txtcolor.label",
+      "default": "#ffffff"
+    }
+  ]
+}
+{% endschema %}

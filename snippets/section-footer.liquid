@@ -1,0 +1,19 @@
+{% comment %}
+  Renders section footer.
+
+  Accepts:
+  - button: {Mixed} Used to check if button is present. Can be String or Boolean.
+  - button_label: {String} button label (can be either a translation key or a string).
+  - link: {String} button link.
+
+  Usage:
+  {% render 'section-footer', button: 'Button text', button_label: 'general.button.add_to_cart', link: '' %}
+{% endcomment %}
+
+{%- unless button == blank or layout contains 'left' -%}
+  <div class="gutter-top--large align-content align-content--horizontal-center">
+    <a href="{{ link }}" {% if custom_button_target %} target="_blank" {% endif %} class="button button--regular button--outline">
+      {{ button_label | escape }}
+    </a>
+  </div>
+{%- endunless -%}

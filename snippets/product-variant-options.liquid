@@ -1,0 +1,157 @@
+{%- comment -%}
+  Renders product variant options
+
+  Accepts:
+  - product: {Object} the product object.
+  - option: {Object} the product option object.
+  - current_variant: {Object} the current selected variant.
+  - type: {String} type of the option (select or radio).
+  - default_to_first_variant: {Boolean} if true, the first available variant will be selected by default.
+  - reload_product: {String} how to handle combined product's reload (can be 'page' or null).
+  - no_history: {Boolean} if true, URL will not be updated on variant change.
+  - id: {String} unique identifier for the option id's.
+  - metaobject_swatch_metafields: {String} comma-separated product metafield references for metaobject swatches (e.g. "custom.materials_list, custom.colors"). Metaobjects must have 'Label', 'Image', 'Color' fields. Optional single-line field 'Option name': when set, must equal the product option's display name (option.name) so duplicate labels across different options resolve to the correct swatch.
+
+  Usage:
+  {% render 'product-variant-options', product: product, option: option, type: 'select', id: section.id, default_to_first_variant: true, reload_product: product.url %}
+{%- endcomment -%}
+
+{%- assign id = id | default: section.id -%}
+
+{%- liquid
+  assign mo_refs = nil
+  if metaobject_swatch_metafields != blank
+    assign mo_refs = metaobject_swatch_metafields | split: ','
+  endif
+-%}
+
+{%- for value in option.values -%}
+
+  {%- capture option_id -%}{{ product.handle }}-option-{{ option.name | escape | downcase | strip | handleize }}-{{ forloop.index }}-{{ id }}{%- endcapture -%} 
+  {%- capture option_name -%}product-{{ option.name | escape | downcase | strip | handleize }}-{{ id }}{%- endcapture -%}
+
+  {%- capture data_input_set -%}
+    data-available="{{ value.available }}"
+    {% if value.product_url %} data-product-url="{{ value.product_url }}" {% if reload_product != blank %} data-product-custom-url="{{ reload_product }}" {% endif %} {% endif %}
+    data-option-value-id="{{ value.id }}"
+    data-variant-id="{{ value.variant.id }}"
+    {% if option.selected_value == value %} data-selected {% endif %}
+  {%- endcapture -%}
+
+  {%- liquid
+
+    assign unavailable_class = ""
+    unless value.available
+      assign unavailable_class = "disabled"
+    endunless 
+
+    if value.product_url != blank
+      assign unavailable_class = ""
+    endif
+
+    assign first_variant_product_url = false
+    if value.product_url
+      assign first_variant_product_url = true
+    endif
+
+  -%}
+
+  {%- if type == 'select' -%}
+
+    <option class="product-variant-value" value="{{ value | escape }}" 
+      {% if default_to_first_variant and option.selected_value == value %}selected{% endif %} 
+      {% if default_to_first_variant == false and first_variant_product_url and option.selected_value == value %} data-silent-selected {% endif %}
+      {{ data_input_set }}
+    >
+      {{ value | escape }}
+    </option>
+
+  {%- else  -%} 
+
+    <div class="product-variant__item {{ unavailable_class }}">
+                  
+      <input type="radio" name="{{ option_name }}" id="{{ option_id }}" value="{{ value | escape }}" 
+        {% if default_to_first_variant and option.selected_value == value %}checked{% endif %} 
+        {% if default_to_first_variant == false and first_variant_product_url and option.selected_value == value %} data-silent-selected {% endif %}
+        class="product-variant__input product-variant-value {{ unavailable_class }}"
+        {{ data_input_set }}
+      >
+
+      <label for="{{ option_id }}" class="product-variant__label">
+
+        {%- liquid
+          assign mo_image = nil
+          assign mo_color = nil
+          if mo_refs != nil
+            for mo_ref in mo_refs
+              assign mo_ref_trimmed = mo_ref | strip
+              assign mo_ref_parts = mo_ref_trimmed | split: '.'
+              assign mo_entries = product.metafields[mo_ref_parts[0]][mo_ref_parts[1]].value
+              assign found_match = false
+
+              if mo_entries != blank and mo_entries.size > 0
+                for entry in mo_entries
+                  assign entry_label = entry.label | strip
+                  if entry_label == value.name
+                    assign mo_image = entry.image.value | default: entry.image
+                    assign mo_color = entry.color.value | default: entry.color
+                    assign found_match = true
+                    break
+                  endif
+                endfor
+              endif
+              if found_match
+                break
+              endif
+            endfor
+          endif
+        -%}
+
+        {%- if value.swatch.image -%}
+          {%- assign color_swatch_image = value.swatch.image -%}
+          <img class="product-variant__item-swatch product-variant__item-swatch--color"
+            src="{{ color_swatch_image | image_url: width: 28, height: 28, crop: 'center' }}"
+            srcset="
+              {{ color_swatch_image | image_url: width: 28, height: 28, crop: 'center' }} 28w,
+              {{ color_swatch_image | image_url: width: 56, height: 56, crop: 'center' }} 56w,
+              {{ color_swatch_image | image_url: width: 84, height: 84, crop: 'center' }} 84w
+            "
+            sizes="30px" width="30" height="30"
+            loading="lazy"
+            alt="{{ color_swatch_image.alt | escape }}"
+          />
+
+        {%- elsif value.swatch.color -%}
+
+          {%- assign color_swatch_background = 'rgb(' | append: value.swatch.color.rgb | append: ')' -%}
+          <span class="product-variant__item-swatch product-variant__item-swatch--image" style="background-color:{{ color_swatch_background }}"></span>
+
+        {%- elsif mo_image -%}
+
+          <img class="product-variant__item-swatch product-variant__item-swatch--color"
+            src="{{ mo_image | image_url: width: 28, height: 28, crop: 'center' }}"
+            srcset="
+              {{ mo_image | image_url: width: 28, height: 28, crop: 'center' }} 28w,
+              {{ mo_image | image_url: width: 56, height: 56, crop: 'center' }} 56w,
+              {{ mo_image | image_url: width: 84, height: 84, crop: 'center' }} 84w
+            "
+            sizes="30px" width="30" height="30"
+            loading="lazy"
+            alt="{{ value | escape }}"
+          />
+
+        {%- elsif mo_color -%}
+
+          <span class="product-variant__item-swatch product-variant__item-swatch--image" style="background-color:{{ mo_color }}"></span>
+
+        {%- endif -%}
+
+        {{ value | escape }}
+
+      </label>
+
+    </div>
+
+  {%- endif -%}
+
+{%- endfor -%}

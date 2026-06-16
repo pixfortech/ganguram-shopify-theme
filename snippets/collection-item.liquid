@@ -1,0 +1,83 @@
+{%- comment -%}
+  Renders collection item
+
+  Accepts:
+  - collection: {Object} collection object.
+  - image: {Object} custom image object for thumbnail (fallbacks to collection featured image).
+  - image_aspect_ratio: {String} image aspect ratio (needs to be a valid width/height ratio).
+	- sizes: {String} image sizes attribute.
+  - index: {Integer} index of the article in the list (can be forloop.index).
+	
+  Usage:
+  {% render 'collection-item', collection: collection, image_aspect_ratio: '1', sizes: 'sizes="250px"', index: forloop.index %}
+{%- endcomment -%}
+
+<div class="card js-collection-item text-align--center" {{ shopify_attributes }}>
+
+	{%- capture element_attributes -%}
+		class="card__whole-link collection-item--{{ style }}" style="position:relative !important;"
+	{%- endcapture -%}
+
+	{%- if collection.url != "" -%}
+		<a {{ element_attributes }} href="{{ collection.url }}">
+	{%- else -%}
+		<div {{ element_attributes }}>
+	{%- endif -%}
+	
+		<div 
+			class="card__image border-radius-top"
+			style="padding-top:{{ 100 | divided_by: section.settings.image_aspect_ratio }}%;--aspect-ratio:{{ section.settings.image_aspect_ratio }}"
+		>
+			{%- liquid
+				unless image == blank
+					assign collection_image = image
+				else
+					assign collection_image = collection.featured_image
+				endunless
+			-%}
+	
+			{%- unless collection_image == blank %}
+				{%- liquid
+          if section.index == 1 and index <= 3
+            assign preload = true
+          else
+            assign preload = false
+          endif
+					if style == 'card'
+						render 'lazy-image', image: collection_image, type: 'background', alt: collection.title, sizes: sizes, ratio: section.settings.image_aspect_ratio, class: 'lazy-image--animation element--border-radius-top', preload: preload 
+					else
+						render 'lazy-image-small', image: collection_image, alt: collection.title, sizes: 'sizes="100px"', aspect_ratio: section.settings.image_aspect_ratio, class: 'lazy-image--animation lazy-image--background', preload: preload 
+					endif
+				-%}
+			{%- else -%}
+				{%- assign no = index | modulo: 6 | plus: 1 -%}
+				{{ 'collection-X' | replace: 'X', no | placeholder_svg_tag }}
+			{%- endunless -%}
+		</div>
+
+		<div class="card__text gutter--small spacing--xsmall remove-empty-space">
+			<span class="text-line-height--small">
+				<span class="{% if title_size == 'small' %} text-size--regular text-animation--underline-thin {% else %} h5 {% endif %}">
+					{%- liquid
+						unless collection.title == blank
+							echo collection.title | escape
+						else
+							echo 'general.onboarding.collection_title' | t
+						endunless
+					-%}
+				</span>
+				{%- if show_count -%}
+					<span class="text-size--small text-color--opacity" style="display: block; margin-top: 8px;">
+						{{ 'collections.product_count_simple' | t: count: collection.all_products_count }}
+					</span>
+				{%- endif -%}
+			</span>
+		</div>
+
+	{%- if collection.url != "" -%}
+		</a>
+	{%- else -%}
+		</div>
+	{%- endif -%}
+
+</div>

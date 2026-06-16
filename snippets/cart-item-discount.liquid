@@ -1,0 +1,10 @@
+<span class="pill">
+  <span class="pill__icon" aria-hidden="true">{%- render 'theme-symbols', icon: 'discount' -%}</span>
+  <span class="visually-hidden">{{ 'cart.discount' | t }}</span>
+  <span class="pill__label text-size--xsmall" style="line-height:1">{{ discount }}</span>
+  {%- if remove -%}
+    <button type="button" class="pill__icon pill__icon--remove" aria-label="{{ 'cart.remove_discount_code' | t: code: discount }}" data-js-discount="{{ discount }}">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" focusable="false" aria-hidden="true"><path stroke-linecap="round" d="M2.5 2.5 7 7m4.5 4.5L7 7m0 0 4.5-4.5M7 7l-4.5 4.5"></path></svg>
+    </button>
+  {%- endif -%}
+</span>

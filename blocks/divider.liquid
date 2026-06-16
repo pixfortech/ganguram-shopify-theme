@@ -1,0 +1,91 @@
+<span
+  class="divider divider--{{ block.settings.width }}"
+  aria-hidden="true"
+  style="
+    --divider-height: {{ block.settings.height }}px;
+    --divider-color: {{ block.settings.color }};
+    --divider-style: {{ block.settings.style }};
+  "
+  >&nbsp;</span
+>
+
+{% schema %}
+{
+  "name": "t:divider.label",
+  "settings": [
+    {
+      "type": "range",
+      "id": "height",
+      "label": "t:divider.divider_height",
+      "unit": "px",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "t:theme_blocks.divider.divider_width",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:theme_blocks.divider.option_1"
+        },
+        {
+          "value": "medium",
+          "label": "t:theme_blocks.divider.option_2"
+        },
+        {
+          "value": "large",
+          "label": "t:theme_blocks.divider.option_3"
+        },
+        {
+          "value": "full",
+          "label": "t:theme_blocks.divider.option_4"
+        }
+      ],
+      "default": "small"
+    },
+    {
+      "type": "header",
+      "content": "t:divider.divider_design"
+    },
+    {
+      "type": "color",
+      "id": "color",
+      "label": "t:divider.divider_color",
+      "default": "#000000"
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "t:sections.local-extra-words.sections.main-product.blocks.pickup_availability.settings.style",
+      "options": [
+        {
+          "value": "solid",
+          "label": "t:divider.divider_style_solid"
+        },
+        {
+          "value": "dotted",
+          "label": "t:divider.divider_style_dotted"
+        },
+        {
+          "value": "dashed",
+          "label": "t:divider.divider_style_dashed"
+        },
+        {
+          "value": "double",
+          "label": "t:divider.divider_style_double"
+        }
+      ],
+      "default": "solid"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:divider.label"
+    }
+  ]
+}
+{% endschema %}

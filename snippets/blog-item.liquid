@@ -1,0 +1,147 @@
+{%- comment -%}
+  Renders blog item
+
+  Accepts:
+  - article: {Object} article object.
+  - section_blocks: {array} section.blocks array (to access block settings).
+  - show_image: {Boolean} if true, show article featured image (fallbacks to SVG placeholder).
+  - image_aspect_ratio: {String} image aspect ratio (needs to be a valid width/height ratio).
+  - emphasize_first: {Boolean} if true, first article in the grid will have a larger display.
+  - type: {String} type of the article (page or grid).
+  - index: {Integer} index of the article in the list (can be forloop.index).
+  
+  Usage:
+  {% render 'blog-item', article: article, section_blocks: section.blocks, show_image: true, image_aspect_ratio: '1', emphasize_first: true, type: 'section', index: forloop.index %}
+{%- endcomment -%}
+
+<div class="blog-item 
+  {% if type == 'page' %} 
+    spacing--large 
+  {% elsif emphasize_first and index == 1 %} 
+    blog-item--emphasized spacing--small
+  {% else %} 
+    spacing--small 
+  {% endif %} 
+remove-empty-space"> 
+
+  {%- if show_image -%}
+    <a class="blog-item__image element--has-border element--border-radius increased-spacing" href="{{ article.url }}" title="{{ article.title | escape }}">
+
+      {%- if article.image == blank -%}
+        {%- render 'lazy-svg', image: 'product-1', ratio: image_aspect_ratio, class: 'svg-placeholder' -%}
+      {%- else -%}
+
+        {%- if type == 'page' -%}
+          {%- capture sizes -%}
+            sizes="(max-width: 767px) 100vw, (max-width: {{ settings.theme_max_width }}px) 50vw, calc({{ settings.theme_max_width }}px / 2)"
+          {%- endcapture -%}
+        {%- else -%}
+          {%- if emphasize_first -%}
+            {%- if index == 1 -%}
+              {%- capture sizes -%}
+                sizes="(max-width: 767px) 100vw, (max-width: {{ settings.theme_max_width }}px) 50vw, calc({{ settings.theme_max_width }}px / 2)"
+              {%- endcapture -%}
+            {%- else -%} 
+              {%- capture sizes -%}
+                sizes="(max-width: 767px) 100vw, (max-width: {{ settings.theme_max_width }}px) 25vw, calc({{ settings.theme_max_width }}px / 4)"
+              {%- endcapture -%}
+            {%- endif -%}
+          {%- else -%} 
+            {%- capture sizes -%}
+              sizes="(max-width: 767px) 100vw, (max-width: {{ settings.theme_max_width }}px) 33vw, calc({{ settings.theme_max_width }}px / 3)"
+            {%- endcapture -%}
+          {%- endif -%}
+        {%- endif -%}
+
+        {%- liquid
+          if section.index == 1 and index <= 2
+            assign preload = true
+          else
+            assign preload = false
+          endif
+        -%}
+
+        {%- render 'lazy-image', image: article.image.src, alt: article.title, ratio: image_aspect_ratio, class: 'lazy-image--animation element--border-radius', sizes: sizes, preload: preload -%}
+
+      {%- endif -%}
+
+    </a>
+  {%- endif -%}
+  
+  {%- for block in section.blocks -%}
+    
+    {%- case block.type -%}
+
+      {%- when 'title' -%}
+        <div class="blog-item__title-holder" {{ block.shopify_attributes }}>
+          <a href="{{ article.url }}" title="{{ article.title | escape }}">
+            <span class="{% if type == 'page' %} text-size--xlarge text-line-height--small {% else %} text-size--large {% endif %} text-weight--bold text-animation--underline">
+              {%- liquid
+                unless blank_article
+                  echo article.title
+                else
+                  echo 'general.onboarding.article_title' | t
+                endunless
+              -%}
+            </span>
+          </a>
+        </div>
+
+      {%- when 'summary' -%}
+        <div class="blog-item__excerpt" {{ block.shopify_attributes }}>
+          <span class="element--is-inline-block">
+            {%- liquid
+              if article.excerpt.size > 0
+                echo article.excerpt | strip_html
+              else
+                echo article.content | strip_html | truncatewords: block.settings.excerpt_limit, "..."
+              endif
+            -%}
+          </span>
+        </div>
+
+      {%- when 'info' -%}
+        <div class="blog-item__meta text-color--opacity" {{ block.shopify_attributes }}>
+
+          {%- if block.settings.show_author -%}
+            <span class="blog-item__author text-size--small">
+              {%- liquid
+                unless blank_article
+                  echo article.author | escape
+                else  
+                  echo 'general.onboarding.author_name' | t
+                endunless 
+              -%}
+            </span>
+          {%- endif -%}
+
+          {%- if block.settings.show_date -%}
+            <span class="blog-item__date text-size--small">
+              {%- liquid 
+                unless blank_article
+                  echo article.published_at | date: format: 'date' 
+                else 
+                  echo 'Feb 28 2020' | date: format: 'date'
+                endunless
+              -%}
+            </span>
+          {%- endif -%}
+
+          {%- if block.settings.show_comments_number -%}
+            <span class="blog-item__date text-size--small">
+              {%- liquid
+                unless blank_article
+                  echo 'blog.grid.comments_count' | t: count: article.comments_count
+                else
+                  echo 'general.onboarding.seven_comments' | t
+                endunless
+              -%}
+            </span>
+          {%- endif -%}
+
+        </div>
+    {%- endcase -%}
+
+  {%- endfor -%}
+
+</div>

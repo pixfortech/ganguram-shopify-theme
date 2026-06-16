@@ -1,0 +1,318 @@
+{{ 'section-main-article.css' | asset_url | stylesheet_tag }}
+{{ 'component-blog-item.css' | asset_url | stylesheet_tag }}
+
+{%- for block in section.blocks -%}
+  {%- liquid
+    if forloop.first
+      assign container_space_class = 'container--vertical-space-small'
+    else
+      assign container_space_class = 'container--vertical-space-xsmall'
+    endif
+  -%}
+
+  {%- case block.type -%}
+    {%- when 'title' -%}
+      <div class="container container--medium {{ container_space_class }} main-page" {{ block.shopify_attributes }}>
+        <header>
+          <div class="rte article">
+            <h1 class="h2">{{ article.title | escape }}</h1>
+            <div class="blog-item__meta">
+              {%- if block.settings.blog_show_date -%}
+                <span class="blog-item__date text-size--small">{{ article.published_at | date: format: 'date' }}</span>
+              {%- endif -%}
+
+              {%- if block.settings.blog_show_author -%}
+                <span class="blog-item__author text-size--small">{{ article.author | escape }}</span>
+              {%- endif -%}
+
+              {%- if block.settings.blog_show_comments -%}
+                <span class="blog-item__date text-size--small">
+                  {{- 'blog.grid.comments_count' | t: count: article.comments_count -}}
+                </span>
+              {%- endif -%}
+            </div>
+          </div>
+        </header>
+      </div>
+
+    {%- when 'featured_image' -%}
+      {%- if article.image -%}
+        <div
+          class="container--{% if block.settings.is_fullwidth %}large{% else %}medium{% endif %} {{ container_space_class }} container--no-margin-if-not-first"
+          {{ block.shopify_attributes }}
+        >
+          <div class="article">
+            {%- capture sizes -%}
+              sizes="(max-width: {{ settings.theme_max_width }}px) calc(100vw - 20px), {{ settings.theme_max_width | minus: 100 }}px"
+            {%- endcapture -%}
+            <div class="article__featured-image element--border-radius">
+              {%- liquid
+                if block.settings.aspect_ratio == 'natural'
+                  assign aspect_ratio = article.image.aspect_ratio
+                else
+                  assign aspect_ratio = block.settings.aspect_ratio
+                endif
+                render 'lazy-image', image: article.image.src, alt: article.title, ratio: aspect_ratio, sizes: sizes, preload: true
+              %}
+            </div>
+          </div>
+        </div>
+      {%- endif -%}
+
+    {%- when 'content' -%}
+      <div class="container container--medium {{ container_space_class }} main-page" {{ block.shopify_attributes }}>
+        <div class="article {% if block.settings.has_social_buttons or block.settings.has_tags %} article--indent-for-social {% endif %}">
+          {%- if block.settings.has_social_buttons or block.settings.has_tags -%}
+            <div class="article__meta">
+              <div class="article__meta__sticky">
+                {%- if block.settings.has_social_buttons -%}
+                  <div class="article__meta-social">
+                    <span class="text-size--large">{{ 'general.sharing.title' | t }}</span>
+                    <div class="social-icons gutter-top--small">
+                      {%- liquid
+                        assign share_link = shop.url | append: article.url
+                        assign share_title = article.title | url_param_escape
+                        if article.image
+                          assign share_image = article.image | image_url: width: 1024
+                        else
+                          assign share_image = page_image | image_url: width: 1024
+                        endif
+                      -%}
+
+                      {%- if block.settings.share_on_facebook -%}
+                        <a
+                          href="//www.facebook.com/sharer.php?u={{ share_link }}"
+                          target="_blank"
+                          title="{{ 'general.accessibility_labels.share.facebook' | t }}"
+                        >
+                          <span aria-hidden="true" class="icon">{% render 'theme-symbols', icon: 'facebook' %}</span>
+                          <span class="visually-hidden">{{ 'general.sharing.facebook' | t }}</span>
+                        </a>
+                      {%- endif %}
+
+                      {%- if block.settings.share_on_x -%}
+                        <a
+                          href="//twitter.com/intent/tweet?text={{ share_title }}&amp;url={{ share_link }}"
+                          target="_blank"
+                          title="{{ 'general.accessibility_labels.share.twitter' | t }}"
+                        >
+                          <span aria-hidden="true" class="icon">{% render 'theme-symbols', icon: 'twitter' %}</span>
+                          <span class="visually-hidden">{{ 'general.sharing.twitter' | t }}</span>
+                        </a>
+                      {%- endif -%}
+
+                      {%- if block.settings.share_on_pinterest -%}
+                        <a
+                          href="//pinterest.com/pin/create/button/?url={{ share_link }}&amp;media={{ share_image }}&amp;description={{ share_title }}"
+                          target="_blank"
+                          title="{{ 'general.accessibility_labels.share.pinterest' | t }}"
+                        >
+                          <span aria-hidden="true" class="icon">{% render 'theme-symbols', icon: 'pinterest' %}</span>
+                          <span class="visually-hidden">{{ 'general.sharing.pinterest' | t }}</span>
+                        </a>
+                      {%- endif -%}
+
+                      {%- if block.settings.custom_share_link -%}
+                        <share-link
+                          class="share-link align-content align-content--vertical-middle"
+                          data-link-info="{{ share_title | url_decode }}"
+                          data-link-url="{{ share_link }}"
+                          data-link-text-copy="{{ 'general.sharing.copy_to_clipboard' | t }}"
+                          data-link-text-copied="{{ 'general.sharing.url_copied_to_clipboard' | t }}"
+                        >
+                          <a
+                            href="#"
+                            target="_blank"
+                            title="{{ 'general.sharing.copy_to_clipboard' | t }}"
+                            class="text-with-icon text-with-icon--small"
+                          >
+                            <span class="visually-hidden">{{ 'products.page.share_link' | t }}</span>
+                            <span aria-hidden="true" class="text-with-icon__icon">
+                              {%- render 'theme-symbols', icon: 'share' -%}
+                            </span>
+                          </a>
+                        </share-link>
+                        <script src="{{ 'component-share-link.js' | asset_url }}" defer></script>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                {%- endif -%}
+
+                {%- if block.settings.has_tags -%}
+                  {%- unless article.tags == blank -%}
+                    <div class="article__meta-tags">
+                      <span class="text-size--large">{{ 'blog.grid.tags_label' | t }}</span>
+                      <div class="tags gutter-top--small">
+                        {% for tag in article.tags %}
+                          <a class="button button--outline button--small" href="{{ blog.url }}/tagged/{{ tag.handle }}">
+                            {{- tag -}}
+                          </a>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  {%- endunless -%}
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endif -%}
+
+          <div class="article__content rte">
+            {{ article.content }}
+          </div>
+
+          {%- if block.settings.enhance_product_links -%}
+            <script>
+              document.querySelectorAll('.article__content a[href]').forEach((link, i) => {
+                if (link.getAttribute('href').includes('products')) {
+                  const enhancedLink = document.createElement('quick-view-product');
+                  enhancedLink.innerHTML = `<a href="${link.href}" data-js-product-add-to-cart data-id="product-{{ block.id }}-${i}">
+                    ${link.textContent}
+                  </a>`;
+                  link.parentNode.replaceChild(enhancedLink, link);
+                }
+              });
+            </script>
+          {%- endif -%}
+        </div>
+      </div>
+  {%- endcase -%}
+{%- endfor -%}
+
+{% schema %}
+{
+  "name": "t:sections.local-extra-words.sections.main-article.name",
+  "class": "article",
+  "blocks": [
+    {
+      "type": "featured_image",
+      "name": "t:sections.main-article.blocks.featured_image.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "aspect_ratio",
+          "label": "t:settings_schema.product-grid.settings.aspect_ratio.label",
+          "options": [
+            {
+              "value": "natural",
+              "label": "t:sections.gallery.settings.aspect_ratio.options__5.label",
+              "group": "t:sections.gallery.settings.aspect_ratio.options__5.group"
+            },
+            {
+              "value": "1.5",
+              "label": "t:sections.local-extra-words.settings_schema.aspect_ratio.landscape.label",
+              "group": "t:sections.gallery.settings.aspect_ratio.options__1.group"
+            },
+            {
+              "value": "1.33333",
+              "label": "t:sections.gallery.settings.aspect_ratio.options__1.label",
+              "group": "t:sections.gallery.settings.aspect_ratio.options__1.group"
+            },
+            {
+              "value": "1",
+              "label": "t:sections.gallery.settings.aspect_ratio.options__2.label",
+              "group": "t:sections.gallery.settings.aspect_ratio.options__1.group"
+            },
+            {
+              "value": "0.83333",
+              "label": "t:sections.gallery.settings.aspect_ratio.options__3.label",
+              "group": "t:sections.gallery.settings.aspect_ratio.options__1.group"
+            }
+          ],
+          "default": "natural"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_fullwidth",
+          "label": "t:sections.local-extra-words.sections.rich-text.settings.fullwidth.label",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "name": "t:sections.main-article.blocks.title.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "blog_show_date",
+          "label": "t:sections.main-article.blocks.title.settings.blog_show_date.label",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "blog_show_author",
+          "label": "t:sections.main-article.blocks.title.settings.blog_show_author.label",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "blog_show_comments",
+          "label": "t:sections.main-article.blocks.title.settings.blog_show_comments.label",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "content",
+      "name": "t:sections.main-article.blocks.content.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "has_tags",
+          "label": "t:sections.local-extra-words.sections.main-article.settings.show_tags",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "enhance_product_links",
+          "label": "t:sections.local-extra-words.sections.main-article.settings.enhance_product_links.label",
+          "info": "t:sections.local-extra-words.sections.main-article.settings.enhance_product_links.info",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "t:sections.main-article.blocks.social_sharing.name"
+        },
+        {
+          "type": "checkbox",
+          "id": "has_social_buttons",
+          "label": "t:sections.main-article.blocks.social_sharing.name",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "label": "t:local-260.labels.show_facebook",
+          "id": "share_on_facebook",
+          "default": true,
+          "visible_if": "{{ block.settings.has_social_buttons == true }}"
+        },
+        {
+          "type": "checkbox",
+          "label": "t:local-260.labels.show_x",
+          "id": "share_on_x",
+          "default": true,
+          "visible_if": "{{ block.settings.has_social_buttons == true }}"
+        },
+        {
+          "type": "checkbox",
+          "label": "t:local-260.labels.show_pinterest",
+          "id": "share_on_pinterest",
+          "default": true,
+          "visible_if": "{{ block.settings.has_social_buttons == true }}"
+        },
+        {
+          "type": "checkbox",
+          "label": "t:local-260.labels.show_custom_link",
+          "id": "custom_share_link",
+          "default": true,
+          "info": "t:local-260.labels.show_custom_link_info",
+          "visible_if": "{{ block.settings.has_social_buttons == true }}"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

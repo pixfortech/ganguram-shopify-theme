@@ -1,0 +1,237 @@
+{%- liquid
+  assign remove_borders_inline = block.settings.remove_borders_inline
+  assign remove_borders_row_heading = block.settings.remove_borders_row_heading
+  assign row_heading_layout = block.settings.row_heading_layout
+
+  assign color_background_main = block.settings.color_background_main
+  assign color_text_main = block.settings.color_text_main
+  assign color_background_blocks = block.settings.color_background_blocks
+  assign color_text_blocks = block.settings.color_text_blocks
+  assign color_checkmark = block.settings.color_checkmark
+-%}
+
+<div
+  class="block-table-wrapper {% if color_background_blocks != 'rgba(0,0,0,0)' or color_background_main != 'rgba(0,0,0,0)' %}has-background{% endif %}"
+  style="
+    {% if color_text_blocks != 'rgba(0,0,0,0)' %}--color-secondary-text-cards: {{ color_text_blocks }};
+    {% endif %}
+  "
+>
+  <div
+    class="
+      block-table
+      {% if row_heading_layout == 'full-width' %}table__full-width{% else %}table__one-column{% endif %}
+      {% if remove_borders_inline %}table__remove-borders-inline{% endif %}
+      {% if remove_borders_row_heading and remove_borders_inline %} table__remove-borders-heading{% endif %}
+    "
+    {{ block.shopify_attributes }}
+  >
+    {%- if block.settings.text != blank -%}
+      <div
+        class="table__heading rte text-size--{{ block.settings.text_size }} gutter--small"
+        style="
+          {% if color_background_main != 'rgba(0,0,0,0)' %}background-color: {{ color_background_main }};{% endif %}
+          {% if color_text_main != 'rgba(0,0,0,0)' %}color: {{ color_text_main }};{% endif %}
+        "
+      >
+        {{ block.settings.text }}
+      </div>
+    {%- endif -%}
+
+    <div
+      class="table__columns table__columns-{{ block.settings.columns_layout }}"
+      style="
+        {% if color_background_blocks != 'rgba(0,0,0,0)' %}background-color: {{ color_background_blocks }};{% endif %}
+        {% if color_text_blocks != 'rgba(0,0,0,0)' %}color: {{ color_text_blocks }}; --color-text-cards: {{ color_text_blocks }};{% endif %}
+        {% if color_checkmark != 'rgba(0,0,0,0)' %} --color-checkmark:{{ color_checkmark }};{% endif %}
+      "
+    >
+      {% content_for 'blocks' %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:table-block.label",
+  "tag": null,
+  "blocks": [{ "type": "_table-text" }, { "type": "_table-checkmark-icon" }],
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:local-march-update.labels.heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "text",
+      "label": "t:sections.rich-text.blocks.text.settings.text.label",
+      "default": "Table title"
+    },
+    {
+      "type": "select",
+      "id": "text_size",
+      "label": "t:sections.footer.blocks.text.settings.text_size.label",
+      "options": [
+        {
+          "value": "xsmall",
+          "label": "t:theme_blocks.caption.settings.option_1"
+        },
+        {
+          "value": "small",
+          "label": "t:sections.local-extra-words.sections.popups.blocks.settings.size.option_1"
+        },
+        {
+          "value": "regular",
+          "label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__1.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__2.label"
+        },
+        {
+          "value": "xlarge",
+          "label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__3.label"
+        }
+      ],
+      "default": "regular"
+    },
+    {
+      "type": "color",
+      "id": "color_background_main",
+      "label": "t:sections.local-extra-words.settings_schema.product-card.badges.custom_badges.color",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "color",
+      "id": "color_text_main",
+      "label": "t:sections.local-extra-words.settings_schema.product-card.badges.custom_badges.text_color",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "select",
+      "id": "row_heading_layout",
+      "label": "t:sections.local-extra-words.sections.header.blocks.info.style.label",
+      "options": [
+        {
+          "value": "full-width",
+          "label": "t:sections.image.fullwidth"
+        },
+        {
+          "value": "one-column",
+          "label": "t:theme_blocks.column.name"
+        }
+      ],
+      "default": "full-width"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.local-extra-words.sections.header.blocks.info.style.label"
+    },
+    {
+      "type": "select",
+      "id": "columns_layout",
+      "label": "t:table-block.columns-layout",
+      "options": [
+        {
+          "value": "one-column",
+          "label": "t:sections.local-extra-words.sections.columns.option__0"
+        },
+        {
+          "value": "two-columns",
+          "label": "t:sections.local-extra-words.sections.columns.option__1"
+        },
+        {
+          "value": "three-columns",
+          "label": "t:sections.local-extra-words.sections.columns.option__2"
+        },
+        {
+          "value": "four-columns",
+          "label": "t:sections.local-extra-words.sections.columns.option__3"
+        }
+      ],
+      "default": "three-columns"
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_borders_inline",
+      "label": "t:table-block.remove-borders-inline",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_borders_row_heading",
+      "visible_if": "{{ block.settings.remove_borders_inline == true }}",
+      "label": "t:table-block.remove-borders-row-heading",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "color_background_blocks",
+      "label": "t:table-block.blocks-background-color",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "color",
+      "id": "color_text_blocks",
+      "label": "t:table-block.blocks-text-color",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "color",
+      "id": "color_checkmark",
+      "label": "t:table-block.checkmark-color",
+      "default": "rgba(0,0,0,0)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:table-block.label",
+      "settings": {
+        "text": "Product details",
+        "text_size": "regular",
+        "color_background_main": "#ffffff",
+        "color_text_main": "#000000",
+        "columns_layout": "two-columns"
+      },
+      "blocks": [
+        {
+          "type": "_table-text",
+          "settings": {
+            "text": "<p>Ingredients</p>"
+          }
+        },
+        {
+          "type": "_table-text",
+          "settings": {
+            "text": "<p>Carefully selected natural ingredients</p>"
+          }
+        },
+        {
+          "type": "_table-text",
+          "settings": {
+            "text": "<p>Origin</p>"
+          }
+        },
+        {
+          "type": "_table-text",
+          "settings": {
+            "text": "<p>Sourced from trusted regional producers</p>"
+          }
+        },
+        {
+          "type": "_table-text",
+          "settings": {
+            "text": "<p>Storage</p>"
+          }
+        },
+        {
+          "type": "_table-text",
+          "settings": {
+            "text": "<p>Store in a cool, dry place away from sunlight</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,63 @@
+{
+  "type": "footer",
+  "name": "t:sections.refactor_words.labels.footer_group",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "b497d03c-a24c-4683-8d7b-5aa889473ba2": {
+          "type": "text",
+          "settings": {
+            "title": "LOCAL",
+            "size": "h4",
+            "content": "<p>Fresh products from local producers, delivered directly to your front door,  daily.</p>",
+            "show_social_icons": true,
+            "enable_follow_on_shop": true
+          }
+        },
+        "97af5be7-f228-4009-8f3e-12d1e44573b9": {
+          "type": "menu",
+          "settings": {
+            "title": "Popular categories",
+            "menu": "categories",
+            "open_in_new_window": false
+          }
+        },
+        "68da10ba-83aa-4858-b4e7-b19015289fd5": {
+          "type": "text",
+          "settings": {
+            "title": "Main Store",
+            "size": "h5",
+            "content": "<p>13 Champs-Élysées<br/>75008 Paris<br/>France</p>",
+            "show_social_icons": false,
+            "enable_follow_on_shop": true
+          }
+        },
+        "eaa55a7e-c72f-40e3-adcb-a4b5111fdda9": {
+          "type": "menu",
+          "settings": {
+            "title": "Quick links",
+            "menu": "footer",
+            "open_in_new_window": false
+          }
+        }
+      },
+      "block_order": [
+        "b497d03c-a24c-4683-8d7b-5aa889473ba2",
+        "97af5be7-f228-4009-8f3e-12d1e44573b9",
+        "68da10ba-83aa-4858-b4e7-b19015289fd5",
+        "eaa55a7e-c72f-40e3-adcb-a4b5111fdda9"
+      ],
+      "settings": {
+        "layout": "grid-4 grid-portable-2 grid-lap-1",
+        "show_locale_selector": true,
+        "show_country_selector": false,
+        "remove_margin": false,
+        "seo_h_tag": "h4"
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

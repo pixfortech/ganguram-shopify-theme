@@ -1,0 +1,567 @@
+{{ 'section-rich-text.css' | asset_url | stylesheet_tag }}
+{{ 'component-countdown.css' | asset_url | stylesheet_tag }}
+
+{%- if section.settings.is_fullwidth -%}
+  {% style %}
+    @media screen and (max-width: {{ settings.theme_max_width }}px) {
+      #shopify-section-{{ section.id }} .rich-text__container--image-right .rich-text__text {
+        padding-inline-start: var(--gutter-container) !important;
+      }
+      #shopify-section-{{ section.id }} .rich-text__container--image-left .rich-text__text {
+        padding-inline-end: var(--gutter-container) !important;
+      }
+    }
+    @media screen and (min-width: {{ settings.theme_max_width | plus: 1 }}px) {
+      .rich-text__container--fullwidth.rich-text__container--has-countdown.rich-text__container--countdown-right .countdown {
+        justify-content: flex-end;
+      }
+      .rich-text__container--fullwidth.rich-text__container--has-countdown.rich-text__container--countdown-left .countdown {
+        justify-content: flex-start;
+      }
+    }
+  {% endstyle %}
+{%- endif -%}
+
+<div class="{% unless section.settings.is_fullwidth %} container--large {% else %} container--fullwidth {% endunless %} {% unless section.settings.remove_margin %} container--vertical-space {% endunless %} {% if section.settings.remove_bottom_margin %} container--negative-margin {% endif %}">
+  <div
+    id="element-{{ section.id }}"
+    class="
+      card
+      {% if section.settings.is_fullwidth %}
+        card--no-radius card--no-sideborders card--no-shadow
+      {% endif %}
+      rich-text
+    "
+  >
+    <div
+      class="
+        rich-text__container
+        rich-text__container--has-countdown
+        rich-text__container--countdown-{{ section.settings.countdown_position }}
+        rich-text__container--countdown--{{ section.settings.countdown_style }}
+        {% if section.settings.is_fullwidth %}
+          rich-text__container--fullwidth
+          rich-text__container--image-{{ section.settings.countdown_position }}
+          rich-text__container--has-countdown-{{ section.settings.countdown_style }}
+        {% endif %}
+      "
+    >
+      <div class="rich-text__countdown gutter--small">
+        <countdown-clock
+          class="countdown hide"
+          data-date="{{ section.settings.countdown_year }},{{ section.settings.countdown_month }},{{ section.settings.countdown_day }},{{ section.settings.countdown_hour }}"
+          data-timezone="{{ section.settings.countdown_zone }}"
+          role="timer"
+          style="display:flex"
+        >
+          <span class="visually-hidden">{{ 'general.accessibility_labels.time_left' | t }}</span>
+          <div class="time text-weight--medium">
+            <div class="time-holder">
+              <span class="time-data days"></span>
+              <span class="time-helper text-size--small">{{ 'general.date_format.days' | t }}</span>
+            </div>
+
+            <div class="time-separator">:</div>
+
+            <div class="time-holder">
+              <span class="time-data hours"></span>
+              <span class="time-helper text-size--small">{{ 'general.date_format.hours' | t }}</span>
+            </div>
+
+            <div class="time-separator">:</div>
+
+            <div class="time-holder">
+              <span class="time-data minutes"></span>
+              <span class="time-helper text-size--small">{{ 'general.date_format.minutes' | t }}</span>
+            </div>
+
+            <div class="time-separator">:</div>
+
+            <div class="time-holder">
+              <span class="time-data seconds"></span>
+              <span class="time-helper text-size--small">{{ 'general.date_format.seconds' | t }}</span>
+            </div>
+          </div>
+        </countdown-clock>
+        <script src="{{ 'component-countdown-clock.js' | asset_url }}" defer></script>
+      </div>
+
+      <div
+        class="
+          rich-text__text align-content align-content--{{ section.settings.text_alignment }} align-content--vertical-middle countdown__text
+          {% if section.settings.countdown_style == "compact" %} gutter--regular {% else %} gutter--large {% endif %}
+          {% if section.settings.is_fullwidth %} container--large gutter-top--xlarge gutter-bottom--xlarge {% endif %}
+        "
+      >
+        <div
+          class="
+            card__text
+            remove-empty-space
+            spacing--large
+          "
+          style="--spacing:{{ section.settings.spacing }}px"
+        >
+          {%- for block in section.blocks -%}
+            {%- case block.type %}
+              {%- when 'title' -%}
+                <div>
+                  <{{ block.settings.seo_h_tag }}
+                    style="margin-bottom: 0"
+                    class="text-font--heading {% if section.settings.countdown_style == "compact" %} h4 {% else %} h1 {% endif %}"
+                    {{ block.shopify_attributes }}
+                  >
+                    {{ block.settings.title }}
+                  </{{ block.settings.seo_h_tag }}>
+                </div>
+
+              {%- when 'text' -%}
+                {%- unless section.settings.countdown_style == 'compact' -%}
+                  <div class="rte text-size--{{ block.settings.text_size }}" {{ block.shopify_attributes }}>
+                    {{ block.settings.text }}
+                  </div>
+                {%- endunless -%}
+
+              {%- when 'button' -%}
+                <div {{ block.shopify_attributes }}>
+                  <a
+                    href="{{ block.settings.link }}"
+                    class="button button--{{ block.settings.button_style }} button--regular"
+                    {% unless block.settings.open_in_new_window == false %}
+                      target="_blank"
+                    {% endunless %}
+                  >
+                    <span aria-hidden="true" class="button__icon">
+                      {%- render 'theme-symbols', icon: 'arrow-right' -%}
+                    </span>
+                    <span>{{ block.settings.button_label | escape }}</span>
+                  </a>
+                </div>
+            {%- endcase %}
+          {%- endfor -%}
+        </div>
+      </div>
+
+      {%- render 'custom-colors',
+        id: section.id,
+        text: section.settings.color_text_main,
+        background: section.settings.color_background_main,
+        borders: section.settings.color_borders_main,
+        shadow: section.settings.color_shadow_main,
+        hide_borders: section.settings.color_hide_borders,
+        hide_shadow: section.settings.color_hide_shadow
+      -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.split-extra-words.sections.countdown-banner.name",
+  "class": "can-be-fullwidth mount-countdown",
+  "settings": [
+    {
+      "type": "select",
+      "id": "countdown_style",
+      "label": "t:sections.local-extra-words.sections.header.blocks.info.style.label",
+      "options": [
+        {
+          "value": "regular",
+          "label": "t:sections.local-extra-words.sections.product-card.blocks.text.settings.size.option__2"
+        },
+        {
+          "value": "compact",
+          "label": "t:sections.local-extra-words.sections.main-product.blocks.pickup_availability.settings.option__1"
+        }
+      ],
+      "info": "Compact style only displays the heading and button blocks",
+      "default": "regular"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "t:sections.image-with-text.settings.text_alignment.label",
+      "info": "t:sections.split-extra-words.settings_schema.product-grid.show_secondary_image.info",
+      "options": [
+        {
+          "value": "horizontal-left",
+          "label": "t:sections.rich-text.settings.text_alignment.options__1.label"
+        },
+        {
+          "value": "horizontal-center",
+          "label": "t:sections.rich-text.settings.text_alignment.options__2.label"
+        },
+        {
+          "value": "horizontal-right",
+          "label": "t:sections.rich-text.settings.text_alignment.options__3.label"
+        }
+      ],
+      "default": "horizontal-left"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.split-extra-words.sections.countdown-banner.settings.header"
+    },
+    {
+      "type": "range",
+      "id": "countdown_year",
+      "label": "t:sections.split-extra-words.sections.countdown-banner.settings.countdown_year",
+      "min": 2020,
+      "max": 2029,
+      "default": 2025,
+      "step": 1
+    },
+    {
+      "type": "range",
+      "id": "countdown_month",
+      "label": "t:sections.split-extra-words.sections.countdown-banner.settings.countdown_month",
+      "min": 1,
+      "max": 12,
+      "default": 1,
+      "step": 1
+    },
+    {
+      "type": "range",
+      "id": "countdown_day",
+      "label": "t:sections.split-extra-words.sections.countdown-banner.settings.countdown_day",
+      "min": 1,
+      "max": 31,
+      "default": 1,
+      "step": 1
+    },
+    {
+      "type": "range",
+      "id": "countdown_hour",
+      "label": "t:sections.split-extra-words.sections.countdown-banner.settings.countdown_hour",
+      "min": 0,
+      "max": 24,
+      "default": 0,
+      "step": 1
+    },
+    {
+      "type": "select",
+      "id": "countdown_zone",
+      "label": "t:sections.split-extra-words.sections.countdown-banner.settings.countdown_timezone",
+      "options": [
+        {
+          "value": "-12",
+          "label": "GMT -12:00"
+        },
+        {
+          "value": "-11",
+          "label": "GMT -11:00"
+        },
+        {
+          "value": "-10",
+          "label": "GMT -10:00"
+        },
+        {
+          "value": "-9",
+          "label": "GMT -9:00"
+        },
+        {
+          "value": "-8",
+          "label": "GMT -8:00"
+        },
+        {
+          "value": "-7",
+          "label": "GMT -7:00"
+        },
+        {
+          "value": "-6",
+          "label": "GMT -6:00"
+        },
+        {
+          "value": "-5",
+          "label": "GMT -5:00"
+        },
+        {
+          "value": "-4",
+          "label": "GMT -4:00"
+        },
+        {
+          "value": "-3",
+          "label": "GMT -3:00"
+        },
+        {
+          "value": "-2",
+          "label": "GMT -2:00"
+        },
+        {
+          "value": "-1",
+          "label": "GMT -1:00"
+        },
+        {
+          "value": "0",
+          "label": "GMT"
+        },
+        {
+          "value": "1",
+          "label": "GMT +1:00"
+        },
+        {
+          "value": "2",
+          "label": "GMT +2:00"
+        },
+        {
+          "value": "3",
+          "label": "GMT +3:00"
+        },
+        {
+          "value": "4",
+          "label": "GMT +4:00"
+        },
+        {
+          "value": "5",
+          "label": "GMT +5:00"
+        },
+        {
+          "value": "6",
+          "label": "GMT +6:00"
+        },
+        {
+          "value": "7",
+          "label": "GMT +7:00"
+        },
+        {
+          "value": "8",
+          "label": "GMT +8:00"
+        },
+        {
+          "value": "9",
+          "label": "GMT +9:00"
+        },
+        {
+          "value": "10",
+          "label": "GMT +10:00"
+        },
+        {
+          "value": "11",
+          "label": "GMT +11:00"
+        },
+        {
+          "value": "12",
+          "label": "GMT +12:00"
+        }
+      ],
+      "default": "0"
+    },
+    {
+      "type": "select",
+      "id": "countdown_position",
+      "label": "t:sections.refactor_words.settings.image_with_hotspots.hotspot.tooltip.position.label",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.local-extra-words.sections.rich-text.settings.image_position.option__1"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.local-extra-words.sections.rich-text.settings.image_position.option__3"
+        }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "header",
+      "content": "t:local-march-update.labels.section_design"
+    },
+    {
+      "type": "checkbox",
+      "id": "is_fullwidth",
+      "label": "t:sections.local-extra-words.sections.rich-text.settings.fullwidth.label",
+      "default": false,
+      "info": "t:sections.local-extra-words.sections.rich-text.settings.fullwidth.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_margin",
+      "label": "t:sections.local-extra-words.sections.rich-text.settings.remove_margin.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_bottom_margin",
+      "label": "t:sections.local-extra-words.settings_schema.layout.sections.remove_bottom_margin",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.local-extra-words.sections.headings.custom_colors"
+    },
+    {
+      "type": "color",
+      "id": "color_background_main",
+      "label": "t:sections.split-extra-words.settings_schema.colors.settings.background",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "color",
+      "id": "color_text_main",
+      "label": "t:sections.split-extra-words.settings_schema.colors.settings.text",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "color",
+      "id": "color_borders_main",
+      "label": "t:sections.local-extra-words.settings_schema.colors.settings.borders",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "color",
+      "id": "color_shadow_main",
+      "label": "t:local-march-update.shadows.label",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "checkbox",
+      "id": "color_hide_borders",
+      "label": "t:sections.local-extra-words.settings_schema.colors.settings.hide_border",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "color_hide_shadow",
+      "label": "t:local-march-update.shadows.hide",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "title",
+      "name": "t:sections.rich-text.blocks.heading.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "title",
+          "label": "t:sections.rich-text.blocks.heading.settings.heading.label",
+          "default": "Flash Sale"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.refactor_words.seo.name"
+        },
+        {
+          "type": "select",
+          "id": "seo_h_tag",
+          "label": "t:sections.refactor_words.seo.label",
+          "info": "t:sections.refactor_words.seo.info",
+          "options": [
+            {
+              "value": "h1",
+              "label": "H1"
+            },
+            {
+              "value": "h2",
+              "label": "H2"
+            },
+            {
+              "value": "h3",
+              "label": "H3"
+            },
+            {
+              "value": "h4",
+              "label": "H4"
+            },
+            {
+              "value": "span",
+              "label": "span"
+            }
+          ],
+          "default": "h3"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "t:sections.rich-text.blocks.text.name",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "t:sections.rich-text.blocks.text.settings.text.label",
+          "default": "<p>Use this text to share information limited product offers or bundles that you may have.</p>"
+        },
+        {
+          "type": "select",
+          "id": "text_size",
+          "label": "t:sections.footer.blocks.text.settings.text_size.label",
+          "options": [
+            {
+              "value": "regular",
+              "label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__1.label"
+            },
+            {
+              "value": "large",
+              "label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__2.label"
+            }
+          ],
+          "default": "regular"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "t:sections.rich-text.blocks.button.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "t:sections.rich-text.blocks.button.settings.button_label.label",
+          "default": "Learn more"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:sections.rich-text.blocks.button.settings.button_link.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_in_new_window",
+          "visible_if": "{{ block.settings.link != blank }}",
+          "label": "t:sections.local-extra-words.sections.announcement-bar.blocks.content.settings.target",
+          "default": false
+        },
+        {
+          "id": "button_style",
+          "label": "t:sections.local-extra-words.sections.buttons.style.label",
+          "type": "select",
+          "options": [
+            {
+              "value": "outline",
+              "label": "t:sections.local-extra-words.sections.buttons.style.option__1"
+            },
+            {
+              "value": "solid",
+              "label": "t:sections.local-extra-words.sections.buttons.style.option__2"
+            }
+          ],
+          "default": "outline"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.split-extra-words.sections.countdown-banner.name",
+      "category": "t:sections-categories.promotions",
+      "blocks": [
+        {
+          "type": "title"
+        },
+        {
+          "type": "text"
+        },
+        {
+          "type": "button"
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header"]
+  }
+}
+{% endschema %}

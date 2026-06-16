@@ -1,0 +1,106 @@
+.main-footer {
+  margin-top: var(--container-vertical-space);
+  border-top: 1px solid var(--color-borders-footer);
+  background: var(--color-background-footer);
+  color: var(--color-text-footer);
+}
+.main-footer a {
+  color: var(--color-text-footer);
+  transition: all 100ms linear;
+}
+.no-touchevents .main-footer a:hover {
+  color: var(--color-accent-footer);
+}
+.main-footer .social-icons {
+  margin-bottom: 1rem;
+}
+.main-footer .social-icons svg * {
+  fill: var(--color-text-footer);
+  transition: all 100ms linear;
+}
+.no-touchevents .main-footer .social-icons a:hover svg * {
+  fill: var(--color-accent-footer);
+}
+.main-footer .localization-form__item-text {
+  color: var(--color-text-footer);
+}
+.main-footer .localization-form__item-symbol svg path {
+  fill: var(--color-text-footer);
+}
+.main-footer .footer-item__menu span {
+  display: block;
+  margin-bottom: 0.3125rem;
+}
+.main-footer .footer-item__content > :last-child {
+  margin-bottom: 0;
+}
+
+.shop-login-button {
+  display: block;
+  margin-top: 1.125rem;
+}
+
+.footer-bottom > div {
+  display: flex;
+  justify-content: space-between;
+}
+@media screen and (max-width: 767px) {
+  .footer-bottom > div {
+    flex-direction: column;
+  }
+  .footer-bottom > div .localization-form {
+    margin-inline-start: -0.9375rem;
+    margin-top: 0.625rem;
+  }
+}
+.footer-top + .footer-bottom {
+  border-top: 1px solid var(--color-borders-footer);
+}
+
+.footer-item__icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3125rem;
+}
+.footer-item__icons img {
+  border-radius: 2px;
+}
+
+.footer-item__newsletter input#Email-newsletter-footer-block {
+  background: var(--color-background-footer);
+  color: var(--color-text-footer);
+  padding-inline-end: 2.5rem;
+  border-color: var(--color-borders-footer);
+}
+.footer-item__newsletter input#Email-newsletter-footer-block::placeholder {
+  color: var(--color-text-footer);
+}
+.footer-item__newsletter input#Email-newsletter-footer-block:-webkit-autofill, .footer-item__newsletter input#Email-newsletter-footer-block:-webkit-autofill:hover, .footer-item__newsletter input#Email-newsletter-footer-block:-webkit-autofill:focus, .footer-item__newsletter input#Email-newsletter-footer-block:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1.875rem var(--color-background-footer) inset !important;
+  -webkit-text-fill-color: var(--color-text-footer);
+}
+.footer-item__newsletter button[type=submit] {
+  top: 0;
+  position: absolute;
+  width: 50px;
+  height: 100%;
+  padding-top: 9px;
+}
+html[dir=rtl] .footer-item__newsletter button[type=submit] {
+  left: 0;
+}
+html[dir=ltr] .footer-item__newsletter button[type=submit] {
+  right: 0;
+}
+.no-touchevents .footer-item__newsletter button[type=submit]:hover svg {
+  opacity: 1;
+}
+.footer-item__newsletter button[type=submit] svg {
+  width: 65%;
+  height: 65%;
+  opacity: 0.66;
+  transition: all 100ms linear;
+}
+.footer-item__newsletter button[type=submit] svg path {
+  stroke: var(--color-text-footer);
+}

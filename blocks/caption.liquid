@@ -1,0 +1,84 @@
+{%- unless block.settings.caption == blank -%}
+  <span
+    class="text-size--{{ block.settings.text_size }}"
+    style="
+      {%- if block.settings.text_color != "rgba(0,0,0,0)" -%}
+       color: {{ block.settings.text_color }};
+      {%- endif -%}
+      {%- if block.settings.text_background_color != "rgba(0,0,0,0)" -%}
+        background-color: {{ block.settings.text_background_color }};
+        padding: .35em 1.25em;
+        border-radius: var(--border-radius-buttons);
+        display: inline-block;
+      {%- endif -%}
+    "
+  >
+    {{ block.settings.caption }}
+  </span>
+{%- endunless -%}
+
+{% schema %}
+{
+  "name": "t:sections.local-extra-words.sections.headings.caption",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "caption",
+      "label": "t:theme_blocks.caption.settings.content",
+      "default": "Caption"
+    },
+    {
+      "type": "select",
+      "id": "text_size",
+      "label": "t:sections.local-extra-words.sections.slideshow.settings.caption_size",
+      "options": [
+        {
+          "value": "xsmall",
+          "label": "t:theme_blocks.caption.settings.option_1"
+        },
+        {
+          "value": "small",
+          "label": "t:sections.local-extra-words.sections.popups.blocks.settings.size.option_1"
+        },
+        {
+          "value": "regular",
+          "label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__1.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__2.label"
+        },
+        {
+          "value": "xlarge",
+          "label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__3.label"
+        }
+      ],
+      "default": "regular"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.split-extra-words.settings_schema.colors.headings.custom_colors"
+    },
+    {
+      "type": "color",
+      "id": "text_background_color",
+      "label": "t:sections.local-extra-words.settings_schema.product-card.badges.custom_badges.color",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.local-extra-words.settings_schema.product-card.badges.custom_badges.text_color",
+      "default": "rgba(0,0,0,0)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.local-extra-words.sections.headings.caption",
+      "settings": {
+        "caption": "Caption"
+      }
+    }
+  ]
+}
+{% endschema %}

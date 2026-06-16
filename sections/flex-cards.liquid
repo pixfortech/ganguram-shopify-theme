@@ -1,0 +1,425 @@
+{%- if section.blocks.size > 0 -%}
+  <div
+    id="section-{{ section.id }}"
+    class="
+      container--large remove-empty-space
+      {% unless section.settings.remove_margin %} {% unless section.settings.descrease_margin %} container--vertical-space {% else %} container--vertical-space-grid {% endunless %} {% endunless %}
+      {% if section.settings.section_background_color != "rgba(0,0,0,0)" or section.settings.section_background_gradient != blank %} container--has-background {% endif %}
+      {% if section.settings.section_visibility == "mobile" %} element--hide-on-desk {% endif %}
+      {% if section.settings.section_visibility == "desktop" %} element--hide-on-small {% endif %}
+    "
+  >
+    {%- render 'section-heading',
+      heading: section.settings.heading,
+      subheading: section.settings.subheading,
+      heading_tag: section.settings.seo_h_tag,
+      layout: section.settings.section_heading_layout,
+      custom_button: true,
+      button: section.settings.show_section_button,
+      button_label: section.settings.button_label,
+      link: section.settings.cta_url
+    -%}
+
+    <div class="grid grid--layout grid--layout-flex {% if section.settings.is_autoheight == true %} mobile-autoheight {% endif %}">
+      {% content_for 'blocks' %}
+    </div>
+
+    {%- render 'section-footer',
+      button: section.settings.show_section_button,
+      button_label: section.settings.button_label,
+      link: section.settings.cta_url,
+      custom_button_target: section.settings.open_in_new_window,
+      layout: section.settings.section_heading_layout
+    -%}
+  </div>
+{%- endif -%}
+
+{%- if section.settings.section_background_color != 'rgba(0,0,0,0)' -%}
+  {% style %}
+    #shopify-section-{{ section.id }} {
+      background-color: {{ section.settings.section_background_color }};
+    }
+  {% endstyle %}
+{%- endif -%}
+{%- if section.settings.section_background_gradient != blank -%}
+  {% style %}
+    #shopify-section-{{ section.id }} {
+      background: {{ section.settings.section_background_gradient }};
+    }
+  {% endstyle %}
+{%- endif -%}
+{%- if section.settings.section_heading_color != 'rgba(0,0,0,0)' -%}
+  {% style %}
+    #shopify-section-{{ section.id }} {
+      --color-text-main: {{ section.settings.section_heading_color }};
+    }
+  {% endstyle %}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:flex-cards.header",
+  "blocks": [
+    {
+      "type": "_card"
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:local-march-update.labels.heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.local-extra-words.sections.headings.heading",
+      "default": "Promotion cards"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "t:sections.local-extra-words.sections.headings.subheading",
+      "default": "Share your best offers"
+    },
+    {
+      "type": "select",
+      "id": "section_heading_layout",
+      "label": "t:sections.rich-text.settings.text_alignment.label",
+      "options": [
+        {
+          "value": "section-heading--left",
+          "label": "t:sections.rich-text.settings.text_alignment.options__1.label"
+        },
+        {
+          "value": "section-heading--center",
+          "label": "t:sections.rich-text.settings.text_alignment.options__2.label"
+        }
+      ],
+      "default": "section-heading--left"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_section_button",
+      "label": "t:local-march-update.labels.show_section_link",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "visible_if": "{{ section.settings.show_section_button == true }}",
+      "label": "t:local-march-update.labels.link_text"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "visible_if": "{{ section.settings.show_section_button == true and section.settings.button_label != blank  }}",
+      "label": "t:sections.local-extra-words.sections.announcement-bar.blocks.content.settings.link"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_window",
+      "visible_if": "{{ section.settings.cta_url != blank and section.settings.show_section_button == true and section.settings.button_label != blank }}",
+      "label": "t:sections.local-extra-words.sections.announcement-bar.blocks.content.settings.target",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.main-article.blocks.content.name"
+    },
+    {
+      "type": "range",
+      "id": "image_height_desktop",
+      "visible_if": "{{ section.settings.hide_media == false }}",
+      "min": 100,
+      "max": 600,
+      "step": 10,
+      "default": 300,
+      "unit": "px",
+      "label": "t:flex-cards.settings.height.desktop"
+    },
+    {
+      "type": "checkbox",
+      "id": "is_autoheight",
+      "visible_if": "{{ section.settings.hide_media == false }}",
+      "label": "t:flex-cards.settings.height.auto",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "image_height_mobile",
+      "visible_if": "{{ section.settings.hide_media == false and section.settings.is_autoheight == false }}",
+      "label": "t:flex-cards.settings.height.mobile",
+      "min": 100,
+      "max": 500,
+      "step": 10,
+      "default": 200,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_media",
+      "label": "t:flex-cards.settings.image_visibility",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.local-extra-words.sections.headings.text_style"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "t:sections.image-with-text.settings.text_alignment.label",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.rich-text.settings.text_alignment.options__1.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.rich-text.settings.text_alignment.options__2.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.rich-text.settings.text_alignment.options__3.label"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "spacing",
+      "label": "t:local-march-update.labels.text_spacing",
+      "options": [
+        {
+          "label": "t:sections.slider.settings.desktop_height.options__1.label",
+          "value": "xsmall"
+        },
+        {
+          "label": "t:sections.slider.settings.desktop_height.options__2.label",
+          "value": "small"
+        },
+        {
+          "label": "t:sections.image-with-text.settings.text_size.options__2.label",
+          "value": "large"
+        },
+        {
+          "label": "t:sections.image-with-text.settings.text_size.options__3.label",
+          "value": "xlarge"
+        }
+      ],
+      "default": "xsmall"
+    },
+    {
+      "type": "select",
+      "id": "gutter_size",
+      "label": "t:theme_blocks.sections.flex-section.gutter_size",
+      "options": [
+        {
+          "value": "regular",
+          "label": "t:sections.local-extra-words.sections.media-with-text-overlay.settings.option__5"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.local-extra-words.sections.media-with-text-overlay.settings.option__2"
+        }
+      ],
+      "default": "regular"
+    },
+    {
+      "type": "header",
+      "content": "t:local-march-update.labels.section_design"
+    },
+    {
+      "type": "color",
+      "id": "section_background_color",
+      "label": "t:sections.local-extra-words.settings_schema.product-card.badges.custom_badges.color",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "color_background",
+      "id": "section_background_gradient",
+      "label": "t:local-230.background_gradient"
+    },
+    {
+      "type": "color",
+      "id": "section_heading_color",
+      "label": "t:local-223.heading_text_color",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "checkbox",
+      "id": "descrease_margin",
+      "visible_if": "{{ section.settings.remove_margin == false }}",
+      "label": "t:theme_blocks.descrease_top_margin",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_margin",
+      "visible_if": "{{ section.settings.descrease_margin == false }}",
+      "label": "t:sections.local-extra-words.sections.rich-text.settings.remove_margin.label",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.refactor_words.seo.name"
+    },
+    {
+      "type": "select",
+      "id": "seo_h_tag",
+      "label": "t:sections.refactor_words.seo.label",
+      "info": "t:sections.refactor_words.seo.info",
+      "options": [
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "h4",
+          "label": "H4"
+        },
+        {
+          "value": "span",
+          "label": "span"
+        }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.refactor_words.announcement-bar.visibility.label"
+    },
+    {
+      "type": "select",
+      "id": "section_visibility",
+      "label": "t:sections-visibility.label",
+      "options": [
+        {
+          "value": "always",
+          "label": "t:sections-visibility.options.always"
+        },
+        {
+          "value": "mobile",
+          "label": "t:sections-visibility.options.mobile"
+        },
+        {
+          "value": "desktop",
+          "label": "t:sections-visibility.options.desktop"
+        }
+      ],
+      "default": "always"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:flex-cards.header",
+      "category": "t:sections-categories.promotions",
+      "blocks": [
+        {
+          "type": "_card",
+          "settings": {
+            "column_desktop": 7,
+            "hide_on_mobile": false,
+            "color_hide_borders": false,
+            "color_hide_shadow": false
+          },
+          "blocks": [
+            { "type": "caption", "settings": { "caption": "Introducing", "text_size": "regular" } },
+            {
+              "type": "heading",
+              "settings": {
+                "heading": "Your best promotion yet",
+                "title_size": "h4",
+                "line_height": "default",
+                "seo_h_tag": "span"
+              }
+            }
+          ]
+        },
+        {
+          "type": "_card",
+          "settings": {
+            "column_desktop": 5,
+            "hide_on_mobile": false,
+            "color_hide_borders": false,
+            "color_hide_shadow": false
+          },
+          "blocks": [
+            { "type": "caption", "settings": { "caption": "Discover Now", "text_size": "regular" } },
+            {
+              "type": "heading",
+              "settings": {
+                "heading": "Your greatest deal yet",
+                "title_size": "h4",
+                "line_height": "default",
+                "seo_h_tag": "span"
+              }
+            }
+          ]
+        },
+        {
+          "type": "_card",
+          "settings": {
+            "column_desktop": 5,
+            "hide_on_mobile": false,
+            "color_hide_borders": false,
+            "color_hide_shadow": false
+          },
+          "blocks": [
+            { "type": "caption", "settings": { "caption": "Just Arrived", "text_size": "regular" } },
+            {
+              "type": "heading",
+              "settings": {
+                "heading": "Don’t miss this special promotion",
+                "title_size": "h4",
+                "line_height": "default",
+                "seo_h_tag": "span"
+              }
+            }
+          ]
+        },
+        {
+          "type": "_card",
+          "settings": {
+            "column_desktop": 7,
+            "hide_on_mobile": false,
+            "color_hide_borders": false,
+            "color_hide_shadow": false
+          },
+          "blocks": [
+            { "type": "caption", "settings": { "caption": "Introducing", "text_size": "regular" } },
+            {
+              "type": "heading",
+              "settings": {
+                "heading": "Your best promotion yet",
+                "title_size": "h4",
+                "line_height": "default",
+                "seo_h_tag": "span"
+              }
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "heading": "Promotion cards",
+        "subheading": "Share your best offers",
+        "section_heading_layout": "section-heading--left",
+        "image_height_desktop": 300,
+        "image_height_mobile": 200,
+        "text_alignment": "left"
+      }
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header"]
+  }
+}
+{% endschema %}

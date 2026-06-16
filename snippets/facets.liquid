@@ -1,0 +1,221 @@
+{%- comment -%}
+  Renders filtering options for collection or search pages.
+
+  Accepts:
+  - results: {Object} collection or search object.
+  - enable_filtering: {Boolean} enable filtering.
+  - enable_sorting: {Boolean} enable sorting.
+  - image_filter_layout: {String} layout for image filters (onecolumn or twocolumns).
+  - type: {String} type of location (desktop or mobile).
+  - filters_position: {String} position of filters (top or sidebar).
+  - id: {String} unique identifier for the snippet.
+
+  Usage:
+  {% render 'facets', results: collection, enable_filtering: true, enable_sorting: true, image_filter_layout: 'twocolumns', type: 'desktop', filters_position: 'top', id: 'desktop' %}
+{%- endcomment -%}
+
+
+{%- liquid
+  assign sort_by = results.sort_by | default: results.default_sort_by
+  assign total_active_values = 0
+  if results.url
+    assign results_url = results.url
+  else 
+    assign terms = results.terms | escape
+    assign results_url = '?q=' | append: terms | append: '&options%5Bprefix%5D=last&sort_by=' | append: sort_by
+  endif
+-%}
+
+{%- liquid
+  if settings.show_currency_codes
+    assign iso_code = localization.country.currency.iso_code | prepend: ' ' 
+  endif
+-%}
+
+
+{%- unless results.products.size == 0  -%}
+  {%- if results.results_count and template.name != 'search' -%}
+    <div class="text-color--opacity margin-bottom--regular" id="CollectionProductCount" role="status">
+      {{ 'search.page.results_count' | t: offset: offset, page_size: page_size, count: results.results_count }}
+    </div>
+  {%- endif -%}
+{%- endunless -%}
+
+<facet-filters-form class="facets {% if type == 'desktop' %} portable-hide {% endif %}" data-location="{{ type }}">
+
+  <form id="FacetFiltersForm{% if id == 'drawer' %}Mobile{% endif %}" class="facets__form{% if type == 'mobile' %} facets__form--mobile {% endif %}">
+
+    {%- if results.terms -%}
+      <input type="hidden" name="q" value="{{ results.terms | escape }}">
+    {%- elsif results.current_vendor or results.current_type -%}
+      <input type="hidden" name="q" value="{{ results.current_vendor }}{{ results.current_type }}">
+    {%- endif -%}
+
+    {%- if enable_filtering -%}
+
+      <div class="facets__prewrapper">
+
+        <div class="facets__wrapper" id="FacetFiltersWrapper-{{ type }}-{{ id }}">
+
+          {%- unless results.filters == empty -%}
+            <p class="facets__heading body-text-sm {% if type == 'mobile' %} visually-hidden {% endif %}">{{ 'collections.filter_by_label' | t }}</p>
+          {%- endunless -%}
+
+          {%- for filter in results.filters -%}
+
+            {%- assign total_active_values = total_active_values | plus: filter.active_values.size -%}
+
+            {%- case filter.type -%}
+             
+              {%- when 'boolean' or 'list' -%}
+                <details id="Filter-{{ filter.param_name | handleize }}-{{ type }}-{{ id }}" 
+                  class="disclosure-has-popup facets__disclosure js-filter" data-index="{{ forloop.index }}-{{ type }}-{{ id }}" 
+                  {% if filter.operator == 'AND' %} data-and-operator {% endif %}
+                  {% if filters_default_status %} open {% endif %}
+                >
+                  <summary class="facets__summary">
+                    <span class="facets__summary-text">
+                      {{ filter.label | escape }} 
+                      {%- if filter.operator == 'AND' -%}
+                        <span class="facets__and-helper-text--mobile text-color--opacity text-size--small hide">{{ 'collections.match_all_label' | t }}</span>
+                      {%- endif -%}
+                    </span>
+                  </summary>
+                  <div class="facets__display body-text-sm">
+                    <div class="facets__header">
+                      <span class="facets__selected no-js-hidden">
+                        {{ 'collections.filters_selected' | t: count: filter.active_values.size }}
+                        {%- if filter.operator == 'AND' -%}
+                          <span class="facets__and-helper-text text-color--opacity text-size--small" style="display:block">{{ 'collections.match_all_label' | t }}</span>
+                        {%- endif -%}
+                      </span>
+                      <a href="{{ filter.url_to_remove }}" class="facets__reset link underlined-link js-facet-remove" >{{ 'collections.reset' | t }}</a>
+                    </div>   
+
+                    {%- render 'filter-blocks', filter: filter, location: type, image_filter_layout: image_filter_layout -%}
+        
+                  </div>
+                </details>
+
+              {%- when 'price_range' -%}
+
+                <details id="Filter-{{ filter.param_name | handleize }}-{{ type }}-{{ id }}" 
+                  class="disclosure-has-popup facets__disclosure js-filter" data-index="{{ forloop.index }}-{{ type }}-{{ id }}"
+                  {% if filters_default_status %} open {% endif %}
+                >
+                  <summary class="facets__summary">
+                    <span class="facets__summary-text">
+                      {{ filter.label | escape }} 
+                    </span>
+                  </summary>
+                  <div class="facets__display body-text-sm">
+                    <div class="facets__header">
+                      {%- assign max_price_amount = filter.range_max | money | append: iso_code -%}
+                      <span class="facets__selected">{{ 'collections.max_price_html' | t: price: max_price_amount }}</span>
+                      <a href="{{ filter.url_to_remove }}" class="facets__reset link underlined-link js-facet-remove" >{{ 'collections.reset' | t }}</a>
+                    </div>
+
+                    {%- render 'filter-price-range', filter: filter, location: type -%}
+                   
+                  </div>
+                </details>
+
+            {%- endcase -%}
+
+          {%- endfor -%}
+
+          <noscript>
+            <button type="submit" class="facets__button button button--regular button--outline">{{ 'collections.filter_button' | t }}</button>
+          </noscript>
+
+        </div>
+
+        {%- unless filters_position == 'sidebar' -%}
+          <div class="active-facets active-facets-desktop active-facets-{{ type }}">
+            {%- assign has_active_filter = false -%}
+            {%- for filter in results.filters -%}
+              {%- for value in filter.active_values -%}
+                {%- assign has_active_filter = true -%}
+                <a class="active-facets__button active-facets__button--light button button--small button--outline js-facet-remove" href="{{ value.url_to_remove }}">
+                  {%- if filter.type == 'boolean' -%}
+                    {{ filter.label | escape }}:&nbsp;
+                  {%- endif -%}
+                  {{ value.label | escape }}
+                  {%- render 'theme-symbols', icon: 'close-small' -%}
+                </a>
+              {%- endfor -%}
+              {%- if filter.type == "price_range" -%}
+                {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+                  {%- assign has_active_filter = true -%}
+                  <a class="active-facets__button active-facets__button--light button button--small button--outline js-facet-remove" href="{{ filter.url_to_remove }}">
+                    {%- if filter.min_value.value -%}{{ filter.min_value.value | money | append: iso_code }}{%- else -%}{{ 0 | money | append: iso_code }}{%- endif -%}-{%- if filter.max_value.value -%}{{ filter.max_value.value | money | append: iso_code }}{%- else -%}{{ filter.range_max | money | append: iso_code }}{%- endif -%}
+                    {%- render 'theme-symbols', icon: 'close-small' -%}
+                  </a>
+                {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+            {%- if has_active_filter -%}
+              <a href="{{ results_url }}" class="active-facets__button button button--small button--solid js-facet-remove">{{ 'collections.clear_all' | t }}</a>
+            {%- endif -%}
+          </div>
+        {%- endunless -%}
+
+      </div>
+
+    {%- endif -%}
+
+    {%- if enable_sorting and results.products.size != 0 -%}
+      <div>
+        <div class="collection-filters__item sorting">
+          <div class="collection-filters__field">
+            <label class="collection-filters__label body-text-sm" for="{{ type }}-SortBy-{{ id }}">{{ 'collections.sort_by_label' | t }}</label>
+            <div class="select">
+              {%- assign sort_by = results.sort_by | default: results.default_sort_by -%}
+              <select name="sort_by" class="select__select collection-filters__sort" id="{{ type }}-SortBy-{{ id }}" aria-describedby="a11y-refresh-page-message">
+                {%- for option in results.sort_options -%}
+                  <option value="{{ option.value | escape }}"{% if option.value == sort_by %} selected="selected"{% endif %}>{{ option.name | escape }}</option>
+                {%- endfor -%}
+              </select>
+            </div>
+          </div>
+          <noscript>
+            <button type="submit" class="button button button--regular button--outline">{{ 'collections.sort_button' | t }}</button>
+          </noscript>
+        </div>
+      </div>
+    {%- endif -%}
+
+  </form>
+
+</facet-filters-form>
+
+{%- if filters_position == 'top' and type != 'mobile' -%}
+<div class="section-heading section-heading--facets gutter-bottom--page">
+
+  <div class="section-heading__text remove-empty-space {% if results.results_count %} hide {% endif %} gutter-top--small">
+    {%- unless results.results_count -%}
+      {%- if type == 'desktop'  -%}
+        <p id="CollectionProductCount" class="collection-product-count" role="status">
+          {%- if results.products_count == results.all_products_count -%}
+            {{ 'collections.product_count_simple' | t: count: results.products_count }}
+          {%- else -%}
+            {{ 'collections.product_count' | t: product_count: results.products_count, count: results.all_products_count }}
+          {%- endif -%}
+        </p>
+      {%- endif -%}
+    {%- endunless -%}
+  </div>
+
+  {%- if type == 'desktop' -%}
+    <div class="section-heading__actions hide portable-show">
+      <button id="collection-filters-handle" class="button button button--regular button--icon button--outline button--fullwidth" data-js-sidebar-handle aria-controls="site-filters-sidebar" aria-expanded="false">
+        <span class="button__icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="m2 6h60l-24 26v20l-12 6v-26z" fill="none" stroke="#202020" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/></svg>
+        </span>
+        {{ 'collections.filter_and_sort' | t }}
+      </button>
+    </div>
+  {%- endif -%}
+
+</div>
+{% endif %}

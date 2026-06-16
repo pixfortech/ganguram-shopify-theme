@@ -1,0 +1,98 @@
+{
+  "type": "header",
+  "name": "t:sections.refactor_words.labels.header_group",
+  "sections": {
+    "announcement": {
+      "type": "announcement-bar",
+      "blocks": {
+        "a88d0552-422f-479a-9ccf-bddae7bb3e36": {
+          "type": "content",
+          "settings": {
+            "text": "Save 20% use code: BULKSAVE",
+            "link": "",
+            "target": true
+          }
+        },
+        "359cd407-1fe0-473f-8b0c-cf52d0783b96": {
+          "type": "content",
+          "settings": {
+            "text": "FREE SHIPPING on orders above $50",
+            "link": "",
+            "target": false
+          }
+        }
+      },
+      "block_order": [
+        "a88d0552-422f-479a-9ccf-bddae7bb3e36",
+        "359cd407-1fe0-473f-8b0c-cf52d0783b96"
+      ],
+      "settings": {
+        "visibility": "all",
+        "show_locale_selector": true,
+        "show_country_selector": false,
+        "show_social_icons": true,
+        "bar_bgcolor": "#1f1f1f",
+        "bar_txtcolor": "#ffffff"
+      }
+    },
+    "header": {
+      "type": "header",
+      "blocks": {
+        "3036ff1d-3133-4662-ad23-bd673e5e4f1d": {
+          "type": "mega-menu",
+          "settings": {
+            "menu_handle": "categories",
+            "show_promotion_block": true,
+            "promotion_title": "Fresh & Energetic",
+            "promotion_title_size": "text-size--xlarge",
+            "promotion_subtitle": "Healthy & Organic",
+            "promotion_subtitle_size": "text-size--small",
+            "promotion_button_label": "Learn more",
+            "promotion_button_size": "regular",
+            "promotion_button_link": "",
+            "promotion_color_txt": "#000000",
+            "promotion_color_bg": "rgba(0,0,0,0)",
+            "promotion_image": ""
+          }
+        },
+        "a3ca4eae-c334-45dd-9842-c49d594b1c4b": {
+          "type": "store-selector",
+          "settings": {}
+        },
+        "2e0d797d-c8e1-463d-a5ad-fe6ae2c0c9de": {
+          "type": "info",
+          "settings": {
+            "caption": "Need delivery?",
+            "title": "See estimates",
+            "link": "",
+            "link_type": "_self",
+            "icon": "delivery",
+            "custom_icon": ""
+          }
+        }
+      },
+      "block_order": [
+        "3036ff1d-3133-4662-ad23-bd673e5e4f1d",
+        "a3ca4eae-c334-45dd-9842-c49d594b1c4b",
+        "2e0d797d-c8e1-463d-a5ad-fe6ae2c0c9de"
+      ],
+      "settings": {
+        "logo_src": "",
+        "logo_height": 60,
+        "logo_mobile_height": 40,
+        "main_linklist": "main-menu",
+        "show_search": true,
+        "sticky_header": true,
+        "select_header_actions_on_mobile": "show_on_homepage",
+        "show_header_actions": true,
+        "show_locale_selector": true,
+        "show_country_selector": false,
+        "show_social_icons": true
+      }
+    }
+  },
+  "order": [
+    "announcement",
+    "header"
+  ]
+}

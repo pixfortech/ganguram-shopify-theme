@@ -1,0 +1,1 @@
+{"sections":{"banner":{"type":"main-collection-banner","settings":{}},"product-grid":{"type":"main-collection-product-grid","blocks":{"price":{"type":"price","settings":{}},"title":{"type":"title","settings":{}},"quick_buy":{"type":"quick_buy","settings":{}}},"block_order":["price","title","quick_buy"],"settings":{}}},"order":["banner","product-grid"]}

@@ -1,0 +1,54 @@
+{%- comment -%}
+  Column. Used in Flex columns section.
+{%- endcomment -%}
+
+<div
+  {{ block.shopify_attributes }}
+  class="
+    js-slider-item {{ section.settings.block_text_alignment }}
+    {% unless section.settings.inherit_card_design %}
+      element--no-border element--no-radius
+    {% else %}
+      card gutter--regular
+    {% endunless %}
+  "
+>
+  <div
+    class="
+      {% unless section.settings.inherit_card_design %}
+        {% if section.settings.block_text_alignment == "text-align--center" %} gutter--regular {% else %} gutter-right--large gutter-bottom--regular{% endif %}
+      {% endunless %} spacing--large remove-empty-space
+    "
+    style="{% unless section.settings.inherit_card_design %} color:var(--color-text-main); {% endunless %} --horizontal-alignment:{{ section.settings.block_text_alignment | split: ' ' | first | replace: 'text-align--', '' }};"
+  >
+    {% content_for 'blocks' %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:theme_blocks.column.name",
+  "tag": null,
+  "blocks": [{ "type": "@theme" }, { "type": "@app" }],
+  "presets": [
+    {
+      "name": "t:theme_blocks.column.name",
+      "blocks": [
+        {
+          "type": "heading",
+          "settings": {
+            "heading": "Shipping",
+            "title_size": "h4"
+          }
+        },
+        {
+          "type": "rich-text",
+          "settings": {
+            "text": "<p>Useful information about your shipping details</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

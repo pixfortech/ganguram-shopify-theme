@@ -1,0 +1,16 @@
+{%- comment -%}
+  Renders form successm message.
+
+  Accepts:
+  - message: {String} a message to be displayed.
+
+  Usage:
+  {%- render 'form-errors', message: 'Form sent successfully!' -%}
+{%- endcomment -%}
+
+<span class="alert alert--success alert--icon">
+  <span class="alert__icon">
+    {%- render 'theme-symbols', icon: 'alert-success' -%}
+  </span>
+  {{ message }}
+</span>

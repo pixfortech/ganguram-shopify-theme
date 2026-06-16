@@ -1,0 +1,1548 @@
+{
+  "sections": {
+    "flex_slideshow_fVfj3k": {
+      "type": "flex-slideshow",
+      "blocks": {
+        "slide_image_rWEXcN": {
+          "type": "_slide-image",
+          "settings": {
+            "link": "",
+            "open_in_new_window": false,
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)"
+          },
+          "blocks": {
+            "caption_nMnnMq": {
+              "type": "caption",
+              "settings": {
+                "caption": "OUR PROMISE",
+                "text_size": "small",
+                "text_background_color": "rgba(0,0,0,0)",
+                "text_color": "rgba(0,0,0,0)"
+              },
+              "blocks": {}
+            },
+            "heading_E7DeUU": {
+              "type": "heading",
+              "settings": {
+                "heading": "Fresh. [br]Organic. [br]Delivered.",
+                "title_size": "h1",
+                "line_height": "default",
+                "text_color": "#343f36",
+                "seo_h_tag": "h3"
+              },
+              "blocks": {}
+            },
+            "content_group_xhinPE": {
+              "type": "content-group",
+              "settings": {
+                "spacing": "regular"
+              },
+              "blocks": {
+                "button_mp9nKm": {
+                  "type": "button",
+                  "settings": {
+                    "button_label": "SHOP NOW",
+                    "link": "",
+                    "open_in_new_window": false,
+                    "button_size": "regular",
+                    "button_style": "solid",
+                    "color_text_buttons": "#343f36",
+                    "color_accent_buttons": "rgba(0,0,0,0)"
+                  },
+                  "blocks": {}
+                },
+                "button_FVTX9K": {
+                  "type": "button",
+                  "settings": {
+                    "button_label": "LEARN MORE",
+                    "link": "",
+                    "open_in_new_window": false,
+                    "button_size": "regular",
+                    "button_style": "outline",
+                    "color_text_buttons": "#343f36",
+                    "color_accent_buttons": "rgba(0,0,0,0)"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "button_mp9nKm",
+                "button_FVTX9K"
+              ]
+            }
+          },
+          "block_order": [
+            "caption_nMnnMq",
+            "heading_E7DeUU",
+            "content_group_xhinPE"
+          ]
+        },
+        "slide_image_LLrAYi": {
+          "type": "_slide-image",
+          "settings": {
+            "link": "",
+            "open_in_new_window": false,
+            "color_background_main": "rgba(0,0,0,0)",
+            "color_text_main": "rgba(0,0,0,0)"
+          },
+          "blocks": {
+            "caption_j4d4q3": {
+              "type": "caption",
+              "settings": {
+                "caption": "UP TO 40% OFF",
+                "text_size": "regular",
+                "text_background_color": "rgba(0,0,0,0)",
+                "text_color": "rgba(0,0,0,0)"
+              },
+              "blocks": {}
+            },
+            "heading_wzKzeB": {
+              "type": "heading",
+              "settings": {
+                "heading": "Kitchen & [br]Dining Sale",
+                "title_size": "h1",
+                "line_height": "default",
+                "text_color": "rgba(0,0,0,0)",
+                "seo_h_tag": "h3"
+              },
+              "blocks": {}
+            },
+            "content_group_FDVyLV": {
+              "type": "content-group",
+              "settings": {
+                "spacing": "small"
+              },
+              "blocks": {
+                "button_wf4ffd": {
+                  "type": "button",
+                  "settings": {
+                    "button_label": "BUY NOW",
+                    "link": "",
+                    "open_in_new_window": false,
+                    "button_size": "regular",
+                    "button_style": "solid",
+                    "color_text_buttons": "rgba(0,0,0,0)",
+                    "color_accent_buttons": "rgba(0,0,0,0)"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "button_wf4ffd"
+              ]
+            }
+          },
+          "block_order": [
+            "caption_j4d4q3",
+            "heading_wzKzeB",
+            "content_group_FDVyLV"
+          ]
+        }
+      },
+      "block_order": [
+        "slide_image_rWEXcN",
+        "slide_image_LLrAYi"
+      ],
+      "settings": {
+        "desktop_height": "80vh",
+        "mobile_height": "80vh",
+        "is_auto_height": false,
+        "autorotate_enable": false,
+        "autorotate_interval": 6,
+        "alignment": "horizontal-left align-content--vertical-middle",
+        "width": "70",
+        "spacing": "xlarge",
+        "is_fullwidth": true,
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_background_gradient": "",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": false,
+        "color_hide_borders": false,
+        "color_hide_shadow": true,
+        "disable_parallax": false
+      }
+    },
+    "text_columns_images_9m9Xcc": {
+      "type": "text-columns-images",
+      "blocks": {
+        "image_nb6e3t": {
+          "type": "image",
+          "settings": {
+            "title": "Bread & Bakery",
+            "caption": "",
+            "link": "",
+            "open_in_new_window": false,
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_GkFQKk": {
+          "type": "image",
+          "settings": {
+            "title": "Flour & Baking",
+            "caption": "",
+            "link": "",
+            "open_in_new_window": false,
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_Af3Dwm": {
+          "type": "image",
+          "settings": {
+            "title": "Fruits & Vegetables",
+            "caption": "",
+            "link": "",
+            "open_in_new_window": false,
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_UTmXBm": {
+          "type": "image",
+          "settings": {
+            "title": "Fresh Meals & Pizzas",
+            "caption": "",
+            "link": "",
+            "open_in_new_window": false,
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_UFxdy6": {
+          "type": "image",
+          "settings": {
+            "title": "Beverages",
+            "caption": "",
+            "link": "",
+            "open_in_new_window": false,
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_DzMfKE": {
+          "type": "image",
+          "settings": {
+            "title": "Fresh Meat",
+            "caption": "",
+            "link": "",
+            "open_in_new_window": false,
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_ddmjCX": {
+          "type": "image",
+          "settings": {
+            "title": "Dairy & Eggs",
+            "caption": "",
+            "link": "",
+            "open_in_new_window": false,
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_9N37VN": {
+          "type": "image",
+          "settings": {
+            "title": "Sauces & Marinades",
+            "caption": "",
+            "link": "",
+            "open_in_new_window": false,
+            "seo_h_tag": "h3"
+          }
+        }
+      },
+      "block_order": [
+        "image_nb6e3t",
+        "image_GkFQKk",
+        "image_Af3Dwm",
+        "image_UTmXBm",
+        "image_UFxdy6",
+        "image_DzMfKE",
+        "image_ddmjCX",
+        "image_9N37VN"
+      ],
+      "settings": {
+        "heading": "Shop by Category",
+        "subheading": "",
+        "section_heading_layout": "section-heading--center",
+        "style": "slider",
+        "layout": "grid-6 grid-portable-4 grid-lap-3 grid-palm-2 smel",
+        "border_radius": 0,
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_background_gradient": "",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "featured-collection": {
+      "type": "featured-collection",
+      "blocks": {
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "2fe5312e-e69f-45d1-bac2-bcdf636d2cf0": {
+          "type": "rating",
+          "settings": {}
+        },
+        "quick_buy": {
+          "type": "quick_buy",
+          "settings": {}
+        },
+        "0732fb3a-f464-4724-9427-62214bde5409": {
+          "type": "local_availability",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "price",
+        "title",
+        "2fe5312e-e69f-45d1-bac2-bcdf636d2cf0",
+        "quick_buy",
+        "0732fb3a-f464-4724-9427-62214bde5409"
+      ],
+      "settings": {
+        "heading": "Best Sellers",
+        "subheading": "",
+        "show_view_all": true,
+        "section_heading_layout": "section-heading--left",
+        "style": "slider",
+        "layout_desktop": "four-columns",
+        "layout_mobile": "grid-palm-2",
+        "products_number": 16,
+        "collection": "",
+        "collection_1": "",
+        "collection_2": "",
+        "collection_3": "",
+        "color_background_main": "rgba(0,0,0,0)",
+        "color_text_main": "rgba(0,0,0,0)",
+        "color_button_main": "rgba(0,0,0,0)",
+        "color_borders_main": "rgba(0,0,0,0)",
+        "color_shadow_main": "rgba(0,0,0,0)",
+        "color_hide_borders": false,
+        "color_hide_shadow": false,
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_background_gradient": "",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "165406738229739f4d": {
+      "type": "promotion-cards",
+      "blocks": {
+        "16540673826052f668-0": {
+          "type": "card",
+          "settings": {
+            "caption": "Fresh everyday",
+            "title": "Finest Bread",
+            "subtitle": "",
+            "link": "",
+            "open_in_new_window": false,
+            "button_label": "Show more",
+            "color_background_main": "#ebe0c9",
+            "color_text_main": "rgba(0,0,0,0)",
+            "color_accent_main": "rgba(0,0,0,0)",
+            "color_borders_main": "#e1e1e1",
+            "color_shadow_main": "rgba(0,0,0,0)",
+            "color_hide_borders": true,
+            "color_hide_shadow": false,
+            "seo_h_tag": "h3"
+          }
+        },
+        "16540673826052f668-1": {
+          "type": "card",
+          "settings": {
+            "caption": "Just arrived!",
+            "title": "Superfoods",
+            "subtitle": "",
+            "link": "",
+            "open_in_new_window": false,
+            "button_label": "Show more",
+            "color_background_main": "#cfded3",
+            "color_text_main": "rgba(0,0,0,0)",
+            "color_accent_main": "rgba(0,0,0,0)",
+            "color_borders_main": "#e1e1e1",
+            "color_shadow_main": "rgba(0,0,0,0)",
+            "color_hide_borders": true,
+            "color_hide_shadow": false,
+            "seo_h_tag": "h3"
+          }
+        },
+        "16540673826052f668-2": {
+          "type": "card",
+          "settings": {
+            "caption": "Collection",
+            "title": "Pure Organic",
+            "subtitle": "",
+            "link": "",
+            "open_in_new_window": false,
+            "button_label": "Show more",
+            "color_background_main": "#cddce4",
+            "color_text_main": "rgba(0,0,0,0)",
+            "color_accent_main": "rgba(0,0,0,0)",
+            "color_borders_main": "#e1e1e1",
+            "color_shadow_main": "rgba(0,0,0,0)",
+            "color_hide_borders": true,
+            "color_hide_shadow": false,
+            "seo_h_tag": "h3"
+          }
+        }
+      },
+      "block_order": [
+        "16540673826052f668-0",
+        "16540673826052f668-1",
+        "16540673826052f668-2"
+      ],
+      "settings": {
+        "heading": "",
+        "subheading": "",
+        "section_heading_layout": "section-heading--center",
+        "layout": "grid-3 grid-lap-1",
+        "image_aspect_ratio": "1",
+        "text_alignment": "text-align--center",
+        "caption_size": "regular",
+        "title_size": "h3",
+        "subtitle_size": "regular",
+        "button_size": "regular",
+        "button_style": "solid",
+        "button_width": "fit",
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_background_gradient": "",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "featured_collection_X3jgLR": {
+      "type": "featured-collection",
+      "blocks": {
+        "price_LQJpmf": {
+          "type": "price",
+          "settings": {}
+        },
+        "title_w9ajWz": {
+          "type": "title",
+          "settings": {}
+        },
+        "rating_3Jg6Ak": {
+          "type": "rating",
+          "settings": {}
+        },
+        "quick_buy_B8QVeF": {
+          "type": "quick_buy",
+          "settings": {}
+        },
+        "local_availability_QfVefU": {
+          "type": "local_availability",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "price_LQJpmf",
+        "title_w9ajWz",
+        "rating_3Jg6Ak",
+        "quick_buy_B8QVeF",
+        "local_availability_QfVefU"
+      ],
+      "settings": {
+        "heading": "Bread & Bakery",
+        "subheading": "",
+        "show_view_all": true,
+        "section_heading_layout": "section-heading--left",
+        "style": "slider",
+        "layout_desktop": "four-columns",
+        "layout_mobile": "grid-palm-2",
+        "products_number": 8,
+        "collection": "",
+        "collection_1": "",
+        "collection_2": "",
+        "collection_3": "",
+        "color_background_main": "rgba(0,0,0,0)",
+        "color_text_main": "rgba(0,0,0,0)",
+        "color_button_main": "rgba(0,0,0,0)",
+        "color_borders_main": "rgba(0,0,0,0)",
+        "color_shadow_main": "rgba(0,0,0,0)",
+        "color_hide_borders": false,
+        "color_hide_shadow": false,
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_background_gradient": "",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "flex_grid_DhRTt8": {
+      "type": "flex-grid",
+      "blocks": {
+        "grid_text_XPbGXQ": {
+          "type": "_grid-text",
+          "settings": {
+            "link": "",
+            "open_in_new_window": false,
+            "alignment": "horizontal-center align-content--vertical-middle",
+            "width": "90%",
+            "column_desktop": 12,
+            "row_desktop": 3,
+            "hide_on_mobile": false,
+            "column_mobile": "2",
+            "row_mobile": "2",
+            "color_background_main": "#ebefeb",
+            "color_text_main": "#282d29",
+            "color_hide_borders": true,
+            "color_hide_shadow": false
+          },
+          "blocks": {
+            "caption_WNKiNy": {
+              "type": "caption",
+              "settings": {
+                "caption": "<strong>FRESH, ORGANIC GOODNESS</strong>",
+                "text_size": "large",
+                "text_background_color": "rgba(0,0,0,0)",
+                "text_color": "rgba(0,0,0,0)"
+              },
+              "blocks": {}
+            },
+            "empty_space_GTyWJz": {
+              "type": "empty-space",
+              "settings": {},
+              "blocks": {}
+            },
+            "heading_cAQegY": {
+              "type": "heading",
+              "settings": {
+                "heading": "Locally <em>sourced & delivered</em> [br]to your doorstep",
+                "title_size": "h1",
+                "line_height": "default",
+                "text_color": "rgba(0,0,0,0)",
+                "seo_h_tag": "span"
+              },
+              "blocks": {}
+            },
+            "empty_space_p6HpDW": {
+              "type": "empty-space",
+              "settings": {},
+              "blocks": {}
+            },
+            "content_group_Cb8DcR": {
+              "type": "content-group",
+              "settings": {
+                "spacing": "small"
+              },
+              "blocks": {
+                "button_XbTJMC": {
+                  "type": "button",
+                  "settings": {
+                    "button_label": "ABOUT US",
+                    "link": "",
+                    "open_in_new_window": false,
+                    "button_size": "regular",
+                    "button_style": "solid",
+                    "color_text_buttons": "rgba(0,0,0,0)",
+                    "color_accent_buttons": "rgba(0,0,0,0)"
+                  },
+                  "blocks": {}
+                },
+                "button_7KRUWi": {
+                  "type": "button",
+                  "settings": {
+                    "button_label": "F.A.Q.",
+                    "link": "",
+                    "open_in_new_window": false,
+                    "button_size": "regular",
+                    "button_style": "outline",
+                    "color_text_buttons": "rgba(0,0,0,0)",
+                    "color_accent_buttons": "rgba(0,0,0,0)"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "button_XbTJMC",
+                "button_7KRUWi"
+              ]
+            }
+          },
+          "block_order": [
+            "caption_WNKiNy",
+            "empty_space_GTyWJz",
+            "heading_cAQegY",
+            "empty_space_p6HpDW",
+            "content_group_Cb8DcR"
+          ]
+        }
+      },
+      "block_order": [
+        "grid_text_XPbGXQ"
+      ],
+      "settings": {
+        "heading": "",
+        "subheading": "",
+        "section_heading_layout": "section-heading--left",
+        "card_height": 3,
+        "card_height_mobile": 3,
+        "is_fullwidth": false,
+        "no_gap": false,
+        "spacing": "small",
+        "gutter_size": "regular",
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_background_gradient": "",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "descrease_margin": false,
+        "remove_margin": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "1657094048f07fb2a2": {
+      "type": "marquee",
+      "blocks": {
+        "16570940482780d791-0": {
+          "type": "text",
+          "settings": {
+            "marquee_text": "<strong>New store in </strong><em><strong>New York</strong></em>"
+          }
+        },
+        "image_VUTRrJ": {
+          "type": "image",
+          "settings": {
+            "border_radius": 100
+          }
+        }
+      },
+      "block_order": [
+        "16570940482780d791-0",
+        "image_VUTRrJ"
+      ],
+      "settings": {
+        "scroll_direction": "left",
+        "speed": 200,
+        "pause_on_hover": false,
+        "horizontal_space": "0.7",
+        "text_size": "200",
+        "remove_top_margin": false,
+        "remove_bottom_margin": false,
+        "color_background_main": "#ffffff",
+        "section_background_gradient": "",
+        "color_text_main": "#5c8e61"
+      }
+    },
+    "flex_grid_haPGC6": {
+      "type": "flex-grid",
+      "blocks": {
+        "grid_text_8UJr97": {
+          "type": "_grid-text",
+          "settings": {
+            "link": "",
+            "open_in_new_window": false,
+            "alignment": "horizontal-center align-content--vertical-middle",
+            "width": "90%",
+            "column_desktop": 12,
+            "row_desktop": 3,
+            "hide_on_mobile": false,
+            "column_mobile": "2",
+            "row_mobile": "2",
+            "color_background_main": "#f7f7f7",
+            "color_text_main": "rgba(0,0,0,0)",
+            "color_hide_borders": true,
+            "color_hide_shadow": false
+          },
+          "blocks": {
+            "caption_8VqJeF": {
+              "type": "caption",
+              "settings": {
+                "caption": "100%",
+                "text_size": "xlarge",
+                "text_background_color": "rgba(0,0,0,0)",
+                "text_color": "rgba(0,0,0,0)"
+              },
+              "blocks": {}
+            },
+            "heading_enhkNT": {
+              "type": "heading",
+              "settings": {
+                "heading": "Organic  Food",
+                "title_size": "h1",
+                "line_height": "default",
+                "text_color": "rgba(0,0,0,0)",
+                "seo_h_tag": "span"
+              },
+              "blocks": {}
+            },
+            "empty_space_UKzt3M": {
+              "type": "empty-space",
+              "settings": {},
+              "blocks": {}
+            },
+            "button_XH3Wi9": {
+              "type": "button",
+              "settings": {
+                "button_label": "View products",
+                "link": "",
+                "open_in_new_window": false,
+                "button_size": "large",
+                "button_style": "solid",
+                "color_text_buttons": "rgba(0,0,0,0)",
+                "color_accent_buttons": "rgba(0,0,0,0)"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "caption_8VqJeF",
+            "heading_enhkNT",
+            "empty_space_UKzt3M",
+            "button_XH3Wi9"
+          ]
+        }
+      },
+      "block_order": [
+        "grid_text_8UJr97"
+      ],
+      "settings": {
+        "heading": "",
+        "subheading": "",
+        "section_heading_layout": "section-heading--left",
+        "card_height": 3,
+        "card_height_mobile": 3,
+        "is_fullwidth": true,
+        "no_gap": false,
+        "spacing": "large",
+        "gutter_size": "regular",
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_background_gradient": "",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "descrease_margin": false,
+        "remove_margin": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "16546982542e923b5a": {
+      "type": "featured-product",
+      "blocks": {
+        "16546982534861ca3b-1": {
+          "type": "price",
+          "settings": {}
+        },
+        "16546982534861ca3b-0": {
+          "type": "title",
+          "settings": {
+            "seo_h_tag": "h2"
+          }
+        },
+        "rating_99467t": {
+          "type": "rating",
+          "settings": {}
+        },
+        "16546982534861ca3b-4": {
+          "type": "description",
+          "settings": {}
+        },
+        "space_K3qE87": {
+          "type": "space",
+          "settings": {}
+        },
+        "space_9QJWLr": {
+          "type": "space",
+          "settings": {}
+        },
+        "nutriscore_UQz6BH": {
+          "type": "nutriscore",
+          "settings": {
+            "title": "Nutriscore",
+            "subtitle": "",
+            "tooltip_info": "Make healthier food choices at a glance. It assigns a score to food and beverages based on their nutritional quality, represented by a color-coded scale from A (green) to E (red)",
+            "active_item": 3,
+            "active_item_dynamic": "",
+            "label_1": "A",
+            "color_1": "#007517",
+            "label_2": "B",
+            "color_2": "#94c11e",
+            "label_3": "C",
+            "color_3": "#ffde00",
+            "label_4": "D",
+            "color_4": "#f29200",
+            "label_5": "E",
+            "color_5": "#dd1e01",
+            "collapsible": false,
+            "opened_by_default": false,
+            "layout": "boxed",
+            "text_color": "rgba(0,0,0,0)",
+            "bg_color": "rgba(0,0,0,0)",
+            "darken_header": false
+          }
+        },
+        "space_QCfGAj": {
+          "type": "space",
+          "settings": {}
+        },
+        "16546982534861ca3b-2": {
+          "type": "variant_picker",
+          "settings": {
+            "variants_style": "radio",
+            "show_quantities": "no",
+            "inventory_color_low": "rgba(0,0,0,0)",
+            "inventory_color_enough": "rgba(0,0,0,0)",
+            "inventory_color_out": "rgba(0,0,0,0)"
+          }
+        },
+        "511f8032-4664-4c08-b843-b3178a8f143a": {
+          "type": "space",
+          "settings": {}
+        },
+        "16546982534861ca3b-3": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_price": true,
+            "show_quantity_selector": true,
+            "show_preorder": false,
+            "show_dynamic_checkout": true,
+            "show_gift_card_recipient": false,
+            "color_text_buttons": "rgba(0,0,0,0)",
+            "color_accent_buttons": "rgba(0,0,0,0)",
+            "style_buttons": "solid"
+          }
+        }
+      },
+      "block_order": [
+        "16546982534861ca3b-1",
+        "16546982534861ca3b-0",
+        "rating_99467t",
+        "16546982534861ca3b-4",
+        "space_K3qE87",
+        "space_9QJWLr",
+        "nutriscore_UQz6BH",
+        "space_QCfGAj",
+        "16546982534861ca3b-2",
+        "511f8032-4664-4c08-b843-b3178a8f143a",
+        "16546982534861ca3b-3"
+      ],
+      "settings": {
+        "product": "",
+        "gallery_ratio": "natural",
+        "other_media_ratio": "natural",
+        "video_fit": true,
+        "gallery_fit": false,
+        "show_border": true,
+        "gallery_card_design": false,
+        "gallery_padding": 0,
+        "gallery_pagination": "dots",
+        "enable_zoom": true,
+        "enable_video_looping": true,
+        "enable_video_autoplay": false,
+        "default_to_first_variant": true
+      }
+    },
+    "flex_grid_QryJ3i": {
+      "type": "flex-grid",
+      "blocks": {
+        "grid_text_jKMQdc": {
+          "type": "_grid-text",
+          "settings": {
+            "link": "",
+            "open_in_new_window": false,
+            "alignment": "horizontal-left align-content--vertical-bottom",
+            "width": "90%",
+            "column_desktop": 6,
+            "row_desktop": 2,
+            "hide_on_mobile": false,
+            "column_mobile": "2",
+            "row_mobile": "2",
+            "color_background_main": "#f7f7f7",
+            "color_text_main": "rgba(0,0,0,0)",
+            "color_hide_borders": true,
+            "color_hide_shadow": false
+          },
+          "blocks": {
+            "caption_AxL4T6": {
+              "type": "caption",
+              "settings": {
+                "caption": "Every day",
+                "text_size": "regular",
+                "text_background_color": "rgba(0,0,0,0)",
+                "text_color": "rgba(0,0,0,0)"
+              },
+              "blocks": {}
+            },
+            "heading_HnNLMA": {
+              "type": "heading",
+              "settings": {
+                "heading": "Fresh backery",
+                "title_size": "h3",
+                "line_height": "default",
+                "text_color": "rgba(0,0,0,0)",
+                "seo_h_tag": "span"
+              },
+              "blocks": {}
+            },
+            "empty_space_tniwtW": {
+              "type": "empty-space",
+              "settings": {},
+              "blocks": {}
+            },
+            "button_mNrLKh": {
+              "type": "button",
+              "settings": {
+                "button_label": "Grab It!",
+                "link": "",
+                "open_in_new_window": false,
+                "button_size": "regular",
+                "button_style": "solid",
+                "color_text_buttons": "rgba(0,0,0,0)",
+                "color_accent_buttons": "rgba(0,0,0,0)"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "caption_AxL4T6",
+            "heading_HnNLMA",
+            "empty_space_tniwtW",
+            "button_mNrLKh"
+          ]
+        },
+        "grid_text_xxXiUU": {
+          "type": "_grid-text",
+          "settings": {
+            "link": "",
+            "open_in_new_window": false,
+            "alignment": "horizontal-left align-content--vertical-bottom",
+            "width": "90%",
+            "column_desktop": 6,
+            "row_desktop": 2,
+            "hide_on_mobile": false,
+            "column_mobile": "2",
+            "row_mobile": "2",
+            "color_background_main": "#f7f7f7",
+            "color_text_main": "rgba(0,0,0,0)",
+            "color_hide_borders": true,
+            "color_hide_shadow": false
+          },
+          "blocks": {
+            "caption_KChGxa": {
+              "type": "caption",
+              "settings": {
+                "caption": "Hand-picked",
+                "text_size": "regular",
+                "text_background_color": "rgba(0,0,0,0)",
+                "text_color": "rgba(0,0,0,0)"
+              },
+              "blocks": {}
+            },
+            "heading_6zMDAn": {
+              "type": "heading",
+              "settings": {
+                "heading": "Fruits & [br]vegetables",
+                "title_size": "h3",
+                "line_height": "default",
+                "text_color": "rgba(0,0,0,0)",
+                "seo_h_tag": "span"
+              },
+              "blocks": {}
+            },
+            "empty_space_QELFVc": {
+              "type": "empty-space",
+              "settings": {},
+              "blocks": {}
+            },
+            "button_pnV4rz": {
+              "type": "button",
+              "settings": {
+                "button_label": "Shop now",
+                "link": "",
+                "open_in_new_window": false,
+                "button_size": "regular",
+                "button_style": "solid",
+                "color_text_buttons": "rgba(0,0,0,0)",
+                "color_accent_buttons": "rgba(0,0,0,0)"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "caption_KChGxa",
+            "heading_6zMDAn",
+            "empty_space_QELFVc",
+            "button_pnV4rz"
+          ]
+        }
+      },
+      "block_order": [
+        "grid_text_jKMQdc",
+        "grid_text_xxXiUU"
+      ],
+      "settings": {
+        "heading": "We promise!",
+        "subheading": "",
+        "section_heading_layout": "section-heading--left",
+        "card_height": 3,
+        "card_height_mobile": 3,
+        "is_fullwidth": false,
+        "no_gap": false,
+        "spacing": "small",
+        "gutter_size": "large",
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_background_gradient": "",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "descrease_margin": false,
+        "remove_margin": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "1654161920efe5f084": {
+      "type": "text-columns-icons",
+      "blocks": {
+        "1654161920f21316cf-0": {
+          "type": "image",
+          "settings": {
+            "icon": "earth-globe",
+            "title": "Vegan",
+            "caption": "Plant based goodness",
+            "link": "",
+            "open_in_new_window": false,
+            "color_background_main": "#d0e2cb",
+            "color_icons_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "f428896f-4051-4df9-8bab-e7cd918d1ac7": {
+          "type": "image",
+          "settings": {
+            "icon": "favorite",
+            "title": "Gluten-Free",
+            "caption": "Only whole foods that don't contain gluten",
+            "link": "",
+            "open_in_new_window": false,
+            "color_background_main": "#e5dfcf",
+            "color_icons_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "c68ec8a9-9eee-49a9-b3f4-b878d866cf14": {
+          "type": "image",
+          "settings": {
+            "icon": "take-out-box",
+            "title": "Paleo",
+            "caption": "Ancient ingredients, modern flavors",
+            "link": "",
+            "open_in_new_window": false,
+            "color_background_main": "#d4e4de",
+            "color_icons_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "133b6423-8e5b-4a12-abea-4494b902a1e0": {
+          "type": "image",
+          "settings": {
+            "icon": "apple",
+            "title": "Keto",
+            "caption": "Good fats served in flavor-forward food",
+            "link": "",
+            "open_in_new_window": false,
+            "color_background_main": "#e6cfcf",
+            "color_icons_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        },
+        "3c446a41-840a-492a-83c7-3e7de3370076": {
+          "type": "image",
+          "settings": {
+            "icon": "pizza-slice",
+            "title": "Plant-Based",
+            "caption": "Introducing",
+            "link": "",
+            "open_in_new_window": false,
+            "color_background_main": "#d3e2e1",
+            "color_icons_main": "rgba(0,0,0,0)",
+            "seo_h_tag": "h3"
+          }
+        }
+      },
+      "block_order": [
+        "1654161920f21316cf-0",
+        "f428896f-4051-4df9-8bab-e7cd918d1ac7",
+        "c68ec8a9-9eee-49a9-b3f4-b878d866cf14",
+        "133b6423-8e5b-4a12-abea-4494b902a1e0",
+        "3c446a41-840a-492a-83c7-3e7de3370076"
+      ],
+      "settings": {
+        "heading": "Shop By Lifestyle",
+        "subheading": "",
+        "section_heading_layout": "section-heading--center",
+        "style": "slider",
+        "layout": "grid-5 grid-portable-4 grid-lap-3 grid-palm-2 smel",
+        "border_radius": 200,
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_background_gradient": "",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "1655121489db318f96": {
+      "type": "shop-the-look",
+      "blocks": {
+        "1655121489da0fd0f2-0": {
+          "type": "price",
+          "settings": {}
+        },
+        "1655121489da0fd0f2-1": {
+          "type": "title",
+          "settings": {}
+        },
+        "ffd8f1c9-28ad-4008-a0c2-02d31f483ede": {
+          "type": "rating",
+          "settings": {}
+        },
+        "1655121489da0fd0f2-2": {
+          "type": "quick_buy",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "1655121489da0fd0f2-0",
+        "1655121489da0fd0f2-1",
+        "ffd8f1c9-28ad-4008-a0c2-02d31f483ede",
+        "1655121489da0fd0f2-2"
+      ],
+      "settings": {
+        "heading": "Shop Hot Meals",
+        "subheading": "",
+        "section_heading_layout": "section-heading--left",
+        "product_list": [],
+        "color_background_main": "#f2f2f2",
+        "color_borders_main": "#eeeeee",
+        "color_hide_borders": true,
+        "color_hide_shadow": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "16551304148266b5a5": {
+      "type": "rich-text",
+      "blocks": {
+        "1655130414988486bd-0": {
+          "type": "title",
+          "settings": {
+            "title": "Delicious Recipes",
+            "title_size": "h2",
+            "seo_h_tag": "h2"
+          }
+        },
+        "1655130414988486bd-2": {
+          "type": "button",
+          "settings": {
+            "button_label": "Explore All",
+            "link": "",
+            "open_in_new_window": false,
+            "button_size": "large",
+            "button_style": "outline"
+          }
+        }
+      },
+      "block_order": [
+        "1655130414988486bd-0",
+        "1655130414988486bd-2"
+      ],
+      "settings": {
+        "height": "regular",
+        "image_position": "top",
+        "image_crop": false,
+        "width": "100",
+        "text_alignment": "horizontal-center",
+        "text_alignment_vertical": "middle",
+        "spacing": "large",
+        "is_fullwidth": true,
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_background_gradient": "",
+        "remove_margin": false,
+        "color_background_main": "#e1e0d7",
+        "color_text_main": "rgba(0,0,0,0)",
+        "color_accent_main": "rgba(0,0,0,0)",
+        "color_borders_main": "rgba(0,0,0,0)",
+        "color_shadow_main": "rgba(0,0,0,0)",
+        "color_hide_borders": true,
+        "color_hide_shadow": false
+      }
+    },
+    "16551212489c663a1e": {
+      "type": "featured-collection",
+      "blocks": {
+        "1655121248aee0f086-0": {
+          "type": "price",
+          "settings": {}
+        },
+        "1655121248aee0f086-1": {
+          "type": "title",
+          "settings": {}
+        },
+        "00a6a182-0604-4cb4-80a4-3c8337e16c08": {
+          "type": "rating",
+          "settings": {}
+        },
+        "1655121248aee0f086-2": {
+          "type": "quick_buy",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "1655121248aee0f086-0",
+        "1655121248aee0f086-1",
+        "00a6a182-0604-4cb4-80a4-3c8337e16c08",
+        "1655121248aee0f086-2"
+      ],
+      "settings": {
+        "heading": "Kitchenware Deals!",
+        "subheading": "",
+        "show_view_all": true,
+        "section_heading_layout": "section-heading--left",
+        "style": "grid",
+        "layout_desktop": "four-columns",
+        "layout_mobile": "grid-palm-2",
+        "products_number": 8,
+        "collection": "",
+        "collection_1": "",
+        "collection_2": "",
+        "collection_3": "",
+        "color_background_main": "rgba(0,0,0,0)",
+        "color_text_main": "rgba(0,0,0,0)",
+        "color_button_main": "rgba(0,0,0,0)",
+        "color_borders_main": "rgba(0,0,0,0)",
+        "color_shadow_main": "rgba(0,0,0,0)",
+        "color_hide_borders": false,
+        "color_hide_shadow": false,
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_background_gradient": "",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "d57de2d5-c548-48dd-a4a3-581d89d355b5": {
+      "type": "image-with-hotspots",
+      "blocks": {
+        "909cc9c2-e352-4947-a592-611a30a5a8d7": {
+          "type": "text",
+          "settings": {
+            "title": "Certified Gluten-Free",
+            "description": "<p>Every product in our collection is carefully vetted to ensure it meets gluten-free standards, giving you peace of mind with every purchase.</p>",
+            "vertical_offset_desktop": 27,
+            "horizontal_offset_desktop": 34,
+            "vertical_offset_mobile": 34,
+            "horizontal_offset_mobile": 87,
+            "mobile_hide": false,
+            "tooltip_position_desktop": "left",
+            "tooltip_position_mobile": "left"
+          }
+        },
+        "cccac557-f008-408d-b6e6-508c125f3831": {
+          "type": "text",
+          "settings": {
+            "title": "Inclusive Options",
+            "description": "<p>Our collection includes vegan, organic, and allergy-friendly choices, catering to diverse dietary needs.</p>",
+            "vertical_offset_desktop": 78,
+            "horizontal_offset_desktop": 68,
+            "vertical_offset_mobile": 50,
+            "horizontal_offset_mobile": 50,
+            "mobile_hide": false,
+            "tooltip_position_desktop": "top",
+            "tooltip_position_mobile": "bottom"
+          }
+        },
+        "3325a923-d079-46e4-b89b-9f25656d441a": {
+          "type": "text",
+          "settings": {
+            "title": "High-Quality Ingredients",
+            "description": "<p>We prioritize natural, wholesome ingredients to bring you delicious, gluten-free options without compromise.</p>",
+            "vertical_offset_desktop": 64,
+            "horizontal_offset_desktop": 32,
+            "vertical_offset_mobile": 57,
+            "horizontal_offset_mobile": 12,
+            "mobile_hide": false,
+            "tooltip_position_desktop": "bottom",
+            "tooltip_position_mobile": "right"
+          }
+        },
+        "033a0dec-5c12-4422-a579-a7792e36158a": {
+          "type": "text",
+          "settings": {
+            "title": "Wide Variety",
+            "description": "<p>From snacks and baking essentials to meal options, our gluten-free collection offers something for every taste and occasion.</p>",
+            "vertical_offset_desktop": 28,
+            "horizontal_offset_desktop": 60,
+            "vertical_offset_mobile": 48,
+            "horizontal_offset_mobile": 77,
+            "mobile_hide": false,
+            "tooltip_position_desktop": "bottom",
+            "tooltip_position_mobile": "left"
+          }
+        }
+      },
+      "block_order": [
+        "909cc9c2-e352-4947-a592-611a30a5a8d7",
+        "cccac557-f008-408d-b6e6-508c125f3831",
+        "3325a923-d079-46e4-b89b-9f25656d441a",
+        "033a0dec-5c12-4422-a579-a7792e36158a"
+      ],
+      "settings": {
+        "heading": "Explore Organic",
+        "subheading": "",
+        "section_heading_layout": "section-heading--left",
+        "color_text": "#000000",
+        "color_background": "#ffffff",
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_background_gradient": "",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "16553621956de397b6": {
+      "type": "testimonials",
+      "blocks": {
+        "16553621951e01132c-0": {
+          "type": "testimonial",
+          "settings": {
+            "author_name": "Michael Smith",
+            "author_title": "Customer",
+            "quote": "<p>Great products. Always fresh, eco stuff that i can't find anywhere else in the city. I wouldn't imagine my daily life without them!</p>"
+          }
+        },
+        "16553621951e01132c-1": {
+          "type": "testimonial",
+          "settings": {
+            "author_name": "John Forest",
+            "author_title": "Customer",
+            "quote": "<p>What i love about this shop is the fact that they have great assistance after buying. They offer free recipes and a lot of freebies on each purchase.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "16553621951e01132c-0",
+        "16553621951e01132c-1"
+      ],
+      "settings": {
+        "heading": "",
+        "subheading": "",
+        "section_heading_layout": "section-heading--center",
+        "quote_font": "crimson_text_i4",
+        "quote_font_size": 34,
+        "quote_line_height": 1.1,
+        "content_alignment": "center",
+        "color_background_main": "rgba(0,0,0,0)",
+        "color_text_main": "#000000",
+        "color_borders_main": "rgba(0,0,0,0)",
+        "color_shadow_main": "rgba(0,0,0,0)",
+        "color_hide_borders": false,
+        "color_hide_shadow": false,
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_background_gradient": "",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "16551127939786a43a": {
+      "type": "blog-posts",
+      "blocks": {
+        "165511279388d6ad87-0": {
+          "type": "info",
+          "settings": {
+            "show_date": true,
+            "show_author": false,
+            "show_comments_number": false
+          }
+        },
+        "165511279388d6ad87-1": {
+          "type": "title",
+          "settings": {}
+        },
+        "6d7d92cc-64fe-4f89-9974-bb98f18308a0": {
+          "type": "summary",
+          "disabled": true,
+          "settings": {
+            "excerpt_limit": 20
+          }
+        }
+      },
+      "block_order": [
+        "165511279388d6ad87-0",
+        "165511279388d6ad87-1",
+        "6d7d92cc-64fe-4f89-9974-bb98f18308a0"
+      ],
+      "settings": {
+        "title": "Latest Articles",
+        "subheading": "",
+        "show_view_all": true,
+        "section_heading_layout": "section-heading--left",
+        "blog": "",
+        "emphasize_first": false,
+        "blog_show_image": true,
+        "image_aspect_ratio": "1.33333",
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_background_gradient": "",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "166124485020a4ae62": {
+      "type": "content-toggles",
+      "blocks": {
+        "16612448501816a8ab-0": {
+          "type": "text",
+          "settings": {
+            "title": "WINE TASTING",
+            "subtitle": "Saint Germain.  Thu Sep 24th  6.00pm - 8.00pm",
+            "icon": "map-marker",
+            "button_label": "Register",
+            "button_link": "",
+            "body": "<p>Spend a decadent afternoon in our Saint Germain store with a wine and cheese tasting, guided by a knowledgeable sommelier. </p><p></p><p>Sample wines from various regions, including Rhone, Bordeaux and Sancerre, learning how each region produces different wines. </p><p></p><p>- Find out the proper way to taste wine. <br/>- Nibble on wine-friendly snacks like French cheeses and cured meats for lunch while you sip in a comfortable converted wine cellar in the center of Paris. <br/>- Taste five different wines from regions such as Bordeaux, Sancerre and Champagne Sample artisanal cheese and tasty charcuterie <br/>- Learn about the best wine-tasting techniques from your trained sommelier guide Relax<br/></p><p></p>",
+            "hide_block_if": false
+          }
+        },
+        "16612448501816a8ab-1": {
+          "type": "text",
+          "settings": {
+            "title": "Free cooking class",
+            "subtitle": "Champs Élysées.  Wed Oct 11th  5.00pm - 8.00pm",
+            "icon": "map-marker",
+            "button_label": "Register",
+            "button_link": "",
+            "body": "<p>In our third MasterClass, Chef John Doe focuses on preparing fresh seafood like lobster and salmon, making classic desserts such as apple pie and lemon tart, and showing how sous vide cooking can be done at home to enhance flavor and texture. </p><p></p><p>Whether you’re a beginning or advanced cook, you’ll learn the techniques and principles that will give you the understanding and skills to get the most delicious results.</p>",
+            "hide_block_if": false
+          }
+        },
+        "16612448501816a8ab-2": {
+          "type": "text",
+          "settings": {
+            "title": "Pumpkin carving contest",
+            "subtitle": "La Défense.  Fri Oct 18th  5.00pm - 8.00pm",
+            "icon": "map-marker",
+            "button_label": "Register",
+            "button_link": "",
+            "body": "<p>This year’s contest will be conducted as follows: </p><p>Pumpkins will be <span style=\"text-decoration:underline\">carved </span>at home and brought to school on <strong>Wednesday, October 30th, </strong><span style=\"text-decoration:underline\"><strong>no </strong></span><strong>later than 9:00am</strong>. Pumpkins will be displayed in the front hall, and the judging will take place on Wednesday, October 30th at 3:00pm. They will be lit and displayed on the stage for the school to view on Thursday at 1:00pm. </p><p>A <span style=\"text-decoration:underline\">battery operated candle </span>must be provided by the student in order for the pumpkin to be lit.</p>",
+            "hide_block_if": false
+          }
+        }
+      },
+      "block_order": [
+        "16612448501816a8ab-0",
+        "16612448501816a8ab-1",
+        "16612448501816a8ab-2"
+      ],
+      "settings": {
+        "heading": "Upcoming Events",
+        "subheading": "",
+        "section_heading_layout": "section-heading--left",
+        "open_first": false,
+        "form_enable": false,
+        "form_title": "Contact form",
+        "seo_h_tag": "h2"
+      }
+    },
+    "165597098555c514a4": {
+      "type": "text-columns-images",
+      "blocks": {
+        "1655970985e1e8c596-0": {
+          "type": "image",
+          "settings": {
+            "title": "Local Pickup",
+            "caption": "Get orders faster while avoiding shipping fees",
+            "link": "",
+            "open_in_new_window": false,
+            "seo_h_tag": "h3"
+          }
+        },
+        "1655970985e1e8c596-1": {
+          "type": "image",
+          "settings": {
+            "title": "Local Delivery",
+            "caption": "100% curbside recyclable boxes",
+            "link": "",
+            "open_in_new_window": false,
+            "seo_h_tag": "h3"
+          }
+        },
+        "1655970985e1e8c596-2": {
+          "type": "image",
+          "settings": {
+            "title": "For Conscious Eaters",
+            "caption": "We are supporting small farmers and producers",
+            "link": "",
+            "open_in_new_window": false,
+            "seo_h_tag": "h3"
+          }
+        },
+        "41380ebb-0166-4f1a-af8f-a77893a5b806": {
+          "type": "image",
+          "settings": {
+            "title": "Delicious & New Food",
+            "caption": "Feel great about what you eat",
+            "link": "",
+            "open_in_new_window": false,
+            "seo_h_tag": "h3"
+          }
+        }
+      },
+      "block_order": [
+        "1655970985e1e8c596-0",
+        "1655970985e1e8c596-1",
+        "1655970985e1e8c596-2",
+        "41380ebb-0166-4f1a-af8f-a77893a5b806"
+      ],
+      "settings": {
+        "heading": "",
+        "subheading": "",
+        "section_heading_layout": "section-heading--left",
+        "style": "slider",
+        "layout": "grid-4 grid-portable-3 grid-lap-2",
+        "border_radius": 0,
+        "section_background_color": "#f5f5f5",
+        "section_background_gradient": "",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "remove_margin": false,
+        "seo_h_tag": "h2"
+      }
+    },
+    "1655112847aaa4cc50": {
+      "type": "newsletter",
+      "settings": {
+        "show_icon": true,
+        "title": "Sign up for our newsletter",
+        "text": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>",
+        "color_background_main": "#e7e7e7",
+        "color_text_main": "#000000",
+        "color_borders_main": "rgba(0,0,0,0)",
+        "color_shadow_main": "rgba(0,0,0,0)",
+        "color_hide_borders": true,
+        "color_hide_shadow": false,
+        "section_background_color": "#e7e7e7",
+        "section_background_gradient": "",
+        "remove_margin": true,
+        "seo_h_tag": "h2"
+      }
+    }
+  },
+  "order": [
+    "flex_slideshow_fVfj3k",
+    "text_columns_images_9m9Xcc",
+    "featured-collection",
+    "165406738229739f4d",
+    "featured_collection_X3jgLR",
+    "flex_grid_DhRTt8",
+    "1657094048f07fb2a2",
+    "flex_grid_haPGC6",
+    "16546982542e923b5a",
+    "flex_grid_QryJ3i",
+    "1654161920efe5f084",
+    "1655121489db318f96",
+    "16551304148266b5a5",
+    "16551212489c663a1e",
+    "d57de2d5-c548-48dd-a4a3-581d89d355b5",
+    "16553621956de397b6",
+    "16551127939786a43a",
+    "166124485020a4ae62",
+    "165597098555c514a4",
+    "1655112847aaa4cc50"
+  ]
+}

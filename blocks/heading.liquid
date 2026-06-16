@@ -1,0 +1,129 @@
+{%- unless block.settings.heading == blank -%}
+  <{{ block.settings.seo_h_tag }}
+    class="{{ block.settings.title_size }} text-line-height--{{  block.settings.line_height }}"
+    {%- if block.settings.text_color != 'rgba(0,0,0,0)' -%}
+      style="color: {{ block.settings.text_color }};"
+    {%- endif -%}
+  >
+    {{ block.settings.heading | replace: '[br]', '<br>' }}
+  </{{ block.settings.seo_h_tag }}>
+{%- endunless -%}
+
+{% schema %}
+{
+  "name": "t:local-march-update.labels.heading",
+  "class": "remove-empty-space",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:theme_blocks.caption.settings.content",
+      "default": "Heading",
+      "info": "t:theme_blocks.heading.settings.info"
+    },
+    {
+      "type": "select",
+      "id": "title_size",
+      "label": "t:sections.rich-text.blocks.heading.settings.heading_size.label",
+      "options": [
+        {
+          "value": "h5",
+          "label": "t:theme_blocks.caption.settings.option_1"
+        },
+        {
+          "value": "h4",
+          "label": "t:sections.local-extra-words.settings_schema.product-card.title-size.options__1"
+        },
+        {
+          "value": "h3",
+          "label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__1.label"
+        },
+        {
+          "value": "h2",
+          "label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__2.label"
+        },
+        {
+          "value": "h1",
+          "label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__3.label"
+        }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "select",
+      "id": "line_height",
+      "label": "t:sections.split-extra-words.settings_schema.typography.settings.line_height",
+      "options": [
+        {
+          "value": "default",
+          "label": "t:theme_blocks.heading.settings.option_1"
+        },
+        {
+          "value": "small",
+          "label": "t:sections.local-extra-words.sections.popups.blocks.settings.size.option_1"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.image-with-text.settings.text_width.options__1.label"
+        }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.split-extra-words.settings_schema.colors.headings.custom_colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.local-extra-words.settings_schema.product-card.badges.custom_badges.text_color",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.refactor_words.seo.name"
+    },
+    {
+      "type": "select",
+      "id": "seo_h_tag",
+      "label": "t:sections.refactor_words.seo.label",
+      "info": "t:sections.refactor_words.seo.info",
+      "options": [
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "h4",
+          "label": "H4"
+        },
+        {
+          "value": "h5",
+          "label": "H5"
+        },
+        {
+          "value": "span",
+          "label": "span"
+        }
+      ],
+      "default": "h3"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:local-march-update.labels.heading",
+      "settings": {
+        "heading": "Heading"
+      }
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,86 @@
+{%- comment -%}
+  Renders collection panel (used in featured collection section)
+
+  Accepts:
+  - collection: {Object} collection object.
+  - panel_id: {Integer} can be 0 - 3 for existing collections, or -1 for onboarding collection.
+  - collection_tabs: {Integer} number of total collection panels.
+  - active: {Boolean} if true, panel is active.
+
+  Usage:
+  {% render 'collection-panel', collection: collection, panel_id: panel_id, collection_tabs: collection_tabs, active: active %}
+{%- endcomment -%}
+
+{%- liquid
+  if panel_id == -1
+    assign collection = "onboarding"
+  endif
+-%}
+
+<div 
+  class="collection-tabs_panel 
+    {% if collection_tabs == 1 or collection == "onboarding" %} active {% endif %}
+    {% if active %} active {% endif %}
+  "
+  id="collection-{{ section.id }}-{{ panel_id }}"
+  {% unless collection_tabs == 1 %}
+    role="tabpanel" aria-labelledby="collection-{{ section.id }}-{{ panel_id }}" 
+    {% unless active %} aria-hidden="true" {% endunless %}
+  {% endunless %}
+>
+
+  {%- if section.settings.style == 'slider' -%}
+    <css-slider data-options='{
+        "selector": ".product-item",
+        "indexNav": true,
+        "groupCells": true,
+        "navigationDOM": "<span class=\"css-slider-button css-slider-prev\" style=\"display:none\"><svg fill=\"none\" height=\"13\" viewBox=\"0 0 8 13\" width=\"8\" xmlns=\"http://www.w3.org/2000/svg\"><g fill=\"#000\" ><path d=\"m7.91419 1.41431-6.48529 6.48528-1.4142102-1.41422 6.4852802-6.48527702z\"/><path d=\"m6.48528 12.9849-6.48528027-6.48532 1.41421027-1.41421 6.48528 6.48523z\"/></g></svg></span><span class=\"css-slider-button css-slider-next\" style=\"display:none\"><svg width=\"9\" height=\"13\" viewBox=\"0 0 9 13\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0.914169 11.5857L7.39945 5.10041L8.81367 6.51463L2.32838 12.9999L0.914169 11.5857Z\" fill=\"black\"/><path d=\"M2.34307 0.0151367L8.82835 6.50042L7.41414 7.91463L0.928857 1.42935L2.34307 0.0151367Z\" fill=\"black\"/></svg></span>"
+      }'
+      class="css-slider css-slider--bottom-navigation"
+      id="css-slider-{{ section.id }}-{{ panel_id }}"
+    >
+    {%- render 'custom-shadow', section_id: section.id -%}
+  {%- endif -%}  
+  
+    {%- liquid
+      if section.settings.layout_desktop == 'five-columns'
+        assign grid_class_desktop = 'grid-5 grid-laptop-4 grid-portable-3 grid-lap-2 grid-tiny-1'
+      elsif section.settings.layout_desktop == 'four-columns'
+        assign grid_class_desktop = 'grid-4 grid-portable-3 grid-lap-2 grid-tiny-1'
+      else
+        assign grid_class_desktop = 'grid-3 grid-lap-2 grid-tiny-1'
+      endif
+      
+      if section.settings.layout_mobile == 'grid-palm-1'
+        assign grid_class_mobile = 'grid-palm-1'
+      else
+        assign grid_class_mobile = 'grid-palm-2'
+      endif
+    -%}
+
+    <div class="grid {% if section.settings.style == 'slider' %} grid--slider {% else %} grid--layout {% endif %} {{ grid_class_desktop }} {{ grid_class_mobile }}">
+
+      {%- liquid
+        if collection != blank and collection != "onboarding" and collection_tabs > 0
+          for product in collections[collection].products limit: section.settings.products_number
+            if section.index == 1 and forloop.index <= 4
+              assign preload = true
+            else 
+              assign preload = false
+            endif
+            render 'product-item', product: product, product_collection: collections[collection], section_blocks: section.blocks, layout: grid_class_desktop, mobile_layout: section.settings.layout_mobile, preload: preload
+          endfor
+        else 
+          for i in (1..section.settings.products_number)
+            render 'product-item', blank_product: true, section_blocks: section.blocks
+          endfor
+        endif
+      -%}
+
+    </div>
+
+  {%- if section.settings.style == 'slider' -%}
+    </css-slider>
+  {%- endif -%}
+
+</div>

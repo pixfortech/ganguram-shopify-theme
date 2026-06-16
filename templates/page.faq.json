@@ -1,0 +1,62 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+ {
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "center": false
+      }
+    },
+    "1656415309f6ed11a7": {
+      "type": "content-toggles",
+      "blocks": {
+        "16564153090c75255e-0": {
+          "type": "text",
+          "settings": {
+            "title": "Shipping details",
+            "body": "<p>We process all orders within 1–2 business days. Standard shipping typically takes 3–5 days, while express options are available at checkout.</p><p>Need more info? Read our full <a href='#'>shipping policy</a>.</p>"
+          }
+        },
+        "16564153090c75255e-1": {
+          "type": "text",
+          "settings": {
+            "title": "Delivery details",
+            "body": "<p>We offer free delivery on orders over $75, and same-day dispatch for local orders placed before 12PM.</p><p>See all our <a href='#'>current delivery offers</a>.</p>"
+          }
+        },
+        "16564153090c75255e-2": {
+          "type": "text",
+          "settings": {
+            "title": "Returns details",
+            "body": "<p>You have 30 days to return your items if you're not satisfied. Products must be unused and in original packaging.</p><p>Check our <a href='#'>returns policy</a> for more information.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "16564153090c75255e-0",
+        "16564153090c75255e-1",
+        "16564153090c75255e-2"
+      ],
+      "settings": {
+        "heading": "",
+        "subheading": "",
+        "open_first": false,
+        "toggle_size": "small",
+        "form_enable": true,
+        "form_title": "Don’t find the answer? Ask us!"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "1656415309f6ed11a7"
+  ]
+}

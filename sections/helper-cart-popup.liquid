@@ -1,0 +1,33 @@
+<div class="cart-item">
+  <a href="{{ product.url }}" class="cart-item__thumbnail element--border-width-clamped element--border-radius">
+    {%- render 'lazy-image-small',
+      image: product.featured_media,
+      aspect_ratio: settings.cart_image_ratio,
+      fit: settings.cart_image_fit
+    -%}
+  </a>
+
+  <div class="cart-item__content">
+    <div>
+      <a href="{{ product.url }}" class="cart-item__title">
+        <span class="text-animation--underline-thin">{{ product.title | escape }}</span>
+      </a>
+
+      {%- unless product.has_only_default_variant -%}
+        <span class="cart-item__variant text-size--small text-color--opacity">
+          {{ product.selected_or_first_available_variant.title }}
+        </span>
+      {%- endunless -%}
+    </div>
+  </div>
+</div>
+
+{%- liquid
+  if settings.show_currency_codes
+    assign iso_code = localization.country.currency.iso_code | prepend: ' '
+  endif
+-%}
+<span class="cart__count hidden" aria-hidden="true" data-cart-count style="display:none">{{ cart.item_count }}</span>
+<span class="cart__total hidden" aria-hidden="true" data-cart-total style="display:none">
+  {{- cart.total_price | money | append: iso_code -}}
+</span>

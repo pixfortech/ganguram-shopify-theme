@@ -1,0 +1,27 @@
+{%- if block.settings.text != blank -%}
+  <div class="table__item gutter--small" {{ block.shopify_attributes }}>
+    <div class="rte line-height--small spacing--small remove-empty-space">
+      {{ block.settings.text }}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.rich-text.blocks.text.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:sections.rich-text.blocks.text.settings.text.label",
+      "default": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements or welcome customers to your store.</p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.rich-text.blocks.text.name"
+    }
+  ]
+}
+{% endschema %}

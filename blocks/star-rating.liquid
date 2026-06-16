@@ -1,0 +1,63 @@
+<div id="star-rating-{{ block.id }}" class="star-rating star-rating--block" {{ block.shopify_attributes }}>
+  <span class="visually-hidden">
+    {% assign a11y_rating = block.settings.active_stars_shown | times: 5 | divided_by: 100 | round: 1 %}
+    {{ a11y_rating }} out of {{ 5 }} stars
+  </span>
+  {%- liquid
+    assign stars_width = 5 | times: 20
+  -%}
+  <span class="star-rating__stars" style="width:{{ stars_width }}px" aria-hidden="true">
+    <span
+      class="star-rating__stars-active"
+      style="width:{{ block.settings.active_stars_shown | times: stars_width | divided_by: 100 }}px"
+    ></span>
+  </span>
+  {%- unless block.settings.caption == blank -%}
+    <span class="star-rating__caption text-size--small">
+      {{ block.settings.caption | escape }}
+    </span>
+  {%- endunless -%}
+</div>
+
+{%- style -%}
+  #star-rating-{{ block.id }} .star-rating__stars {
+    background-image: url('data:image/svg+xml;utf8,<svg width="20" height="13" viewBox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="m7 0 1.572 4.837h5.085l-4.114 2.99 1.572 4.836L7 9.673l-4.114 2.99 1.571-4.837-4.114-2.99h5.085L7 0Z" stroke="{{ block.settings.star_color | url_encode }}" stroke-width="1"/></svg>');
+  }
+  #star-rating-{{ block.id }} .star-rating__stars-active {
+    background-image: url('data:image/svg+xml;utf8,<svg width="20" height="13" viewBox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="m7 0 1.572 4.837h5.085l-4.114 2.99 1.572 4.836L7 9.673l-4.114 2.99 1.571-4.837-4.114-2.99h5.085L7 0Z" fill="{{ block.settings.star_color | url_encode }}" stroke-width="0"/></svg>');
+  }
+{%- endstyle -%}
+
+{% schema %}
+{
+  "name": "t:flex-cards.settings.star-rating.name",
+  "settings": [
+    {
+      "type": "range",
+      "id": "active_stars_shown",
+      "label": "t:sections.local-extra-words.sections.product-card.blocks.rating",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "default": 80,
+      "unit": "%"
+    },
+    {
+      "type": "text",
+      "id": "caption",
+      "label": "t:sections.local-extra-words.sections.headings.caption"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "t:flex-cards.settings.star-rating.color",
+      "default": "#FFCC00"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:flex-cards.settings.star-rating.name"
+    }
+  ]
+}
+{% endschema %}

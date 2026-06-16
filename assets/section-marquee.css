@@ -1,0 +1,61 @@
+.scrolling-text {
+  --scrolling-text-height: var(--scrolling-text-size);
+  color: var(--color-text-main);
+  border: 0;
+  width: 100%;
+  height: var(--scrolling-text-height);
+  white-space: nowrap;
+  overflow: hidden;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+@media screen and (max-width: 1023px) {
+  .scrolling-text {
+    --scrolling-text-height: calc(var(--scrolling-text-size) * 0.8);
+  }
+}
+@media screen and (max-width: 767px) {
+  .scrolling-text {
+    --scrolling-text-height: calc(var(--scrolling-text-size) * 0.6);
+  }
+}
+.scrolling-text__container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.scrolling-text__container > span {
+  direction: ltr;
+  display: inline-block;
+  padding-left: calc(var(--scrolling-text-height) * var(--scrolling-text-space));
+  padding-right: calc(var(--scrolling-text-height) * var(--scrolling-text-space));
+}
+html[dir=rtl] .scrolling-text__container > span > * {
+  direction: rtl;
+}
+.scrolling-text__text {
+  font-size: var(--scrolling-text-font-size);
+}
+.scrolling-text__image {
+  height: 0;
+  width: 1px;
+  position: relative;
+}
+.scrolling-text__image .lazy-image {
+  position: absolute;
+  width: calc(var(--scrolling-text-height) * 0.75);
+  height: calc(var(--scrolling-text-height) * 0.75);
+  padding-top: 0 !important;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.scrolling-text p {
+  margin-bottom: 0;
+}
+.scrolling-text a {
+  text-decoration: underline;
+}

@@ -1,0 +1,85 @@
+<div class="block-image" style="--image-height: {{ block.settings.image_height }}px;" {{ block.shopify_attributes }}>
+  {%- if block.settings.link -%}
+    <a
+      href="{{ block.settings.link }}"
+      {% unless block.settings.open_in_new_window == false %}
+        target="_blank"
+      {% endunless %}
+    >
+  {%- endif -%}
+
+  {%- liquid
+    assign height = block.settings.image_height
+    assign height_x2 = height | times: 2
+    assign height_x3 = height | times: 3
+    assign aspect_ratio = block.settings.image.aspect_ratio
+    assign width = height | times: aspect_ratio | round
+  -%}
+
+  <figure class="block-image__figure">
+    {%- if block.settings.image != blank -%}
+      <img
+        src="{{ block.settings.image | image_url: height: height }}"
+        srcset="
+          {{ block.settings.image | image_url: height: height }} {{ width }}w,
+          {{ block.settings.image | image_url: height: height_x2 }} {{ width | times: 2 }}w,
+          {{ block.settings.image | image_url: height: height_x3 }} {{ width | times: 3 }}w
+        "
+        sizes="(max-width: 467px) {{ width | times: 0.5 }}px, (max-width: 767px) {{ width | times: 0.75 }}px, {{ width }}px"
+        alt="{{ block.settings.image.alt | escape }}"
+        height="{{ height }}"
+        width="{{ width }}"
+        loading="lazy"
+        onload="this.parentNode.classList.add('lazyloaded')"
+      >
+    {%- else -%}
+      <span class="onboarding-svg" style="background:white">
+        {{ 'image' | placeholder_svg_tag }}
+      </span>
+    {%- endif -%}
+  </figure>
+
+  {%- if block.settings.link -%}
+    </a>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.gallery.blocks.image.settings.image.label",
+  "settings": [
+    {
+      "id": "image",
+      "type": "image_picker",
+      "label": "t:sections.gallery.blocks.image.settings.image.label"
+    },
+    {
+      "id": "image_height",
+      "type": "range",
+      "label": "t:divider.divider_height",
+      "min": 40,
+      "max": 240,
+      "step": 2,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "t:sections.local-extra-words.sections.announcement-bar.blocks.content.settings.link"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_window",
+      "visible_if": "{{ block.settings.link != blank }}",
+      "label": "t:sections.local-extra-words.sections.announcement-bar.blocks.content.settings.target",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.gallery.blocks.image.settings.image.label"
+    }
+  ]
+}
+{% endschema %}

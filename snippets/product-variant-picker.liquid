@@ -1,0 +1,138 @@
+{%- comment -%}
+  Renders product variant picker.
+
+  Accepts:
+  - product: {Object} the product object.
+  - current_variant: {Object} the current selected variant.
+  - default_to_first_variant: {Boolean} if true, the first available variant will be selected by default.
+  - block: {Object} the block object (to get snippets settings).
+  - no_history: {Boolean} if true, URL will not be updated on variant change.
+
+  Usage:
+  {% render 'product-variant-picker', product: product, current_variant: product.selected_or_first_available_variant, default_to_first_variant: true, block: block %}
+
+{%- endcomment -%}
+
+<product-variants 
+  data-main-product-variants
+  {% if main_product %} data-main-product-page-variants {% endif %}
+  data-variants="{{ product.options_with_values.size }}"
+  data-type="{{ block.settings.variants_style }}"
+  data-hide-variants="true"
+  data-unavailable-variants="show"
+  data-url="{{ product.url }}" data-id="{{ id }}" data-helper-id="{{ section.id }}"
+  data-style="{{ block.settings.variants_style }}"
+  {% if no_history %} data-no-history {% endif %}
+  {% unless default_to_first_variant %} data-variant-required {% endunless %}
+  {% unless product.has_only_default_variant %} data-has-variants {% elsif product.available == false %} data-unavailable {% endunless %}
+  {{ block.shopify_attributes }}
+> 
+
+  <script type="application/json" data-js-variant-data data-update-block="variant-data">
+    {{ current_variant | json }}
+  </script>
+
+  {%- if block.settings.variants_style == 'select' -%}
+
+    <div class="product-variants product-variants--select buttons-holder no-js-hidden"
+      {% if product.has_only_default_variant %} style="display:none" {% endif %}
+    >
+      {%- for option in product.options_with_values -%}
+        <div class="product-variant" data-js-product-variant>
+          <label class="product-variant__name text-size--large" for="product-{{ option.name | escape | downcase | strip | handleize }}-{{ id }}">{{ option.name }}</label>
+          <select class="product-variant-container" id="product-{{ option.name | escape | downcase | strip | handleize }}-{{ id }}" data-js-product-variant-container="select">
+            {%- unless default_to_first_variant -%}
+              <option class="product-variant-value" default selected disabled data-disabled>{{ 'products.grid.select_variant' | t: variant: option.name }}</option>
+            {%- endunless -%}
+            {%- render 'product-variant-options', type: 'select', product: product, option: option, current_variant: current_variant, default_to_first_variant: default_to_first_variant, reload_product: reload_product, id: id -%}
+          </select>
+        </div>
+      {%- endfor -%}
+    </div>
+
+  {%- else -%}
+
+    <div class="product-variants product-variants--radio no-js-hidden"
+      {% if product.has_only_default_variant %} style="display:none" {% endif %}
+    >
+
+      {%- for option in product.options_with_values -%}
+        
+        <div class="product-variant" data-name="product-{{ option.name | escape | downcase | strip | handleize }}-{{ id }}" data-js-product-variant>
+
+          <span class="product-variant__name text-size--large">{{ option.name }}</span>
+
+          <div class="product-variant__container" data-js-product-variant-container="radio">
+            {%- render 'product-variant-options', type: 'radio', product: product, option: option, current_variant: current_variant, default_to_first_variant: default_to_first_variant, reload_product: reload_product, id: id, metaobject_swatch_metafields: block.settings.metaobject_swatch_metafields -%}
+          </div>
+
+        </div>
+
+      {%- endfor -%}
+
+    </div>
+
+  {%- endif -%}
+
+  {%- if block.settings.show_quantities != "no" -%} 
+    <style>
+      {%- if block.settings.inventory_color_low != 'rgba(0,0,0,0)' -%}
+        {%- liquid 
+          assign brightness_inventory = block.settings.inventory_color_low | color_brightness
+          if brightness_inventory > 150 
+            assign color_foreground_inventory = '#000' 
+          else 
+            assign color_foreground_inventory = '#fff' 
+          endif 
+        -%}
+        .product-variant__quantity[data-stock="little-stock"] .pill,
+        .product-variant__quantity[data-stock="one-item-stock"] .pill {
+          background: {{ block.settings.inventory_color_low }};
+          --color-text-main: {{ color_foreground_inventory }};
+        }
+      {%- endif -%}
+      {%- if block.settings.inventory_color_enough != 'rgba(0,0,0,0)' -%}
+        {%- liquid 
+          assign brightness_inventory = block.settings.inventory_color_enough | color_brightness
+          if brightness_inventory > 150 
+            assign color_foreground_inventory = '#000' 
+          else 
+            assign color_foreground_inventory = '#fff' 
+          endif 
+        -%}
+        .product-variant__quantity[data-stock="in-stock"] .pill {
+          background: {{ block.settings.inventory_color_enough }};
+          --color-text-main: {{ color_foreground_inventory }};
+        }
+      {%- endif -%}
+      {%- if block.settings.inventory_color_out != 'rgba(0,0,0,0)' -%}
+        {%- liquid 
+          assign brightness_inventory = block.settings.inventory_color_out | color_brightness
+          if brightness_inventory > 150 
+            assign color_foreground_inventory = '#000' 
+          else 
+            assign color_foreground_inventory = '#fff' 
+          endif 
+        -%}
+        .product-variant__quantity[data-stock="out-of-stock"] .pill {
+          background: {{ block.settings.inventory_color_out }};
+          --color-text-main: {{ color_foreground_inventory }};
+        }
+      {%- endif -%}
+    </style>
+    <span class="product-variant__quantity" 
+      data-js-variant-quantity 
+      data-type="{{ block.settings.show_quantities }}"
+      data-low-stock="5"
+    ></span>
+    {%- if current_variant != null -%}
+      <span data-js-variant-quantity-data data-inventory='[{
+        "id": {{ current_variant.id }}{%- if current_variant.inventory_management != null -%}, 
+        "quantity": {{ current_variant.inventory_quantity }}, 
+        "inventory": "{{ current_variant.inventory_policy }}"{%- endif -%}
+        {%- if current_variant.available == false -%},"unavailable": true{%- endif -%}
+      }]'></span>
+    {%- endif -%}
+  {%- endif -%}
+
+</product-variants>

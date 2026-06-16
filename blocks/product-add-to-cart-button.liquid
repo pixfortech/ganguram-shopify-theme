@@ -1,0 +1,120 @@
+<div class="block-add-to-cart" id="button-{{ block.id }}" {{ block.shopify_attributes }}>
+  {%- if block.settings.color_text_buttons != 'rgba(0,0,0,0)'
+    or block.settings.color_accent_buttons != 'rgba(0,0,0,0)'
+  -%}
+    <style type="text/css">
+      #button-{{ block.id }} {
+        {%- if block.settings.color_text_buttons != 'rgba(0,0,0,0)' -%}
+          --color-text-main: {{ block.settings.color_text_buttons }};
+          --color-text-cards: {{ block.settings.color_text_buttons }};
+          {%- liquid
+            assign brightness_button = block.settings.color_text_buttons | color_brightness
+            if brightness_button > 150
+              assign color_foreground_button = settings.color_foreground_light
+            else
+              assign color_foreground_button = settings.color_foreground_dark
+            endif
+          -%}
+          --color-foreground-main: {{ color_foreground_button }};
+          --color-foreground-cards: {{ color_foreground_button }};
+        {%- endif -%}
+
+        {%- if block.settings.color_accent_buttons != 'rgba(0,0,0,0)' -%}
+          --color-accent-main: {{ block.settings.color_accent_buttons }};
+          --color-accent-cards : {{ block.settings.color_accent_buttons }};
+          {%- liquid
+            assign brightness_accent_main = block.settings.color_accent_buttons | color_brightness
+            if brightness_accent_main > 150
+              assign color_foreground_accent_button = settings.color_foreground_light
+            else
+              assign color_foreground_accent_button = settings.color_foreground_dark
+            endif
+          -%}
+          --color-foreground-accent-main: {{ color_foreground_accent_button }};
+          --color-foreground-accent-cards: {{ color_foreground_accent_button }};
+        {%- endif -%}
+      }
+    </style>
+  {%- endif -%}
+
+  {%- liquid
+    assign button_classes = 'button--' | append: block.settings.button_size | append: ' button--' | append: block.settings.button_style
+    render 'quick-buy', product: block.settings.product, button_classes: button_classes, quick_buy_button_text: block.settings.button_label, choose_options_button_text: block.settings.button_label
+  -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:theme_blocks.product-add-to-cart-button.name",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "t:sections.featured-product.settings.product.label"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:sections.contact-form.blocks.field.settings.labels.label",
+      "default": "Buy now"
+    },
+    {
+      "type": "select",
+      "id": "button_size",
+      "label": "t:sections.rich-text.blocks.button.settings.button_size.label",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:sections.local-extra-words.sections.media-with-text-overlay.settings.option__1"
+        },
+        {
+          "value": "regular",
+          "label": "t:sections.rich-text.blocks.button.settings.button_size.options__1.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.rich-text.blocks.button.settings.button_size.options__2.label"
+        }
+      ],
+      "default": "regular"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "t:sections.local-extra-words.sections.buttons.style.label",
+      "options": [
+        {
+          "value": "outline",
+          "label": "t:sections.local-extra-words.sections.buttons.style.option__1"
+        },
+        {
+          "value": "solid",
+          "label": "t:sections.local-extra-words.sections.buttons.style.option__2"
+        }
+      ],
+      "default": "outline"
+    },
+    {
+      "type": "header",
+      "content": "t:local-march-update.labels.custom_colors"
+    },
+    {
+      "type": "color",
+      "id": "color_text_buttons",
+      "label": "t:sections.split-extra-words.settings_schema.colors.settings.text",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "color",
+      "id": "color_accent_buttons",
+      "label": "t:sections.local-extra-words.settings_schema.colors.settings.accent",
+      "default": "rgba(0,0,0,0)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:theme_blocks.product-add-to-cart-button.name"
+    }
+  ]
+}
+{% endschema %}

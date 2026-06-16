@@ -1,0 +1,659 @@
+{{ 'section-specifications-table.css' | asset_url | stylesheet_tag }}
+
+<div
+  id="section-{{ section.id }}"
+  class="
+    container--large remove-empty-space
+    {% unless section.settings.remove_margin %} {% unless section.settings.descrease_margin %} container--vertical-space {% else %} container--vertical-space-grid {% endunless %} {% endunless %}
+    {% if section.settings.section_background_color != "rgba(0,0,0,0)" or section.settings.section_background_gradient != blank %} container--has-background {% endif %}
+    {% if section.settings.section_visibility == "mobile" %} element--hide-on-desk {% endif %}
+    {% if section.settings.section_visibility == "desktop" %} element--hide-on-small {% endif %}
+  "
+>
+  {%- render 'section-heading',
+    heading: section.settings.heading,
+    subheading: section.settings.subheading,
+    heading_tag: section.settings.seo_h_tag,
+    layout: section.settings.section_heading_layout,
+    custom_button: true,
+    button: section.settings.show_section_button,
+    button_label: section.settings.button_label,
+    link: section.settings.cta_url
+  -%}
+
+  <div id="element-{{ section.id }}" class="grid grid--layout {{ section.settings.layout }} grid-lap-1">
+    {% content_for 'blocks' %}
+  </div>
+
+  {%- render 'section-footer',
+    button: section.settings.show_section_button,
+    button_label: section.settings.button_label,
+    link: section.settings.cta_url,
+    custom_button_target: section.settings.open_in_new_window,
+    layout: section.settings.section_heading_layout
+  -%}
+</div>
+
+{%- if section.settings.section_background_color != 'rgba(0,0,0,0)' -%}
+  {% style %}
+    #shopify-section-{{ section.id }} {
+      background-color: {{ section.settings.section_background_color }};
+    }
+  {% endstyle %}
+{%- endif -%}
+{%- if section.settings.section_background_gradient != blank -%}
+  {% style %}
+    #shopify-section-{{ section.id }} {
+      background: {{ section.settings.section_background_gradient }};
+    }
+  {% endstyle %}
+{%- endif -%}
+{%- if section.settings.section_heading_color != 'rgba(0,0,0,0)' -%}
+  {% style %}
+    #shopify-section-{{ section.id }} {
+      --color-text-main: {{ section.settings.section_heading_color }};
+    }
+  {% endstyle %}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:table-block.label",
+  "blocks": [{ "type": "_table" }, { "type": "_column" }],
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:local-march-update.labels.heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.local-extra-words.sections.headings.heading",
+      "default": "Product specification"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "t:sections.local-extra-words.sections.headings.subheading",
+      "default": "Showcase specifications about a product to help your customers making an informed decision about their purchase."
+    },
+    {
+      "type": "select",
+      "id": "section_heading_layout",
+      "label": "t:sections.rich-text.settings.text_alignment.label",
+      "options": [
+        {
+          "value": "section-heading--left",
+          "label": "t:sections.rich-text.settings.text_alignment.options__1.label"
+        },
+        {
+          "value": "section-heading--center",
+          "label": "t:sections.rich-text.settings.text_alignment.options__2.label"
+        }
+      ],
+      "default": "section-heading--left"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_section_button",
+      "label": "t:local-march-update.labels.show_section_link",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "visible_if": "{{ section.settings.show_section_button == true }}",
+      "label": "t:local-march-update.labels.link_text"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "visible_if": "{{ section.settings.show_section_button == true and section.settings.button_label != blank  }}",
+      "label": "t:sections.local-extra-words.sections.announcement-bar.blocks.content.settings.link"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_window",
+      "visible_if": "{{ section.settings.cta_url != blank and section.settings.show_section_button == true and section.settings.button_label != blank }}",
+      "label": "t:sections.local-extra-words.sections.announcement-bar.blocks.content.settings.target",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:local-march-update.labels.section_design"
+    },
+    {
+      "type": "color",
+      "id": "section_background_color",
+      "label": "t:sections.local-extra-words.settings_schema.product-card.badges.custom_badges.color",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "color_background",
+      "id": "section_background_gradient",
+      "label": "t:local-230.background_gradient"
+    },
+    {
+      "type": "color",
+      "id": "section_heading_color",
+      "label": "t:local-223.heading_text_color",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "checkbox",
+      "id": "descrease_margin",
+      "visible_if": "{{ section.settings.remove_margin == false }}",
+      "label": "t:theme_blocks.descrease_top_margin",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_margin",
+      "visible_if": "{{ section.settings.descrease_margin == false }}",
+      "label": "t:sections.local-extra-words.sections.rich-text.settings.remove_margin.label",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.local-extra-words.settings_schema.layout.name"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "t:sections.local-extra-words.sections.columns.name",
+      "info": "t:sections.local-extra-words.sections.columns.info",
+      "options": [
+        {
+          "value": "grid-1",
+          "label": "t:sections.local-extra-words.sections.columns.option__0"
+        },
+        {
+          "value": "grid-2",
+          "label": "t:sections.local-extra-words.sections.columns.option__1"
+        },
+        {
+          "value": "grid-3",
+          "label": "t:sections.local-extra-words.sections.columns.option__2"
+        }
+      ],
+      "default": "grid-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.refactor_words.seo.name"
+    },
+    {
+      "type": "select",
+      "id": "seo_h_tag",
+      "label": "t:sections.refactor_words.seo.label",
+      "info": "t:sections.refactor_words.seo.info",
+      "options": [
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "h4",
+          "label": "H4"
+        },
+        {
+          "value": "h5",
+          "label": "H5"
+        },
+        {
+          "value": "h6",
+          "label": "H6"
+        },
+        {
+          "value": "span",
+          "label": "span"
+        }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.refactor_words.announcement-bar.visibility.label"
+    },
+    {
+      "type": "select",
+      "id": "section_visibility",
+      "label": "t:sections-visibility.label",
+      "options": [
+        {
+          "value": "always",
+          "label": "t:sections-visibility.options.always"
+        },
+        {
+          "value": "mobile",
+          "label": "t:sections-visibility.options.mobile"
+        },
+        {
+          "value": "desktop",
+          "label": "t:sections-visibility.options.desktop"
+        }
+      ],
+      "default": "always"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:table-block.one-column",
+      "category": "t:table-block.section-category",
+      "settings": {
+        "layout": "grid-2"
+      },
+      "blocks": [
+        {
+          "type": "_table",
+          "blocks": [
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Ingredients</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Natural ingredients with no artificial additives</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Allergens</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>May contain traces of nuts and gluten</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Storage</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Store in a cool, dry place. Refrigerate after opening</p>"
+              }
+            }
+          ],
+          "settings": {
+            "text": "Product details",
+            "color_background_main": "#000000",
+            "color_text_main": "#ffffff",
+            "row_heading_layout": "full-width",
+            "columns_layout": "one-column"
+          }
+        },
+        {
+          "type": "_table",
+          "blocks": [
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Ingredients</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Natural ingredients with no artificial additives</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Allergens</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>May contain traces of nuts and gluten</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Storage</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Store in a cool, dry place. Refrigerate after opening</p>"
+              }
+            }
+          ],
+          "settings": {
+            "text": "Product details",
+            "color_background_main": "#000000",
+            "color_text_main": "#ffffff",
+            "row_heading_layout": "full-width",
+            "columns_layout": "one-column"
+          }
+        }
+      ]
+    },
+    {
+      "name": "t:table-block.two-columns",
+      "category": "t:table-block.section-category",
+      "settings": {
+        "layout": "grid-2"
+      },
+      "blocks": [
+        {
+          "type": "_table",
+          "blocks": [
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Ingredients</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Carefully selected natural ingredients</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Origin</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Sourced from trusted regional producers</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Storage</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Store in a cool, dry place away from sunlight</p>"
+              }
+            }
+          ],
+          "settings": {
+            "text": "Product details",
+            "color_background_main": "#EFEFEF",
+            "color_text_main": "#000000",
+            "color_background_blocks": "#EFEFEF",
+            "color_text_blocks": "#000000",
+            "color_checkmark": "#D14545",
+            "row_heading_layout": "full-width",
+            "columns_layout": "two-columns",
+            "remove_borders_inline": true,
+            "remove_borders_row_heading": false
+          }
+        },
+        {
+          "type": "_table",
+          "blocks": [
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Ingredients</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Carefully selected natural ingredients</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Origin</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Sourced from trusted regional producers</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Storage</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Store in a cool, dry place away from sunlight</p>"
+              }
+            }
+          ],
+          "settings": {
+            "text": "Product details",
+            "color_background_main": "#EFEFEF",
+            "color_text_main": "#000000",
+            "color_background_blocks": "#EFEFEF",
+            "color_text_blocks": "#000000",
+            "color_checkmark": "#D14545",
+            "row_heading_layout": "full-width",
+            "columns_layout": "two-columns",
+            "remove_borders_inline": true,
+            "remove_borders_row_heading": false
+          }
+        }
+      ]
+    },
+    {
+      "name": "t:table-block.three-columns",
+      "category": "t:table-block.section-category",
+      "settings": {
+        "layout": "grid-1"
+      },
+      "blocks": [
+        {
+          "type": "_table",
+          "blocks": [
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Ingredients</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Natural ingredients, no artificial additives</p>"
+              }
+            },
+            {
+              "type": "_table-checkmark-icon"
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Origin</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Sourced from trusted regional farms</p>"
+              }
+            },
+            {
+              "type": "_table-checkmark-icon",
+              "name": "t:table-block.checkmark"
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Storage</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Keep in a cool, dry place</p>"
+              }
+            },
+            {
+              "type": "_table-checkmark-icon"
+            }
+          ],
+          "settings": {
+            "text": "Product details",
+            "color_background_main": "#000000",
+            "color_text_main": "#ffffff",
+            "color_checkmark": "#D14545",
+            "row_heading_layout": "one-column",
+            "columns_layout": "three-columns"
+          }
+        }
+      ]
+    },
+    {
+      "name": "t:table-block.four-columns",
+      "category": "t:table-block.section-category",
+      "settings": {
+        "layout": "grid-1"
+      },
+      "blocks": [
+        {
+          "type": "_table",
+          "blocks": [
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p></p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Classic</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Organic</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Premium</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Natural ingredients</p>"
+              }
+            },
+            {
+              "type": "_table-checkmark-icon"
+            },
+            {
+              "type": "_table-checkmark-icon"
+            },
+            {
+              "type": "_table-checkmark-icon"
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>No artificial additives</p>"
+              }
+            },
+            {
+              "type": "_table-checkmark-icon"
+            },
+            {
+              "type": "_table-checkmark-icon"
+            },
+            {
+              "type": "_table-checkmark-icon"
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Organic certified</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>-</p>"
+              }
+            },
+            {
+              "type": "_table-checkmark-icon"
+            },
+            {
+              "type": "_table-checkmark-icon"
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>Small batch production</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>-</p>"
+              }
+            },
+            {
+              "type": "_table-text",
+              "settings": {
+                "text": "<p>-</p>"
+              }
+            },
+            {
+              "type": "_table-checkmark-icon"
+            }
+          ],
+          "settings": {
+            "text": "Product comparison",
+            "color_background_main": "#000000",
+            "color_text_main": "#ffffff",
+            "color_background_blocks": "#EFEFEF",
+            "color_text_blocks": "#000000",
+            "color_checkmark": "#3AB877",
+            "row_heading_layout": "full-width",
+            "columns_layout": "four-columns",
+            "remove_borders_inline": true
+          }
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header"]
+  }
+}
+{% endschema %}

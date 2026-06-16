@@ -1,0 +1,168 @@
+{%- comment -%}
+  Renders a product block (not all of them) with header area and block style.
+  
+  Accepts:
+  - title: {String} block title
+  - subtitle: {String} block subtitle
+  - text_color: {String} rgb/hex color of the text in the block. Affects border color.
+  - collapsible: {Boolean} the block can collapse/expand. Presence of arrow icon in the block header.
+  - opened_by_default: {Boolean} if collapsible, makes the block expanded by default.
+  - image: {Object} icon image used in the header
+  - tooltip_info: {String} text in the tooltip
+  - layout: {String} block layout (boxed, compact)
+  - content: {String} block content. Often captured and sent via a variable.
+  - rich_text: {Boolean} if the content is rich text applies proper class
+  - background_color: {String} rgb/hex color. Overrides theme defaults. Is the color of the block.
+  - darken_header: {Boolean} affects block header bg color. Uses background_color.
+  
+  Usage:
+  {%- render 'product-block', title: block.settings.title, subtitle: block.settings.subtitle, text_color: block.settings.text_color, collapsible: block.settings.collapsible, background_color: block.settings.bg_color, darken_header: block.settings.darken_header, block_id: block.id, opened_by_default: block.settings.opened_by_default, image: block.settings.image, tooltip_info: block.settings.tooltip_info, layout: block.settings.layout, content: block_content, shopify_attributes: block.shopify_attributes -%}
+{%- endcomment -%}
+
+{%- liquid
+  assign transparent = 'rgba(0,0,0,0)'
+  assign widget_header_bg = settings.color_background_main
+  assign widget_borders_color = settings.color_text_main | color_modify: 'alpha', 0.15
+  assign widget_text_color = settings.color_text_main
+-%}
+
+<div class="card-widget {% if collapsible %} card-widget--is-collapsible {% endif %} {% if layout == "compact" %} card-widget--layout-compact {% else %} card-widget--layout-boxed {% endif %} {% if subtitle == blank and title == blank %} element--overflow-hidden {% endif %} {{ css_class }}" 
+  style="
+  {%- if background_color != transparent -%}
+    --color-background-main: {{ background_color }};
+    {%- assign widget_header_bg = background_color -%}
+  {%- endif -%}
+
+  {%- if text_color != transparent -%}
+    --color-text-main: {{ text_color }};
+    --color-secondary-text-main: {{ text_color | color_modify: 'alpha', 0.60 }};
+    {%- assign widget_borders_color = text_color | color_modify: 'alpha', 0.15 -%}
+    {%- assign widget_text_color = text_color-%}
+  {%- endif -%}
+
+  --widget-borders-color: {{ widget_borders_color }};
+  --color-borders-main: {{ widget_borders_color }};
+
+  {%- unless tooltip_info == blank -%}
+    {%- liquid
+      assign tooltip_background = widget_text_color
+      assign brightness_tooltip = tooltip_background | color_brightness
+      
+      if brightness_tooltip > 150
+        assign tooltip_foreground = settings.color_foreground_light
+      else
+        assign tooltip_foreground = settings.color_foreground_dark
+      endif
+    -%}
+    --color-background-tooltip: {{ tooltip_background }};
+    --color-foreground-tooltip: {{ tooltip_foreground }};
+  {%- endunless -%}
+    
+  {%- if darken_header -%}
+    --color-background-widget-header: {{ widget_text_color | color_modify: 'alpha', 0.05 }};
+  {%- else -%}
+    --color-background-widget-header: {{ widget_header_bg }};
+  {%- endif -%}
+  " {{shopify_attributes }}
+>
+
+  {%- if collapsible == true and subtitle != blank or title != blank -%}
+    <toggle-tab class="toggle {% if opened_by_default %} opened {% endif %}">
+  {%- endif -%}
+
+    {%- if subtitle != blank or title != blank -%}
+
+      {%- if collapsible == true -%}
+        <div class="toggle__title" data-js-title tabindex="0" aria-expanded="{% if opened_by_default %}true{% else %}false{% endif %}" role="button" aria-controls="toggle-{{ block_id }}">
+      {%- endif -%}
+
+          <div class="card-widget__header  {% if subtitle and title == blank %} card-widget__header--subtitle-only {% endif %} {% if title and subtitle == blank %} card-widget__header--title-only {% endif %}">
+            
+            {%- if image -%}
+              <span class="card-widget__header-icon">
+                {%- unless image == blank -%}
+                  <img 
+                    src="{{ image | image_url: width: 24, height: 24, crop: 'center' }}" alt="{{ image.alt | escape }}"
+                    srcset="
+                      {{ image | image_url: width: 24, height: 24, crop: 'center' }} 24w
+                      {% if image.width >= 48 %} ,{{ image | image_url: width: 48, height: 48, crop: 'center' }} 48w, {% endif %} 
+                      {% if image.width >= 72 %} ,{{ image | image_url: width: 72, height: 72, crop: 'center' }} 72w, {% endif %} 
+                      {% if image.width >= 96 %} ,{{ image | image_url: width: 96, height: 96, crop: 'center' }} 96w, {% endif %} 
+                    "
+                    loading="lazy"
+                    sizes="24px"
+                    width="24" height="24"
+                    onload="this.parentNode.classList.add('lazyloaded')"
+                  />
+                {%- endunless -%}
+              </span>
+            {%- endif -%}
+
+            {%- capture info_button -%}
+              <div class="card-widget__header-info">
+                <div class="text-with-icon--tooltip">
+                  <span class="text-with-icon__label rte">
+                    {{ tooltip_info | escape }}
+                  </span>  
+                  {%- render 'theme-symbols', icon: "info-circle" -%}
+                </div>
+              </div>
+            {%- endcapture -%}
+
+            <span class="card-widget__header-text">
+              {%- unless title == blank -%}
+                <span class="card-widget__header-text__title {% if layout == "compact" %} text-size--large {% endif %}">
+                  <span>{{ title | escape }}</span>
+                  {%- unless tooltip_info == blank -%}
+                    {{ info_button }}
+                  {%- endunless -%}
+                </span>
+              {%- endunless -%}
+              
+              {%- unless subtitle == blank -%}
+                <span class="card-widget__header-text__subtitle text-size--xsmall">
+                  
+                  {% if css_class contains 'type-is-rte' %}
+                    <div class="rte" style="margin-top:2px;">{{ subtitle }}</div>
+                  {% else %}
+                    <span>{{ subtitle | escape }}</span>
+                  {% endif %}
+                  
+                  {%- if tooltip_info != blank and title == blank -%}
+                    {{ info_button }}
+                  {%- endif -%}
+                </span>
+              {%- endunless -%}
+              
+            </span>
+          </div>
+      
+      {%- if collapsible == true -%}
+        </div>
+      {%- endif -%}
+
+    {%- endif -%}
+
+      {%- if collapsible == true and subtitle != blank or title != blank -%}
+        <div id="toggle--{{ block_id }}" data-js-content class="toggle__content remove-empty-space" role="region">
+      {%- endif -%}
+
+        {%- unless content == blank -%}
+          <div class="card-widget__content {% if rich_text %} rte {% endif %} remove-empty-space">
+            {{ content }}
+          </div>
+        {%- endunless -%}
+        
+        {%- if widget_url -%}
+          <a class="card-widget_clickable-overlay" href="{{ widget_url }}" {% if open_in_new_window %} target="_blank" {% endif %} title="{{ title | escape }}"></a>
+        {%- endif -%}
+
+    {%- if collapsible == true and subtitle != blank or title != blank -%}
+      </div>
+    {%- endif -%}
+
+  {%- if collapsible == true and subtitle != blank or title != blank -%}
+    </toggle-tab>
+  {%- endif -%}
+
+</div>

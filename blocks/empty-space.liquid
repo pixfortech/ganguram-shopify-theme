@@ -1,0 +1,37 @@
+<div class="empty-space" style="height:{{ block.settings.height }};" aria-hidden="true" {{ block.shopify_attributes }}>
+  &nbsp;
+</div>
+
+{% schema %}
+{
+  "name": "t:theme_blocks.empty-space.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "height",
+      "label": "t:divider.divider_height",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.image-with-text.settings.image_height.options__1.label"
+        },
+        {
+          "value": "20px",
+          "label": "t:sections.image-with-text.settings.image_height.options__2.label"
+        },
+        {
+          "value": "40px",
+          "label": "t:sections.image-with-text.settings.image_height.options__3.label"
+        }
+      ],
+      "default": "0"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:theme_blocks.empty-space.name"
+    }
+  ]
+}
+{% endschema %}
