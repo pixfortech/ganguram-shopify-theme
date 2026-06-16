@@ -254,3 +254,13 @@ html[dir=ltr] .product-item__badges {
 .collection-tabs_panel.active {
   display: block;
 }
+
+/* Phase 1 (visual only): subtle sold-out card treatment — desaturate/dim the image only, layout untouched */
+.product-item--sold-out .product-item__image-figure {
+  filter: grayscale(0.55);
+  opacity: 0.82;
+}
+.no-touchevents .product-item--sold-out:hover .product-item__image-figure {
+  filter: grayscale(0.2);
+  opacity: 0.95;
+}

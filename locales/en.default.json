@@ -165,7 +165,7 @@
     "grid": {
       "on_sale_from_html": "On Sale from {{ price }}",
       "from_text_html": "From {{ price }}",
-      "sold_out_product": "Sold Out",
+      "sold_out_product": "Fresh Batch Soon",
       "on_sale_product": "On Sale",
       "new_product": "New",
       "preorder_product": "Pre Order",
@@ -184,7 +184,7 @@
       "more_description_label": "Show more",
       "less_description_label": "Show less",
       "inventory": {
-        "sold_out_variant": "Sold out",
+        "sold_out_variant": "Fresh Batch Soon",
         "unavailable_variant": "Unavailable",
         "one_product": "There is only one product left!",
         "few_products": "There are {{ count }} products left",
