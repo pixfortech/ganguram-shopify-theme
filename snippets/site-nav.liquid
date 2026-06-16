@@ -20,54 +20,55 @@
 {%- if type == 'classic' -%}
 	{% style %}
 		.menu-link.menu-item--mango {
-			--mango: #f59e0b;
-			--mango-deep: #ea580c;
+			--mango-light: #ffce7a;
+			--mango-deep: #ef7d1a;
+			--mango-text: #7c3f12;
 			position: relative;
 			isolation: isolate;
-			transition: transform .28s cubic-bezier(.2,.7,.3,1.5), color .2s ease;
+			transition: transform .25s cubic-bezier(.2,.7,.3,1.4), color .2s ease;
 		}
+		/* glossy ripe-mango chip — centred & height-bound so it stays inside the menu row (no header bleed) */
 		.menu-link.menu-item--mango::before {
 			content: "";
 			position: absolute;
-			inset: -4px -10px;
+			inset-inline: 8px;
+			top: 50%;
+			height: 1.85em;
+			margin-top: -0.925em;
 			z-index: -1;
 			border-radius: 999px;
-			background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(234,88,12,.20));
+			background:
+				linear-gradient(180deg, rgba(255,255,255,.32), rgba(255,255,255,0) 52%),
+				linear-gradient(135deg, var(--mango-light), var(--mango-deep));
 			opacity: 0;
-			transform: scale(.6);
-			transition: opacity .2s ease, transform .28s cubic-bezier(.2,.7,.3,1.5);
+			transform: scale(.92);
+			transition: opacity .2s ease, transform .25s cubic-bezier(.2,.7,.3,1.4), box-shadow .2s ease;
 		}
-		.menu-link.menu-item--mango::after {
-			content: "🥭";
-			position: absolute;
-			top: -10px;
-			inset-inline-end: -14px;
-			font-size: 14px;
-			line-height: 1;
-			opacity: 0;
-			transform: scale(0) rotate(-20deg);
-			transition: opacity .2s ease, transform .3s cubic-bezier(.2,.7,.3,1.7);
-			pointer-events: none;
+		/* recolour the theme underline (it uses --color-accent-header) to mango */
+		.menu-link.menu-item--mango .text-animation--underline-in-header {
+			background-image: linear-gradient(to right, var(--mango-deep), var(--mango-deep));
 		}
+		/* hover: deep mango-brown text + gentle lift + soft warm glow on the chip */
 		.no-touchevents .menu-link.menu-item--mango:hover {
-			color: var(--mango-deep);
-			transform: translateY(-2px) scale(1.06);
+			color: var(--mango-text);
+			transform: translateY(-1px);
 		}
-		.no-touchevents .menu-link.menu-item--mango:hover::before { opacity: 1; transform: scale(1); }
-		.no-touchevents .menu-link.menu-item--mango:hover::after  { opacity: 1; transform: scale(1) rotate(8deg); }
-		.menu-link.menu-item--mango:active { animation: mango-pop .4s cubic-bezier(.2,.7,.3,1.6); }
+		.no-touchevents .menu-link.menu-item--mango:hover::before {
+			opacity: 1;
+			transform: scale(1);
+			box-shadow: 0 4px 12px -5px rgba(239,125,26,.55), inset 0 1px 0 rgba(255,255,255,.45);
+		}
+		/* active / tap: subtle pop only */
+		.menu-link.menu-item--mango:active { animation: mango-pop .32s cubic-bezier(.2,.7,.3,1.4); }
 		.menu-link.menu-item--mango:active::before { opacity: 1; transform: scale(1); }
-		.menu-link.menu-item--mango:active::after  { opacity: 1; transform: scale(1.1) rotate(8deg); }
 		@keyframes mango-pop {
 			0%   { transform: scale(1); }
-			35%  { transform: scale(1.18) rotate(2deg); }
-			65%  { transform: scale(.95); }
+			45%  { transform: scale(1.05); }
 			100% { transform: scale(1); }
 		}
 		@media (prefers-reduced-motion: reduce) {
 			.menu-link.menu-item--mango,
 			.menu-link.menu-item--mango::before,
-			.menu-link.menu-item--mango::after,
 			.menu-link.menu-item--mango:hover,
 			.menu-link.menu-item--mango:active {
 				transition: none !important;
