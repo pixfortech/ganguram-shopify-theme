@@ -520,5 +520,9 @@
   {{ 'ganguram-delivery-popup.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'ganguram-delivery-popup.js' | asset_url }}" defer></script>
 
+  {%- comment -%} Product visibility filtering by delivery zone (Phase 2.2) — display only; reads window.GanguramZone. No cart/checkout/menu/search/banner logic. {%- endcomment -%}
+  {{ 'ganguram-product-zone-filter.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'ganguram-product-zone-filter.js' | asset_url }}" defer></script>
+
 </body>
 </html>

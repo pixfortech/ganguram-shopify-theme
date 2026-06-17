@@ -16,7 +16,23 @@
 
 {%- assign product_variant = product.selected_or_first_available_variant -%}
 
-<div id="product-item-{{ product.id }}" class="product-item card{% unless blank_product or product.available %} product-item--sold-out{% endunless %}" data-js-product-item>
+{%- comment -%} Phase 2.2 — delivery-zone tags exposed for the pincode product filter (display only). {%- endcomment -%}
+{%- liquid
+  assign gz_kolkata = false
+  assign gz_pan_india = false
+  assign gz_quick_commerce = false
+  if product.tags contains 'Kolkata'
+    assign gz_kolkata = true
+  endif
+  if product.tags contains 'PAN India'
+    assign gz_pan_india = true
+  endif
+  if product.tags contains 'Quick Commerce'
+    assign gz_quick_commerce = true
+  endif
+-%}
+
+<div id="product-item-{{ product.id }}" class="product-item card{% unless blank_product or product.available %} product-item--sold-out{% endunless %}" data-js-product-item data-ganguram-product-card data-ganguram-kolkata="{{ gz_kolkata }}" data-ganguram-pan-india="{{ gz_pan_india }}" data-ganguram-quick-commerce="{{ gz_quick_commerce }}">
 
   {%- liquid
     
