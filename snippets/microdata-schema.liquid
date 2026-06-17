@@ -2,6 +2,20 @@
   This snippet structures the micro-data using JSON-LD specification. For product and article pages, the data is 100% outputted by Shopify. The theme only offers schema for the organization and breadcrumb.
 {%- endcomment -%}
 
+{%- liquid
+  assign org_logo = settings.favicon
+-%}
+{%- capture org_same_as -%}
+{%- if settings.social_facebook != blank %}{{ settings.social_facebook | json }}|||{% endif -%}
+{%- if settings.social_instagram != blank %}{{ settings.social_instagram | json }}|||{% endif -%}
+{%- if settings.social_twitter != blank %}{{ settings.social_twitter | json }}|||{% endif -%}
+{%- if settings.social_youtube != blank %}{{ settings.social_youtube | json }}|||{% endif -%}
+{%- if settings.social_linkedin != blank %}{{ settings.social_linkedin | json }}|||{% endif -%}
+{%- if settings.social_pinterest != blank %}{{ settings.social_pinterest | json }}|||{% endif -%}
+{%- if settings.social_tiktok != blank %}{{ settings.social_tiktok | json }}|||{% endif -%}
+{%- endcapture -%}
+{%- assign org_same_as = org_same_as | strip | split: '|||' | join: ',' -%}
+
 <script type="application/ld+json">
   [
     {
@@ -15,6 +29,12 @@
       "@type": "Organization",
       "name": {{ shop.name | json }},
       "url": {{ shop.url | json }}
+      {%- if org_logo != blank -%}
+        ,"logo": {{ org_logo | image_url | prepend: 'https:' | json }}
+      {%- endif -%}
+      {%- if org_same_as != blank -%}
+        ,"sameAs": [{{ org_same_as }}]
+      {%- endif -%}
     }
   ]
 </script>
