@@ -171,7 +171,7 @@
           "settings": {
             "title": "Sandesh",
             "caption": "",
-            "link": "/collections/all",
+            "link": "/collections/sandesh",
             "open_in_new_window": false,
             "seo_h_tag": "h3"
           }
@@ -181,7 +181,7 @@
           "settings": {
             "title": "Ghee Mishti",
             "caption": "",
-            "link": "/collections/all",
+            "link": "/collections/ghee-mishti",
             "open_in_new_window": false,
             "seo_h_tag": "h3"
           }
@@ -191,7 +191,7 @@
           "settings": {
             "title": "Dry Fruits Mishti",
             "caption": "",
-            "link": "/collections/all",
+            "link": "/collections/dry-fruits-mishti",
             "open_in_new_window": false,
             "seo_h_tag": "h3"
           }
@@ -201,7 +201,7 @@
           "settings": {
             "title": "Packed Mishti",
             "caption": "",
-            "link": "/collections/all",
+            "link": "/collections/packed-mishti",
             "open_in_new_window": false,
             "seo_h_tag": "h3"
           }
