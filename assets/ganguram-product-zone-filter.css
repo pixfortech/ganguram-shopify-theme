@@ -1,0 +1,32 @@
+/* Ganguram — product zone filtering (Phase 2.2). Hides out-of-zone cards + empty state. */
+
+[data-ganguram-product-card].ganguram-zone-hidden {
+  display: none !important;
+}
+
+.ganguram-zone-empty {
+  grid-column: 1 / -1;   /* span full width inside CSS-grid product grids */
+  width: 100%;
+  box-sizing: border-box;
+  padding: 2.25rem 1rem;
+  text-align: center;
+}
+.ganguram-zone-empty__text {
+  margin: 0 0 0.85rem;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: #555;
+}
+.ganguram-zone-empty__button {
+  display: inline-block;
+  padding: 0.55rem 1.15rem;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: #49488d; /* brand primary */
+  border: 0;
+  border-radius: 0.45rem;
+  cursor: pointer;
+}
+.ganguram-zone-empty__button:hover { filter: brightness(1.08); }
+.ganguram-zone-empty__button:focus-visible { outline: 2px solid #1a1a1a; outline-offset: 2px; }
