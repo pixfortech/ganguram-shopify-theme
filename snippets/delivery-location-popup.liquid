@@ -1,0 +1,47 @@
+{%- comment -%}
+  Ganguram mandatory delivery pincode popup — markup only (Phase 2.1d).
+  Behaviour: assets/ganguram-delivery-popup.js (uses window.GanguramZone).
+  Styles:    assets/ganguram-delivery-popup.css.
+
+  Rendered ONCE (in layout/theme.liquid, after the resolver). Hidden by default;
+  the JS opens it on first visit / when a blocked Add-to-Cart or Buy Now is clicked.
+  No cart/checkout/availability logic here — pincode entry/display only.
+{%- endcomment -%}
+<div class="ganguram-delivery-popup" id="ganguram-delivery-popup" data-gdp-root hidden>
+  <div class="ganguram-delivery-popup__overlay" data-gdp-overlay tabindex="-1"></div>
+  <div class="ganguram-delivery-popup__dialog" role="dialog" aria-modal="true" aria-labelledby="gdp-title" aria-describedby="gdp-message">
+    <button type="button" class="ganguram-delivery-popup__close" data-gdp-close aria-label="Close" hidden>
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <span class="ganguram-delivery-popup__pin" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 21s7-5.686 7-11a7 7 0 1 0-14 0c0 5.314 7 11 7 11z" fill="currentColor" opacity="0.18"/>
+        <path d="M12 21s7-5.686 7-11a7 7 0 1 0-14 0c0 5.314 7 11 7 11z" stroke="currentColor" stroke-width="1.6"/>
+        <circle cx="12" cy="10" r="2.4" fill="currentColor"/>
+      </svg>
+    </span>
+
+    <h2 class="ganguram-delivery-popup__title" id="gdp-title">Where should we deliver?</h2>
+    <p class="ganguram-delivery-popup__message" id="gdp-message" data-gdp-message>Enter your pincode to see availability and delivery options for your area.</p>
+
+    <div class="ganguram-delivery-popup__row">
+      <input
+        type="text"
+        class="ganguram-delivery-popup__input"
+        data-gdp-input
+        inputmode="numeric"
+        pattern="[0-9]*"
+        maxlength="6"
+        autocomplete="postal-code"
+        placeholder="6-digit pincode"
+        aria-label="Delivery pincode"
+      >
+      <button type="button" class="ganguram-delivery-popup__apply" data-gdp-apply>Apply</button>
+    </div>
+
+    <p class="ganguram-delivery-popup__status" data-gdp-status role="status" aria-live="polite"></p>
+  </div>
+</div>

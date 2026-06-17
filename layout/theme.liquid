@@ -515,5 +515,10 @@
   {{ 'ganguram-delivery-widget.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'ganguram-delivery-widget.js' | asset_url }}" defer></script>
 
+  {%- comment -%} Mandatory pincode popup + add-to-cart/buy-now guard (Phase 2.1d) — UI/guard only via window.GanguramZone; no checkout/MOV/availability logic. {%- endcomment -%}
+  {%- render 'delivery-location-popup' -%}
+  {{ 'ganguram-delivery-popup.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'ganguram-delivery-popup.js' | asset_url }}" defer></script>
+
 </body>
 </html>
