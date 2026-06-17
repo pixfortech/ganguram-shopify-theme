@@ -125,9 +125,9 @@
               "store_pickup_price": "Home delivery available",
               "store_pickup_time": "",
               "store_address": "<p>123/2, Acharya Prafulla Chandra Road, opposite Scottish Church Collegiate School, Kolkata-700006</p><p> </p><p><strong>Store Hours<br/></strong>07:30-22:00 | Everyday</p>",
-              "store_closing_times": "<p>Closed</p><p>Closing at 5pm</p><p>Closing at 5pm</p><p>Closing at 5pm</p><p>Closing at 5pm</p><p>Closing at 5pm</p><p>Closing at 1pm</p>",
-              "store_map_latitude": "46.7834818",
-              "store_map_longitude": "23.5464733",
+              "store_closing_times": "",
+              "store_map_latitude": "",
+              "store_map_longitude": "",
               "store_map_link": ""
             }
           }
@@ -136,7 +136,7 @@
           "store-selector-0"
         ],
         "settings": {
-          "map_enable": true,
+          "map_enable": false,
           "map_zoom": 10,
           "map_style": "standard",
           "map_tag_pin": false
