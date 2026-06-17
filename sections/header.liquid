@@ -298,11 +298,6 @@
         </a>
       </div>
     </div>
-
-    {%- comment -%} Phase 2.1b hotfix — delivery widget in its own row, outside the logo/actions grids so it can't affect cart/search/account sizing. {%- endcomment -%}
-    <div class="ganguram-delivery-widget-header-slot container--large">
-      {%- render 'delivery-location-widget', align: 'left' -%}
-    </div>
   </div>
 
   <!-- header menu -->
@@ -413,7 +408,8 @@
         {%- render 'theme-symbols', icon: 'chevron' -%}
       </span>
 
-      <div class="header-actions header-actions--blocks" data-js-header-actions>{{ header_blocks }}</div>
+      {%- comment -%} Phase 2.1b — delivery widget placed beside the lower-row service blocks (My store / Need delivery); hidden on mobile. UI only; reads/writes window.GanguramZone. {%- endcomment -%}
+      <div class="header-actions header-actions--blocks" data-js-header-actions><div class="ganguram-delivery-widget-menu-slot">{%- render 'delivery-location-widget', align: 'right' -%}</div>{{ header_blocks }}</div>
     </div>
   </div>
 
