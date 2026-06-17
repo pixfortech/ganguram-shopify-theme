@@ -1298,6 +1298,7 @@
     },
     "16553621956de397b6": {
       "type": "testimonials",
+      "disabled": true,
       "blocks": {
         "16553621951e01132c-0": {
           "type": "testimonial",
@@ -1387,6 +1388,7 @@
     },
     "166124485020a4ae62": {
       "type": "content-toggles",
+      "disabled": true,
       "blocks": {
         "16612448501816a8ab-0": {
           "type": "text",
@@ -1408,7 +1410,7 @@
             "icon": "map-marker",
             "button_label": "Register",
             "button_link": "",
-            "body": "<p>In our third MasterClass, Chef John Doe focuses on preparing fresh seafood like lobster and salmon, making classic desserts such as apple pie and lemon tart, and showing how sous vide cooking can be done at home to enhance flavor and texture. </p><p></p><p>Whether you’re a beginning or advanced cook, you’ll learn the techniques and principles that will give you the understanding and skills to get the most delicious results.</p>",
+            "body": "",
             "hide_block_if": false
           }
         },
@@ -1509,7 +1511,7 @@
       "settings": {
         "show_icon": true,
         "title": "Sign up for our newsletter",
-        "text": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>",
+        "text": "<p>Sign up to hear about fresh-batch mithai, festive gifting and new arrivals.</p>",
         "color_background_main": "#e7e7e7",
         "color_text_main": "#000000",
         "color_borders_main": "rgba(0,0,0,0)",
