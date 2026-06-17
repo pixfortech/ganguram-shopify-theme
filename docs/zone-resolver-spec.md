@@ -72,7 +72,8 @@ phase needs to know how zones are computed.
 `zone` notes: `quick_commerce` implies `isKolkata` (express within Kolkata).
 `not_serviceable` is reserved for a future config rule and is **not** emitted by
 the default classifier (parity with 2.3.2, where every valid pincode is at least
-Pan-India).
+PAN India). Display labels: `kolkata`→"Kolkata", `quick_commerce`→"Quick Commerce",
+`pan_india`→"PAN India".
 
 ## 5. SBZ compatibility
 

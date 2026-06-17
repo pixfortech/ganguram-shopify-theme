@@ -1,0 +1,70 @@
+{%- comment -%}
+  Ganguram "Delivering to…" header widget — markup only (Phase 2.1b).
+  Behaviour: assets/ganguram-delivery-widget.js (reads/writes window.GanguramZone).
+  Styles:    assets/ganguram-delivery-widget.css (loaded once in layout/theme.liquid).
+
+  Params:
+    compact : boolean  -> hides the "Delivering to" label + caret (mobile)
+    align   : 'left' | 'right' (panel anchor; default 'left')
+    class   : extra classes
+
+  No IDs are used, so the snippet is safe to render multiple times (desktop +
+  mobile) on the same page. Each instance is self-contained and synced via the
+  'ganguram:delivery-location-changed' event.
+
+  This snippet renders NO scripts/styles and contains NO cart/checkout/visibility
+  logic. It only provides the UI shell the resolver drives.
+{%- endcomment -%}
+
+<div
+  class="ganguram-delivery-widget{% if compact %} ganguram-delivery-widget--compact{% endif %}{% if align == 'right' %} ganguram-delivery-widget--align-right{% endif %}{% if class %} {{ class }}{% endif %}"
+  data-ganguram-delivery-widget
+>
+  <button
+    type="button"
+    class="ganguram-delivery-widget__trigger"
+    data-gdw-trigger
+    aria-haspopup="dialog"
+    aria-expanded="false"
+    aria-label="{{ 'general.accessibility_labels.choose_delivery_location' | t | default: 'Choose delivery pincode' }}"
+  >
+    <span class="ganguram-delivery-widget__pin" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 21s7-5.686 7-11a7 7 0 1 0-14 0c0 5.314 7 11 7 11z" fill="currentColor" opacity="0.18"/>
+        <path d="M12 21s7-5.686 7-11a7 7 0 1 0-14 0c0 5.314 7 11 7 11z" stroke="currentColor" stroke-width="1.6"/>
+        <circle cx="12" cy="10" r="2.4" fill="currentColor"/>
+      </svg>
+    </span>
+    <span class="ganguram-delivery-widget__text">
+      {%- unless compact -%}
+        <span class="ganguram-delivery-widget__label">Delivering to</span>
+      {%- endunless -%}
+      <span class="ganguram-delivery-widget__value" data-gdw-value>Select pincode</span>
+    </span>
+    <span class="ganguram-delivery-widget__caret" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+  </button>
+
+  <div class="ganguram-delivery-widget__panel" data-gdw-panel hidden role="dialog" aria-label="Choose delivery pincode">
+    <p class="ganguram-delivery-widget__panel-title">Enter your delivery pincode</p>
+    <div class="ganguram-delivery-widget__row">
+      <input
+        type="text"
+        class="ganguram-delivery-widget__input"
+        data-gdw-input
+        inputmode="numeric"
+        pattern="[0-9]*"
+        maxlength="6"
+        autocomplete="postal-code"
+        placeholder="6-digit pincode"
+        aria-label="Delivery pincode"
+      >
+      <button type="button" class="ganguram-delivery-widget__apply" data-gdw-apply>Apply</button>
+    </div>
+    <button type="button" class="ganguram-delivery-widget__clear" data-gdw-clear hidden>Clear pincode</button>
+    <p class="ganguram-delivery-widget__status" data-gdw-status role="status" aria-live="polite"></p>
+  </div>
+</div>

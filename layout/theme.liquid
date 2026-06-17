@@ -511,5 +511,9 @@
   {%- comment -%} Delivery zone resolver (Phase 2.1a) — defines window.GanguramZone. No UI / cart / checkout / visibility logic. {%- endcomment -%}
   {%- render 'zone-resolver' -%}
 
+  {%- comment -%} Delivering-to header widget (Phase 2.1b) — UI only; loaded after the resolver so window.GanguramZone is ready. {%- endcomment -%}
+  {{ 'ganguram-delivery-widget.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'ganguram-delivery-widget.js' | asset_url }}" defer></script>
+
 </body>
 </html>
