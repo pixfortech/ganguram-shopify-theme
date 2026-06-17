@@ -15,7 +15,7 @@
             "caption_nMnnMq": {
               "type": "caption",
               "settings": {
-                "caption": "OUR PROMISE",
+                "caption": "Freshly crafted in Kolkata, delivered across Kolkata & India",
                 "text_size": "small",
                 "text_background_color": "rgba(0,0,0,0)",
                 "text_color": "rgba(0,0,0,0)"
@@ -25,7 +25,7 @@
             "heading_E7DeUU": {
               "type": "heading",
               "settings": {
-                "heading": "Fresh. [br]Organic. [br]Delivered.",
+                "heading": "Heritage Bengali [br]Mithai, Since 1885",
                 "title_size": "h1",
                 "line_height": "default",
                 "text_color": "#343f36",
@@ -42,8 +42,8 @@
                 "button_mp9nKm": {
                   "type": "button",
                   "settings": {
-                    "button_label": "SHOP NOW",
-                    "link": "",
+                    "button_label": "SHOP SWEETS",
+                    "link": "/collections/all",
                     "open_in_new_window": false,
                     "button_size": "regular",
                     "button_style": "solid",
@@ -55,8 +55,8 @@
                 "button_FVTX9K": {
                   "type": "button",
                   "settings": {
-                    "button_label": "LEARN MORE",
-                    "link": "",
+                    "button_label": "PACKED SNACKS",
+                    "link": "/collections/snacks",
                     "open_in_new_window": false,
                     "button_size": "regular",
                     "button_style": "outline",
@@ -90,7 +90,7 @@
             "caption_j4d4q3": {
               "type": "caption",
               "settings": {
-                "caption": "UP TO 40% OFF",
+                "caption": "Premium sweets, packed mithai and festive favourites",
                 "text_size": "regular",
                 "text_background_color": "rgba(0,0,0,0)",
                 "text_color": "rgba(0,0,0,0)"
@@ -100,7 +100,7 @@
             "heading_wzKzeB": {
               "type": "heading",
               "settings": {
-                "heading": "Kitchen & [br]Dining Sale",
+                "heading": "Sweets That [br]Travel Beautifully",
                 "title_size": "h1",
                 "line_height": "default",
                 "text_color": "rgba(0,0,0,0)",
@@ -117,8 +117,8 @@
                 "button_wf4ffd": {
                   "type": "button",
                   "settings": {
-                    "button_label": "BUY NOW",
-                    "link": "",
+                    "button_label": "SHOP PACKED MITHAI",
+                    "link": "/collections/all",
                     "open_in_new_window": false,
                     "button_size": "regular",
                     "button_style": "solid",
