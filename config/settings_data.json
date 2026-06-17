@@ -54,6 +54,7 @@
     "product_card_color_borders_main": "#e9e9e9",
     "product_card_badge_sale_color": "#EA5454",
     "product_card_badge_custom_2_text": "Preorder Now",
+    "favicon": "shopify://shop_images/ganguram.com-logo-500px_1.png",
     "cart_action": "overlay",
     "sticky_cart_actions": true,
     "cart_additional_buttons": true,
