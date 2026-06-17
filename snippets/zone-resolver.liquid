@@ -1,0 +1,20 @@
+{%- comment -%}
+  Ganguram delivery zone resolver loader (Phase 2.1a foundation).
+
+  Loads assets/ganguram-zone-resolver.js, which defines window.GanguramZone:
+    classifyPincode, getSelectedPincode, getSelectedDeliveryLocation,
+    setSelectedPincode, clearSelectedDeliveryLocation.
+
+  Foundation ONLY — defines the API and is inert on load. It does NOT render UI
+  or touch cart / checkout / MOV / date-slot / product visibility / menu / search
+  / banners / collection filtering. SBZ compatibility: the resolver mirrors the
+  pincode to localStorage["Zipcode"].
+
+  Render once. Currently rendered in layout/theme.liquid before </body>.
+
+  Future override seam (no list duplication): to source the pincode lists from
+  Liquid/shop metafields instead of the JS default, output a
+  `window.GanguramZoneConfig = { kolkata, quickCommerce, labels }` script BEFORE
+  this include. If absent, the JS default config is the single source of truth.
+{%- endcomment -%}
+<script src="{{ 'ganguram-zone-resolver.js' | asset_url }}" defer></script>
