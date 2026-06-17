@@ -162,6 +162,8 @@
       <!-- header blocks -->
 
       <div class="header-actions header-actions--buttons {% if section.settings.show_search %} header-actions--show-search {% endif %} portable-hide">
+        {%- comment -%} Phase 2.1b — delivery location widget (desktop). UI only; reads/writes window.GanguramZone. {%- endcomment -%}
+        {%- render 'delivery-location-widget', align: 'right' -%}
         {%- if section.settings.show_search -%}
           <search-form style="position:relative">
             <div class="button button--outline button--icon button--outline-hover button--no-padding button--no-hover site-search-handle">
@@ -254,6 +256,9 @@
           <span class="visually-hidden">{{ 'general.accessibility_labels.open_menu' | t }}</span>
           {%- render 'theme-symbols', icon: 'burger' -%}
         </button>
+
+        {%- comment -%} Phase 2.1b — delivery location widget (mobile, compact). UI only. {%- endcomment -%}
+        {%- render 'delivery-location-widget', compact: true, align: 'left' -%}
 
         {% if section.settings.show_search and section.settings.compact_search_on_mobile %}
           <button
