@@ -1,5 +1,22 @@
 /* Ganguram — "Delivering to…" header widget (Phase 2.1b). Scoped to .ganguram-delivery-widget. */
 
+/* Header slot — the widget lives in its OWN row (a sibling of .header__top), so it
+   sits outside the logo/actions grids and can never resize or shift cart/search/
+   account. Fixed-size utility, never a flex-layout controller. */
+.ganguram-delivery-widget-header-slot {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+.ganguram-delivery-widget-header-slot .ganguram-delivery-widget {
+  flex: 0 0 auto;     /* no grow, no shrink-to-zero */
+  max-width: 100%;
+  min-width: 0;
+}
+
 .ganguram-delivery-widget {
   position: relative;
   display: inline-flex;
