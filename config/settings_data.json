@@ -63,6 +63,11 @@
     "show_breadcrumb": true,
     "show_gotop": false,
     "theme_preset": "Local",
+    "social_email": "mailto:ganguramonline@gmail.com",
+    "social_phone": "tel:+919073096322",
+    "social_facebook": "https://facebook.com/ganguramoriginal",
+    "social_instagram": "https://instagram.com/ganguramoriginal",
+    "social_linkedin": "https://linkedin.com//company/ganguramoriginal",
     "sections": {
       "popups": {
         "type": "popups",
