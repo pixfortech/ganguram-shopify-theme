@@ -37,12 +37,12 @@
       ],
       "settings": {
         "visibility": "all",
-        "autoplay": false,
+        "autoplay": true,
         "autoplay_interval": 6,
         "show_locale_selector": true,
         "show_country_selector": false,
         "show_social_icons": true,
-        "bar_bgcolor": "#1f1f1f",
+        "bar_bgcolor": "#49488D",
         "bar_txtcolor": "#ffffff"
       }
     },
