@@ -1,20 +1,20 @@
 /* Ganguram — "Delivering to…" header widget (Phase 2.1b). Scoped to .ganguram-delivery-widget. */
 
-/* Header slot — the widget lives in its OWN row (a sibling of .header__top), so it
-   sits outside the logo/actions grids and can never resize or shift cart/search/
-   account. Fixed-size utility, never a flex-layout controller. */
-.ganguram-delivery-widget-header-slot {
+/* Menu/service-row slot — the widget sits beside the lower-row service blocks
+   (My store / Need delivery). That cluster is a flex (justify-content:end) row, so
+   a fixed-size child is layout-neutral. Hidden on mobile for now (the lower row is
+   portable-hide by default and is cloned into the mobile nav). */
+.ganguram-delivery-widget-menu-slot {
   display: flex;
-  justify-content: flex-start;
   align-items: center;
-  padding-top: 0.35rem;
-  padding-bottom: 0.35rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-}
-.ganguram-delivery-widget-header-slot .ganguram-delivery-widget {
-  flex: 0 0 auto;     /* no grow, no shrink-to-zero */
-  max-width: 100%;
+  flex: 0 0 auto;     /* no grow, no shrink-to-zero, never a flex-layout controller */
   min-width: 0;
+}
+.ganguram-delivery-widget-menu-slot .ganguram-delivery-widget__value {
+  max-width: 16ch;    /* clean truncation for "Quick Commerce 700001" */
+}
+@media (max-width: 1023px) {
+  .ganguram-delivery-widget-menu-slot { display: none; }
 }
 
 .ganguram-delivery-widget {
