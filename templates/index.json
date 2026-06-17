@@ -169,9 +169,9 @@
         "image_nb6e3t": {
           "type": "image",
           "settings": {
-            "title": "Bread & Bakery",
+            "title": "Sandesh",
             "caption": "",
-            "link": "",
+            "link": "/collections/all",
             "open_in_new_window": false,
             "seo_h_tag": "h3"
           }
@@ -179,9 +179,9 @@
         "image_GkFQKk": {
           "type": "image",
           "settings": {
-            "title": "Flour & Baking",
+            "title": "Ghee Mishti",
             "caption": "",
-            "link": "",
+            "link": "/collections/all",
             "open_in_new_window": false,
             "seo_h_tag": "h3"
           }
@@ -189,9 +189,9 @@
         "image_Af3Dwm": {
           "type": "image",
           "settings": {
-            "title": "Fruits & Vegetables",
+            "title": "Dry Fruits Mishti",
             "caption": "",
-            "link": "",
+            "link": "/collections/all",
             "open_in_new_window": false,
             "seo_h_tag": "h3"
           }
@@ -199,9 +199,9 @@
         "image_UTmXBm": {
           "type": "image",
           "settings": {
-            "title": "Fresh Meals & Pizzas",
+            "title": "Packed Mishti",
             "caption": "",
-            "link": "",
+            "link": "/collections/all",
             "open_in_new_window": false,
             "seo_h_tag": "h3"
           }
@@ -209,9 +209,9 @@
         "image_UFxdy6": {
           "type": "image",
           "settings": {
-            "title": "Beverages",
+            "title": "Packed Snacks",
             "caption": "",
-            "link": "",
+            "link": "/collections/snacks",
             "open_in_new_window": false,
             "seo_h_tag": "h3"
           }
@@ -219,9 +219,9 @@
         "image_DzMfKE": {
           "type": "image",
           "settings": {
-            "title": "Fresh Meat",
-            "caption": "",
-            "link": "",
+            "title": "Mishti Doi",
+            "caption": "Fresh in Kolkata",
+            "link": "/collections/doi",
             "open_in_new_window": false,
             "seo_h_tag": "h3"
           }
@@ -229,9 +229,9 @@
         "image_ddmjCX": {
           "type": "image",
           "settings": {
-            "title": "Dairy & Eggs",
-            "caption": "",
-            "link": "",
+            "title": "Rosher Mishti",
+            "caption": "Fresh in Kolkata",
+            "link": "/collections/rosher-mishti",
             "open_in_new_window": false,
             "seo_h_tag": "h3"
           }
@@ -239,9 +239,29 @@
         "image_9N37VN": {
           "type": "image",
           "settings": {
-            "title": "Sauces & Marinades",
-            "caption": "",
-            "link": "",
+            "title": "Tattya",
+            "caption": "Kolkata Orders",
+            "link": "/collections/tattya",
+            "open_in_new_window": false,
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_giftboxes": {
+          "type": "image",
+          "settings": {
+            "title": "Gift Boxes",
+            "caption": "Kolkata Orders",
+            "link": "/collections/gift-boxes",
+            "open_in_new_window": false,
+            "seo_h_tag": "h3"
+          }
+        },
+        "image_sweetstray": {
+          "type": "image",
+          "settings": {
+            "title": "Sweets Tray",
+            "caption": "Kolkata Orders",
+            "link": "/collections/sweets-tray",
             "open_in_new_window": false,
             "seo_h_tag": "h3"
           }
@@ -255,7 +275,9 @@
         "image_UFxdy6",
         "image_DzMfKE",
         "image_ddmjCX",
-        "image_9N37VN"
+        "image_9N37VN",
+        "image_giftboxes",
+        "image_sweetstray"
       ],
       "settings": {
         "heading": "Shop by Category",
