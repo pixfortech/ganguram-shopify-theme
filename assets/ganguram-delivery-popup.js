@@ -21,7 +21,7 @@
   window.__ganguramDeliveryPopupInit = true;
 
   var BLOCK_MSG = 'Please enter your delivery pincode to see available items.';
-  var DEFAULT_MSG = 'Enter your pincode to see availability and delivery options for your area.';
+  var DEFAULT_MSG = 'We use your pincode only to show products available for your delivery area.';
 
   function zone() { return window.GanguramZone || null; }
   function inDesignMode() { return !!(window.Shopify && window.Shopify.designMode); }
@@ -63,8 +63,11 @@
     var closeBtn = q('[data-gdp-close]');
     if (closeBtn) { closeBtn.hidden = !hasValidDeliveryLocation(); }
     lastFocus = document.activeElement;
+    r.classList.remove('is-closing');
     r.hidden = false;
     document.documentElement.classList.add('gdp-open');
+    void r.offsetWidth; // reflow so the entrance transition runs from its start state
+    r.classList.add('is-open');
     var input = q('[data-gdp-input]');
     if (input) {
       var pin = (zone() && zone().getSelectedPincode()) || '';
@@ -73,14 +76,25 @@
     }
   }
 
+  function prefersReducedMotion() {
+    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
   function closeDeliveryLocationPopup(force) {
     var r = root(); if (!r) { return; }
     // Mandatory mode: don't close unless forced (Escape / programmatic) or a valid
     // pincode already exists. The backdrop uses force=false, Escape uses force=true.
     if (!force && !hasValidDeliveryLocation()) { return; }
-    r.hidden = true;
-    document.documentElement.classList.remove('gdp-open');
-    if (lastFocus && lastFocus.focus) { try { lastFocus.focus(); } catch (e) {} }
+    if (r.hidden) { return; }
+    r.classList.remove('is-open');
+    r.classList.add('is-closing'); // CSS plays the exit transition
+    var finish = function () {
+      r.hidden = true;
+      r.classList.remove('is-closing');
+      document.documentElement.classList.remove('gdp-open');
+      if (lastFocus && lastFocus.focus) { try { lastFocus.focus(); } catch (e) {} }
+    };
+    if (prefersReducedMotion()) { finish(); } else { window.setTimeout(finish, 200); }
   }
 
   function apply() {
@@ -90,7 +104,7 @@
     if (!z) { setStatus('Delivery lookup is unavailable. Please reload and try again.', 'error'); return; }
     var test = z.classifyPincode(raw);
     if (!test || test.zone === 'unknown' || test.isServiceable !== true) {
-      setStatus('Please enter a valid 6-digit pincode.', 'error');
+      setStatus('Please enter a valid serviceable pincode.', 'error');
       return; // invalid -> NOT stored
     }
     z.setSelectedPincode(raw); // validates + persists + fires event -> onZoneChange() closes

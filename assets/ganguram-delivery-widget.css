@@ -11,7 +11,7 @@
   min-width: 0;
 }
 .ganguram-delivery-widget-menu-slot .ganguram-delivery-widget__value {
-  max-width: 16ch;    /* clean truncation for "Quick Commerce 700001" */
+  max-width: 22ch;    /* fit "Quick Commerce 700001" without cramping */
 }
 @media (max-width: 1023px) {
   .ganguram-delivery-widget-menu-slot { display: none; }
@@ -39,8 +39,11 @@
   line-height: 1.15;
   cursor: pointer;
 }
-.ganguram-delivery-widget__trigger:hover { background: rgba(0, 0, 0, 0.05); }
+.ganguram-delivery-widget__trigger:hover { background: rgba(73, 72, 141, 0.08); }
 .ganguram-delivery-widget__trigger:focus-visible { outline: 2px solid #49488d; outline-offset: 2px; }
+/* make it obvious the value is clickable / changeable */
+.ganguram-delivery-widget__trigger:hover .ganguram-delivery-widget__value { text-decoration: underline; text-underline-offset: 2px; }
+.ganguram-delivery-widget__trigger:hover .ganguram-delivery-widget__caret { opacity: 1; color: #49488d; }
 
 .ganguram-delivery-widget__pin {
   flex: 0 0 auto;
@@ -63,13 +66,13 @@
   line-height: 1.1;
 }
 .ganguram-delivery-widget__value {
-  font-size: 0.86em;
-  font-weight: 600;
-  line-height: 1.15;
+  font-size: 0.9em;
+  font-weight: 700;
+  line-height: 1.18;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 14ch;
+  max-width: 18ch;
 }
 .ganguram-delivery-widget__caret { flex: 0 0 auto; width: 0.7em; height: 0.7em; opacity: 0.6; }
 .ganguram-delivery-widget__caret svg { display: block; width: 100%; height: 100%; }
@@ -115,7 +118,8 @@
   border: 1px solid rgba(0, 0, 0, 0.25);
   border-radius: 0.4rem;
 }
-.ganguram-delivery-widget__input:focus-visible { outline: 2px solid #49488d; outline-offset: 1px; }
+.ganguram-delivery-widget__input:focus,
+.ganguram-delivery-widget__input:focus-visible { outline: none; border-color: #49488d; box-shadow: 0 0 0 3px rgba(73, 72, 141, 0.16); }
 .ganguram-delivery-widget__apply {
   flex: 0 0 auto;
   padding: 0.5rem 0.85rem;
