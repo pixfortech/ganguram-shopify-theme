@@ -61,6 +61,7 @@
     "cart_additional_buttons": true,
     "cart_image_fit": false,
     "cart_recommendations": true,
+    "google_maps_api_key": "AIzaSyBPP8E71qfFID6gR986MipcqllnG7kjAdM",
     "show_breadcrumb": true,
     "show_gotop": false,
     "theme_preset": "Local",
