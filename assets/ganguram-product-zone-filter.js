@@ -66,7 +66,7 @@
   }
   function openPincodeUI() {
     if (window.GanguramDelivery && typeof window.GanguramDelivery.openDeliveryLocationPopup === 'function') {
-      window.GanguramDelivery.openDeliveryLocationPopup('Enter a delivery pincode to see available products.');
+      window.GanguramDelivery.openDeliveryLocationPopup('No products are available for this pincode. Try another delivery pincode.');
     } else {
       var trigger = document.querySelector('[data-gdw-trigger]'); // fall back to the header widget
       if (trigger) { trigger.click(); }

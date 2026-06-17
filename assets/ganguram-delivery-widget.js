@@ -123,7 +123,15 @@
     var input = q(w, '[data-gdw-input]');
 
     if (trigger) {
-      trigger.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); togglePanel(w); });
+      trigger.addEventListener('click', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        // Phase 2.4: open the premium popup; fall back to the inline dropdown if the popup module isn't present.
+        if (window.GanguramDelivery && typeof window.GanguramDelivery.openDeliveryLocationPopup === 'function') {
+          window.GanguramDelivery.openDeliveryLocationPopup();
+        } else {
+          togglePanel(w);
+        }
+      });
     }
     if (applyBtn) { applyBtn.addEventListener('click', function () { apply(w); }); }
     if (clearBtn) { clearBtn.addEventListener('click', function () { clearSelection(w); }); }

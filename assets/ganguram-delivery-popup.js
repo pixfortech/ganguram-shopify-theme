@@ -45,6 +45,8 @@
   function root() { return document.getElementById('ganguram-delivery-popup'); }
   function q(sel) { var r = root(); return r ? r.querySelector(sel) : null; }
   var lastFocus = null;
+  var suppressAutoClose = false;
+  var successTimer = null;
 
   function setMessage(msg) { var m = q('[data-gdp-message]'); if (m) { m.textContent = msg || DEFAULT_MSG; } }
   function setStatus(msg, state) {
@@ -52,12 +54,28 @@
     s.textContent = msg || '';
     if (state) { s.setAttribute('data-gdp-state', state); } else { s.removeAttribute('data-gdp-state'); }
   }
+  function setTitle(txt) { var t = q('[data-gdp-title]'); if (t && txt) { t.textContent = txt; } }
+  function currentLoc() { var z = zone(); return z ? z.getSelectedDeliveryLocation() : null; }
+  function setCurrent() {
+    var el = q('[data-gdp-current]'); if (!el) { return; }
+    var loc = currentLoc();
+    if (loc && loc.pincode && loc.isServiceable === true) {
+      el.textContent = 'Currently delivering to ' + (loc.label ? loc.label + ' ' : '') + loc.pincode + '.';
+      el.hidden = false;
+    } else {
+      el.textContent = '';
+      el.hidden = true;
+    }
+  }
   function isOpen() { var r = root(); return !!(r && !r.hidden); }
 
   function openDeliveryLocationPopup(message) {
     var r = root(); if (!r) { return; }
     setMessage(message);
     setStatus('', '');
+    var hasLoc = hasValidDeliveryLocation();
+    setTitle(hasLoc ? 'Change delivery pincode' : 'Enter delivery pincode');
+    setCurrent();
     // Close button only when a valid pincode already exists (dismissible);
     // otherwise the popup is mandatory (no close button).
     var closeBtn = q('[data-gdp-close]');
@@ -92,6 +110,7 @@
       r.hidden = true;
       r.classList.remove('is-closing');
       document.documentElement.classList.remove('gdp-open');
+      suppressAutoClose = false;
       if (lastFocus && lastFocus.focus) { try { lastFocus.focus(); } catch (e) {} }
     };
     if (prefersReducedMotion()) { finish(); } else { window.setTimeout(finish, 200); }
@@ -105,12 +124,24 @@
     var test = z.classifyPincode(raw);
     if (!test || test.zone === 'unknown' || test.isServiceable !== true) {
       setStatus('Please enter a valid serviceable pincode.', 'error');
+      if (input) { try { input.focus(); input.select(); } catch (e) {} } // keep focus in the input
       return; // invalid -> NOT stored
     }
-    z.setSelectedPincode(raw); // validates + persists + fires event -> onZoneChange() closes
+    // Valid: persist (fires the change event so the product filter updates), then show a
+    // brief success state and close smoothly. suppressAutoClose lets the success show
+    // instead of onZoneChange closing instantly. No filtering logic is duplicated here.
+    suppressAutoClose = true;
+    var loc = z.setSelectedPincode(raw);
+    setStatus('Products updated for ' + (loc.label ? loc.label + ' ' : '') + loc.pincode + '.', 'ok');
+    setTitle('Change delivery pincode');
+    setCurrent();
+    clearTimeout(successTimer);
+    var delay = prefersReducedMotion() ? 150 : 950;
+    successTimer = window.setTimeout(function () { suppressAutoClose = false; closeDeliveryLocationPopup(true); }, delay);
   }
 
   function onZoneChange() {
+    if (suppressAutoClose) { return; } // the popup's own apply is showing its success; its timer will close it
     if (isOpen() && hasValidDeliveryLocation()) {
       setStatus('', '');
       closeDeliveryLocationPopup(true);
@@ -157,9 +188,19 @@
       input.addEventListener('input', function () { input.value = input.value.replace(/\D/g, '').slice(0, 6); });
       input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); apply(); } });
     }
-    // Escape always closes (accessibility — never trap the user), even when mandatory.
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && isOpen()) { closeDeliveryLocationPopup(true); } });
+    // Escape closes only when a pincode is already saved; it must NOT bypass the
+    // mandatory first-visit gate while shopping is blocked. Reduced-motion honoured in close().
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && isOpen()) { closeDeliveryLocationPopup(false); } });
     window.addEventListener((zone() && zone().EVENT_NAME) || 'ganguram:delivery-location-changed', onZoneChange);
+    // Any element marked [data-ganguram-open-pincode] opens this popup (header widget,
+    // mobile-nav clone, empty-state button). Delegated so dynamically-cloned triggers work.
+    document.addEventListener('click', function (e) {
+      var t = e.target;
+      if (t && t.closest && t.closest('[data-ganguram-open-pincode]')) {
+        e.preventDefault();
+        openDeliveryLocationPopup();
+      }
+    });
   }
 
   function init() {
