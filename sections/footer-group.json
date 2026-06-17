@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "type": "footer",
   "name": "t:sections.refactor_words.labels.footer_group",
@@ -10,6 +19,7 @@
           "settings": {
             "title": "Ganguram Sweets",
             "size": "h4",
+            "image_size": 100,
             "content": "<p>Heritage Bengali mithai since 1885. Freshly crafted sweets from Kolkata, delivered across Kolkata &amp; India.</p>",
             "show_social_icons": true,
             "enable_follow_on_shop": true
@@ -19,17 +29,18 @@
           "type": "menu",
           "settings": {
             "title": "Popular categories",
-            "menu": "categories",
+            "menu": "",
             "open_in_new_window": false
           }
         },
         "68da10ba-83aa-4858-b4e7-b19015289fd5": {
           "type": "text",
           "settings": {
-            "title": "Delivery &amp; Orders",
+            "title": "Delivery & Orders",
             "size": "h5",
-            "content": "<p>Delivering Ganguram's sweets across Kolkata &amp; India.<br/>Bulk, wedding &amp; corporate orders available.</p>",
-            "show_social_icons": false,
+            "image_size": 100,
+            "content": "<p>Delivering Ganguram Sweets' sweetness across Kolkata & India.<br/>Bulk, wedding & corporate orders available.</p>",
+            "show_social_icons": true,
             "enable_follow_on_shop": true
           }
         },
