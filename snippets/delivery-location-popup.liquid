@@ -1,5 +1,5 @@
 {%- comment -%}
-  Ganguram mandatory delivery pincode popup — markup only (Phase 2.1d).
+  Ganguram delivery pincode popup — markup only (Phase 2.1d; polished in 2.3).
   Behaviour: assets/ganguram-delivery-popup.js (uses window.GanguramZone).
   Styles:    assets/ganguram-delivery-popup.css.
 
@@ -9,7 +9,7 @@
 {%- endcomment -%}
 <div class="ganguram-delivery-popup" id="ganguram-delivery-popup" data-gdp-root hidden>
   <div class="ganguram-delivery-popup__overlay" data-gdp-overlay tabindex="-1"></div>
-  <div class="ganguram-delivery-popup__dialog" role="dialog" aria-modal="true" aria-labelledby="gdp-title" aria-describedby="gdp-message">
+  <div class="ganguram-delivery-popup__dialog" role="dialog" aria-modal="true" aria-labelledby="gdp-title" aria-describedby="gdp-subtitle">
     <button type="button" class="ganguram-delivery-popup__close" data-gdp-close aria-label="Close" hidden>
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -25,7 +25,8 @@
     </span>
 
     <h2 class="ganguram-delivery-popup__title" id="gdp-title">Where should we deliver?</h2>
-    <p class="ganguram-delivery-popup__message" id="gdp-message" data-gdp-message>Enter your pincode to see availability and delivery options for your area.</p>
+    <p class="ganguram-delivery-popup__subtitle" id="gdp-subtitle">Enter your pincode to see sweets and snacks available for your area.</p>
+    <p class="ganguram-delivery-popup__message" data-gdp-message>We use your pincode only to show products available for your delivery area.</p>
 
     <div class="ganguram-delivery-popup__row">
       <input
@@ -36,12 +37,13 @@
         pattern="[0-9]*"
         maxlength="6"
         autocomplete="postal-code"
-        placeholder="6-digit pincode"
+        placeholder="Enter delivery pincode"
         aria-label="Delivery pincode"
       >
-      <button type="button" class="ganguram-delivery-popup__apply" data-gdp-apply>Apply</button>
+      <button type="button" class="ganguram-delivery-popup__apply" data-gdp-apply>Check Availability</button>
     </div>
 
     <p class="ganguram-delivery-popup__status" data-gdp-status role="status" aria-live="polite"></p>
+    <p class="ganguram-delivery-popup__examples">Examples — Kolkata <strong>700008</strong> &middot; PAN India <strong>110001</strong></p>
   </div>
 </div>

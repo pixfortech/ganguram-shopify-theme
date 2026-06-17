@@ -78,15 +78,18 @@
     box.setAttribute('data-ganguram-zone-empty', '');
     var p = document.createElement('p');
     p.className = 'ganguram-zone-empty__text';
-    p.textContent = 'No products available for this delivery pincode.';
+    p.textContent = 'No products are available for this pincode. Please change your delivery pincode.';
     var btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'ganguram-zone-empty__button';
     btn.setAttribute('data-ganguram-change-pincode', '');
     btn.textContent = 'Change pincode';
     btn.addEventListener('click', openPincodeUI);
-    box.appendChild(p);
-    box.appendChild(btn);
+    var inner = document.createElement('div');
+    inner.className = 'ganguram-zone-empty__inner';
+    inner.appendChild(p);
+    inner.appendChild(btn);
+    box.appendChild(inner);
     return box;
   }
   function updateEmptyStates() {
