@@ -88,6 +88,17 @@
   line-height: 1.45;
   color: #333;
 }
+.ganguram-delivery-popup__current {
+  display: inline-block;
+  margin: 0.1rem 0 0.55rem;
+  padding: 0.28rem 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #49488d;
+  background: rgba(73, 72, 141, 0.10);
+  border-radius: 999px;
+}
+.ganguram-delivery-popup__current[hidden] { display: none; }
 .ganguram-delivery-popup__message {
   margin: 0 0 1.1rem;
   font-size: 0.82rem;

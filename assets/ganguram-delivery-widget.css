@@ -14,8 +14,16 @@
   max-width: 22ch;    /* fit "Quick Commerce 700001" without cramping */
 }
 @media (max-width: 1023px) {
-  .ganguram-delivery-widget-menu-slot { display: none; }
+  .ganguram-delivery-widget-menu-slot { display: none; }                   /* hide in the header service row on mobile */
+  mobile-navigation .ganguram-delivery-widget-menu-slot { display: flex; } /* show the cloned widget inside the mobile menu drawer */
 }
+/* Mobile drawer presentation (Phase 2.4): full-width, comfortable tap target; tapping opens the popup. */
+mobile-navigation .ganguram-delivery-widget-menu-slot,
+mobile-navigation .ganguram-delivery-widget-menu-slot .ganguram-delivery-widget,
+mobile-navigation .ganguram-delivery-widget-menu-slot .ganguram-delivery-widget__trigger { width: 100%; }
+mobile-navigation .ganguram-delivery-widget-menu-slot .ganguram-delivery-widget__trigger { padding: 0.6rem 0.4rem; }
+mobile-navigation .ganguram-delivery-widget-menu-slot .ganguram-delivery-widget__value { max-width: none; }
+mobile-navigation .ganguram-delivery-widget-menu-slot .ganguram-delivery-widget__panel { display: none !important; } /* the cloned dropdown never opens; the popup handles entry */
 
 .ganguram-delivery-widget {
   position: relative;
