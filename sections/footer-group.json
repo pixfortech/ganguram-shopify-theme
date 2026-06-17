@@ -8,9 +8,9 @@
         "b497d03c-a24c-4683-8d7b-5aa889473ba2": {
           "type": "text",
           "settings": {
-            "title": "LOCAL",
+            "title": "Ganguram Sweets",
             "size": "h4",
-            "content": "<p>Fresh products from local producers, delivered directly to your front door,  daily.</p>",
+            "content": "<p>Heritage Bengali mithai since 1885. Freshly crafted sweets from Kolkata, delivered across Kolkata &amp; India.</p>",
             "show_social_icons": true,
             "enable_follow_on_shop": true
           }
@@ -26,9 +26,9 @@
         "68da10ba-83aa-4858-b4e7-b19015289fd5": {
           "type": "text",
           "settings": {
-            "title": "Main Store",
+            "title": "Delivery &amp; Orders",
             "size": "h5",
-            "content": "<p>13 Champs-Élysées<br/>75008 Paris<br/>France</p>",
+            "content": "<p>Delivering Ganguram's sweets across Kolkata &amp; India.<br/>Bulk, wedding &amp; corporate orders available.</p>",
             "show_social_icons": false,
             "enable_follow_on_shop": true
           }
