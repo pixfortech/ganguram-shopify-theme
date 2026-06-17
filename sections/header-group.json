@@ -42,7 +42,7 @@
         "show_locale_selector": true,
         "show_country_selector": false,
         "show_social_icons": true,
-        "bar_bgcolor": "#49488D",
+        "bar_bgcolor": "#49488d",
         "bar_txtcolor": "#ffffff"
       }
     },
@@ -79,10 +79,12 @@
         },
         "a3ca4eae-c334-45dd-9842-c49d594b1c4b": {
           "type": "store-selector",
+          "disabled": true,
           "settings": {}
         },
         "2e0d797d-c8e1-463d-a5ad-fe6ae2c0c9de": {
           "type": "info",
+          "disabled": true,
           "settings": {
             "caption": "Need delivery?",
             "title": "See estimates",
