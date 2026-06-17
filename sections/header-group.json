@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "type": "header",
   "name": "t:sections.refactor_words.labels.header_group",
@@ -28,6 +37,8 @@
       ],
       "settings": {
         "visibility": "all",
+        "autoplay": false,
+        "autoplay_interval": 6,
         "show_locale_selector": true,
         "show_country_selector": false,
         "show_social_icons": true,
@@ -42,6 +53,8 @@
           "type": "mega-menu",
           "settings": {
             "menu_handle": "categories",
+            "show_menu_images": false,
+            "link_columns": "4",
             "show_promotion_block": true,
             "promotion_title": "Fresh & Energetic",
             "promotion_title_size": "text-size--xlarge",
@@ -52,7 +65,16 @@
             "promotion_button_link": "",
             "promotion_color_txt": "#000000",
             "promotion_color_bg": "rgba(0,0,0,0)",
-            "promotion_image": ""
+            "show_promotion_block_2": false,
+            "promotion_title_2": "Great promotion",
+            "promotion_title_size_2": "text-size--xlarge",
+            "promotion_subtitle_2": "Write all about it",
+            "promotion_subtitle_size_2": "text-size--regular",
+            "promotion_button_label_2": "",
+            "promotion_button_size_2": "regular",
+            "promotion_button_link_2": "",
+            "promotion_color_txt_2": "#000000",
+            "promotion_color_bg_2": "#f3f3f3"
           }
         },
         "a3ca4eae-c334-45dd-9842-c49d594b1c4b": {
@@ -66,8 +88,7 @@
             "title": "See estimates",
             "link": "",
             "link_type": "_self",
-            "icon": "delivery",
-            "custom_icon": ""
+            "icon": "delivery"
           }
         }
       },
@@ -77,12 +98,19 @@
         "2e0d797d-c8e1-463d-a5ad-fe6ae2c0c9de"
       ],
       "settings": {
-        "logo_src": "",
+        "logo_src": "shopify://shop_images/ganguram-packing-slip-logo.png",
         "logo_height": 60,
+        "logo_mobile_src": "shopify://shop_images/ganguram-packing-slip-logo.png",
         "logo_mobile_height": 40,
         "main_linklist": "main-menu",
         "show_search": true,
+        "compact_search_on_mobile": false,
         "sticky_header": true,
+        "customer_account_menu": "customer-account-main-menu",
+        "header_absolute_homepage": false,
+        "header_absolute_collection": false,
+        "header_absolute_custom": "",
+        "color_text_header": "#000000",
         "select_header_actions_on_mobile": "show_on_homepage",
         "show_header_actions": true,
         "show_locale_selector": true,
