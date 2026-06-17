@@ -357,10 +357,10 @@
         "16540673826052f668-0": {
           "type": "card",
           "settings": {
-            "caption": "Fresh everyday",
-            "title": "Finest Bread",
+            "caption": "Since 1885",
+            "title": "Heritage Bengali Mithai",
             "subtitle": "",
-            "link": "",
+            "link": "/collections/sandesh",
             "open_in_new_window": false,
             "button_label": "Show more",
             "color_background_main": "#ebe0c9",
@@ -376,10 +376,10 @@
         "16540673826052f668-1": {
           "type": "card",
           "settings": {
-            "caption": "Just arrived!",
-            "title": "Superfoods",
+            "caption": "Premium gifting",
+            "title": "Dry-Fruit Mithai",
             "subtitle": "",
-            "link": "",
+            "link": "/collections/dry-fruits-mishti",
             "open_in_new_window": false,
             "button_label": "Show more",
             "color_background_main": "#cfded3",
@@ -395,10 +395,10 @@
         "16540673826052f668-2": {
           "type": "card",
           "settings": {
-            "caption": "Collection",
-            "title": "Pure Organic",
+            "caption": "Delivered across India",
+            "title": "Packed Sweets & Snacks",
             "subtitle": "",
-            "link": "",
+            "link": "/collections/packed-mishti",
             "open_in_new_window": false,
             "button_label": "Show more",
             "color_background_main": "#cddce4",
@@ -519,7 +519,7 @@
             "caption_WNKiNy": {
               "type": "caption",
               "settings": {
-                "caption": "<strong>FRESH, ORGANIC GOODNESS</strong>",
+                "caption": "<strong>HERITAGE BENGALI MITHAI</strong>",
                 "text_size": "large",
                 "text_background_color": "rgba(0,0,0,0)",
                 "text_color": "rgba(0,0,0,0)"
@@ -534,7 +534,7 @@
             "heading_cAQegY": {
               "type": "heading",
               "settings": {
-                "heading": "Locally <em>sourced & delivered</em> [br]to your doorstep",
+                "heading": "Freshly <em>crafted in Kolkata</em> [br]since 1885",
                 "title_size": "h1",
                 "line_height": "default",
                 "text_color": "rgba(0,0,0,0)",
@@ -622,7 +622,7 @@
         "16570940482780d791-0": {
           "type": "text",
           "settings": {
-            "marquee_text": "<strong>New store in </strong><em><strong>New York</strong></em>"
+            "marquee_text": "<strong>Heritage Bengali Mithai</strong> &middot; Freshly crafted in Kolkata &middot; Since 1885"
           }
         },
         "image_VUTRrJ": {
@@ -673,7 +673,7 @@
             "caption_8VqJeF": {
               "type": "caption",
               "settings": {
-                "caption": "100%",
+                "caption": "Daily fresh",
                 "text_size": "xlarge",
                 "text_background_color": "rgba(0,0,0,0)",
                 "text_color": "rgba(0,0,0,0)"
@@ -683,7 +683,7 @@
             "heading_enhkNT": {
               "type": "heading",
               "settings": {
-                "heading": "Organic  Food",
+                "heading": "Traditional Bengali Sweets",
                 "title_size": "h1",
                 "line_height": "default",
                 "text_color": "rgba(0,0,0,0)",
@@ -741,6 +741,7 @@
     },
     "16546982542e923b5a": {
       "type": "featured-product",
+      "disabled": true,
       "blocks": {
         "16546982534861ca3b-1": {
           "type": "price",
@@ -879,7 +880,7 @@
             "caption_AxL4T6": {
               "type": "caption",
               "settings": {
-                "caption": "Every day",
+                "caption": "Made fresh",
                 "text_size": "regular",
                 "text_background_color": "rgba(0,0,0,0)",
                 "text_color": "rgba(0,0,0,0)"
@@ -889,7 +890,7 @@
             "heading_HnNLMA": {
               "type": "heading",
               "settings": {
-                "heading": "Fresh backery",
+                "heading": "Daily Fresh Mithai",
                 "title_size": "h3",
                 "line_height": "default",
                 "text_color": "rgba(0,0,0,0)",
@@ -944,7 +945,7 @@
             "caption_KChGxa": {
               "type": "caption",
               "settings": {
-                "caption": "Hand-picked",
+                "caption": "Festive favourites",
                 "text_size": "regular",
                 "text_background_color": "rgba(0,0,0,0)",
                 "text_color": "rgba(0,0,0,0)"
@@ -954,7 +955,7 @@
             "heading_6zMDAn": {
               "type": "heading",
               "settings": {
-                "heading": "Fruits & [br]vegetables",
+                "heading": "Gifting & [br]Celebrations",
                 "title_size": "h3",
                 "line_height": "default",
                 "text_color": "rgba(0,0,0,0)",
@@ -1013,6 +1014,7 @@
     },
     "1654161920efe5f084": {
       "type": "text-columns-icons",
+      "disabled": true,
       "blocks": {
         "1654161920f21316cf-0": {
           "type": "image",
@@ -1145,7 +1147,7 @@
         "1655130414988486bd-0": {
           "type": "title",
           "settings": {
-            "title": "Delicious Recipes",
+            "title": "The Ganguram Story",
             "title_size": "h2",
             "seo_h_tag": "h2"
           }
@@ -1153,7 +1155,7 @@
         "1655130414988486bd-2": {
           "type": "button",
           "settings": {
-            "button_label": "Explore All",
+            "button_label": "Our Heritage",
             "link": "",
             "open_in_new_window": false,
             "button_size": "large",
@@ -1241,6 +1243,7 @@
     },
     "d57de2d5-c548-48dd-a4a3-581d89d355b5": {
       "type": "image-with-hotspots",
+      "disabled": true,
       "blocks": {
         "909cc9c2-e352-4947-a592-611a30a5a8d7": {
           "type": "text",
@@ -1470,8 +1473,8 @@
         "1655970985e1e8c596-0": {
           "type": "image",
           "settings": {
-            "title": "Local Pickup",
-            "caption": "Get orders faster while avoiding shipping fees",
+            "title": "Made Fresh in Kolkata",
+            "caption": "Traditional favourites and daily fresh mithai",
             "link": "",
             "open_in_new_window": false,
             "seo_h_tag": "h3"
@@ -1480,8 +1483,8 @@
         "1655970985e1e8c596-1": {
           "type": "image",
           "settings": {
-            "title": "Local Delivery",
-            "caption": "100% curbside recyclable boxes",
+            "title": "Delivery Across India",
+            "caption": "Packed sweets and snacks available for delivery across India",
             "link": "",
             "open_in_new_window": false,
             "seo_h_tag": "h3"
@@ -1490,8 +1493,8 @@
         "1655970985e1e8c596-2": {
           "type": "image",
           "settings": {
-            "title": "For Conscious Eaters",
-            "caption": "We are supporting small farmers and producers",
+            "title": "Fresh in Kolkata",
+            "caption": "Fresh Kolkata favourites available by pincode",
             "link": "",
             "open_in_new_window": false,
             "seo_h_tag": "h3"
@@ -1500,8 +1503,8 @@
         "41380ebb-0166-4f1a-af8f-a77893a5b806": {
           "type": "image",
           "settings": {
-            "title": "Delicious & New Food",
-            "caption": "Feel great about what you eat",
+            "title": "Bulk & Gifting Orders",
+            "caption": "Bulk, wedding and corporate orders available",
             "link": "",
             "open_in_new_window": false,
             "seo_h_tag": "h3"
