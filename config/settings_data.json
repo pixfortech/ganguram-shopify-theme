@@ -120,13 +120,13 @@
           "store-selector-0": {
             "type": "store",
             "settings": {
-              "store_name": "My store",
+              "store_name": "",
               "store_pickup_price": "Free",
               "store_pickup_time": "Usually ready in 24 hrs",
-              "store_address": "<p>123 John Doe Street<br/>Your Town, YT 12345</p><p> </p><p><strong>Store Hours<br/></strong>Sun: Closed<br/>Mon-Fri: 9:00 - 17:00<br/>Sat: 10:00 - 13:00</p><p><strong>What to expect at pickup</strong></p><p> </p>",
-              "store_closing_times": "<p>Closed</p><p>Closing at 5pm</p><p>Closing at 5pm</p><p>Closing at 5pm</p><p>Closing at 5pm</p><p>Closing at 5pm</p><p>Closing at 1pm</p>",
-              "store_map_latitude": "46.7834818",
-              "store_map_longitude": "23.5464733",
+              "store_address": "",
+              "store_closing_times": "",
+              "store_map_latitude": "",
+              "store_map_longitude": "",
               "store_map_link": ""
             }
           }
@@ -135,7 +135,7 @@
           "store-selector-0"
         ],
         "settings": {
-          "map_enable": true,
+          "map_enable": false,
           "map_zoom": 10,
           "map_style": "silver",
           "map_tag_pin": false

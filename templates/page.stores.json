@@ -12,22 +12,22 @@
         "store_QmNhip": {
           "type": "store",
           "settings": {
-            "store_name": "My Store",
-            "store_address": "<p>123 John Doe Street<br/>Your Town, YT 12345</p><p> </p><p><strong>Store Hours<br/></strong>Sun: Closed<br/>Mon-Fri: 9:00 - 17:00<br/>Sat: 10:00 - 13:00</p>",
+            "store_name": "",
+            "store_address": "",
             "image_aspect_ratio": "1.33333",
-            "store_map_latitude": "46.7834818",
-            "store_map_longitude": "23.5464733",
+            "store_map_latitude": "",
+            "store_map_longitude": "",
             "store_map_link": ""
           }
         },
         "store_mVaqQB": {
           "type": "store",
           "settings": {
-            "store_name": "My Store",
-            "store_address": "<p>123 John Doe Street<br/>Your Town, YT 12345</p><p> </p><p><strong>Store Hours<br/></strong>Sun: Closed<br/>Mon-Fri: 9:00 - 17:00<br/>Sat: 10:00 - 13:00</p>",
+            "store_name": "",
+            "store_address": "",
             "image_aspect_ratio": "1.33333",
-            "store_map_latitude": "46.7834818",
-            "store_map_longitude": "23.5464733",
+            "store_map_latitude": "",
+            "store_map_longitude": "",
             "store_map_link": ""
           }
         }
@@ -40,7 +40,7 @@
         "heading": "",
         "subheading": "",
         "section_heading_layout": "section-heading--left",
-        "map_enable": true,
+        "map_enable": false,
         "map_zoom": 10,
         "map_style": "silver",
         "seo_h_tag": "h2"
