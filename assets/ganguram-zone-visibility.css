@@ -1,0 +1,4 @@
+/* Ganguram — zone visibility (Phase 2.5). Reversibly hides out-of-zone menu links. */
+.ganguram-zone-link-hidden {
+  display: none !important;
+}

@@ -524,5 +524,8 @@
   {{ 'ganguram-product-zone-filter.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'ganguram-product-zone-filter.js' | asset_url }}" defer></script>
 
+  {%- comment -%} Menu visibility by delivery zone (Phase 2.5) — display only; data-driven Kolkata-only collection map. No cart/checkout/ShipZip logic. {%- endcomment -%}
+  {%- render 'ganguram-zone-visibility-config' -%}
+
 </body>
 </html>

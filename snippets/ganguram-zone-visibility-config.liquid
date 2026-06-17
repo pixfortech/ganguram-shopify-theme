@@ -1,0 +1,24 @@
+{%- comment -%}
+  Ganguram zone-visibility config (Phase 2.5).
+
+  Builds window.GanguramZoneKolkataOnly: the handles of collections that have NO
+  PAN-India product (i.e. only Kolkata / Quick-Commerce eligible) — derived live
+  from each collection's all_tags, so there is NO hardcoded category list and NO
+  pincode list duplicated. The menu-visibility engine hides links to these
+  collections for PAN-India customers (reversibly).
+
+  Display-only. No cart/checkout/ShipZip/SBZ/zipLogic logic.
+{%- endcomment -%}
+<script>
+  window.GanguramZoneKolkataOnly = [
+    {%- for collection in collections -%}
+      {%- unless collection.all_tags contains 'PAN India' -%}
+        {%- if collection.all_tags contains 'Kolkata' or collection.all_tags contains 'Quick Commerce' -%}
+          {{ collection.handle | json }},
+        {%- endif -%}
+      {%- endunless -%}
+    {%- endfor -%}
+  ];
+</script>
+{{ 'ganguram-zone-visibility.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ganguram-zone-visibility.js' | asset_url }}" defer></script>
