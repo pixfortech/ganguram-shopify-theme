@@ -24,10 +24,7 @@
 <meta property="og:description" content="{{ og_description | escape }}">
 
 {%- liquid
-  assign share_image = page_image
-  if share_image == blank
-    assign share_image = settings.favicon
-  endif
+  assign share_image = page_image | default: settings.social_share_image | default: settings.favicon
 -%}
 {%- if share_image -%}
   <meta property="og:image" content="https:{{ share_image | image_url }}">

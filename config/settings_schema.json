@@ -1012,6 +1012,12 @@
 				"id": "favicon",
 				"label": "t:settings_schema.favicon.settings.favicon.label",
 				"info": "t:settings_schema.favicon.settings.favicon.info"
+			},
+			{
+				"type": "image_picker",
+				"id": "social_share_image",
+				"label": "Social sharing image",
+				"info": "Shown when a page is shared on social media (Open Graph / Twitter). Used as a fallback after the page/product image. Recommended size: 1200 x 630 px."
 			}
 		]
 	},
