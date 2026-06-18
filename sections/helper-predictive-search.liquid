@@ -24,7 +24,22 @@
         <span class="search-title">{{ 'search.form.product_results_title' | t }}</span>
 
         {%- for product in predictive_search.resources.products -%}
-          <div class="search-item cart-item" data-js-search-item>
+          {%- comment -%} Phase 2.5 — zone tags so the Phase 2.2 product filter covers predictive results. {%- endcomment -%}
+          {%- liquid
+            assign gz_kolkata = false
+            assign gz_pan_india = false
+            assign gz_quick_commerce = false
+            if product.tags contains 'Kolkata'
+              assign gz_kolkata = true
+            endif
+            if product.tags contains 'PAN India'
+              assign gz_pan_india = true
+            endif
+            if product.tags contains 'Quick Commerce'
+              assign gz_quick_commerce = true
+            endif
+          -%}
+          <div class="search-item cart-item" data-js-search-item data-ganguram-product-card data-ganguram-kolkata="{{ gz_kolkata }}" data-ganguram-pan-india="{{ gz_pan_india }}" data-ganguram-quick-commerce="{{ gz_quick_commerce }}">
             <a
               tabindex="-1"
               href="{{ product.url }}"
