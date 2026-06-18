@@ -6,6 +6,19 @@
   else
     assign default_to_first_variant = true
   endunless
+
+  assign gz_k = false
+  assign gz_p = false
+  assign gz_q = false
+  if product.tags contains 'Kolkata'
+    assign gz_k = true
+  endif
+  if product.tags contains 'PAN India'
+    assign gz_p = true
+  endif
+  if product.tags contains 'Quick Commerce'
+    assign gz_q = true
+  endif
 -%}
 
 <product-page
@@ -18,6 +31,10 @@
   data-collection="{{ collection.handle }}"
   data-id="{{ product.id }}"
   data-availability="{{ product.available }}"
+  data-ganguram-product-availability
+  data-ganguram-kolkata="{{ gz_k }}"
+  data-ganguram-pan-india="{{ gz_p }}"
+  data-ganguram-quick-commerce="{{ gz_q }}"
   data-js-product-component
 >
   {%- assign current_variant = product.selected_or_first_available_variant -%}

@@ -46,6 +46,18 @@
       '/cart/update.js';
   }
   function allProductsUrl() { return cfg().allProductsUrl || '/collections/all'; }
+  function addUrl() {
+    return cfg().addUrl ||
+      (window.KROWN && KROWN.settings && KROWN.settings.routes && KROWN.settings.routes.cart_add_url) ||
+      '/cart/add.js';
+  }
+  function cartJsUrl() { return cfg().cartUrl || '/cart.js'; }
+  function undoEnabled() { return cfg().undoEnabled !== false; } // default on
+  function undoSeconds() { var n = parseInt(cfg().undoSeconds, 10); return (n && n > 0) ? n : 10; }
+  function undoMessage(n) {
+    var t = cfg().undoMessage || 'Items removed. Undo available for {seconds} seconds.';
+    return t.replace('{seconds}', String(n));
+  }
 
   // Active location only for a VALID, serviceable, selected pincode — else null.
   function activeLoc() {
@@ -79,6 +91,7 @@
       seen[key] = true;
       out.push({
         key: key,
+        variantId: el.getAttribute('data-ganguram-variant-id') || '',
         title: el.getAttribute('data-ganguram-product-title') || el.getAttribute('data-title') || 'Item',
         url: el.getAttribute('data-ganguram-product-url') || '',
         image: el.getAttribute('data-ganguram-product-image') || '',
@@ -186,17 +199,23 @@
     var loc = activeLoc();
     if (!loc) { pending = null; dismiss(); return; }
     var entered = loc.pincode;
-    var affected = computeAffected(loc.zone, deliveryContext()); // recompute from current cart
-    lastAccepted = { pincode: loc.pincode, zone: loc.zone };     // accept the new pincode
+    var previousPincode = lastAccepted ? lastAccepted.pincode : null; // for Undo
+    var affected = computeAffected(loc.zone, deliveryContext());       // recompute from current cart
+    lastAccepted = { pincode: loc.pincode, zone: loc.zone };           // accept the new pincode
     pending = null;
     if (!affected.length) { dismiss(); return; }
-    removeLines(affected, entered);
+    removeLines(affected, entered, previousPincode);
   }
 
-  function removeLines(remove, entered) {
+  function removeLines(remove, entered, previousPincode) {
     busy = true;
     var updates = {};
     remove.forEach(function (l) { updates[l.key] = 0; });
+    var snapshot = {
+      items: remove.map(function (l) { return { variantId: l.variantId, qty: l.qty, title: l.title, url: l.url, image: l.image }; }),
+      previousPincode: previousPincode,
+      pincode: entered
+    };
     fetch(updateUrl(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -206,7 +225,8 @@
       .then(function (cart) {
         var emptied = !!cart && cart.item_count === 0;
         if (typeof window.refreshCart === 'function') { try { window.refreshCart(false); } catch (e) {} }
-        showConfirmation(remove, emptied, entered);
+        dismiss();                                  // close the warning modal — no second modal
+        showToast(remove.length, entered, snapshot);
       })
       .catch(function () { /* leave cart untouched on failure */ })
       .finally(function () { busy = false; });
@@ -315,25 +335,116 @@
     ]);
     show();
   }
-  function showConfirmation(removed, emptied, pincode) {
-    if (!modal) { modal = buildModal(); }
-    var n = removed.length;
-    modal._heading.textContent = (n === 1
-      ? '1 item was removed from your cart because delivery is not available for the selected pincode: ' + pincode + '.'
-      : n + ' items were removed from your cart because delivery is not available for the selected pincode: ' + pincode + '.');
-    if (emptied) {
-      modal._sub.textContent = 'Your cart is now empty.';
-      modal._sub.removeAttribute('hidden');
+  // ---- final confirmation toast (NOT a second modal) + Undo -----------------
+  var toast = null;
+  var toastTimer = null;
+  function dismissToast() {
+    if (toastTimer) { clearInterval(toastTimer); toastTimer = null; }
+    if (toast && toast.parentNode) { toast.parentNode.removeChild(toast); }
+    toast = null;
+  }
+  function showToast(n, pincode, snapshot) {
+    dismissToast();
+    toast = el('div', 'ganguram-cart-toast');
+    toast.setAttribute('data-ganguram-cart-toast', '');
+    toast.setAttribute('role', 'status');
+
+    var close = el('button', 'ganguram-cart-toast__close');
+    close.type = 'button'; close.setAttribute('aria-label', 'Close'); close.innerHTML = '&times;';
+    close.addEventListener('click', dismissToast);              // closing never changes the cart
+
+    var msg = el('p', 'ganguram-cart-toast__msg');
+    msg.textContent = (n === 1
+      ? '1 item was removed because delivery is not available for the selected pincode: ' + pincode + '.'
+      : n + ' items were removed because delivery is not available for the selected pincode: ' + pincode + '.');
+
+    var note = el('p', 'ganguram-cart-toast__note');
+    var actions = el('div', 'ganguram-cart-toast__actions');
+
+    var canUndo = undoEnabled() && snapshot.items.some(function (i) { return i.variantId; });
+    if (canUndo) {
+      var remaining = undoSeconds();
+      note.textContent = undoMessage(remaining);
+      var undoBtn = el('button', 'ganguram-cart-toast__btn ganguram-cart-toast__btn--undo');
+      undoBtn.type = 'button';
+      undoBtn.textContent = 'Undo';
+      undoBtn.addEventListener('click', function () { onUndo(snapshot, undoBtn, note); });
+      actions.appendChild(undoBtn);
+      toast._undoBtn = undoBtn; toast._note = note;
+      toastTimer = setInterval(function () {
+        remaining -= 1;
+        if (remaining <= 0) { dismissToast(); return; }        // buffer expired -> undo gone
+        note.textContent = undoMessage(remaining);
+      }, 1000);
     } else {
-      modal._sub.textContent = '';
-      modal._sub.setAttribute('hidden', '');
+      note.setAttribute('hidden', '');
+      toastTimer = setTimeout(dismissToast, 6000);             // plain acknowledgement auto-dismisses
     }
-    fillList(removed, pincode);
-    setActions([
-      { label: 'Continue Shopping', cls: 'ganguram-cart-elig__btn ganguram-cart-elig__btn--primary', href: allProductsUrl() },
-      { label: 'Close', cls: 'ganguram-cart-elig__btn', onClick: function () { dismiss(); } }
-    ]);
-    show();
+
+    var shop = el('a', 'ganguram-cart-toast__btn');
+    shop.href = allProductsUrl();
+    shop.textContent = 'Continue Shopping';
+    actions.appendChild(shop);
+
+    toast.appendChild(close);
+    toast.appendChild(msg);
+    toast.appendChild(note);
+    toast.appendChild(actions);
+    document.body.appendChild(toast);
+  }
+
+  // Restore a specific pincode (the previous one) for Undo, guarded against loops.
+  function restoreUndoPincode(pin) {
+    if (!window.GanguramZone) { return; }
+    suppressNext = true;
+    try {
+      if (pin) {
+        window.GanguramZone.setSelectedPincode(pin);
+        var loc = window.GanguramZone.getSelectedDeliveryLocation();
+        lastAccepted = (loc && loc.pincode && loc.isServiceable === true) ? { pincode: loc.pincode, zone: loc.zone } : null;
+      } else if (typeof window.GanguramZone.clearSelectedDeliveryLocation === 'function') {
+        window.GanguramZone.clearSelectedDeliveryLocation();
+        lastAccepted = null;
+      } else { suppressNext = false; }
+    } catch (e) { suppressNext = false; }
+  }
+
+  function onUndo(snapshot, undoBtn, note) {
+    if (busy) { return; }
+    busy = true;
+    if (undoBtn) { undoBtn.setAttribute('disabled', ''); }
+    // Read the current cart first so we never create duplicate quantities.
+    fetch(cartJsUrl(), { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
+      .then(function (r) { return r.json(); })
+      .then(function (cart) {
+        var current = {};
+        (cart && cart.items || []).forEach(function (it) { var id = String(it.id); current[id] = (current[id] || 0) + it.quantity; });
+        var toAdd = [];
+        snapshot.items.forEach(function (i) {
+          if (!i.variantId) { return; }
+          var have = current[String(i.variantId)] || 0;
+          var need = i.qty - have;
+          if (need > 0) { toAdd.push({ id: i.variantId, quantity: need }); }
+        });
+        if (!toAdd.length) { return { ok: true }; }            // already present -> nothing to add
+        return fetch(addUrl(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ items: toAdd })
+        }).then(function (r) { if (!r.ok) { throw new Error('add failed'); } return r.json(); }).then(function () { return { ok: true }; });
+      })
+      .then(function () {
+        restoreUndoPincode(snapshot.previousPincode);          // restore previous pincode (guarded)
+        if (typeof window.refreshCart === 'function') { try { window.refreshCart(false); } catch (e) {} }
+        dismissToast();
+      })
+      .catch(function () {
+        if (note) { note.removeAttribute('hidden'); note.textContent = 'We could not restore all items. Please add them again.'; }
+        if (undoBtn && undoBtn.parentNode) { undoBtn.parentNode.removeChild(undoBtn); }
+        if (toastTimer) { clearInterval(toastTimer); toastTimer = null; }
+      })
+      .finally(function () { busy = false; });
   }
 
   // ---- triggers -------------------------------------------------------------

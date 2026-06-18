@@ -538,5 +538,8 @@
   {%- comment -%} Empty collection warning + homepage redirect (Phase 2.7C) — collection pages only; reuses the product-zone filter output + GanguramZone. Display only; no checkout/shipping/ShipZip logic. {%- endcomment -%}
   {%- render 'ganguram-empty-collection-warning-config' -%}
 
+  {%- comment -%} Product page pincode availability (Phase 2.7C hotfix) — product pages only; disables Add to Cart/Buy Now + message when the product is not deliverable to the selected pincode. Reuses the zone rule; no checkout/shipping/ShipZip logic. {%- endcomment -%}
+  {%- render 'ganguram-product-availability-config' -%}
+
 </body>
 </html>

@@ -1,0 +1,39 @@
+/* Ganguram — Product page pincode availability (Phase 2.7C hotfix). Scoped to .ganguram-pa* / body flag. Display only. */
+
+/* Disable Add to Cart + Buy Now (incl. the sticky bar) while the product is
+   unavailable for the selected pincode. The submit handler is the hard guard;
+   this is the visual + click guard. */
+body.ganguram-product-unavailable [data-js-product-add-to-cart],
+body.ganguram-product-unavailable .add-to-cart,
+body.ganguram-product-unavailable .shopify-payment-button {
+  opacity: 0.5 !important;
+  pointer-events: none !important;
+  cursor: not-allowed !important;
+}
+
+.ganguram-pa {
+  margin: 0 0 0.9rem;
+  padding: 0.8rem 0.95rem;
+  background: #fff4e5;
+  color: #7a4a00;
+  border: 1px solid #ffd699;
+  border-radius: 0.55rem;
+}
+.ganguram-pa__text {
+  margin: 0 0 0.55rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.ganguram-pa__btn {
+  display: inline-block;
+  padding: 0.5rem 0.9rem;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: #49488d;
+  border: 1px solid #49488d;
+  border-radius: 0.4rem;
+  cursor: pointer;
+}
+.ganguram-pa__btn:hover { filter: brightness(1.08); }

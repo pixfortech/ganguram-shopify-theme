@@ -155,3 +155,57 @@
   .ganguram-cart-elig__panel { max-width: none; border-radius: 0.7rem 0.7rem 0 0; }
   .ganguram-cart-elig__btn { flex: 1 1 100%; }
 }
+
+/* Final confirmation TOAST (not a modal/second prompt) + Undo */
+.ganguram-cart-toast {
+  position: fixed;
+  z-index: 99998;
+  left: 50%;
+  bottom: 1.25rem;
+  transform: translateX(-50%);
+  width: calc(100vw - 2rem);
+  max-width: 30rem;
+  padding: 0.85rem 2.2rem 0.85rem 1rem;
+  background: #1f2430;
+  color: #fff;
+  border-radius: 0.6rem;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.32);
+}
+.ganguram-cart-toast__close {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.5rem;
+  padding: 0.15rem 0.45rem;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: #cdd2dc;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.ganguram-cart-toast__close:hover { color: #fff; }
+.ganguram-cart-toast__msg { margin: 0 0 0.25rem; font-size: 0.92rem; line-height: 1.4; }
+.ganguram-cart-toast__note { margin: 0 0 0.55rem; font-size: 0.8rem; line-height: 1.35; color: #b9c0cc; }
+.ganguram-cart-toast__note[hidden] { display: none; }
+.ganguram-cart-toast__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.ganguram-cart-toast__btn {
+  display: inline-block;
+  padding: 0.4rem 0.85rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 0.4rem;
+  cursor: pointer;
+}
+.ganguram-cart-toast__btn:hover { background: rgba(255, 255, 255, 0.22); }
+.ganguram-cart-toast__btn--undo { background: #4ad295; color: #06301f; border-color: #4ad295; }
+.ganguram-cart-toast__btn--undo:hover { filter: brightness(1.05); }
+.ganguram-cart-toast__btn[disabled] { opacity: 0.6; cursor: default; }
+
+@media (max-width: 480px) {
+  .ganguram-cart-toast { left: 0.75rem; right: 0.75rem; width: auto; transform: none; max-width: none; }
+}

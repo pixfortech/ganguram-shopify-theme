@@ -14,6 +14,8 @@
     seconds: {{ settings.ganguram_ecr_seconds | default: 6 | json }},
     title: {{ settings.ganguram_ecr_title | default: 'No products available for this pincode' | json }},
     body: {{ settings.ganguram_ecr_body | default: 'No products in this collection are available for the selected pincode.' | json }},
+    body4hr: {{ settings.ganguram_ecr_body_4hr | default: '4 Hours Delivery is available only in selected Kolkata areas. Please change your pincode or continue with normal delivery.' | json }},
+    zeroCountText: {{ settings.ganguram_ecr_zero_count | default: '0 products available for this pincode' | json }},
     redirectText: {{ settings.ganguram_ecr_redirect_text | default: 'Redirecting to homepage in {seconds} seconds.' | json }},
     target: {{ settings.ganguram_ecr_target | default: '/' | json }}
   };
