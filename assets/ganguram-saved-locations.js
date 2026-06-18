@@ -75,19 +75,33 @@
     var recents = getRecents();
     var cur = currentLoc();
     ul.textContent = '';
-    if (!recents.length) { if (section) { section.hidden = true; } return; }
+    if (!recents.length) { if (section) { section.hidden = true; } return; } // hide the section when empty (clean)
     if (section) { section.hidden = false; }
     recents.forEach(function (r) {
       var li = document.createElement('li');
+      var wrap = document.createElement('span');
+      wrap.className = 'ganguram-delivery-popup__chip-wrap' + (cur && cur.pincode === r.pincode ? ' is-current' : '');
       var b = document.createElement('button');
       b.type = 'button';
-      b.className = 'ganguram-delivery-popup__chip' + (cur && cur.pincode === r.pincode ? ' is-current' : '');
+      b.className = 'ganguram-delivery-popup__chip';
       b.setAttribute('data-gdp-recent-item', '');
       b.setAttribute('data-gdp-pin', r.pincode);
       b.textContent = (r.label ? r.label + ' ' : '') + r.pincode;
-      li.appendChild(b);
+      var x = document.createElement('button');
+      x.type = 'button';
+      x.className = 'ganguram-delivery-popup__chip-remove';
+      x.setAttribute('data-gdp-recent-remove', '');
+      x.setAttribute('data-gdp-pin', r.pincode);
+      x.setAttribute('aria-label', 'Remove ' + r.pincode + ' from recent locations');
+      x.textContent = '×';
+      wrap.appendChild(b); wrap.appendChild(x);
+      li.appendChild(wrap);
       ul.appendChild(li);
     });
+  }
+  function removeRecent(pin) {
+    setRecents(getRecents().filter(function (r) { return r && r.pincode !== pin; }));
+    renderRecents();
   }
   function renderClear() {
     var c = q('[data-gdp-clear]'); if (!c) { return; }
@@ -102,6 +116,8 @@
     r.addEventListener('click', function (e) {
       var t = e.target;
       if (!t || !t.closest) { return; }
+      var remove = t.closest('[data-gdp-recent-remove]');
+      if (remove) { e.preventDefault(); removeRecent(remove.getAttribute('data-gdp-pin') || ''); return; }
       var recent = t.closest('[data-gdp-recent-item]');
       if (recent) { e.preventDefault(); applyPincode(recent.getAttribute('data-gdp-pin') || ''); return; }
       var saved = t.closest('[data-gdp-saved-item]');
