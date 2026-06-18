@@ -1,4 +1,4 @@
-/* Ganguram — Cart eligibility message (Phase 2.7A). Scoped to .ganguram-cart-elig*. Display only. */
+/* Ganguram — Cart eligibility warning/confirmation (Phase 2.7A + hotfix). Scoped to .ganguram-cart-elig*. Display only. */
 
 .ganguram-cart-elig {
   position: fixed;
@@ -21,7 +21,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 28rem;
+  max-width: 30rem;
   max-height: calc(100vh - 2rem);
   overflow-y: auto;
   padding: 1.25rem 1.25rem 1.1rem;
@@ -46,19 +46,75 @@
 .ganguram-cart-elig__close:hover { color: #000; }
 
 .ganguram-cart-elig__heading {
-  margin: 0 1.5rem 0.75rem 0;
-  font-size: 1.02rem;
+  margin: 0 1.5rem 0.35rem 0;
+  font-size: 1.05rem;
   font-weight: 700;
   line-height: 1.35;
 }
-
-.ganguram-cart-elig__list {
-  margin: 0 0 1rem;
-  padding-left: 1.1rem;
-  font-size: 0.92rem;
-  line-height: 1.45;
+.ganguram-cart-elig__sub {
+  margin: 0 0 0.85rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #555;
 }
-.ganguram-cart-elig__item { margin: 0.2rem 0; }
+.ganguram-cart-elig__sub[hidden] { display: none; }
+
+/* Interactive affected-item cards */
+.ganguram-cart-elig__list {
+  list-style: none;
+  margin: 0 0 1.1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.ganguram-cart-elig__item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.6rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 0.55rem;
+  background: #fafafa;
+}
+.ganguram-cart-elig__thumb {
+  flex: 0 0 auto;
+  display: block;
+  width: 56px;
+  height: 56px;
+  border-radius: 0.4rem;
+  overflow: hidden;
+  background: #efefef;
+}
+.ganguram-cart-elig__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.ganguram-cart-elig__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+.ganguram-cart-elig__name {
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #1a1a1a;
+  text-decoration: none;
+}
+.ganguram-cart-elig__name:hover { text-decoration: underline; }
+.ganguram-cart-elig__qty {
+  font-size: 0.8rem;
+  color: #555;
+}
+.ganguram-cart-elig__reason {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #9a4a00;
+}
 
 .ganguram-cart-elig__actions {
   display: flex;
@@ -68,7 +124,7 @@
 .ganguram-cart-elig__btn {
   flex: 1 1 auto;
   display: inline-block;
-  padding: 0.55rem 0.9rem;
+  padding: 0.6rem 0.9rem;
   font: inherit;
   font-weight: 600;
   text-align: center;
@@ -86,3 +142,10 @@
   border-color: #49488d;
 }
 .ganguram-cart-elig__btn--primary:hover { filter: brightness(1.08); }
+
+/* Mobile */
+@media (max-width: 480px) {
+  .ganguram-cart-elig { padding: 0.5rem; align-items: flex-end; }
+  .ganguram-cart-elig__panel { max-width: none; border-radius: 0.7rem 0.7rem 0 0; }
+  .ganguram-cart-elig__btn { flex: 1 1 100%; }
+}
