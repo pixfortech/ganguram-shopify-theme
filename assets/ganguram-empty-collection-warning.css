@@ -1,8 +1,10 @@
 /* Ganguram — Empty collection warning (Phase 2.7C). Scoped to .ganguram-ecw*. Display only. */
 
 /* While our premium warning is up, suppress the product filter's small inline
-   empty-state so the page doesn't show two "no products" messages. */
+   empty-state so the page doesn't show two "no products" messages, and hide the
+   now-misleading pagination under the empty grid. */
 body.ganguram-empty-collection-active [data-ganguram-zone-empty] { display: none !important; }
+body.ganguram-empty-collection-active .pagination { display: none !important; }
 
 .ganguram-ecw {
   margin: 1.5rem 0;

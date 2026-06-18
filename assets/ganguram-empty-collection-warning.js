@@ -42,6 +42,8 @@
   function target() { return cfg().target || '/'; }
   function titleText() { return cfg().title || 'No products available for this pincode'; }
   function bodyText() { return cfg().body || 'No products in this collection are available for the selected pincode.'; }
+  function body4hrText() { return cfg().body4hr || '4 Hours Delivery is available only in selected Kolkata areas. Please change your pincode or continue with normal delivery.'; }
+  function zeroCountText() { return cfg().zeroCountText || '0 products available for this pincode'; }
   function redirectTextFor(n) {
     var t = cfg().redirectText || 'Redirecting to homepage in {seconds} seconds.';
     return t.replace('{seconds}', String(n));
@@ -64,6 +66,30 @@
     for (var i = 0; i < cards.length; i++) { if (!cards[i].classList.contains(HIDDEN)) { visible++; } }
     return { total: cards.length, visible: visible };
   }
+  // Is the current collection the "4 Hours Delivery" / Quick-Commerce collection?
+  function is4hrCollection() {
+    var g = grid(); if (!g) { return false; }
+    var h = (g.getAttribute('data-ganguram-collection') || '').toLowerCase();
+    if (!h) { return false; }
+    var handles = (window.GanguramQuickCommerceHandles && window.GanguramQuickCommerceHandles.length) ? window.GanguramQuickCommerceHandles : [];
+    for (var i = 0; i < handles.length; i++) { if (String(handles[i]).toLowerCase() === h) { return true; } }
+    return false;
+  }
+  // Customer-facing product count: replace with "0 available" when filtered to empty;
+  // restore the original (Shopify) count when products are visible again. Never
+  // changes the real collection total — display only.
+  var countOriginal = null;
+  function setZeroCount(zero) {
+    var c = document.getElementById('CollectionProductCount');
+    if (!c) { return; }
+    if (zero) {
+      if (countOriginal === null) { countOriginal = c.innerHTML; }
+      c.textContent = zeroCountText();
+    } else if (countOriginal !== null) {
+      c.innerHTML = countOriginal;
+      countOriginal = null;
+    }
+  }
 
   function openPincode() {
     if (window.GanguramDelivery && typeof window.GanguramDelivery.openDeliveryLocationPopup === 'function') {
@@ -82,7 +108,8 @@
     paused = false;
     if (warningEl && warningEl.parentNode) { warningEl.parentNode.removeChild(warningEl); }
     warningEl = null;
-    if (document.body) { document.body.classList.remove(ACTIVE_BODY); }
+    setZeroCount(false);                                  // restore the original product count
+    if (document.body) { document.body.classList.remove(ACTIVE_BODY); } // CSS un-hides pagination
   }
 
   function el(tag, cls) { var e = document.createElement(tag); if (cls) { e.className = cls; } return e; }
@@ -95,7 +122,7 @@
     var h = el('p', 'ganguram-ecw__title');
     h.textContent = titleText();
     var b = el('p', 'ganguram-ecw__body');
-    b.textContent = bodyText();
+    b.textContent = is4hrCollection() ? body4hrText() : bodyText();
     var count = el('p', 'ganguram-ecw__countdown');
     var progress = el('div', 'ganguram-ecw__progress');
     var bar = el('div', 'ganguram-ecw__progress-bar');
@@ -162,6 +189,7 @@
     var first = !warningEl || !document.body.contains(warningEl);
     ensureWarning();
     if (!warningEl) { return; }
+    setZeroCount(true);                                   // replace "146 products" -> "0 available"
     if (first && !paused) { startCountdown(); }
     else if (paused) { warningEl._count.textContent = ''; warningEl._bar.style.width = '0%'; }
   }

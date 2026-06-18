@@ -1660,6 +1660,98 @@
 				"label": "Redirect target",
 				"default": "/",
 				"info": "Where to send the customer, e.g. / for the homepage."
+			},
+			{
+				"type": "text",
+				"id": "ganguram_ecr_body_4hr",
+				"label": "4 Hours Delivery warning body",
+				"default": "4 Hours Delivery is available only in selected Kolkata areas. Please change your pincode or continue with normal delivery.",
+				"info": "Shown on the 4 Hours Delivery collection when empty for the pincode."
+			},
+			{
+				"type": "text",
+				"id": "ganguram_ecr_zero_count",
+				"label": "Zero-count text",
+				"default": "0 products available for this pincode",
+				"info": "Replaces the product count when none are available for the pincode."
+			}
+		]
+	},
+	{
+		"name": "Ganguram — Cart removal undo",
+		"settings": [
+			{
+				"type": "header",
+				"content": "Undo after ineligible items are removed"
+			},
+			{
+				"type": "paragraph",
+				"content": "After the customer confirms removing items that are not deliverable to the selected pincode, offer a temporary Undo that restores the previous pincode and the removed items. Client-side only; cleared on page reload."
+			},
+			{
+				"type": "checkbox",
+				"id": "ganguram_cart_undo_enabled",
+				"label": "Enable cart removal undo",
+				"default": true
+			},
+			{
+				"type": "range",
+				"id": "ganguram_cart_undo_seconds",
+				"label": "Undo available for (seconds)",
+				"min": 3,
+				"max": 30,
+				"step": 1,
+				"unit": "s",
+				"default": 10
+			},
+			{
+				"type": "text",
+				"id": "ganguram_cart_undo_message",
+				"label": "Undo message",
+				"default": "Items removed. Undo available for {seconds} seconds.",
+				"info": "Use {seconds} for the live countdown."
+			}
+		]
+	},
+	{
+		"name": "Ganguram — Product availability",
+		"settings": [
+			{
+				"type": "header",
+				"content": "Product page pincode availability"
+			},
+			{
+				"type": "paragraph",
+				"content": "On a product page, if the product is not deliverable to the selected pincode, Add to Cart and Buy Now are disabled and this message is shown. Display only — it does not change checkout or shipping."
+			},
+			{
+				"type": "text",
+				"id": "ganguram_pavl_message",
+				"label": "Unavailable message",
+				"default": "This product is not available for delivery to the selected pincode: {pincode}.",
+				"info": "Use {pincode} for the selected pincode."
+			},
+			{
+				"type": "checkbox",
+				"id": "ganguram_pavl_redirect_enabled",
+				"label": "Redirect unavailable product to homepage",
+				"default": false
+			},
+			{
+				"type": "range",
+				"id": "ganguram_pavl_redirect_seconds",
+				"label": "Redirect after (seconds)",
+				"min": 3,
+				"max": 30,
+				"step": 1,
+				"unit": "s",
+				"default": 8
+			},
+			{
+				"type": "text",
+				"id": "ganguram_pavl_redirect_target",
+				"label": "Redirect target",
+				"default": "/"
 			}
 		]
 	}

@@ -1,0 +1,19 @@
+{%- comment -%}
+  Ganguram — Product page pincode availability config (Phase 2.7C hotfix).
+
+  Publishes window.GanguramProductAvailabilityConfig from theme settings and loads
+  the scoped module. Display/eligibility only: it disables Add to Cart + Buy Now and
+  shows a message when the product is not deliverable to the selected pincode. It
+  reuses window.GanguramZoneRules + GanguramZone. No checkout / shipping-rate / MOV /
+  ShipZip / SBZ / zipLogic logic, no pincode lists.
+{%- endcomment -%}
+<script>
+  window.GanguramProductAvailabilityConfig = {
+    message: {{ settings.ganguram_pavl_message | default: 'This product is not available for delivery to the selected pincode: {pincode}.' | json }},
+    redirectEnabled: {% if settings.ganguram_pavl_redirect_enabled %}true{% else %}false{% endif %},
+    redirectSeconds: {{ settings.ganguram_pavl_redirect_seconds | default: 8 | json }},
+    redirectTarget: {{ settings.ganguram_pavl_redirect_target | default: '/' | json }}
+  };
+</script>
+{{ 'ganguram-product-availability.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ganguram-product-availability.js' | asset_url }}" defer></script>
