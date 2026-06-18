@@ -1,26 +1,30 @@
 /*
- * Ganguram — Cart eligibility: confirm-before-remove (Phase 2.7A + warning hotfix)
+ * Ganguram — Cart eligibility: confirm-before-remove (Phase 2.7A, no-removal-on-cancel)
  * ---------------------------------------------------------------------------
  * When the customer selects/changes a VALID serviceable pincode and some cart
- * lines are not deliverable to the new zone/context, we do NOT remove anything
- * immediately. Instead we WARN first and let the customer decide:
+ * lines are not deliverable to it, we WARN first and remove NOTHING until ONE
+ * explicit positive action. The warning offers three clearly separated choices:
  *
- *   - "Change Pincode"            -> cart unchanged; the PREVIOUS pincode is
- *                                    restored; the pincode popup reopens.
- *   - "Continue with selected …"  -> the new pincode is accepted; ONLY the
- *                                    affected lines are removed (Ajax cart API);
- *                                    the cart refreshes; a final confirmation shows.
+ *   - "Keep current pincode"             -> SAFE. Restore the previous accepted
+ *                                           pincode, close the warning, change
+ *                                           nothing. (Same as ✕ / backdrop / Esc.)
+ *   - "Change pincode"                   -> Restore the previous pincode and
+ *                                           reopen the pincode popup. No removal.
+ *   - "Continue with selected pincode"   -> the ONLY path that mutates the cart:
+ *                                           accept the new pincode, remove only the
+ *                                           affected lines, refresh, then show a
+ *                                           final confirmation message.
  *
- * If all lines are valid, the new pincode is accepted silently (no warning).
+ * Removal is triggered from exactly ONE place (onConfirm -> removeLines). Every
+ * cancel/close/keep/change path restores the previous pincode and never calls the
+ * cart API. The self-induced restore re-dispatch is guarded (suppressNext) so it
+ * cannot re-trigger a warning or a removal.
  *
  * Eligibility REUSES the product-display rule (window.GanguramZoneRules
- * .isProductVisibleForContext) — single source of truth. Tags + product url/image/
- * handle are read from Liquid-stamped cart-line attributes (Shopify /cart.js does
- * NOT include product tags), keyed by line item key.
- *
- * Never removes silently or before confirmation; never acts on no/invalid/
- * unserviceable pincode. No checkout, MOV, date/slot, shipping-rate, payment,
- * ShipZip/SBZ/zipLogic. No pincode lists, no 4-hour timing, no Google API.
+ * .isProductVisibleForContext). Tags + product url/image/handle are read from
+ * Liquid-stamped cart-line attributes (Shopify /cart.js has no product tags).
+ * No checkout/MOV/date-slot/shipping/payment/ShipZip/SBZ/zipLogic. No pincode
+ * lists, no 4-hour timing, no Google API.
  * ---------------------------------------------------------------------------
  */
 (function () {
@@ -33,7 +37,7 @@
   var busy = false;            // during Ajax removal
   var suppressNext = false;    // ignore the next change event (self-induced restore)
   var lastAccepted = null;     // { pincode, zone } the customer has accepted
-  var pending = null;          // { zone, ctx } awaiting confirm while a warning shows
+  var pending = null;          // { zone, ctx, pincode } while a warning is showing
 
   function cfg() { return window.GanguramCartConfig || {}; }
   function updateUrl() {
@@ -88,8 +92,9 @@
     return out;
   }
 
-  // Specific customer-facing reason for an ineligible line.
-  function reasonFor(line, zone, ctx) {
+  // Internal-only specific reason (kept for debugging on the card; NOT shown to the
+  // customer — the customer-facing text is the simple pincode message below).
+  function reasonDetail(line, zone, ctx) {
     if (!line.k && !line.p && !line.q) { return 'Delivery eligibility tag missing'; }
     if (zone === 'pan_india') {
       if (line.k && !line.p) { return 'Available only for Kolkata delivery'; }
@@ -100,26 +105,45 @@
       if (line.k && !line.q) { return 'Available only for Kolkata delivery'; }
       return 'Not eligible for the selected delivery mode';
     }
-    // normal Kolkata
     if (line.q && !line.k) { return 'Available only for 4 Hours Delivery'; }
     return 'Not eligible for the selected delivery mode';
   }
+  // Simple, professional customer-facing reason for the entered pincode.
+  function customerReason(pincode) {
+    return 'Delivery is not available for the selected pincode: ' + pincode + '.';
+  }
 
-  // Affected (ineligible) lines for a zone/context, each annotated with .reason.
+  // Affected (ineligible) lines for a zone/context, each annotated with .detail.
   function computeAffected(zone, ctx) {
     var fn = rule();
     if (!fn) { return []; }                  // rules missing -> never affected (fail safe)
     var out = [];
     cartLines().forEach(function (l) {
       if (!fn({ kolkata: l.k, panIndia: l.p, quickCommerce: l.q }, zone, ctx)) {
-        l.reason = reasonFor(l, zone, ctx);
+        l.detail = reasonDetail(l, zone, ctx);
         out.push(l);
       }
     });
     return out;
   }
 
-  // ---- flow -----------------------------------------------------------------
+  // ---- state machine --------------------------------------------------------
+  // Restore the previously accepted pincode WITHOUT removing anything. The
+  // re-dispatch is suppressed so it can never re-warn or re-remove.
+  function restorePrevious() {
+    if (!window.GanguramZone) { return; }
+    suppressNext = true;
+    try {
+      if (lastAccepted && lastAccepted.pincode) {
+        window.GanguramZone.setSelectedPincode(lastAccepted.pincode);
+      } else if (typeof window.GanguramZone.clearSelectedDeliveryLocation === 'function') {
+        window.GanguramZone.clearSelectedDeliveryLocation();
+      } else {
+        suppressNext = false;
+      }
+    } catch (e) { suppressNext = false; }
+  }
+
   function onChange() {
     if (suppressNext) { suppressNext = false; return; } // ignore our own restore
     var loc = activeLoc();
@@ -131,35 +155,45 @@
     if (!affected.length) {                   // all valid -> accept silently
       pending = null; dismiss(); lastAccepted = { pincode: loc.pincode, zone: loc.zone }; return;
     }
-    pending = { zone: loc.zone, ctx: ctx };   // some invalid -> WARN (do not remove)
-    showWarning(affected);
+    pending = { zone: loc.zone, ctx: ctx, pincode: loc.pincode }; // some invalid -> WARN
+    showWarning(affected, loc.pincode);
   }
 
-  function onCancel() {                        // "Change Pincode"
-    pending = null; dismiss();
-    suppressNext = true;                       // the restore below re-dispatches the event
-    try {
-      if (lastAccepted && lastAccepted.pincode && window.GanguramZone) {
-        window.GanguramZone.setSelectedPincode(lastAccepted.pincode);
-      } else if (window.GanguramZone && typeof window.GanguramZone.clearSelectedDeliveryLocation === 'function') {
-        window.GanguramZone.clearSelectedDeliveryLocation();
-      }
-    } catch (e) { suppressNext = false; }
-    openPincode();                             // let them enter another pincode
+  // SAFE cancel — restore previous pincode, close, no removal, no popup.
+  function onKeepCurrent() {
+    pending = null;
+    dismiss();
+    restorePrevious();
   }
 
-  function onConfirm() {                        // "Continue with selected pincode"
-    if (busy) { return; }
+  // Edit — restore previous pincode, close, reopen the pincode popup, no removal.
+  function onChangePincode() {
+    pending = null;
+    dismiss();
+    restorePrevious();
+    openPincode();
+  }
+
+  // ✕ / backdrop / Esc — during a warning behaves like "Keep current pincode";
+  // during the final confirmation it just closes.
+  function onClose() {
+    if (pending) { onKeepCurrent(); } else { dismiss(); }
+  }
+
+  // The ONLY mutating path: accept the new pincode and remove the affected lines.
+  function onConfirm() {
+    if (busy || !pending) { return; }
     var loc = activeLoc();
-    if (!loc) { dismiss(); pending = null; return; }
+    if (!loc) { pending = null; dismiss(); return; }
+    var entered = loc.pincode;
     var affected = computeAffected(loc.zone, deliveryContext()); // recompute from current cart
-    lastAccepted = { pincode: loc.pincode, zone: loc.zone };
+    lastAccepted = { pincode: loc.pincode, zone: loc.zone };     // accept the new pincode
     pending = null;
     if (!affected.length) { dismiss(); return; }
-    removeLines(affected);
+    removeLines(affected, entered);
   }
 
-  function removeLines(remove) {
+  function removeLines(remove, entered) {
     busy = true;
     var updates = {};
     remove.forEach(function (l) { updates[l.key] = 0; });
@@ -172,7 +206,7 @@
       .then(function (cart) {
         var emptied = !!cart && cart.item_count === 0;
         if (typeof window.refreshCart === 'function') { try { window.refreshCart(false); } catch (e) {} }
-        showConfirmation(remove, emptied);
+        showConfirmation(remove, emptied, entered);
       })
       .catch(function () { /* leave cart untouched on failure */ })
       .finally(function () { busy = false; });
@@ -200,14 +234,14 @@
     root.setAttribute('hidden', '');
 
     var backdrop = el('div', 'ganguram-cart-elig__backdrop');
-    backdrop.addEventListener('click', dismiss);
+    backdrop.addEventListener('click', onClose);
 
     var panel = el('div', 'ganguram-cart-elig__panel');
     var close = el('button', 'ganguram-cart-elig__close');
     close.type = 'button';
     close.setAttribute('aria-label', 'Close');
     close.innerHTML = '&times;';
-    close.addEventListener('click', dismiss);
+    close.addEventListener('click', onClose);
 
     var heading = el('p', 'ganguram-cart-elig__heading');
     heading.id = 'ganguram-cart-elig-heading';
@@ -223,13 +257,14 @@
     root.appendChild(backdrop);
     root.appendChild(panel);
     document.body.appendChild(root);
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { dismiss(); } });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) { onClose(); } });
 
     root._heading = heading; root._sub = sub; root._list = list; root._actions = actions; root._close = close;
     return root;
   }
-  function itemCard(l) {
+  function itemCard(l, pincode) {
     var li = el('li', 'ganguram-cart-elig__item');
+    if (l.detail) { li.setAttribute('data-ganguram-reason-detail', l.detail); } // internal/debug only
     if (l.image) {
       var thumb = el('a', 'ganguram-cart-elig__thumb');
       thumb.href = l.url || '#';
@@ -245,14 +280,14 @@
     var qty = el('span', 'ganguram-cart-elig__qty');
     qty.textContent = 'Qty: ' + (l.qty || 1);
     var reason = el('span', 'ganguram-cart-elig__reason');
-    reason.textContent = l.reason || 'Not eligible for the selected delivery mode';
+    reason.textContent = customerReason(pincode);
     info.appendChild(name); info.appendChild(qty); info.appendChild(reason);
     li.appendChild(info);
     return li;
   }
-  function fillList(items) {
+  function fillList(items, pincode) {
     modal._list.textContent = '';
-    items.forEach(function (l) { modal._list.appendChild(itemCard(l)); });
+    items.forEach(function (l) { modal._list.appendChild(itemCard(l, pincode)); });
   }
   function setActions(buttons) {
     modal._actions.textContent = '';
@@ -266,25 +301,26 @@
   }
   function show() { modal.removeAttribute('hidden'); if (modal._close && modal._close.focus) { modal._close.focus(); } }
 
-  function showWarning(affected) {
+  function showWarning(affected, pincode) {
     if (!modal) { modal = buildModal(); }
-    var n = affected.length;
-    modal._heading.textContent = (n === 1 ? '1 item may be affected by this pincode change.' : n + ' items may be affected by this pincode change.');
-    modal._sub.textContent = 'The following items are not deliverable to the selected pincode.';
+    modal._heading.textContent = 'Some items are not deliverable to the selected pincode';
+    modal._sub.textContent = 'The following items are not deliverable to ' + pincode +
+      '. You can keep your current pincode, change the pincode, or continue with the selected pincode and remove these items from your cart.';
     modal._sub.removeAttribute('hidden');
-    fillList(affected);
+    fillList(affected, pincode);
     setActions([
-      { label: 'Change Pincode', cls: 'ganguram-cart-elig__btn', onClick: function () { onCancel(); } },
-      { label: 'Continue with selected pincode', cls: 'ganguram-cart-elig__btn ganguram-cart-elig__btn--primary', onClick: function () { onConfirm(); } }
+      { label: 'Keep current pincode', cls: 'ganguram-cart-elig__btn ganguram-cart-elig__btn--primary', onClick: function () { onKeepCurrent(); } },
+      { label: 'Change pincode', cls: 'ganguram-cart-elig__btn', onClick: function () { onChangePincode(); } },
+      { label: 'Continue with selected pincode', cls: 'ganguram-cart-elig__btn ganguram-cart-elig__btn--danger', onClick: function () { onConfirm(); } }
     ]);
     show();
   }
-  function showConfirmation(removed, emptied) {
+  function showConfirmation(removed, emptied, pincode) {
     if (!modal) { modal = buildModal(); }
     var n = removed.length;
     modal._heading.textContent = (n === 1
-      ? '1 item was removed from your cart because it is not deliverable to the selected pincode.'
-      : n + ' items were removed from your cart because they are not deliverable to the selected pincode.');
+      ? '1 item was removed from your cart because delivery is not available for the selected pincode: ' + pincode + '.'
+      : n + ' items were removed from your cart because delivery is not available for the selected pincode: ' + pincode + '.');
     if (emptied) {
       modal._sub.textContent = 'Your cart is now empty.';
       modal._sub.removeAttribute('hidden');
@@ -292,7 +328,7 @@
       modal._sub.textContent = '';
       modal._sub.setAttribute('hidden', '');
     }
-    fillList(removed);
+    fillList(removed, pincode);
     setActions([
       { label: 'Continue Shopping', cls: 'ganguram-cart-elig__btn ganguram-cart-elig__btn--primary', href: allProductsUrl() },
       { label: 'Close', cls: 'ganguram-cart-elig__btn', onClick: function () { dismiss(); } }
@@ -303,7 +339,7 @@
   // ---- triggers -------------------------------------------------------------
   function init() {
     var loc = activeLoc();
-    lastAccepted = loc ? { pincode: loc.pincode, zone: loc.zone } : null; // adopt current as accepted; do not warn on load
+    lastAccepted = loc ? { pincode: loc.pincode, zone: loc.zone } : null; // adopt current as accepted; never warn on load
     window.addEventListener(EVENT, onChange);
   }
   if (document.readyState === 'loading') {
