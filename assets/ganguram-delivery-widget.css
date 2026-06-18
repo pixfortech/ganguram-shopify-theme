@@ -27,36 +27,50 @@ mobile-navigation .ganguram-delivery-widget-menu-slot .ganguram-delivery-widget_
 
 .ganguram-delivery-widget {
   position: relative;
+  z-index: 1;          /* keep it above any menu hover-highlight bleed */
   display: inline-flex;
   align-items: center;
+  flex-shrink: 0;      /* never get squished/overlapped by nav items */
   font-family: inherit;
+  white-space: nowrap;
 }
 
 /* Trigger ------------------------------------------------------------------ */
 .ganguram-delivery-widget__trigger {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.25rem 0.55rem;
+  gap: 0.4rem;
+  padding: 0;             /* inline menu utility — no boxed padding */
   margin: 0;
-  background: none;
+  background: transparent;
   border: 0;
-  border-radius: 0.45rem;
+  border-radius: 0;
   color: inherit;
   font: inherit;
   line-height: 1.15;
   cursor: pointer;
+  white-space: nowrap;
 }
-.ganguram-delivery-widget__trigger:hover { background: rgba(73, 72, 141, 0.08); }
-.ganguram-delivery-widget__trigger:focus-visible { outline: 2px solid #49488d; outline-offset: 2px; }
-/* make it obvious the value is clickable / changeable */
-.ganguram-delivery-widget__trigger:hover .ganguram-delivery-widget__value { text-decoration: underline; text-underline-offset: 2px; }
-.ganguram-delivery-widget__trigger:hover .ganguram-delivery-widget__caret { opacity: 1; color: #49488d; }
+/* Clean inline utility: no box background or border on ANY state. */
+.ganguram-delivery-widget__trigger:hover,
+.ganguram-delivery-widget__trigger:focus,
+.ganguram-delivery-widget__trigger:active { background: transparent; }
+.ganguram-delivery-widget__trigger:focus,
+.ganguram-delivery-widget__trigger:focus-visible { outline: none; }
+/* Subtle, premium hover/focus — tint + underline the value only (also the visible keyboard-focus cue). */
+.ganguram-delivery-widget__trigger:hover .ganguram-delivery-widget__value,
+.ganguram-delivery-widget__trigger:focus-visible .ganguram-delivery-widget__value {
+  color: #49488d;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.ganguram-delivery-widget__trigger:hover .ganguram-delivery-widget__caret,
+.ganguram-delivery-widget__trigger:focus-visible .ganguram-delivery-widget__caret { color: #49488d; opacity: 1; }
 
 .ganguram-delivery-widget__pin {
   flex: 0 0 auto;
-  width: 1.1em;
-  height: 1.1em;
+  width: 1em;          /* ~16px subtle location icon */
+  height: 1em;
   color: #ea5454; /* brand accent */
 }
 .ganguram-delivery-widget__pin svg { display: block; width: 100%; height: 100%; }
