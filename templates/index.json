@@ -342,7 +342,7 @@
         "layout_desktop": "four-columns",
         "layout_mobile": "grid-palm-2",
         "products_number": 16,
-        "collection": "",
+        "collection": "packed-mishti",
         "collection_1": "",
         "collection_2": "",
         "collection_3": "",
@@ -478,7 +478,7 @@
         "local_availability_QfVefU"
       ],
       "settings": {
-        "heading": "Bread & Bakery",
+        "heading": "Sandesh",
         "subheading": "",
         "show_view_all": true,
         "section_heading_layout": "section-heading--left",
@@ -486,7 +486,7 @@
         "layout_desktop": "four-columns",
         "layout_mobile": "grid-palm-2",
         "products_number": 8,
-        "collection": "",
+        "collection": "sandesh",
         "collection_1": "",
         "collection_2": "",
         "collection_3": "",
@@ -1114,6 +1114,7 @@
     },
     "1655121489db318f96": {
       "type": "shop-the-look",
+      "disabled": true,
       "blocks": {
         "1655121489da0fd0f2-0": {
           "type": "price",
@@ -1224,7 +1225,7 @@
         "1655121248aee0f086-2"
       ],
       "settings": {
-        "heading": "Kitchenware Deals!",
+        "heading": "Dry-Fruit Mithai",
         "subheading": "",
         "show_view_all": true,
         "section_heading_layout": "section-heading--left",
@@ -1232,7 +1233,7 @@
         "layout_desktop": "four-columns",
         "layout_mobile": "grid-palm-2",
         "products_number": 8,
-        "collection": "",
+        "collection": "dry-fruits-mishti",
         "collection_1": "",
         "collection_2": "",
         "collection_3": "",
