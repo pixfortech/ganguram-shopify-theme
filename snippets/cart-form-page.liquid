@@ -26,7 +26,22 @@
 					</div>
 					{%- for item in cart.items -%}
 
-						<div id="item-{{ item.id }}" class="cart-form-item {% if item.product.id == settings.gift_wrap_product.id %} cart-item--gift-wrapping {% endif %}" data-title="{{ item.product.title | escape }} {%- unless item.product.has_only_default_variant -%} ({{ item.variant.title | escape }}) {%- endunless -%}" data-id="{{ item.key }}" data-qty="{{ item.quantity }}" data-line="{{ forloop.index }}" data-product-id="{{ item.product.id }}" data-js-cart-item>
+						{%- liquid
+							assign gz_k = false
+							assign gz_p = false
+							assign gz_q = false
+							if item.product.tags contains 'Kolkata'
+								assign gz_k = true
+							endif
+							if item.product.tags contains 'PAN India'
+								assign gz_p = true
+							endif
+							if item.product.tags contains 'Quick Commerce'
+								assign gz_q = true
+							endif
+						-%}
+
+						<div id="item-{{ item.id }}" class="cart-form-item {% if item.product.id == settings.gift_wrap_product.id %} cart-item--gift-wrapping {% endif %}" data-title="{{ item.product.title | escape }} {%- unless item.product.has_only_default_variant -%} ({{ item.variant.title | escape }}) {%- endunless -%}" data-id="{{ item.key }}" data-qty="{{ item.quantity }}" data-line="{{ forloop.index }}" data-product-id="{{ item.product.id }}" data-ganguram-cart-line data-ganguram-line-key="{{ item.key }}" data-ganguram-product-title="{{ item.product.title | escape }}" data-ganguram-kolkata="{{ gz_k }}" data-ganguram-pan-india="{{ gz_p }}" data-ganguram-quick-commerce="{{ gz_q }}" data-js-cart-item>
 
 							<div class="cart-item__product-info cart-form-item--layout">
 

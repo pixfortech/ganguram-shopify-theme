@@ -81,6 +81,11 @@
     return k;                                          // normal grids -> only Kolkata products
   }
 
+  // Expose the rule so other modules (e.g. cart eligibility, Phase 2.7A) reuse the
+  // EXACT same logic — single source of truth. Read-only; does not change the matrix.
+  window.GanguramZoneRules = window.GanguramZoneRules || {};
+  window.GanguramZoneRules.isProductVisibleForContext = isProductVisibleForContext;
+
   function cardAllowed(card, zoneName) {
     if (!zoneName) { return true; }
     var tags = {
