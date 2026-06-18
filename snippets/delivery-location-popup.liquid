@@ -24,10 +24,10 @@
       </svg>
     </span>
 
-    <h2 class="ganguram-delivery-popup__title" id="gdp-title" data-gdp-title>Where should we deliver?</h2>
+    <h2 class="ganguram-delivery-popup__title" id="gdp-title" data-gdp-title>Choose delivery location</h2>
     <p class="ganguram-delivery-popup__current" data-gdp-current hidden></p>
     <button type="button" class="ganguram-delivery-popup__clear" data-gdp-clear hidden>Clear selection</button>
-    <p class="ganguram-delivery-popup__subtitle" id="gdp-subtitle">Enter your pincode to see sweets and snacks available for your area.</p>
+    <p class="ganguram-delivery-popup__subtitle" id="gdp-subtitle">Select a pincode to see products available for your area.</p>
     <p class="ganguram-delivery-popup__message" data-gdp-message>We use your pincode only to show products available for your delivery area.</p>
 
     <div class="ganguram-delivery-popup__row">
@@ -42,7 +42,7 @@
         placeholder="Enter delivery pincode"
         aria-label="Delivery pincode"
       >
-      <button type="button" class="ganguram-delivery-popup__apply" data-gdp-apply>Check Availability</button>
+      <button type="button" class="ganguram-delivery-popup__apply" data-gdp-apply>Apply</button>
     </div>
 
     <p class="ganguram-delivery-popup__status" data-gdp-status role="status" aria-live="polite"></p>
@@ -55,34 +55,44 @@
       Maps, no checkout autofill, no full-address storage for guests.
     {%- endcomment -%}
     <div class="ganguram-delivery-popup__locations" data-gdp-locations>
-      {%- if customer and customer.addresses.size > 0 -%}
+      {%- if customer -%}
         <div class="ganguram-delivery-popup__section" data-gdp-saved-section>
           <p class="ganguram-delivery-popup__section-title">Your saved addresses</p>
-          <ul class="ganguram-delivery-popup__list">
-            {%- for address in customer.addresses limit: 6 -%}
-              {%- assign gdp_zip = address.zip | remove: ' ' -%}
-              {%- if gdp_zip != blank -%}
-                <li>
-                  <button
-                    type="button"
-                    class="ganguram-delivery-popup__addr"
-                    data-gdp-saved-item
-                    data-gdp-zip="{{ gdp_zip | escape }}"
-                  >
-                    <span class="ganguram-delivery-popup__addr-name">
-                      {{- address.first_name | escape }} {{ address.last_name | escape -}}
-                      {%- if address == customer.default_address %} <span class="ganguram-delivery-popup__addr-default">Default</span>{% endif -%}
-                    </span>
-                    <span class="ganguram-delivery-popup__addr-line">
-                      {{- address.address1 | escape -}}
-                      {%- if address.city != blank %}, {{ address.city | escape }}{% endif -%}
-                      {%- if address.province != blank %}, {{ address.province | escape }}{% endif %} — {{ gdp_zip | escape -}}
-                    </span>
-                  </button>
-                </li>
-              {%- endif -%}
-            {%- endfor -%}
-          </ul>
+          {%- if customer.addresses.size > 0 -%}
+            <ul class="ganguram-delivery-popup__list">
+              {%- for address in customer.addresses limit: 6 -%}
+                {%- assign gdp_zip = address.zip | remove: ' ' -%}
+                {%- if gdp_zip != blank -%}
+                  <li>
+                    <button
+                      type="button"
+                      class="ganguram-delivery-popup__addr"
+                      data-gdp-saved-item
+                      data-gdp-zip="{{ gdp_zip | escape }}"
+                    >
+                      <span class="ganguram-delivery-popup__addr-name">
+                        {{- address.first_name | escape }} {{ address.last_name | escape -}}
+                        {%- if address == customer.default_address %} <span class="ganguram-delivery-popup__addr-default">· Default</span>{% endif -%}
+                      </span>
+                      <span class="ganguram-delivery-popup__addr-line">
+                        {%- if address.city != blank %}{{ address.city | escape }}{% endif -%}
+                        {%- if address.province != blank %}, {{ address.province | escape }}{% endif -%}
+                        {%- if address.city != blank or address.province != blank %} — {% endif %}{{ gdp_zip | escape -}}
+                      </span>
+                      {%- if address.address1 != blank -%}
+                        <span class="ganguram-delivery-popup__addr-full">
+                          {{- address.address1 | escape -}}
+                          {%- if address.address2 != blank %}, {{ address.address2 | escape }}{% endif -%}
+                        </span>
+                      {%- endif -%}
+                    </button>
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          {%- else -%}
+            <p class="ganguram-delivery-popup__empty">No saved addresses yet. Add one in your account to reuse it here.</p>
+          {%- endif -%}
         </div>
       {%- endif -%}
 
