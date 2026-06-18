@@ -63,7 +63,7 @@
         "header_absolute_custom": "",
         "color_text_header": "#000000",
         "select_header_actions_on_mobile": "show_on_homepage",
-        "show_header_actions": true,
+        "show_header_actions": false,
         "show_locale_selector": true,
         "show_country_selector": false,
         "show_social_icons": true
