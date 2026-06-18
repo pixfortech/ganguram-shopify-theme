@@ -1,0 +1,16 @@
+{%- comment -%}
+  Ganguram — Cart eligibility config (Phase 2.7A).
+
+  Passes the localized Ajax cart update URL + the all-products URL to the cart
+  eligibility module, then loads it. Display + Ajax cart-line removal only; reuses
+  the shared zone eligibility rule (window.GanguramZoneRules). No checkout / MOV /
+  date-slot / shipping-rate / payment / ShipZip / SBZ / zipLogic logic.
+{%- endcomment -%}
+<script>
+  window.GanguramCartConfig = {
+    updateUrl: {{ routes.cart_url | append: '/update.js' | json }},
+    allProductsUrl: {{ routes.all_products_collection_url | default: '/collections/all' | json }}
+  };
+</script>
+{{ 'ganguram-cart-eligibility.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ganguram-cart-eligibility.js' | asset_url }}" defer></script>

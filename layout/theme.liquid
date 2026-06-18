@@ -532,5 +532,8 @@
   {%- comment -%} Admin-controlled "4 Hours Delivery" display (Phase 2.7) — menu/tile/collection visibility + time window + messages from theme settings. Display only; no checkout/shipping-rate/MOV/ShipZip logic. {%- endcomment -%}
   {%- render 'ganguram-4hour-delivery-config' -%}
 
+  {%- comment -%} Cart eligibility enforcement on pincode change (Phase 2.7A) — reuses the zone eligibility rule; removes ineligible cart lines via the Ajax cart API and shows a message. No checkout/MOV/date-slot/shipping-rate/payment/ShipZip/SBZ/zipLogic logic. {%- endcomment -%}
+  {%- render 'ganguram-cart-eligibility-config' -%}
+
 </body>
 </html>
