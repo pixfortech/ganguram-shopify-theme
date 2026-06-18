@@ -26,6 +26,7 @@
 
     <h2 class="ganguram-delivery-popup__title" id="gdp-title" data-gdp-title>Where should we deliver?</h2>
     <p class="ganguram-delivery-popup__current" data-gdp-current hidden></p>
+    <button type="button" class="ganguram-delivery-popup__clear" data-gdp-clear hidden>Clear selection</button>
     <p class="ganguram-delivery-popup__subtitle" id="gdp-subtitle">Enter your pincode to see sweets and snacks available for your area.</p>
     <p class="ganguram-delivery-popup__message" data-gdp-message>We use your pincode only to show products available for your delivery area.</p>
 
@@ -45,6 +46,52 @@
     </div>
 
     <p class="ganguram-delivery-popup__status" data-gdp-status role="status" aria-live="polite"></p>
+
+    {%- comment -%}
+      Saved Delivery Locations shell (Phase 2.8A). Display/selection only — every
+      selection still goes through GanguramZone.setSelectedPincode. Saved addresses
+      render only for a logged-in customer; guests see recent locations from
+      localStorage (populated by assets/ganguram-saved-locations.js). No Google
+      Maps, no checkout autofill, no full-address storage for guests.
+    {%- endcomment -%}
+    <div class="ganguram-delivery-popup__locations" data-gdp-locations>
+      {%- if customer and customer.addresses.size > 0 -%}
+        <div class="ganguram-delivery-popup__section" data-gdp-saved-section>
+          <p class="ganguram-delivery-popup__section-title">Your saved addresses</p>
+          <ul class="ganguram-delivery-popup__list">
+            {%- for address in customer.addresses limit: 6 -%}
+              {%- assign gdp_zip = address.zip | remove: ' ' -%}
+              {%- if gdp_zip != blank -%}
+                <li>
+                  <button
+                    type="button"
+                    class="ganguram-delivery-popup__addr"
+                    data-gdp-saved-item
+                    data-gdp-zip="{{ gdp_zip | escape }}"
+                  >
+                    <span class="ganguram-delivery-popup__addr-name">
+                      {{- address.first_name | escape }} {{ address.last_name | escape -}}
+                      {%- if address == customer.default_address %} <span class="ganguram-delivery-popup__addr-default">Default</span>{% endif -%}
+                    </span>
+                    <span class="ganguram-delivery-popup__addr-line">
+                      {{- address.address1 | escape -}}
+                      {%- if address.city != blank %}, {{ address.city | escape }}{% endif -%}
+                      {%- if address.province != blank %}, {{ address.province | escape }}{% endif %} — {{ gdp_zip | escape -}}
+                    </span>
+                  </button>
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+
+      <div class="ganguram-delivery-popup__section" data-gdp-recent-section hidden>
+        <p class="ganguram-delivery-popup__section-title">Recent locations</p>
+        <ul class="ganguram-delivery-popup__list ganguram-delivery-popup__list--chips" data-gdp-recent></ul>
+      </div>
+    </div>
+
     <p class="ganguram-delivery-popup__examples">Examples — Kolkata <strong>700008</strong> &middot; PAN India <strong>110001</strong></p>
   </div>
 </div>
