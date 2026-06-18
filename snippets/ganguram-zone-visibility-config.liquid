@@ -14,7 +14,7 @@
   handle map. It is used to (a) give that collection's product grid the "quick"
   context so only 'Quick Commerce' products show there, and (b) hide its menu
   link/tile for PAN-India customers (4-Hours Delivery is Kolkata/QC only).
-  MERCHANT: confirm the real handle and trim this list if needed.
+  Merchant-confirmed handle: '4-hour-delivery'.
 
   Display-only. No cart/checkout/ShipZip/SBZ/zipLogic logic.
 {%- endcomment -%}
@@ -28,10 +28,9 @@
       {%- endunless -%}
     {%- endfor -%}
   ];
-  // "4 Hours Delivery" / Quick-Commerce collection handle(s). Both common
-  // handleizations of "4 Hours Delivery" are listed so the rule works whichever
-  // the store uses; unknown handles simply never match. Edit to match the store.
-  window.GanguramQuickCommerceHandles = ['4-hours-delivery', '4-hour-delivery'];
+  // "4 Hours Delivery" / Quick-Commerce collection handle(s). Merchant-confirmed
+  // handle. Unknown handles simply never match; edit if the store handle changes.
+  window.GanguramQuickCommerceHandles = ['4-hour-delivery'];
 </script>
 {{ 'ganguram-zone-visibility.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'ganguram-zone-visibility.js' | asset_url }}" defer></script>
