@@ -56,9 +56,19 @@
       else
         assign grid_class_mobile = 'grid-palm-2'
       endif
+
+      assign gz_panel_collection_handle = ''
+      if collection != blank and collection != 'onboarding'
+        assign gz_panel_collection_handle = collections[collection].handle
+      endif
     -%}
 
-    <div class="grid {% if section.settings.style == 'slider' %} grid--slider {% else %} grid--layout {% endif %} {{ grid_class_desktop }} {{ grid_class_mobile }}">
+    {%- comment -%}
+      Zone-filter context marker: this panel's collection handle (blank for the
+      onboarding/blank state). Lets the product filter give the 4-Hours-Delivery
+      collection its "quick" context wherever it is rendered.
+    {%- endcomment -%}
+    <div data-ganguram-collection="{{ gz_panel_collection_handle }}" class="grid {% if section.settings.style == 'slider' %} grid--slider {% else %} grid--layout {% endif %} {{ grid_class_desktop }} {{ grid_class_mobile }}">
 
       {%- liquid
         if collection != blank and collection != "onboarding" and collection_tabs > 0

@@ -1,14 +1,27 @@
 /*
- * Ganguram — Product visibility filtering by delivery zone (Phase 2.2)
+ * Ganguram — Product visibility filtering by delivery zone (Phase 2.2 + hotfix)
  * ---------------------------------------------------------------------------
  * Shows/hides product CARDS based on the selected delivery zone from
- * window.GanguramZone. Replicates the 2.3.2 business outcome, cleanly:
- *   - Kolkata pincode        -> show products tagged "Kolkata"
- *   - Quick Commerce pincode -> show products tagged "Kolkata" (QC ⊆ Kolkata serviceable)
- *   - PAN India pincode      -> show products tagged "PAN India"
- *   - no valid pincode       -> show ALL (never permanently hide; the popup/cart
- *                               guard from 2.1d handle requiring a pincode)
- *   - a product with no zone tag -> always shown (the catalogue has none; safety)
+ * window.GanguramZone AND the surface context (normal grid vs the
+ * "4 Hours Delivery" / Quick-Commerce collection). Business rules:
+ *
+ *   - no valid pincode            -> show ALL (never permanently hide; the popup /
+ *                                    cart guard from 2.1d handle requiring a pincode)
+ *   - product carries no zone tag -> hidden once a pincode is set (zone unknown)
+ *
+ *   - PAN India pincode           -> show ONLY products tagged "PAN India".
+ *                                    The 4-Hours-Delivery context is NEVER shown to
+ *                                    PAN India (that collection's link is hidden too).
+ *   - Kolkata / Quick Commerce    -> normal grids: show ONLY products tagged "Kolkata"
+ *                                    (Quick-Commerce-only products stay out of normal
+ *                                    browsing; QC ⊆ Kolkata serviceable area).
+ *                                    4-Hours-Delivery grid: show ONLY products tagged
+ *                                    "Quick Commerce".
+ *
+ * "4 Hours Delivery" context is detected per grid: a card whose closest
+ * [data-ganguram-collection] grid handle is in window.GanguramQuickCommerceHandles
+ * gets the "quick" context. Everything else (regular collections, featured blocks,
+ * search, predictive search, recommendations) is "normal".
  *
  * Uses GanguramZone only. No checkout/MOV/date-slot/shipping/cart-removal/payment
  * logic; no menu/search/collection filtering of the THEME; no ShipZip/SBZ/zipLogic.
@@ -38,16 +51,44 @@
     return loc.zone;
   }
 
+  // Handle(s) of the "4 Hours Delivery" / Quick-Commerce collection (set in the
+  // zone-visibility config snippet). Read live so config order never matters.
+  function quickCommerceHandles() {
+    return (window.GanguramQuickCommerceHandles && window.GanguramQuickCommerceHandles.length) ? window.GanguramQuickCommerceHandles : [];
+  }
+
+  // Per-card surface context: 'quick' when the card sits inside a product grid
+  // marked for the 4-Hours-Delivery / Quick-Commerce collection, else 'normal'.
+  function contextOf(card) {
+    var grid = card.closest('[data-ganguram-collection]');
+    if (!grid) { return 'normal'; }
+    var handle = grid.getAttribute('data-ganguram-collection');
+    return (handle && quickCommerceHandles().indexOf(handle) !== -1) ? 'quick' : 'normal';
+  }
+
+  // Single source of truth for product visibility. Pure function of the three zone
+  // tags, the active zone name, and the surface context ('normal' | 'quick').
+  function isProductVisibleForContext(tags, zone, context) {
+    if (!zone) { return true; }                       // no pincode -> show everything
+    var k = tags.kolkata, p = tags.panIndia, q = tags.quickCommerce;
+    if (!k && !p && !q) { return false; }             // no zone tag -> hidden after pincode
+    if (zone === 'pan_india') {
+      if (context === 'quick') { return false; }      // 4 Hours Delivery never shows for PAN India
+      return p;                                        // normal grids -> only PAN India products
+    }
+    // kolkata or quick_commerce pincode (QC ⊆ Kolkata serviceable area):
+    if (context === 'quick') { return q; }            // 4 Hours Delivery grid -> only Quick Commerce
+    return k;                                          // normal grids -> only Kolkata products
+  }
+
   function cardAllowed(card, zoneName) {
     if (!zoneName) { return true; }
-    var k = card.getAttribute('data-ganguram-kolkata') === 'true';
-    var p = card.getAttribute('data-ganguram-pan-india') === 'true';
-    var qc = card.getAttribute('data-ganguram-quick-commerce') === 'true';
-    if (!k && !p && !qc) { return true; } // untagged -> always show
-    if (zoneName === 'kolkata') { return k; }
-    if (zoneName === 'quick_commerce') { return k || qc; }
-    if (zoneName === 'pan_india') { return p; }
-    return true;
+    var tags = {
+      kolkata: card.getAttribute('data-ganguram-kolkata') === 'true',
+      panIndia: card.getAttribute('data-ganguram-pan-india') === 'true',
+      quickCommerce: card.getAttribute('data-ganguram-quick-commerce') === 'true'
+    };
+    return isProductVisibleForContext(tags, zoneName, contextOf(card));
   }
 
   function debounce(fn, wait) {

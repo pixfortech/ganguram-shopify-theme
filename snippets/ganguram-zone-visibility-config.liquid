@@ -1,11 +1,20 @@
 {%- comment -%}
-  Ganguram zone-visibility config (Phase 2.5).
+  Ganguram zone-visibility config (Phase 2.5 + zone-filtering hotfix).
 
   Builds window.GanguramZoneKolkataOnly: the handles of collections that have NO
   PAN-India product (i.e. only Kolkata / Quick-Commerce eligible) — derived live
   from each collection's all_tags, so there is NO hardcoded category list and NO
   pincode list duplicated. The menu-visibility engine hides links to these
   collections for PAN-India customers (reversibly).
+
+  Also publishes window.GanguramQuickCommerceHandles: the handle(s) of the
+  "4 Hours Delivery" / Quick-Commerce collection. This cannot be derived from
+  all_tags (a Kolkata category and the 4-Hours collection both carry the
+  'Kolkata'/'Quick Commerce' product tags), so it is a small, merchant-editable
+  handle map. It is used to (a) give that collection's product grid the "quick"
+  context so only 'Quick Commerce' products show there, and (b) hide its menu
+  link/tile for PAN-India customers (4-Hours Delivery is Kolkata/QC only).
+  MERCHANT: confirm the real handle and trim this list if needed.
 
   Display-only. No cart/checkout/ShipZip/SBZ/zipLogic logic.
 {%- endcomment -%}
@@ -19,6 +28,10 @@
       {%- endunless -%}
     {%- endfor -%}
   ];
+  // "4 Hours Delivery" / Quick-Commerce collection handle(s). Both common
+  // handleizations of "4 Hours Delivery" are listed so the rule works whichever
+  // the store uses; unknown handles simply never match. Edit to match the store.
+  window.GanguramQuickCommerceHandles = ['4-hours-delivery', '4-hour-delivery'];
 </script>
 {{ 'ganguram-zone-visibility.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'ganguram-zone-visibility.js' | asset_url }}" defer></script>
