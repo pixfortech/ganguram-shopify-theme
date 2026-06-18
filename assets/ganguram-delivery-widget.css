@@ -14,8 +14,8 @@
   max-width: 22ch;    /* fit "Quick Commerce 700001" without cramping */
 }
 @media (max-width: 1023px) {
-  .ganguram-delivery-widget-menu-slot { display: none; }                   /* hide in the header service row on mobile */
-  mobile-navigation .ganguram-delivery-widget-menu-slot { display: flex; } /* show the cloned widget inside the mobile menu drawer */
+  .ganguram-delivery-widget-menu-slot,
+  mobile-navigation .ganguram-delivery-widget-menu-slot { display: none; } /* HOTFIX: keep the cloned mobile-drawer widget hidden for now; mobile pincode is handled by the popup (cart guard / empty-state) */
 }
 /* Mobile drawer presentation (Phase 2.4): full-width, comfortable tap target; tapping opens the popup. */
 mobile-navigation .ganguram-delivery-widget-menu-slot,
@@ -60,6 +60,8 @@ mobile-navigation .ganguram-delivery-widget-menu-slot .ganguram-delivery-widget_
   color: #ea5454; /* brand accent */
 }
 .ganguram-delivery-widget__pin svg { display: block; width: 100%; height: 100%; }
+/* HOTFIX: hard cap every widget icon so it can never render oversized (pre-CSS render or when cloned). */
+.ganguram-delivery-widget svg { max-width: 22px; max-height: 22px; }
 
 .ganguram-delivery-widget__text {
   display: flex;

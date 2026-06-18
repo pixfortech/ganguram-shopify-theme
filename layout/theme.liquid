@@ -43,6 +43,9 @@
 
   {{ 'theme.css' | asset_url | stylesheet_tag }}
 
+  {%- comment -%} Pincode widget CSS in <head> (hotfix) so the location/caret icons never flash oversized before the late body CSS applies. {%- endcomment -%}
+  {{ 'ganguram-delivery-widget.css' | asset_url | stylesheet_tag }}
+
 	{{ content_for_header }}
 
   <script>
@@ -511,8 +514,7 @@
   {%- comment -%} Delivery zone resolver (Phase 2.1a) — defines window.GanguramZone. No UI / cart / checkout / visibility logic. {%- endcomment -%}
   {%- render 'zone-resolver' -%}
 
-  {%- comment -%} Delivering-to header widget (Phase 2.1b) — UI only; loaded after the resolver so window.GanguramZone is ready. {%- endcomment -%}
-  {{ 'ganguram-delivery-widget.css' | asset_url | stylesheet_tag }}
+  {%- comment -%} Delivering-to header widget (Phase 2.1b; CSS moved to <head> by hotfix to avoid icon FOUC) — UI only; loaded after the resolver. {%- endcomment -%}
   <script src="{{ 'ganguram-delivery-widget.js' | asset_url }}" defer></script>
 
   {%- comment -%} Mandatory pincode popup + add-to-cart/buy-now guard (Phase 2.1d) — UI/guard only via window.GanguramZone; no checkout/MOV/availability logic. {%- endcomment -%}

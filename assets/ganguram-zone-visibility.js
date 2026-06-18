@@ -27,7 +27,9 @@
 
   var HIDDEN = 'ganguram-zone-link-hidden';
   var EVENT = 'ganguram:delivery-location-changed';
-  var MENU_LINK = '.menu-link[href*="/collections/"]';
+  // Menu links + homepage category tiles (.js-slider-item wraps text-columns-images tiles;
+  // product cards link to /products/ so they never match this collection-link selector).
+  var MENU_LINK = '.menu-link[href*="/collections/"], .js-slider-item a[href*="/collections/"]';
 
   function zone() { return window.GanguramZone || null; }
 
@@ -51,7 +53,7 @@
   function applyLink(a, hidePan) {
     var h = handleOf(a.getAttribute('href') || '');
     var isKolkataOnly = !!(h && kolkataOnlySet().indexOf(h) !== -1);
-    var li = a.closest('li') || a;
+    var li = a.closest('li, .js-slider-item') || a;
     if (isKolkataOnly && hidePan) { li.classList.add(HIDDEN); }
     else { li.classList.remove(HIDDEN); }
   }
