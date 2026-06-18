@@ -1,0 +1,22 @@
+{%- comment -%}
+  Ganguram — Empty collection warning config (Phase 2.7C).
+
+  Publishes window.GanguramEmptyCollectionConfig from theme settings
+  (Theme settings → "Ganguram — Empty collection redirect"), then loads the scoped
+  module. Display only: it shows a warning + countdown and redirects to the
+  homepage when a collection has zero products visible for the selected pincode.
+  It reuses the product-zone filter output + GanguramZone; no checkout / shipping /
+  MOV / ShipZip / SBZ / zipLogic logic, no pincode lists.
+{%- endcomment -%}
+<script>
+  window.GanguramEmptyCollectionConfig = {
+    enabled: {% if settings.ganguram_ecr_enabled %}true{% else %}false{% endif %},
+    seconds: {{ settings.ganguram_ecr_seconds | default: 6 | json }},
+    title: {{ settings.ganguram_ecr_title | default: 'No products available for this pincode' | json }},
+    body: {{ settings.ganguram_ecr_body | default: 'No products in this collection are available for the selected pincode.' | json }},
+    redirectText: {{ settings.ganguram_ecr_redirect_text | default: 'Redirecting to homepage in {seconds} seconds.' | json }},
+    target: {{ settings.ganguram_ecr_target | default: '/' | json }}
+  };
+</script>
+{{ 'ganguram-empty-collection-warning.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ganguram-empty-collection-warning.js' | asset_url }}" defer></script>

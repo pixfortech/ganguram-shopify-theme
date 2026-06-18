@@ -535,5 +535,8 @@
   {%- comment -%} Cart eligibility enforcement on pincode change (Phase 2.7A) — reuses the zone eligibility rule; removes ineligible cart lines via the Ajax cart API and shows a message. No checkout/MOV/date-slot/shipping-rate/payment/ShipZip/SBZ/zipLogic logic. {%- endcomment -%}
   {%- render 'ganguram-cart-eligibility-config' -%}
 
+  {%- comment -%} Empty collection warning + homepage redirect (Phase 2.7C) — collection pages only; reuses the product-zone filter output + GanguramZone. Display only; no checkout/shipping/ShipZip logic. {%- endcomment -%}
+  {%- render 'ganguram-empty-collection-warning-config' -%}
+
 </body>
 </html>

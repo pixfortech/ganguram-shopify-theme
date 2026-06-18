@@ -1607,5 +1607,60 @@
 				"default": "Only Quick Commerce eligible items are available for 4 Hours Delivery."
 			}
 		]
+	},
+	{
+		"name": "Ganguram — Empty collection redirect",
+		"settings": [
+			{
+				"type": "header",
+				"content": "Empty collection after pincode filtering"
+			},
+			{
+				"type": "paragraph",
+				"content": "On a collection page, if a selected pincode hides every product, show a warning and redirect to the homepage after a countdown. Display only — it does not change checkout, shipping or product eligibility."
+			},
+			{
+				"type": "checkbox",
+				"id": "ganguram_ecr_enabled",
+				"label": "Enable empty-collection redirect",
+				"default": true
+			},
+			{
+				"type": "range",
+				"id": "ganguram_ecr_seconds",
+				"label": "Redirect after (seconds)",
+				"min": 2,
+				"max": 30,
+				"step": 1,
+				"unit": "s",
+				"default": 6
+			},
+			{
+				"type": "text",
+				"id": "ganguram_ecr_title",
+				"label": "Warning title",
+				"default": "No products available for this pincode"
+			},
+			{
+				"type": "text",
+				"id": "ganguram_ecr_body",
+				"label": "Warning body",
+				"default": "No products in this collection are available for the selected pincode."
+			},
+			{
+				"type": "text",
+				"id": "ganguram_ecr_redirect_text",
+				"label": "Redirect text",
+				"default": "Redirecting to homepage in {seconds} seconds.",
+				"info": "Use {seconds} for the live countdown."
+			},
+			{
+				"type": "text",
+				"id": "ganguram_ecr_target",
+				"label": "Redirect target",
+				"default": "/",
+				"info": "Where to send the customer, e.g. / for the homepage."
+			}
+		]
 	}
 ]
