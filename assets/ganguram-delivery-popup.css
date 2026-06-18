@@ -1,9 +1,13 @@
-/* Ganguram — delivery pincode popup (Phase 2.1d; polished 2.3). Scoped to .ganguram-delivery-popup. */
+/* Ganguram — delivery pincode popup (Phase 2.1d; polished 2.3; 2.8B native/calm).
+   Scoped to .ganguram-delivery-popup. Tuned to feel native to the Local theme:
+   theme radius/border/foreground variables (with fallbacks), restrained brand
+   accent, outline-style actions, subtle bordered cards, muted helper copy. */
 
 .ganguram-delivery-popup {
   position: fixed;
   inset: 0;
   z-index: 9999; /* above the header (z-index 11) and any sticky UI */
+  --gdp-accent: var(--color-accent-main, #49488d); /* brand accent; native if a scheme provides it */
 }
 .ganguram-delivery-popup[hidden] { display: none; }
 
@@ -11,7 +15,7 @@
 .ganguram-delivery-popup__overlay {
   position: absolute;
   inset: 0;
-  background: rgba(18, 18, 22, 0.58);
+  background: rgba(18, 18, 22, 0.52);
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -20,16 +24,19 @@
 .ganguram-delivery-popup__dialog {
   position: relative;
   z-index: 1;
-  width: min(27rem, calc(100vw - 1.75rem));
+  box-sizing: border-box;
+  width: min(26rem, calc(100vw - 1.75rem));
+  max-height: calc(100vh - 6vh);
+  overflow-y: auto;
   margin: 12vh auto 0;
-  padding: 1.9rem 1.7rem 1.5rem;
-  background: #ffffff;
-  color: #1a1a1a;
-  border-radius: 1rem;
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32), 0 2px 8px rgba(0, 0, 0, 0.12);
-  text-align: center;
+  padding: 1.5rem 1.5rem 1.35rem;
+  text-align: left;
+  color: var(--color-foreground-main, #1a1a1a);
+  background: var(--color-background-main, #fff);
+  border-radius: var(--border-radius-cards, 0.85rem);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.22), 0 1px 4px rgba(0, 0, 0, 0.10);
   opacity: 0;
-  transform: translateY(12px) scale(0.97);
+  transform: translateY(10px) scale(0.985);
   transition: opacity 0.22s ease, transform 0.24s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
@@ -37,147 +44,254 @@
 .ganguram-delivery-popup.is-open .ganguram-delivery-popup__overlay { opacity: 1; }
 .ganguram-delivery-popup.is-open .ganguram-delivery-popup__dialog { opacity: 1; transform: none; }
 .ganguram-delivery-popup.is-closing .ganguram-delivery-popup__overlay { opacity: 0; }
-.ganguram-delivery-popup.is-closing .ganguram-delivery-popup__dialog { opacity: 0; transform: translateY(12px) scale(0.97); }
+.ganguram-delivery-popup.is-closing .ganguram-delivery-popup__dialog { opacity: 0; transform: translateY(10px) scale(0.985); }
 
 /* Close ----------------------------------------------------------------- */
 .ganguram-delivery-popup__close {
   position: absolute;
-  top: 0.7rem;
-  right: 0.7rem;
-  width: 2rem;
-  height: 2rem;
+  top: 0.6rem;
+  right: 0.6rem;
+  width: 1.9rem;
+  height: 1.9rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  color: #888;
+  color: #8a8a93;
   background: none;
   border: 0;
   border-radius: 50%;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
 }
-.ganguram-delivery-popup__close:hover { background: rgba(0, 0, 0, 0.06); color: #333; }
+.ganguram-delivery-popup__close:hover { background: rgba(0, 0, 0, 0.05); color: #333; }
 .ganguram-delivery-popup__close[hidden] { display: none; }
-.ganguram-delivery-popup__close svg { width: 1.15rem; height: 1.15rem; }
+.ganguram-delivery-popup__close svg { width: 1.05rem; height: 1.05rem; }
 
-/* Pin badge ------------------------------------------------------------- */
+/* Header (pin + title) -------------------------------------------------- */
 .ganguram-delivery-popup__pin {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 3.1rem;
-  height: 3.1rem;
-  margin-bottom: 0.7rem;
-  color: #ea5454; /* brand accent */
-  background: rgba(234, 84, 84, 0.10);
+  width: 2rem;
+  height: 2rem;
+  margin-bottom: 0.55rem;
+  color: var(--gdp-accent);
+  background: rgba(73, 72, 141, 0.08);
   border-radius: 50%;
 }
-.ganguram-delivery-popup__pin svg { width: 1.7rem; height: 1.7rem; }
+.ganguram-delivery-popup__pin svg { width: 1.15rem; height: 1.15rem; }
 
-/* Text ------------------------------------------------------------------ */
 .ganguram-delivery-popup__title {
-  margin: 0 0 0.4rem;
-  font-size: 1.35rem;
-  line-height: 1.2;
-  font-weight: 700;
+  margin: 0 0 0.3rem;
+  font-size: 1.12rem;
+  line-height: 1.25;
+  font-weight: 600;
+  color: var(--color-foreground-main, #1a1a1a);
 }
 .ganguram-delivery-popup__subtitle {
-  margin: 0 0 0.35rem;
-  font-size: 0.95rem;
+  margin: 0 0 0.85rem;
+  font-size: 0.86rem;
   line-height: 1.45;
-  color: #333;
+  font-weight: 400;
+  color: #6f6f78;
 }
-.ganguram-delivery-popup__current {
-  display: inline-block;
-  margin: 0.1rem 0 0.55rem;
-  padding: 0.28rem 0.7rem;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: #49488d;
-  background: rgba(73, 72, 141, 0.10);
-  border-radius: 999px;
-}
-.ganguram-delivery-popup__current[hidden] { display: none; }
 .ganguram-delivery-popup__message {
-  margin: 0 0 1.1rem;
-  font-size: 0.82rem;
+  margin: 0 0 0.9rem;
+  font-size: 0.8rem;
   line-height: 1.4;
-  color: #777;
+  font-weight: 400;
+  color: #8c8c95;
 }
 
-/* Input row ------------------------------------------------------------- */
+/* Current location card (only when a pincode is selected) --------------- */
+.ganguram-delivery-popup__current {
+  display: block;
+  margin: 0 0 0.85rem;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500; /* the selected location is the one emphasised line */
+  color: var(--color-foreground-main, #1a1a1a);
+  background: rgba(73, 72, 141, 0.045);
+  border: 1px solid rgba(73, 72, 141, 0.28);
+  border-radius: var(--border-radius-forms, 0.55rem);
+}
+.ganguram-delivery-popup__current[hidden] { display: none; }
+
+/* Input + Apply (outline / brand-tinted, calm) -------------------------- */
 .ganguram-delivery-popup__row {
   display: flex;
-  gap: 0.55rem;
-  justify-content: center;
+  gap: 0.5rem;
 }
 .ganguram-delivery-popup__input {
   flex: 1 1 auto;
   min-width: 0;
-  padding: 0.72rem 0.8rem;
+  box-sizing: border-box;
+  padding: 0.7rem 0.8rem;
   font: inherit;
-  font-size: 1.05rem; /* >=16px avoids iOS focus-zoom; comfortable tap target */
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-align: center;
-  color: #1a1a1a;
+  font-size: 1.02rem; /* >=16px avoids iOS focus-zoom */
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--color-foreground-main, #1a1a1a);
   background: #fff;
-  border: 1.5px solid rgba(0, 0, 0, 0.22);
-  border-radius: 0.55rem;
+  border: 1px solid var(--color-borders-main, rgba(0, 0, 0, 0.18));
+  border-radius: var(--border-radius-forms, 0.55rem);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.ganguram-delivery-popup__input::placeholder { letter-spacing: normal; font-weight: 400; color: #9a9a9a; }
+.ganguram-delivery-popup__input::placeholder { letter-spacing: normal; font-weight: 400; color: #a2a2ab; }
 .ganguram-delivery-popup__input:focus {
   outline: none;
-  border-color: #49488d;
-  box-shadow: 0 0 0 3px rgba(73, 72, 141, 0.16);
+  border-color: var(--gdp-accent);
+  box-shadow: 0 0 0 3px rgba(73, 72, 141, 0.14);
 }
 .ganguram-delivery-popup__apply {
   flex: 0 0 auto;
-  padding: 0.72rem 1.25rem;
+  padding: 0.7rem 1.1rem;
   font: inherit;
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: #fff;
-  background: #49488d; /* brand primary */
-  border: 0;
-  border-radius: 0.55rem;
+  font-weight: 500;
+  font-size: 0.92rem;
+  color: var(--gdp-accent);
+  background: rgba(73, 72, 141, 0.06);
+  border: 1px solid var(--gdp-accent);
+  border-radius: var(--border-radius-buttons, 0.55rem);
   cursor: pointer;
-  transition: filter 0.15s ease, transform 0.05s ease;
+  transition: background 0.15s ease, color 0.15s ease;
 }
-.ganguram-delivery-popup__apply:hover { filter: brightness(1.08); }
-.ganguram-delivery-popup__apply:active { transform: translateY(1px); }
-.ganguram-delivery-popup__apply:focus-visible { outline: 2px solid #1a1a1a; outline-offset: 2px; }
+.ganguram-delivery-popup__apply:hover { background: var(--gdp-accent); color: #fff; }
+.ganguram-delivery-popup__apply:focus-visible { outline: 2px solid var(--gdp-accent); outline-offset: 2px; }
+
+/* Clear / change — quiet text button ------------------------------------ */
+.ganguram-delivery-popup__clear {
+  display: inline-block;
+  margin: 0.55rem 0 0;
+  padding: 0;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #8c8c95;
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.ganguram-delivery-popup__clear:hover { color: var(--gdp-accent); }
+.ganguram-delivery-popup__clear[hidden] { display: none; }
 
 /* Status + examples ----------------------------------------------------- */
 .ganguram-delivery-popup__status {
-  margin: 0.7rem 0 0;
+  margin: 0.65rem 0 0;
   min-height: 1em;
-  font-size: 0.84rem;
+  font-size: 0.83rem;
   line-height: 1.35;
-  font-weight: 600;
+  font-weight: 500;
 }
-.ganguram-delivery-popup__status[data-gdp-state="error"] { color: #c0392b; }
+.ganguram-delivery-popup__status[data-gdp-state="error"] { color: #c0392b; } /* red only for real errors */
 .ganguram-delivery-popup__status[data-gdp-state="ok"] { color: #1e7e34; }
 .ganguram-delivery-popup__examples {
-  margin: 0.9rem 0 0;
-  font-size: 0.78rem;
-  color: #999;
+  margin: 0.85rem 0 0;
+  font-size: 0.76rem;
+  font-weight: 400;
+  color: #a2a2ab;
 }
-.ganguram-delivery-popup__examples strong { color: #555; font-weight: 700; }
+.ganguram-delivery-popup__examples strong { color: #6f6f78; font-weight: 500; }
 
 /* Lock background scroll while open */
 html.gdp-open { overflow: hidden; }
 
-/* Mobile ---------------------------------------------------------------- */
+/* Saved Delivery Locations (Phase 2.8A; polished 2.8B) ------------------ */
+.ganguram-delivery-popup__locations { margin: 0.5rem 0 0; }
+.ganguram-delivery-popup__section { margin-top: 1rem; }
+.ganguram-delivery-popup__section[hidden] { display: none; }
+.ganguram-delivery-popup__section-title {
+  margin: 0 0 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #9a9aa3;
+}
+.ganguram-delivery-popup__list { list-style: none; margin: 0; padding: 0; }
+.ganguram-delivery-popup__list--chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.ganguram-delivery-popup__empty {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: #a2a2ab;
+}
+
+/* Recent-location chips (with a quiet remove control) */
+.ganguram-delivery-popup__chip-wrap {
+  display: inline-flex;
+  align-items: center;
+  background: #fafafb;
+  border: 1px solid var(--color-borders-main, rgba(0, 0, 0, 0.14));
+  border-radius: 999px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.ganguram-delivery-popup__chip-wrap:hover { background: rgba(73, 72, 141, 0.055); border-color: var(--gdp-accent); }
+.ganguram-delivery-popup__chip-wrap.is-current { border-color: var(--gdp-accent); background: rgba(73, 72, 141, 0.07); }
+.ganguram-delivery-popup__chip {
+  padding: 0.4rem 0.55rem 0.4rem 0.75rem;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: var(--color-foreground-main, #1a1a1a);
+  background: none;
+  border: 0;
+  border-radius: 999px 0 0 999px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.ganguram-delivery-popup__chip-remove {
+  padding: 0 0.55rem 0 0.35rem;
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  color: #b0b0b8;
+  background: none;
+  border: 0;
+  border-radius: 0 999px 999px 0;
+  cursor: pointer;
+}
+.ganguram-delivery-popup__chip-remove:hover { color: #c0392b; }
+
+/* Saved address cards (logged-in only) */
+.ganguram-delivery-popup__addr {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.4rem;
+  padding: 0.6rem 0.7rem;
+  text-align: left;
+  font: inherit;
+  color: var(--color-foreground-main, #1a1a1a);
+  background: #fafafb;
+  border: 1px solid var(--color-borders-main, rgba(0, 0, 0, 0.12));
+  border-radius: var(--border-radius-cards, 0.55rem);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.ganguram-delivery-popup__addr:hover { border-color: var(--gdp-accent); background: rgba(73, 72, 141, 0.045); }
+.ganguram-delivery-popup__addr-name { display: block; font-weight: 600; font-size: 0.87rem; line-height: 1.3; }
+.ganguram-delivery-popup__addr-default { font-size: 0.72rem; font-weight: 400; color: #9a9aa3; }
+.ganguram-delivery-popup__addr-line { display: block; margin-top: 0.1rem; font-size: 0.82rem; font-weight: 400; color: #50505a; }
+.ganguram-delivery-popup__addr-full { display: block; margin-top: 0.08rem; font-size: 0.76rem; font-weight: 400; line-height: 1.35; color: #9a9aa3; }
+
+/* Mobile — clean bottom sheet ------------------------------------------- */
 @media (max-width: 600px) {
-  .ganguram-delivery-popup__dialog { margin-top: 8vh; padding: 1.6rem 1.2rem 1.3rem; }
-  .ganguram-delivery-popup__input { padding: 0.78rem 0.7rem; }
-  .ganguram-delivery-popup__apply { padding: 0.78rem 1rem; }
+  .ganguram-delivery-popup { display: flex; align-items: flex-end; }
+  .ganguram-delivery-popup__dialog {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    max-height: 90vh;
+    border-radius: 1rem 1rem 0 0;
+    padding: 1.35rem 1.15rem 1.3rem;
+  }
 }
 @media (max-width: 360px) {
-  .ganguram-delivery-popup__row { flex-direction: column; } /* guarantee the Apply button stays visible + tappable */
+  .ganguram-delivery-popup__row { flex-direction: column; }
   .ganguram-delivery-popup__apply { width: 100%; }
 }
 
@@ -188,78 +302,3 @@ html.gdp-open { overflow: hidden; }
   .ganguram-delivery-popup__overlay { opacity: 1; }
   .ganguram-delivery-popup__dialog { opacity: 1; transform: none; }
 }
-
-/* Saved Delivery Locations shell (Phase 2.8A) --------------------------- */
-.ganguram-delivery-popup__clear {
-  display: inline-block;
-  margin: 0 0 0.5rem;
-  padding: 0;
-  font: inherit;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #49488d;
-  background: none;
-  border: 0;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  cursor: pointer;
-}
-.ganguram-delivery-popup__clear[hidden] { display: none; }
-
-.ganguram-delivery-popup__locations { margin: 0.85rem 0 0; text-align: left; }
-.ganguram-delivery-popup__section { margin-top: 0.9rem; }
-.ganguram-delivery-popup__section[hidden] { display: none; }
-.ganguram-delivery-popup__section-title {
-  margin: 0 0 0.4rem;
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: #6b6b78;
-}
-.ganguram-delivery-popup__list { list-style: none; margin: 0; padding: 0; }
-.ganguram-delivery-popup__list--chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-
-/* Saved address rows (logged-in) */
-.ganguram-delivery-popup__addr {
-  display: block;
-  width: 100%;
-  margin-bottom: 0.4rem;
-  padding: 0.55rem 0.7rem;
-  text-align: left;
-  font: inherit;
-  color: #1a1a1a;
-  background: #f7f7fa;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 0.5rem;
-  cursor: pointer;
-}
-.ganguram-delivery-popup__addr:hover { border-color: #49488d; background: #f0f0f7; }
-.ganguram-delivery-popup__addr-name { display: block; font-weight: 700; font-size: 0.9rem; }
-.ganguram-delivery-popup__addr-default {
-  margin-left: 0.35rem;
-  padding: 0.05rem 0.4rem;
-  font-size: 0.66rem;
-  font-weight: 700;
-  color: #1e7e34;
-  background: rgba(30, 126, 52, 0.12);
-  border-radius: 999px;
-  vertical-align: middle;
-}
-.ganguram-delivery-popup__addr-line { display: block; font-size: 0.8rem; color: #555; line-height: 1.35; }
-
-/* Recent-location chips (guest + logged-in) */
-.ganguram-delivery-popup__chip {
-  padding: 0.4rem 0.75rem;
-  font: inherit;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #1a1a1a;
-  background: #f1f1f4;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 999px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.ganguram-delivery-popup__chip:hover { border-color: #49488d; background: #ececf6; }
-.ganguram-delivery-popup__chip.is-current { color: #fff; background: #49488d; border-color: #49488d; }

@@ -73,8 +73,7 @@
     var r = root(); if (!r) { return; }
     setMessage(message);
     setStatus('', '');
-    var hasLoc = hasValidDeliveryLocation();
-    setTitle(hasLoc ? 'Change delivery pincode' : 'Enter delivery pincode');
+    setTitle('Choose delivery location');
     setCurrent();
     // Close button only when a valid pincode already exists (dismissible);
     // otherwise the popup is mandatory (no close button).
@@ -133,7 +132,7 @@
     suppressAutoClose = true;
     var loc = z.setSelectedPincode(raw);
     setStatus('Products updated for ' + (loc.label ? loc.label + ' ' : '') + loc.pincode + '.', 'ok');
-    setTitle('Change delivery pincode');
+    setTitle('Choose delivery location');
     setCurrent();
     clearTimeout(successTimer);
     var delay = prefersReducedMotion() ? 150 : 950;
