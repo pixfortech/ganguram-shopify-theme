@@ -11,7 +11,7 @@
 {%- endcomment -%}
 <script>
   window.GanguramZoneKolkataOnly = [
-    {%- for collection in collections -%}
+    {%- for collection in collections limit: 250 -%}
       {%- unless collection.all_tags contains 'PAN India' -%}
         {%- if collection.all_tags contains 'Kolkata' or collection.all_tags contains 'Quick Commerce' -%}
           {{ collection.handle | json }},
