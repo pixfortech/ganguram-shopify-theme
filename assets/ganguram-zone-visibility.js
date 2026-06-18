@@ -10,7 +10,11 @@
  *   No hardcoded category list, no pincode list duplicated.
  *
  * Rule:
- *   - pan_india pincode -> hide menu links pointing to Kolkata-only collections
+ *   - pan_india pincode -> hide menu links pointing to Kolkata-only collections,
+ *     AND to the "4 Hours Delivery" / Quick-Commerce collection
+ *     (window.GanguramQuickCommerceHandles) — that service is Kolkata/QC only and
+ *     must never be offered to PAN India, even if it happens to contain a
+ *     PAN-tagged product.
  *   - kolkata / quick_commerce / no-pincode -> show all menu links
  *
  * Reuses window.GanguramZone + 'ganguram:delivery-location-changed'. Fail-open if
@@ -44,6 +48,9 @@
   function kolkataOnlySet() {
     return (window.GanguramZoneKolkataOnly && window.GanguramZoneKolkataOnly.length) ? window.GanguramZoneKolkataOnly : [];
   }
+  function quickCommerceHandleSet() {
+    return (window.GanguramQuickCommerceHandles && window.GanguramQuickCommerceHandles.length) ? window.GanguramQuickCommerceHandles : [];
+  }
   function handleOf(href) {
     if (!href) { return null; }
     var m = href.match(/\/collections\/([^\/?#]+)/);
@@ -52,9 +59,11 @@
 
   function applyLink(a, hidePan) {
     var h = handleOf(a.getAttribute('href') || '');
-    var isKolkataOnly = !!(h && kolkataOnlySet().indexOf(h) !== -1);
+    // Hidden for PAN India when the target is a Kolkata-only category OR the
+    // 4-Hours-Delivery / Quick-Commerce collection.
+    var hideForPan = !!(h && (kolkataOnlySet().indexOf(h) !== -1 || quickCommerceHandleSet().indexOf(h) !== -1));
     var li = a.closest('li, .js-slider-item') || a;
-    if (isKolkataOnly && hidePan) { li.classList.add(HIDDEN); }
+    if (hideForPan && hidePan) { li.classList.add(HIDDEN); }
     else { li.classList.remove(HIDDEN); }
   }
 
