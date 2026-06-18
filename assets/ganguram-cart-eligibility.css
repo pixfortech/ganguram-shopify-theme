@@ -142,6 +142,12 @@
   border-color: #49488d;
 }
 .ganguram-cart-elig__btn--primary:hover { filter: brightness(1.08); }
+.ganguram-cart-elig__btn--danger {
+  color: #fff;
+  background: #c0392b; /* destructive: removes items */
+  border-color: #c0392b;
+}
+.ganguram-cart-elig__btn--danger:hover { filter: brightness(1.06); }
 
 /* Mobile */
 @media (max-width: 480px) {
