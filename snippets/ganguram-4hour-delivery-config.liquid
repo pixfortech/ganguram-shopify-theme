@@ -1,0 +1,35 @@
+{%- comment -%}
+  Ganguram — "4 Hours Delivery" display config (Phase 2.7).
+
+  Publishes window.Ganguram4HourConfig from THEME SETTINGS (Theme settings →
+  "Ganguram — 4 Hours Delivery"), then loads the scoped display module. Nothing
+  about the service (title, time window, messages, handle) is hard-coded in JS —
+  it is all admin-controlled here.
+
+  Display/eligibility only: menu/tile visibility, menu title, 4-hour collection
+  banner + customer guidance. No checkout/shipping-rate/MOV/date-slot/cart/ShipZip
+  /SBZ/zipLogic logic. The 4-hour collection's "only Quick Commerce products" rule
+  and the PAN-India menu hiding remain owned by the existing product-zone filter +
+  zone-visibility engine; this only adds the admin-enable + time-window layer.
+{%- endcomment -%}
+{%- assign gz_4h_handle = settings.ganguram_4h_handle | default: '4-hour-delivery' -%}
+<script>
+  window.Ganguram4HourConfig = {
+    enabled: {% if settings.ganguram_4h_enabled %}true{% else %}false{% endif %},
+    title: {{ settings.ganguram_4h_title | default: '4 Hours Delivery' | json }},
+    handle: {{ gz_4h_handle | json }},
+    days: {{ settings.ganguram_4h_days | default: 'Mon,Tue,Wed,Thu,Fri,Sat,Sun' | json }},
+    start: {{ settings.ganguram_4h_start | default: '11:00' | json }},
+    end: {{ settings.ganguram_4h_end | default: '18:00' | json }},
+    timezone: {{ settings.ganguram_4h_timezone | default: 'Asia/Kolkata' | json }},
+    inactiveBehaviour: {{ settings.ganguram_4h_inactive_behaviour | default: 'disable' | json }},
+    normalDeliveryUrl: {{ routes.all_products_collection_url | default: '/collections/all' | json }},
+    messages: {
+      inactive: {{ settings.ganguram_4h_msg_inactive | default: '4 Hours Delivery is currently closed. Please choose normal delivery.' | json }},
+      panIndia: {{ settings.ganguram_4h_msg_pan | default: '4 Hours Delivery is available only in selected Kolkata areas.' | json }},
+      quickOnly: {{ settings.ganguram_4h_msg_quick_only | default: 'Only Quick Commerce eligible items are available for 4 Hours Delivery.' | json }}
+    }
+  };
+</script>
+{{ 'ganguram-4hour-delivery.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ganguram-4hour-delivery.js' | asset_url }}" defer></script>

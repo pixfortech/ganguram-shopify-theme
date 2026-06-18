@@ -529,5 +529,8 @@
   {%- comment -%} Menu visibility by delivery zone (Phase 2.5) — display only; data-driven Kolkata-only collection map. No cart/checkout/ShipZip logic. {%- endcomment -%}
   {%- render 'ganguram-zone-visibility-config' -%}
 
+  {%- comment -%} Admin-controlled "4 Hours Delivery" display (Phase 2.7) — menu/tile/collection visibility + time window + messages from theme settings. Display only; no checkout/shipping-rate/MOV/ShipZip logic. {%- endcomment -%}
+  {%- render 'ganguram-4hour-delivery-config' -%}
+
 </body>
 </html>

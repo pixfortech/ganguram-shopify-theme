@@ -1,0 +1,41 @@
+/* Ganguram — "4 Hours Delivery" display logic (Phase 2.7). Scoped to .ganguram-4h-*. Display only. */
+
+/* Hidden menu link / homepage tile (admin off, PAN India, or inactive+hide). */
+.ganguram-4h-hidden { display: none !important; }
+
+/* Disabled menu link (inactive + "show disabled link with message"). */
+.menu-link.ganguram-4h-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: auto; /* keep the click handler (which blocks navigation) working */
+}
+.menu-link.ganguram-4h-disabled .ganguram-4h-note {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.72em;
+  font-weight: 400;
+  line-height: 1.25;
+  opacity: 0.85;
+  white-space: normal;
+  max-width: 22ch;
+}
+
+/* 4-hour collection page banner / customer guidance. */
+.ganguram-4h-banner {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+.ganguram-4h-banner__text { margin: 0; }
+.ganguram-4h-banner__link {
+  display: inline-block;
+  margin-top: 0.4rem;
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.ganguram-4h-banner--info { background: #eef6ff; color: #1a3a5a; border: 1px solid #cfe3f7; }
+.ganguram-4h-banner--warn { background: #fff4e5; color: #7a4a00; border: 1px solid #ffd699; }

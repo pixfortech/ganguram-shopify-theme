@@ -1521,5 +1521,91 @@
 				"info": "https://socialnetwork.com/shopify"
 			}
 		]
+	},
+	{
+		"name": "Ganguram — 4 Hours Delivery",
+		"settings": [
+			{
+				"type": "header",
+				"content": "4 Hours Delivery (display only)"
+			},
+			{
+				"type": "paragraph",
+				"content": "Controls only how the 4 Hours Delivery menu link, tile and collection are shown to customers (admin enable + time window + messages). It does NOT change ShipZip checkout rates, the distance delivery charge, or product tagging."
+			},
+			{
+				"type": "checkbox",
+				"id": "ganguram_4h_enabled",
+				"label": "Enable 4 Hours Delivery",
+				"default": true
+			},
+			{
+				"type": "text",
+				"id": "ganguram_4h_title",
+				"label": "Menu title",
+				"default": "4 Hours Delivery"
+			},
+			{
+				"type": "text",
+				"id": "ganguram_4h_handle",
+				"label": "Collection handle",
+				"default": "4-hour-delivery",
+				"info": "The /collections/<handle> of the 4 Hours Delivery collection. Also used by the product zone filter."
+			},
+			{
+				"type": "text",
+				"id": "ganguram_4h_days",
+				"label": "Active days",
+				"default": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
+				"info": "Comma-separated, e.g. Mon,Tue,Wed,Thu,Fri,Sat,Sun. Leave blank for every day."
+			},
+			{
+				"type": "text",
+				"id": "ganguram_4h_start",
+				"label": "Start time (24h HH:MM)",
+				"default": "11:00"
+			},
+			{
+				"type": "text",
+				"id": "ganguram_4h_end",
+				"label": "End time (24h HH:MM)",
+				"default": "18:00"
+			},
+			{
+				"type": "text",
+				"id": "ganguram_4h_timezone",
+				"label": "Timezone",
+				"default": "Asia/Kolkata",
+				"info": "IANA timezone name, e.g. Asia/Kolkata."
+			},
+			{
+				"type": "select",
+				"id": "ganguram_4h_inactive_behaviour",
+				"label": "When outside the active time window",
+				"options": [
+					{ "value": "hide", "label": "Hide the menu link" },
+					{ "value": "disable", "label": "Show a disabled link with message" }
+				],
+				"default": "disable"
+			},
+			{
+				"type": "text",
+				"id": "ganguram_4h_msg_inactive",
+				"label": "Inactive message",
+				"default": "4 Hours Delivery is currently closed. Please choose normal delivery."
+			},
+			{
+				"type": "text",
+				"id": "ganguram_4h_msg_pan",
+				"label": "PAN India message",
+				"default": "4 Hours Delivery is available only in selected Kolkata areas."
+			},
+			{
+				"type": "text",
+				"id": "ganguram_4h_msg_quick_only",
+				"label": "Quick Commerce-only message",
+				"default": "Only Quick Commerce eligible items are available for 4 Hours Delivery."
+			}
+		]
 	}
 ]

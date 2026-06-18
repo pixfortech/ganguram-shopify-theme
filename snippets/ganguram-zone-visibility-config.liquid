@@ -28,9 +28,11 @@
       {%- endunless -%}
     {%- endfor -%}
   ];
-  // "4 Hours Delivery" / Quick-Commerce collection handle(s). Merchant-confirmed
-  // handle. Unknown handles simply never match; edit if the store handle changes.
-  window.GanguramQuickCommerceHandles = ['4-hour-delivery'];
+  // "4 Hours Delivery" / Quick-Commerce collection handle. Single-sourced from the
+  // "Ganguram — 4 Hours Delivery" theme setting (default '4-hour-delivery') so the
+  // product filter's quick context and this menu hiding always use the same admin
+  // handle. Unknown handles simply never match.
+  window.GanguramQuickCommerceHandles = [{{ settings.ganguram_4h_handle | default: '4-hour-delivery' | json }}];
 </script>
 {{ 'ganguram-zone-visibility.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'ganguram-zone-visibility.js' | asset_url }}" defer></script>
