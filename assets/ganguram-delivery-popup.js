@@ -59,11 +59,12 @@
   function setCurrent() {
     var el = q('[data-gdp-current]'); if (!el) { return; }
     var loc = currentLoc();
+    var val = q('[data-gdp-current-value]');
     if (loc && loc.pincode && loc.isServiceable === true) {
-      el.textContent = 'Currently delivering to ' + (loc.label ? loc.label + ' ' : '') + loc.pincode + '.';
+      if (val) { val.textContent = (loc.label ? loc.label + ' ' : '') + loc.pincode; }
       el.hidden = false;
     } else {
-      el.textContent = '';
+      if (val) { val.textContent = ''; }
       el.hidden = true;
     }
   }

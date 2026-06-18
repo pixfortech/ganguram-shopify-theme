@@ -72,19 +72,11 @@
   function renderRecents() {
     var ul = q('[data-gdp-recent]'); var section = q('[data-gdp-recent-section]');
     if (!ul) { return; }
-    if (section) { section.hidden = false; } // always visible: chips, or a quiet helper
     var recents = getRecents();
     var cur = currentLoc();
     ul.textContent = '';
-    if (!recents.length) {
-      var liEmpty = document.createElement('li');
-      var p = document.createElement('p');
-      p.className = 'ganguram-delivery-popup__empty';
-      p.textContent = 'Your recent locations will appear here.';
-      liEmpty.appendChild(p);
-      ul.appendChild(liEmpty);
-      return;
-    }
+    if (!recents.length) { if (section) { section.hidden = true; } return; } // hide the section when empty (clean)
+    if (section) { section.hidden = false; }
     recents.forEach(function (r) {
       var li = document.createElement('li');
       var wrap = document.createElement('span');

@@ -1,263 +1,273 @@
-/* Ganguram — delivery pincode popup (Phase 2.1d; polished 2.3; 2.8B native/calm).
-   Scoped to .ganguram-delivery-popup. Tuned to feel native to the Local theme:
-   theme radius/border/foreground variables (with fallbacks), restrained brand
-   accent, outline-style actions, subtle bordered cards, muted helper copy. */
+/* Ganguram — delivery location popup (Phase 2.1d; redesigned 2.8B).
+   Native to the Local theme: theme radius/border/form tokens (with fallbacks),
+   restrained brand accent, soft borders + light hover, minimal shadow, and
+   explicit readable text on an explicit white card (high contrast on any scheme).
+   Mostly regular weight; medium only for the title/name; semibold only for the
+   selected-location line. Scoped to .ganguram-delivery-popup. */
 
 .ganguram-delivery-popup {
   position: fixed;
   inset: 0;
-  z-index: 9999; /* above the header (z-index 11) and any sticky UI */
-  --gdp-accent: var(--color-accent-main, #49488d); /* brand accent; native if a scheme provides it */
+  z-index: 9999; /* above the header + sticky UI */
+  --gdp-accent: #49488d;             /* restrained brand accent */
+  --gdp-accent-tint: rgba(73, 72, 141, 0.07);
+  --gdp-text: #20242e;               /* explicit dark — readable on white */
+  --gdp-text-2: #585e6c;
+  --gdp-muted: #8a8f9c;
+  --gdp-line: var(--color-borders-main, rgba(22, 22, 30, 0.10));
+  --gdp-hover: rgba(22, 22, 30, 0.035);
+  --gdp-radius: var(--border-radius-cards, 14px);
+  --gdp-radius-sm: var(--border-radius-forms, 9px);
+  --gdp-radius-btn: var(--border-radius-buttons, 9px);
+  --gdp-field-border: var(--color-borders-forms-primary, rgba(22, 22, 30, 0.18));
 }
 .ganguram-delivery-popup[hidden] { display: none; }
+.ganguram-delivery-popup *,
+.ganguram-delivery-popup *::before,
+.ganguram-delivery-popup *::after { box-sizing: border-box; }
 
-/* Overlay --------------------------------------------------------------- */
+/* Overlay + dialog ------------------------------------------------------ */
 .ganguram-delivery-popup__overlay {
   position: absolute;
   inset: 0;
-  background: rgba(18, 18, 22, 0.52);
+  background: rgba(18, 18, 22, 0.42);
   opacity: 0;
   transition: opacity 0.2s ease;
 }
-
-/* Dialog ---------------------------------------------------------------- */
 .ganguram-delivery-popup__dialog {
   position: relative;
   z-index: 1;
-  box-sizing: border-box;
-  width: min(26rem, calc(100vw - 1.75rem));
-  max-height: calc(100vh - 6vh);
+  width: min(25rem, calc(100vw - 2rem));
+  max-height: min(86vh, 46rem);
   overflow-y: auto;
-  margin: 12vh auto 0;
-  padding: 1.5rem 1.5rem 1.35rem;
-  text-align: left;
-  color: var(--color-foreground-main, #1a1a1a);
-  background: var(--color-background-main, #fff);
-  border-radius: var(--border-radius-cards, 0.85rem);
-  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.22), 0 1px 4px rgba(0, 0, 0, 0.10);
+  margin: 10vh auto 0;
+  padding: 1.35rem 1.4rem 1.25rem;
+  font: inherit;
+  color: var(--gdp-text);
+  background: #fff;
+  border: 1px solid var(--gdp-line);
+  border-radius: var(--gdp-radius);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.16);
   opacity: 0;
-  transform: translateY(10px) scale(0.985);
-  transition: opacity 0.22s ease, transform 0.24s cubic-bezier(0.2, 0.7, 0.3, 1);
+  transform: translateY(8px) scale(0.99);
+  transition: opacity 0.2s ease, transform 0.22s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
-
-/* Entrance / exit driven by JS classes (.is-open / .is-closing) */
 .ganguram-delivery-popup.is-open .ganguram-delivery-popup__overlay { opacity: 1; }
 .ganguram-delivery-popup.is-open .ganguram-delivery-popup__dialog { opacity: 1; transform: none; }
 .ganguram-delivery-popup.is-closing .ganguram-delivery-popup__overlay { opacity: 0; }
-.ganguram-delivery-popup.is-closing .ganguram-delivery-popup__dialog { opacity: 0; transform: translateY(10px) scale(0.985); }
+.ganguram-delivery-popup.is-closing .ganguram-delivery-popup__dialog { opacity: 0; transform: translateY(8px) scale(0.99); }
 
-/* Close ----------------------------------------------------------------- */
+/* Header ---------------------------------------------------------------- */
+.ganguram-delivery-popup__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.ganguram-delivery-popup__title {
+  margin: 0;
+  font-size: 1.02rem;
+  line-height: 1.3;
+  font-weight: 500;
+  color: var(--gdp-text);
+}
 .ganguram-delivery-popup__close {
-  position: absolute;
-  top: 0.6rem;
-  right: 0.6rem;
-  width: 1.9rem;
-  height: 1.9rem;
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin: -0.2rem -0.35rem -0.2rem 0;
   padding: 0;
-  color: #8a8a93;
+  color: var(--gdp-muted);
   background: none;
   border: 0;
   border-radius: 50%;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
 }
-.ganguram-delivery-popup__close:hover { background: rgba(0, 0, 0, 0.05); color: #333; }
+.ganguram-delivery-popup__close:hover { background: var(--gdp-hover); color: var(--gdp-text); }
 .ganguram-delivery-popup__close[hidden] { display: none; }
-.ganguram-delivery-popup__close svg { width: 1.05rem; height: 1.05rem; }
 
-/* Header (pin + title) -------------------------------------------------- */
-.ganguram-delivery-popup__pin {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  margin-bottom: 0.55rem;
-  color: var(--gdp-accent);
-  background: rgba(73, 72, 141, 0.08);
-  border-radius: 50%;
-}
-.ganguram-delivery-popup__pin svg { width: 1.15rem; height: 1.15rem; }
-
-.ganguram-delivery-popup__title {
-  margin: 0 0 0.3rem;
-  font-size: 1.12rem;
-  line-height: 1.25;
-  font-weight: 600;
-  color: var(--color-foreground-main, #1a1a1a);
-}
-.ganguram-delivery-popup__subtitle {
-  margin: 0 0 0.85rem;
-  font-size: 0.86rem;
+.ganguram-delivery-popup__help {
+  margin: 0.3rem 0 0;
+  font-size: 0.82rem;
+  font-weight: 400;
   line-height: 1.45;
-  font-weight: 400;
-  color: #6f6f78;
-}
-.ganguram-delivery-popup__message {
-  margin: 0 0 0.9rem;
-  font-size: 0.8rem;
-  line-height: 1.4;
-  font-weight: 400;
-  color: #8c8c95;
+  color: var(--gdp-muted);
 }
 
-/* Current location card (only when a pincode is selected) --------------- */
+/* Current location card -------------------------------------------------- */
 .ganguram-delivery-popup__current {
-  display: block;
-  margin: 0 0 0.85rem;
-  padding: 0.6rem 0.75rem;
-  font-size: 0.9rem;
-  font-weight: 500; /* the selected location is the one emphasised line */
-  color: var(--color-foreground-main, #1a1a1a);
-  background: rgba(73, 72, 141, 0.045);
-  border: 1px solid rgba(73, 72, 141, 0.28);
-  border-radius: var(--border-radius-forms, 0.55rem);
+  margin: 0.95rem 0 0;
+  padding: 0.65rem 0.75rem;
+  background: var(--gdp-accent-tint);
+  border: 1px solid rgba(73, 72, 141, 0.22);
+  border-radius: var(--gdp-radius-sm);
 }
 .ganguram-delivery-popup__current[hidden] { display: none; }
+.ganguram-delivery-popup__current-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.ganguram-delivery-popup__current-label {
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gdp-muted);
+}
+.ganguram-delivery-popup__current-value {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.98rem;
+  font-weight: 600; /* the single emphasised line */
+  color: var(--gdp-text);
+}
+.ganguram-delivery-popup__clear {
+  flex: 0 0 auto;
+  padding: 0;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 400;
+  color: var(--gdp-muted);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.ganguram-delivery-popup__clear:hover { color: var(--gdp-accent); text-decoration: underline; text-underline-offset: 2px; }
+.ganguram-delivery-popup__clear[hidden] { display: none; }
 
-/* Input + Apply (outline / brand-tinted, calm) -------------------------- */
+/* Pincode entry --------------------------------------------------------- */
+.ganguram-delivery-popup__field { margin-top: 1rem; }
+.ganguram-delivery-popup__label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gdp-muted);
+}
 .ganguram-delivery-popup__row {
   display: flex;
+  align-items: stretch;
   gap: 0.5rem;
 }
 .ganguram-delivery-popup__input {
   flex: 1 1 auto;
   min-width: 0;
-  box-sizing: border-box;
-  padding: 0.7rem 0.8rem;
+  padding: 0.62rem 0.75rem;
   font: inherit;
-  font-size: 1.02rem; /* >=16px avoids iOS focus-zoom */
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  color: var(--color-foreground-main, #1a1a1a);
+  font-size: 1rem; /* >=16px avoids iOS focus-zoom */
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--gdp-text);
   background: #fff;
-  border: 1px solid var(--color-borders-main, rgba(0, 0, 0, 0.18));
-  border-radius: var(--border-radius-forms, 0.55rem);
+  border: 1px solid var(--gdp-field-border);
+  border-radius: var(--gdp-radius-sm);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.ganguram-delivery-popup__input::placeholder { letter-spacing: normal; font-weight: 400; color: #a2a2ab; }
+.ganguram-delivery-popup__input::placeholder { letter-spacing: normal; color: var(--gdp-muted); }
 .ganguram-delivery-popup__input:focus {
   outline: none;
   border-color: var(--gdp-accent);
-  box-shadow: 0 0 0 3px rgba(73, 72, 141, 0.14);
+  box-shadow: 0 0 0 3px var(--gdp-accent-tint);
 }
 .ganguram-delivery-popup__apply {
   flex: 0 0 auto;
-  padding: 0.7rem 1.1rem;
+  padding: 0.62rem 1.05rem;
   font: inherit;
+  font-size: 0.9rem;
   font-weight: 500;
-  font-size: 0.92rem;
   color: var(--gdp-accent);
-  background: rgba(73, 72, 141, 0.06);
+  background: #fff;
   border: 1px solid var(--gdp-accent);
-  border-radius: var(--border-radius-buttons, 0.55rem);
+  border-radius: var(--gdp-radius-btn);
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
 }
 .ganguram-delivery-popup__apply:hover { background: var(--gdp-accent); color: #fff; }
 .ganguram-delivery-popup__apply:focus-visible { outline: 2px solid var(--gdp-accent); outline-offset: 2px; }
 
-/* Clear / change — quiet text button ------------------------------------ */
-.ganguram-delivery-popup__clear {
-  display: inline-block;
-  margin: 0.55rem 0 0;
-  padding: 0;
-  font: inherit;
+.ganguram-delivery-popup__status {
+  margin: 0.5rem 0 0;
+  min-height: 1em;
   font-size: 0.8rem;
   font-weight: 400;
-  color: #8c8c95;
-  background: none;
-  border: 0;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  cursor: pointer;
-}
-.ganguram-delivery-popup__clear:hover { color: var(--gdp-accent); }
-.ganguram-delivery-popup__clear[hidden] { display: none; }
-
-/* Status + examples ----------------------------------------------------- */
-.ganguram-delivery-popup__status {
-  margin: 0.65rem 0 0;
-  min-height: 1em;
-  font-size: 0.83rem;
   line-height: 1.35;
-  font-weight: 500;
 }
 .ganguram-delivery-popup__status[data-gdp-state="error"] { color: #c0392b; } /* red only for real errors */
 .ganguram-delivery-popup__status[data-gdp-state="ok"] { color: #1e7e34; }
-.ganguram-delivery-popup__examples {
-  margin: 0.85rem 0 0;
-  font-size: 0.76rem;
-  font-weight: 400;
-  color: #a2a2ab;
-}
-.ganguram-delivery-popup__examples strong { color: #6f6f78; font-weight: 500; }
 
-/* Lock background scroll while open */
-html.gdp-open { overflow: hidden; }
-
-/* Saved Delivery Locations (Phase 2.8A; polished 2.8B) ------------------ */
-.ganguram-delivery-popup__locations { margin: 0.5rem 0 0; }
-.ganguram-delivery-popup__section { margin-top: 1rem; }
+/* Sections (recent / saved) --------------------------------------------- */
+.ganguram-delivery-popup__section { margin-top: 1.05rem; }
 .ganguram-delivery-popup__section[hidden] { display: none; }
 .ganguram-delivery-popup__section-title {
-  margin: 0 0 0.45rem;
-  font-size: 0.72rem;
-  font-weight: 600;
+  margin: 0 0 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #9a9aa3;
+  color: var(--gdp-muted);
 }
-.ganguram-delivery-popup__list { list-style: none; margin: 0; padding: 0; }
-.ganguram-delivery-popup__list--chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
 .ganguram-delivery-popup__empty {
   margin: 0;
   font-size: 0.8rem;
   font-weight: 400;
-  line-height: 1.4;
-  color: #a2a2ab;
+  line-height: 1.45;
+  color: var(--gdp-muted);
 }
 
-/* Recent-location chips (with a quiet remove control) */
+/* Recent chips */
+.ganguram-delivery-popup__chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
 .ganguram-delivery-popup__chip-wrap {
   display: inline-flex;
   align-items: center;
-  background: #fafafb;
-  border: 1px solid var(--color-borders-main, rgba(0, 0, 0, 0.14));
+  background: #fff;
+  border: 1px solid var(--gdp-line);
   border-radius: 999px;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
-.ganguram-delivery-popup__chip-wrap:hover { background: rgba(73, 72, 141, 0.055); border-color: var(--gdp-accent); }
-.ganguram-delivery-popup__chip-wrap.is-current { border-color: var(--gdp-accent); background: rgba(73, 72, 141, 0.07); }
+.ganguram-delivery-popup__chip-wrap:hover { background: var(--gdp-hover); border-color: rgba(73, 72, 141, 0.4); }
+.ganguram-delivery-popup__chip-wrap.is-current { border-color: var(--gdp-accent); background: var(--gdp-accent-tint); }
 .ganguram-delivery-popup__chip {
-  padding: 0.4rem 0.55rem 0.4rem 0.75rem;
+  padding: 0.34rem 0.4rem 0.34rem 0.7rem;
   font: inherit;
-  font-size: 0.84rem;
-  font-weight: 500;
-  color: var(--color-foreground-main, #1a1a1a);
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: var(--gdp-text);
   background: none;
   border: 0;
-  border-radius: 999px 0 0 999px;
   cursor: pointer;
   white-space: nowrap;
 }
 .ganguram-delivery-popup__chip-remove {
-  padding: 0 0.55rem 0 0.35rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.5rem 0 0.3rem;
   font: inherit;
   font-size: 1rem;
   line-height: 1;
-  color: #b0b0b8;
+  color: var(--gdp-muted);
   background: none;
   border: 0;
-  border-radius: 0 999px 999px 0;
   cursor: pointer;
 }
-.ganguram-delivery-popup__chip-remove:hover { color: #c0392b; }
+.ganguram-delivery-popup__chip-remove:hover { color: var(--gdp-text); }
 
-/* Saved address cards (logged-in only) */
+/* Saved address cards */
+.ganguram-delivery-popup__addr-list { list-style: none; margin: 0; padding: 0; }
 .ganguram-delivery-popup__addr {
   display: block;
   width: 100%;
@@ -265,18 +275,56 @@ html.gdp-open { overflow: hidden; }
   padding: 0.6rem 0.7rem;
   text-align: left;
   font: inherit;
-  color: var(--color-foreground-main, #1a1a1a);
-  background: #fafafb;
-  border: 1px solid var(--color-borders-main, rgba(0, 0, 0, 0.12));
-  border-radius: var(--border-radius-cards, 0.55rem);
+  color: var(--gdp-text);
+  background: #fff;
+  border: 1px solid var(--gdp-line);
+  border-radius: var(--gdp-radius-sm);
   cursor: pointer;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
-.ganguram-delivery-popup__addr:hover { border-color: var(--gdp-accent); background: rgba(73, 72, 141, 0.045); }
-.ganguram-delivery-popup__addr-name { display: block; font-weight: 600; font-size: 0.87rem; line-height: 1.3; }
-.ganguram-delivery-popup__addr-default { font-size: 0.72rem; font-weight: 400; color: #9a9aa3; }
-.ganguram-delivery-popup__addr-line { display: block; margin-top: 0.1rem; font-size: 0.82rem; font-weight: 400; color: #50505a; }
-.ganguram-delivery-popup__addr-full { display: block; margin-top: 0.08rem; font-size: 0.76rem; font-weight: 400; line-height: 1.35; color: #9a9aa3; }
+.ganguram-delivery-popup__addr:last-child { margin-bottom: 0; }
+.ganguram-delivery-popup__addr:hover { border-color: rgba(73, 72, 141, 0.4); background: var(--gdp-hover); }
+.ganguram-delivery-popup__addr-name {
+  display: block;
+  font-size: 0.87rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--gdp-text);
+}
+.ganguram-delivery-popup__addr-tag {
+  margin-left: 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--gdp-muted);
+}
+.ganguram-delivery-popup__addr-place {
+  display: block;
+  margin-top: 0.12rem;
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: var(--gdp-text-2);
+}
+.ganguram-delivery-popup__addr-full {
+  display: block;
+  margin-top: 0.08rem;
+  font-size: 0.76rem;
+  font-weight: 400;
+  line-height: 1.35;
+  color: var(--gdp-muted);
+  word-break: break-word;
+}
+
+/* Examples -------------------------------------------------------------- */
+.ganguram-delivery-popup__examples {
+  margin: 1.05rem 0 0;
+  font-size: 0.76rem;
+  font-weight: 400;
+  color: var(--gdp-muted);
+}
+.ganguram-delivery-popup__examples span { color: var(--gdp-text-2); font-weight: 500; }
+
+/* Lock background scroll while open */
+html.gdp-open { overflow: hidden; }
 
 /* Mobile — clean bottom sheet ------------------------------------------- */
 @media (max-width: 600px) {
@@ -285,12 +333,12 @@ html.gdp-open { overflow: hidden; }
     width: 100%;
     max-width: none;
     margin: 0;
-    max-height: 90vh;
-    border-radius: 1rem 1rem 0 0;
-    padding: 1.35rem 1.15rem 1.3rem;
+    max-height: 88vh;
+    border-radius: var(--gdp-radius) var(--gdp-radius) 0 0;
+    padding: 1.25rem 1.15rem 1.3rem;
   }
 }
-@media (max-width: 360px) {
+@media (max-width: 340px) {
   .ganguram-delivery-popup__row { flex-direction: column; }
   .ganguram-delivery-popup__apply { width: 100%; }
 }
