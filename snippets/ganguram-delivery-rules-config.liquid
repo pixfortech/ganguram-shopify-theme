@@ -36,6 +36,7 @@
         {%- assign gdr_fdt = r.free_delivery_threshold.value -%}
         {%- assign gdr_dmin = r.distance_min_km.value -%}
         {%- assign gdr_dmax = r.distance_max_km.value -%}
+        {%- assign gdr_lr = r.local_radius_km.value -%}
         {
           "name": {{ r.name.value | default: '' | json }},
           "active": {% if r.active.value == false %}false{% else %}true{% endif %},
@@ -45,6 +46,9 @@
           "pincodePrefix": {{ r.pincode_prefix.value | default: '' | json }},
           "city": {{ r.city.value | default: '' | json }},
           "state": {{ r.state.value | default: '' | json }},
+          "stateKey": {{ r.state_key.value | default: '' | json }},
+          "stateName": {{ r.state_name.value | default: '' | json }},
+          "localRadiusKm": {% if gdr_lr != blank %}{{ gdr_lr | json }}{% else %}null{% endif %},
           "distanceMinKm": {% if gdr_dmin != blank %}{{ gdr_dmin | json }}{% else %}null{% endif %},
           "distanceMaxKm": {% if gdr_dmax != blank %}{{ gdr_dmax | json }}{% else %}null{% endif %},
           "mov": {% if gdr_mov != blank %}{{ gdr_mov | times: 100 | round }}{% else %}null{% endif %},
