@@ -25,6 +25,12 @@
  *      OTHERWISE (manual pincode entry, or no band/radius rules configured):
  *          prefix — rule.pincode_prefix matches, longest prefix wins  -> 'prefix'
  *   4. state      — state_key / state_name / state matches the location's state
+ *   4b. zone      — ZONE FALLBACK (until Distance Matrix): a rule whose only
+ *                   criterion is zone_key = the selected LOCAL zone (kolkata /
+ *                   quick_commerce), with no pincode/prefix/state/radius/band.
+ *                   Non-distance-mode only, so far addresses still fall to
+ *                   state / PAN India; distance rules keep priority once a
+ *                   distanceKm is supplied.
  *   5. pan_india  — the PAN India default rule (zone_key = 'pan_india')
  *   6. default    — the global catch-all (a rule with no match criteria)
  *   -> none       — nothing matched and no default exists
@@ -141,6 +147,7 @@
   }
 
   function isPanIndiaDefault(r) { return r.zone === 'pan_india'; }
+  function isLocalZone(z) { return z === 'kolkata' || z === 'quick_commerce'; }
   // Global catch-all: no match criteria at all (and not the PAN India default).
   function isGlobalDefault(r) {
     return (!r.zone || r.zone === 'default') &&
@@ -169,6 +176,7 @@
     options = options || {};
     var loc = location || currentLocation();
     var pin = loc ? normPin(loc.pincode) : '';
+    var zone = loc ? trim(loc.zone) : '';
     var state = (loc && loc.state) ? String(loc.state) : (options.state ? String(options.state) : stateFor(pin));
     state = state ? state.trim().toLowerCase() : '';
     var distanceKm = num(options.distanceKm);
@@ -178,14 +186,14 @@
     var hasDistanceRules = allRules.some(function (r) {
       return r.localRadiusKm != null || r.distanceMinKm != null || r.distanceMaxKm != null;
     });
-    return { pin: pin, state: state, distanceKm: distanceKm, distanceMode: (distanceKm != null && hasDistanceRules), allRules: allRules };
+    return { pin: pin, zone: zone, state: state, distanceKm: distanceKm, distanceMode: (distanceKm != null && hasDistanceRules), allRules: allRules };
   }
 
   // Most-specific-wins over a GIVEN rule subset, using a shared context.
   // Returns { rule, reason }. resolve() runs it over ALL rules; getServiceOptions()
   // runs it once per service type so each service yields its best rule for the slab.
   function resolveAmong(rules, ctx) {
-    var pin = ctx.pin, state = ctx.state, distanceKm = ctx.distanceKm, distanceMode = ctx.distanceMode;
+    var pin = ctx.pin, zone = ctx.zone, state = ctx.state, distanceKm = ctx.distanceKm, distanceMode = ctx.distanceMode;
     if (!rules.length) { return { rule: null, reason: 'none' }; }
 
     // 1) exact pincode — always highest
@@ -232,6 +240,22 @@
         return r.stateNames.indexOf(state) !== -1 || r.stateKeys.indexOf(state) !== -1;
       }).sort(byPriorityDesc);
       if (st.length) { return { rule: st[0], reason: 'state' }; }
+    }
+
+    // 4b) zone-level fallback (local zones only) — used until a Distance Matrix
+    //     integration supplies distanceKm. Matches a rule whose ONLY criterion is
+    //     zone_key = the selected local zone (kolkata / quick_commerce), with no
+    //     pincode / prefix / state / radius / band. Distance rules are untouched
+    //     and still take priority once distanceKm exists; this is SKIPPED in
+    //     distance mode so a far address never becomes "local" (requirement #6).
+    if (!distanceMode && isLocalZone(zone)) {
+      var zf = rules.filter(function (r) {
+        return isLocalZone(r.zone) && r.zone === zone &&
+          r.pincodes.length === 0 && r.prefixes.length === 0 &&
+          r.stateKeys.length === 0 && r.stateNames.length === 0 &&
+          r.localRadiusKm == null && r.distanceMinKm == null && r.distanceMaxKm == null;
+      }).sort(byPriorityDesc);
+      if (zf.length) { return { rule: zf[0], reason: 'zone' }; }
     }
 
     // 5) PAN India default
@@ -381,6 +405,6 @@
     getServiceOptions: getServiceOptions,
     getProgressData: getProgressData,
     formatMoney: formatMoney,
-    version: 3
+    version: 4
   };
 })();
