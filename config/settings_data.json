@@ -72,6 +72,7 @@
     "social_linkedin": "https://linkedin.com//company/ganguramoriginal",
     "ganguram_4h_inactive_behaviour": "hide",
     "ganguram_ecr_seconds": 2,
+    "ganguram_pavl_redirect_enabled": true,
     "ganguram_places_enabled": true,
     "ganguram_places_api_key": "AIzaSyBPP8E71qfFID6gR986MipcqllnG7kjAdM",
     "ganguram_outlet_origin": "22.586852842169446, 88.37350202482604",
