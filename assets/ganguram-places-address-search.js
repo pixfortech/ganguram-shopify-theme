@@ -181,6 +181,69 @@
     window.gm_authFailure = function () { unavailable(); };
   }
 
+  // ---- pincode -> city lookup (reused by the enrichment module) -------------
+  // Resolves { city, state } for an Indian pincode, or null. Reuses the SAME lazy
+  // Maps loader + merchant key + enable gate as the address search; never throws,
+  // never blocks. Uses the Geocoder (Geocoding API): if that API isn't enabled on
+  // the key the geocode status is not OK and we resolve null (fail-open) — the
+  // manual pincode-only display is simply kept.
+  function geocodingLib(maps) {
+    return (maps && typeof maps.importLibrary === 'function')
+      ? maps.importLibrary('geocoding')
+      : Promise.resolve(maps); // older API: Geocoder hangs off google.maps
+  }
+  function pickComponent(components, types) {
+    if (!components) { return ''; }
+    for (var i = 0; i < components.length; i++) {
+      var t = (components[i] && components[i].types) || [];
+      for (var j = 0; j < types.length; j++) { if (t.indexOf(types[j]) !== -1) { return String(components[i].long_name || ''); } }
+    }
+    return '';
+  }
+  function lookupCityByPincode(pincode) {
+    var pin = String(pincode || '').replace(/\D/g, '').slice(0, 6);
+    if (pin.length !== 6) { return Promise.resolve(null); }
+    if (!enabled()) { return Promise.resolve(null); } // no key / disabled -> fail open
+    return loadGoogle()
+      .then(geocodingLib)
+      .then(function (lib) {
+        var Geocoder = (lib && lib.Geocoder) || (window.google && window.google.maps && window.google.maps.Geocoder);
+        if (typeof Geocoder !== 'function') { return null; }
+        return new Promise(function (resolve) {
+          var done = false;
+          var finish = function (v) { if (!done) { done = true; resolve(v); } };
+          var timer = setTimeout(function () { finish(null); }, 8000); // never wedge the caller
+          try {
+            new Geocoder().geocode(
+              { componentRestrictions: { country: country().toUpperCase(), postalCode: pin } },
+              function (results, status) {
+                clearTimeout(timer);
+                if (status !== 'OK' || !results || !results.length) { finish(null); return; }
+                var comps = results[0].address_components || [];
+                // Generic for ANY Indian pincode Google can resolve — no hardcoded
+                // city list. Prefer the most specific place name (locality/town),
+                // then fall back to district / taluka for rural pincodes that have
+                // no locality, then state. Whatever Google returns is what we show.
+                var city = pickComponent(comps, [
+                  'locality', 'postal_town', 'sublocality', 'sublocality_level_1',
+                  'administrative_area_level_3', 'administrative_area_level_2'
+                ]);
+                var state = pickComponent(comps, ['administrative_area_level_1']);
+                finish((city || state) ? { city: city, state: state } : null);
+              }
+            );
+          } catch (e) { clearTimeout(timer); finish(null); }
+        });
+      })
+      .catch(function () { return null; });
+  }
+
+  // Expose a tiny Google-owning surface for the enrichment module to reuse, so the
+  // merchant key, the lazy loader and the enable gate stay in ONE place.
+  window.GanguramPlaces = window.GanguramPlaces || {};
+  window.GanguramPlaces.loadMaps = loadGoogle;
+  window.GanguramPlaces.lookupCityByPincode = lookupCityByPincode;
+
   function init() {
     if (!popup()) { return; }
     if (!enabled()) { return; }                    // no key / disabled -> manual pincode only; search stays hidden

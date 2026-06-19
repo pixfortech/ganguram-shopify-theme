@@ -168,6 +168,8 @@
 
     // keep every instance in sync with resolver changes
     window.addEventListener(EVENT, function (e) { renderAll((e && e.detail) || currentLocation()); });
+    // a later async city enrichment refreshes the visible label (display only)
+    window.addEventListener('ganguram:delivery-label-updated', function () { renderAll(currentLocation()); });
 
     // close on outside click / Escape
     document.addEventListener('click', function (e) {

@@ -158,6 +158,7 @@
     addRecent(currentLoc()); // seed with an already-selected location on load
     render();
     window.addEventListener(EVENT, onChange);
+    window.addEventListener('ganguram:delivery-label-updated', render); // refresh chips after city enrichment
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
