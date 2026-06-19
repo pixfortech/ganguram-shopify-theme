@@ -204,6 +204,8 @@
     // mandatory first-visit gate while shopping is blocked. Reduced-motion honoured in close().
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && isOpen()) { closeDeliveryLocationPopup(false); } });
     window.addEventListener((zone() && zone().EVENT_NAME) || 'ganguram:delivery-location-changed', onZoneChange);
+    // City enrichment finished later -> re-render the current-location card only (no close).
+    window.addEventListener('ganguram:delivery-label-updated', setCurrent);
     // Any element marked [data-ganguram-open-pincode] opens this popup (header widget,
     // mobile-nav clone, empty-state button). Delegated so dynamically-cloned triggers work.
     document.addEventListener('click', function (e) {

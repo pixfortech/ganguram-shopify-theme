@@ -31,6 +31,7 @@
   if (window.GanguramDisplayLabel) { return; } // idempotent; never re-define
 
   var RECENT_KEY = 'ganguram.recentLocations'; // read-only; owned by saved-locations / places
+  var CACHE_KEY = 'ganguram.pincodeCityCache'; // read-only; owned by the pincode-enrich module
   var KOLKATA_CITY = 'Kolkata';                // public city name for the Kolkata/QC zone
 
   function str(v) { return (v == null ? '' : String(v)).trim(); }
@@ -45,6 +46,19 @@
       for (var i = 0; i < arr.length; i++) {
         if (arr[i] && normPin(arr[i].pincode) === pin) { return arr[i]; }
       }
+    } catch (e) {}
+    return null;
+  }
+
+  // Pincode -> city cache (populated by the enrichment module). Read-only here, and
+  // a fallback source of the city when the recent-locations entry doesn't have it
+  // (e.g. it was evicted, or the pincode was enriched in another tab).
+  function cacheCityFor(pin) {
+    if (!pin) { return null; }
+    try {
+      var raw = window.localStorage.getItem(CACHE_KEY);
+      var o = raw ? JSON.parse(raw) : null;
+      if (o && o[pin]) { return o[pin]; }
     } catch (e) {}
     return null;
   }
@@ -75,6 +89,7 @@
         if (!zone) { zone = str(rec.zone); }
         kolkata = kolkata || isKolkataLike(rec, str(rec.zone));
       }
+      if (!city) { var cc = cacheCityFor(pin); if (cc) { city = str(cc.city); } } // enriched city cache
     }
 
     if (name) { return name + ' ' + pin; }            // 1. saved address name/company

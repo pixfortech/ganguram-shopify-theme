@@ -531,6 +531,9 @@
   {%- comment -%} Google Places address search (Phase 2.9B) — optional pincode-finder in the popup; extracts a pincode and commits via GanguramZone.setSelectedPincode. Self-gates on a merchant key; Maps JS lazy-loads on popup open. No checkout autofill / filtering / cart logic. {%- endcomment -%}
   {%- render 'ganguram-places-address-search-config' -%}
 
+  {%- comment -%} Manual-pincode -> city enrichment (display hotfix) — when a selected pincode's city is unknown, asynchronously reuses the Phase 2.9B Google setup (no new key) to resolve the city and refresh the shared display label everywhere. Display/enrichment only; fail-open; Google not loaded on page load. No resolver/zone/filtering/cart-logic change. {%- endcomment -%}
+  <script src="{{ 'ganguram-pincode-enrich.js' | asset_url }}" defer></script>
+
   {%- comment -%} Product visibility filtering by delivery zone (Phase 2.2) — display only; reads window.GanguramZone. No cart/checkout/menu/search/banner logic. {%- endcomment -%}
   {{ 'ganguram-product-zone-filter.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'ganguram-product-zone-filter.js' | asset_url }}" defer></script>

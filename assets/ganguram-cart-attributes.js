@@ -246,6 +246,9 @@
     renderSummary();
     observeCartForms();
     window.addEventListener(EVENT, onChange);
+    // City enrichment completed later -> refresh the summary label and re-sync the
+    // now city-aware address summary attribute (debounced, idempotent, fail-open).
+    window.addEventListener('ganguram:delivery-label-updated', function () { renderSummary(); scheduleSync(null); });
     document.addEventListener('click', onCheckoutIntent, true);
     document.addEventListener('submit', onSubmit, true);
     // Make sure an already-selected pincode is reflected on the cart before checkout.
