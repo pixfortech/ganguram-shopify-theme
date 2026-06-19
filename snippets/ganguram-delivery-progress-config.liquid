@@ -11,23 +11,24 @@
   change, no cart mutation, no ShipZip/SBZ/zipLogic/Google/resolver change, no
   settings_data.json. Fail-open (no rules / no selection -> the panel hides).
 
-  Copy uses {amount}/{date} tokens replaced at runtime in JS — they are plain
-  string literals here (JSON-safe via | json), never a setting default, so there is
-  no placeholder-inside-default Liquid issue. Per-rule customer messages
-  (customer_message_for_cart_value / _delivery_date) are shown in addition.
+  Copy uses Liquid-SAFE tokens __AMOUNT__ / __DATE__. A single-brace placeholder
+  token must NOT appear inside a Liquid output tag — Shopify's Liquid parser treats
+  the inner brace as the start of a tag and fails the import. The JS replaces these
+  tokens at runtime (and still accepts the older single-brace form). Per-rule
+  customer messages (customer_message_for_cart_value / _delivery_date) are also shown.
 {%- endcomment -%}
 <script>
   window.GanguramDeliveryProgressConfig = {
     enabled: true,
     copy: {
-      movRemaining: {{ 'Add {amount} to reach the minimum order.' | json }},
-      freeDeliveryRemaining: {{ 'Add {amount} more for free delivery.' | json }},
+      movRemaining: {{ 'Add __AMOUNT__ to reach the minimum order.' | json }},
+      freeDeliveryRemaining: {{ 'Add __AMOUNT__ more for free delivery.' | json }},
       freeDeliveryUnlocked: {{ 'You’ve unlocked free delivery!' | json }},
       minimumMet: {{ 'Minimum order reached.' | json }},
-      deliveryChargeFrom: {{ 'Delivery from {amount}' | json }},
+      deliveryChargeFrom: {{ 'Delivery from __AMOUNT__' | json }},
       freeDelivery: {{ 'Free delivery' | json }},
       datePickerNote: {{ 'Choose a delivery date' | json }},
-      earliestNote: {{ 'earliest {date}' | json }},
+      earliestNote: {{ 'earliest __DATE__' | json }},
       standardLabel: {{ 'Standard delivery' | json }},
       fourHourLabel: {{ '4-hour delivery' | json }}
     }
