@@ -1,0 +1,60 @@
+{%- comment -%}
+  Ganguram — Delivery rules read path (Phase 2.11B).
+
+  Publishes window.GanguramDeliveryRulesConfig (the admin-configured delivery
+  rules) and loads the resolver helper (assets/ganguram-delivery-rules.js →
+  window.GanguramDeliveryRules). FOUNDATION ONLY: this reads rules and resolves
+  the matching one for the selected pincode/zone. It renders NO UI, builds NO
+  progress bar, enforces NO MOV, changes NO delivery charge, and touches NO
+  checkout / cart / ShipZip / SBZ / zipLogic / Google / resolver logic.
+
+  SOURCE OF TRUTH (Phase 2.11A decision): a Shopify metaobject definition of type
+  `ganguram_delivery_rule` with Storefront access enabled. The theme reads its
+  entries DIRECTLY via `shop.metaobjects.ganguram_delivery_rule.values` — no shop
+  metafield is required for the theme. (The shop metafield
+  `shop.metafields.ganguram.delivery_rules` is only needed LATER for a Shopify
+  Function / app enforcement path; see docs/delivery-rule-engine-admin-setup.md.)
+
+  FAIL-OPEN: if the metaobject definition does not exist yet, has no Storefront
+  access, or has no entries, this outputs an empty `rules: []` and the helper
+  resolves to a safe null/default — nothing on the storefront breaks.
+
+  Money fields are entered by the admin in RUPEES (number_decimal) and emitted
+  here in PAISE (×100) so JS works in the same minor units as cart.total_price.
+{%- endcomment -%}
+{%- liquid
+  assign gdr_rules = shop.metaobjects.ganguram_delivery_rule.values
+-%}
+<script>
+  window.GanguramDeliveryRulesConfig = {
+    currency: {{ cart.currency.iso_code | default: shop.currency | default: 'INR' | json }},
+    moneyFormat: {{ shop.money_format | strip_html | json }},
+    rules: [
+      {%- for r in gdr_rules -%}
+        {%- assign gdr_mov = r.min_order_value.value -%}
+        {%- assign gdr_dc = r.delivery_charge.value -%}
+        {%- assign gdr_fdt = r.free_delivery_threshold.value -%}
+        {%- assign gdr_dmin = r.distance_min_km.value -%}
+        {%- assign gdr_dmax = r.distance_max_km.value -%}
+        {
+          "name": {{ r.name.value | default: '' | json }},
+          "active": {% if r.active.value == false %}false{% else %}true{% endif %},
+          "priority": {{ r.priority.value | default: 0 | json }},
+          "zone": {{ r.zone_key.value | default: '' | json }},
+          "pincode": {{ r.exact_pincode.value | default: '' | json }},
+          "pincodePrefix": {{ r.pincode_prefix.value | default: '' | json }},
+          "city": {{ r.city.value | default: '' | json }},
+          "state": {{ r.state.value | default: '' | json }},
+          "distanceMinKm": {% if gdr_dmin != blank %}{{ gdr_dmin | json }}{% else %}null{% endif %},
+          "distanceMaxKm": {% if gdr_dmax != blank %}{{ gdr_dmax | json }}{% else %}null{% endif %},
+          "mov": {% if gdr_mov != blank %}{{ gdr_mov | times: 100 | round }}{% else %}null{% endif %},
+          "deliveryCharge": {% if gdr_dc != blank %}{{ gdr_dc | times: 100 | round }}{% else %}null{% endif %},
+          "freeDeliveryThreshold": {% if gdr_fdt != blank %}{{ gdr_fdt | times: 100 | round }}{% else %}null{% endif %},
+          "fourHourEligible": {% if r.four_hour_eligible.value == true %}true{% else %}false{% endif %},
+          "message": {{ r.customer_message.value | default: '' | json }}
+        }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    ]
+  };
+</script>
+<script src="{{ 'ganguram-delivery-rules.js' | asset_url }}" defer></script>
