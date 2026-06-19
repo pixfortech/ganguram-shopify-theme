@@ -1,0 +1,248 @@
+/*
+ * Ganguram — Delivery location -> cart attributes handoff  (Phase 2.10A)
+ * ---------------------------------------------------------------------------
+ * Mirrors the SELECTED delivery location (pincode + zone, via GanguramZone — the
+ * single source of truth) into Shopify CART ATTRIBUTES, so the delivery context
+ * travels with the cart/order for admin visibility and a future checkout handoff.
+ *
+ * HANDOFF ONLY. This module:
+ *   - listens to the existing 'ganguram:delivery-location-changed' event,
+ *   - reads state via GanguramZone.getSelectedDeliveryLocation() (no new resolver),
+ *   - PATCHes a small, fixed set of cart attributes via the Ajax Cart API
+ *     (/cart/update.js), merging — never clobbering other attributes,
+ *   - debounces writes and skips redundant ones (compares against /cart.js),
+ *   - does a best-effort, NON-BLOCKING flush right before checkout,
+ *   - optionally paints a subtle read-only "Delivering to: <zone> <pincode>" line.
+ *
+ * It must NOT (and does not): autofill or change checkout, change the checkout URL
+ * or button behaviour, touch MOV / date-slot / shipping rates / SBZ / ShipZip /
+ * zipLogic / payment, change product/cart eligibility or cart removal/undo, change
+ * product/menu/search filtering, add Google Maps, or write localStorage["Zipcode"]
+ * directly. It is fully FAIL-OPEN: any Ajax error is a silent console warning and
+ * never blocks the customer or checkout.
+ *
+ * PRIVACY: stores only the pincode, zone, zone label, a coarse source label, and —
+ * only when it was already captured as a short safe summary (city/state on the
+ * recent-locations entry) — that city/state string. Never a full street address,
+ * never lat/lng, never a Google place_id.
+ *
+ * No jQuery / Bootstrap / FontAwesome / external libs.
+ * ---------------------------------------------------------------------------
+ */
+(function () {
+  'use strict';
+  if (window.__ganguramCartAttributesInit) { return; }
+  window.__ganguramCartAttributesInit = true;
+
+  var EVENT = 'ganguram:delivery-location-changed';
+  var RECENT_KEY = 'ganguram.recentLocations'; // read-only here; owned by saved-locations/places
+  var ALLOWED_SOURCES = { manual: 1, recent: 1, saved_address: 1, google_places: 1 };
+
+  // ---- config (single-sourced from the snippet) -----------------------------
+  function cfg() { return window.GanguramCartAttributesConfig || {}; }
+  function enabled() { return cfg().enabled !== false; }
+  function updateUrl() { return cfg().updateUrl || '/cart/update.js'; }
+  function cartUrl() { return cfg().cartUrl || '/cart.js'; }
+  function debounceMs() { var n = parseInt(cfg().debounceMs, 10); return (isFinite(n) && n >= 0) ? n : 600; }
+  function summaryEnabled() { return cfg().summaryEnabled !== false; }
+  function summaryLabel() { return cfg().summaryLabel || 'Delivering to:'; }
+  function keys() {
+    var k = cfg().keys || {};
+    return {
+      pincode: k.pincode || 'Delivery Pincode',
+      zone: k.zone || 'Delivery Zone',
+      zoneLabel: k.zoneLabel || 'Delivery Zone Label',
+      source: k.source || 'Delivery Location Source',
+      addressSummary: k.addressSummary || 'Delivery Address Summary'
+    };
+  }
+
+  function warn(msg, err) {
+    try { if (window.console && console.warn) { console.warn('[ganguram-cart-attributes] ' + msg, err || ''); } } catch (e) {}
+  }
+
+  function zone() { return window.GanguramZone || null; }
+  function currentLoc() {
+    var z = zone();
+    if (!z || typeof z.getSelectedDeliveryLocation !== 'function') { return null; }
+    try { return z.getSelectedDeliveryLocation(); } catch (e) { return null; }
+  }
+
+  // ---- privacy-minimal enrichment (read-only) -------------------------------
+  // city/state only ever live on the recent-locations entry, and ONLY when the
+  // customer used Google Places (the places module enriches them). We read them
+  // to build a short safe summary + infer the source; we never store anything else.
+  function recentFor(pin) {
+    if (!pin) { return null; }
+    try {
+      var raw = window.localStorage.getItem(RECENT_KEY);
+      var arr = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(arr)) { return null; }
+      for (var i = 0; i < arr.length; i++) { if (arr[i] && arr[i].pincode === pin) { return arr[i]; } }
+    } catch (e) {}
+    return null;
+  }
+  function safeSummary(rec) {
+    if (!rec) { return ''; }
+    var parts = [];
+    if (rec.city) { parts.push(String(rec.city)); }
+    if (rec.state) { parts.push(String(rec.state)); }
+    return parts.join(', ');
+  }
+  function inferSource(detail, rec) {
+    var s = detail && detail.source;          // honoured if a future caller provides one
+    if (s && ALLOWED_SOURCES[s]) { return s; }
+    if (rec && (rec.city || rec.state)) { return 'google_places'; } // only Places enriches these
+    return 'manual';
+  }
+
+  // ---- desired attribute map ------------------------------------------------
+  // Blank values are intentional: /cart/update.js removes an attribute when its
+  // value is '', which is exactly how we "clear" the handoff.
+  function desiredAttributes(detail) {
+    var K = keys();
+    var out = {};
+    out[K.pincode] = ''; out[K.zone] = ''; out[K.zoneLabel] = ''; out[K.source] = ''; out[K.addressSummary] = '';
+    var loc = currentLoc();
+    if (loc && loc.pincode && loc.isServiceable === true) {
+      var rec = recentFor(loc.pincode);
+      out[K.pincode] = loc.pincode;
+      out[K.zone] = loc.zone || '';
+      out[K.zoneLabel] = loc.label || '';
+      out[K.source] = inferSource(detail, rec);
+      out[K.addressSummary] = safeSummary(rec); // '' when no safe summary exists -> pincode+zone only
+    }
+    return out;
+  }
+  function hasPincode(attrs) { return !!attrs[keys().pincode]; }
+  function signature(attrs) { try { return JSON.stringify(attrs); } catch (e) { return String(Math.random()); } }
+
+  // ---- sync -----------------------------------------------------------------
+  var lastSig = null;
+
+  function postAttributes(attrs, useKeepalive) {
+    var opts = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ attributes: attrs })
+    };
+    if (useKeepalive) { opts.keepalive = true; }
+    return fetch(updateUrl(), opts);
+  }
+
+  // Compare against the live cart so we never write redundantly and so a missing
+  // attribute counts as blank (a fresh visitor with no selection => no write).
+  function doSync(detail) {
+    if (!enabled()) { return; }
+    var desired = desiredAttributes(detail);
+    var desiredSig = signature(desired);
+    if (desiredSig === lastSig) { return; }
+    fetch(cartUrl(), { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
+      .then(function (r) { return r.json(); })
+      .then(function (cart) {
+        var cur = (cart && cart.attributes) || {};
+        var same = true;
+        for (var name in desired) {
+          if (!Object.prototype.hasOwnProperty.call(desired, name)) { continue; }
+          if (String(cur[name] == null ? '' : cur[name]) !== String(desired[name])) { same = false; break; }
+        }
+        if (same) { lastSig = desiredSig; return null; }
+        return postAttributes(desired, false).then(function () { lastSig = desiredSig; });
+      })
+      .catch(function (err) { warn('cart attribute sync failed (non-blocking)', err); });
+  }
+
+  var timer = null;
+  function scheduleSync(detail) {
+    if (timer) { clearTimeout(timer); }
+    timer = setTimeout(function () { timer = null; doSync(detail); }, debounceMs());
+  }
+
+  // Best-effort flush right before checkout. Only pushes when a pincode is set,
+  // uses keepalive so it survives navigation, and NEVER blocks or preventDefaults.
+  function flushSync() {
+    if (!enabled()) { return; }
+    var desired = desiredAttributes(null);
+    if (!hasPincode(desired)) { return; }     // nothing meaningful to push; clearing is event-driven
+    var desiredSig = signature(desired);
+    if (desiredSig === lastSig) { return; }   // already in sync this session
+    try {
+      postAttributes(desired, true)
+        .then(function () { lastSig = desiredSig; })
+        .catch(function (err) { warn('pre-checkout sync failed (non-blocking)', err); });
+    } catch (err) { warn('pre-checkout sync threw (non-blocking)', err); }
+  }
+
+  // ---- optional read-only "Delivering to:" summary --------------------------
+  function renderSummary() {
+    if (!summaryEnabled()) { return; }
+    var els = document.querySelectorAll('[data-ganguram-cart-delivery-summary]');
+    if (!els.length) { return; }
+    var loc = currentLoc();
+    var show = !!(loc && loc.pincode && loc.isServiceable === true);
+    var value = show ? ((loc.label ? loc.label + ' ' : '') + loc.pincode) : '';
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      try {
+        var labelEl = el.querySelector('[data-gcd-label]');
+        var valueEl = el.querySelector('[data-gcd-value]');
+        if (labelEl) { labelEl.textContent = summaryLabel(); }
+        if (valueEl) { valueEl.textContent = value; }
+        if (show) { el.removeAttribute('hidden'); } else { el.setAttribute('hidden', 'hidden'); }
+      } catch (e) {}
+    }
+  }
+
+  // The cart re-renders via several paths (component-cart qty change, refreshCart);
+  // each replaces the cart-form's HTML, dropping our painted text. Observe the
+  // cart-form(s) and re-paint after any re-render. childList covers innerHTML swaps.
+  function observeCartForms() {
+    if (!('MutationObserver' in window)) { return; }
+    var forms = document.querySelectorAll('cart-form');
+    if (!forms.length) { return; }
+    var pending = false;
+    var schedule = function () {
+      if (pending) { return; }
+      pending = true;
+      var run = function () { pending = false; renderSummary(); };
+      if (window.requestAnimationFrame) { window.requestAnimationFrame(run); } else { setTimeout(run, 0); }
+    };
+    var obs = new MutationObserver(schedule);
+    for (var i = 0; i < forms.length; i++) {
+      try { obs.observe(forms[i], { childList: true }); } catch (e) {}
+    }
+  }
+
+  // ---- wiring ---------------------------------------------------------------
+  function onChange(e) {
+    var detail = (e && e.detail) ? e.detail : null;
+    renderSummary();
+    scheduleSync(detail);
+  }
+  function onCheckoutIntent(e) {
+    var t = e.target;
+    if (!t || !t.closest) { return; }
+    if (t.closest('[name="checkout"], #CheckOut, [data-ganguram-checkout]')) { flushSync(); }
+  }
+  function onSubmit(e) {
+    var f = e.target;
+    if (f && f.id === 'cart') { flushSync(); }   // covers Enter / non-mouse checkout submit
+  }
+
+  function init() {
+    renderSummary();
+    observeCartForms();
+    window.addEventListener(EVENT, onChange);
+    document.addEventListener('click', onCheckoutIntent, true);
+    document.addEventListener('submit', onSubmit, true);
+    // Make sure an already-selected pincode is reflected on the cart before checkout.
+    var loc = currentLoc();
+    if (loc && loc.pincode && loc.isServiceable === true) { scheduleSync(null); }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();

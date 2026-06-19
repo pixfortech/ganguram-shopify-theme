@@ -1,0 +1,12 @@
+{%- comment -%}
+  Ganguram — read-only "Delivering to: <zone> <pincode>" cart line (Phase 2.10A).
+
+  Subtle, display-only. Rendered at the top of the cart (drawer + page); starts
+  hidden and is populated client-side by ganguram-cart-attributes.js from the
+  SELECTED pincode/zone (window.GanguramZone). No cart / checkout / eligibility /
+  removal logic lives here — it is purely informational.
+{%- endcomment -%}
+<div class="ganguram-cart-delivery-summary" data-ganguram-cart-delivery-summary hidden>
+  <span class="ganguram-cart-delivery-summary__label" data-gcd-label></span>
+  <span class="ganguram-cart-delivery-summary__value" data-gcd-value></span>
+</div>
