@@ -1,8 +1,7 @@
 /*
- * Ganguram — cart delivery progress + service options (Phase 2.11C). Subtle,
- * Local-theme-native, display-only. Scoped to .ganguram-delivery-progress.
- * Inherits the cart's text colour (currentColor) — no inverted/low-contrast text,
- * no heavy fill. Neutral borders work on light and dark surfaces.
+ * Ganguram — cart delivery progress + MOV checkout guard (Phase 2.11C / 2.11C.1).
+ * Subtle, Local-theme-native, display/advisory only. Inherits the cart's text
+ * colour (currentColor) — no inverted/low-contrast text, no heavy fill.
  */
 .ganguram-delivery-progress {
   margin: 0 0 1rem;
@@ -15,9 +14,22 @@
 }
 .ganguram-delivery-progress[hidden] { display: none !important; }
 
+/* minimum-order / cart-value lines: detailed (page) only; compact (drawer) hides them */
+.ganguram-delivery-progress__lines { display: flex; flex-wrap: wrap; gap: 0.15rem 1rem; margin: 0 0 0.4rem; }
+.ganguram-delivery-progress__lines[hidden] { display: none; }
+.ganguram-delivery-progress--drawer .ganguram-delivery-progress__lines { display: none; }
+.ganguram-delivery-progress__line[hidden] { display: none; }
+.ganguram-delivery-progress__line-label { opacity: 0.7; }
+.ganguram-delivery-progress__line-value { font-weight: 600; }
+
+.ganguram-delivery-progress__message { margin: 0; font-weight: 500; }
+.ganguram-delivery-progress__message[hidden] { display: none; }
+.ganguram-delivery-progress[data-gdpr-state="blocked"] .ganguram-delivery-progress__message { font-weight: 600; }
+
+/* horizontal progress line */
 .ganguram-delivery-progress__bar {
   height: 6px;
-  margin: 0 0 0.5rem;
+  margin: 0.45rem 0 0;
   border-radius: 999px;
   background: rgba(128, 128, 128, 0.18);
   overflow: hidden;
@@ -30,11 +42,9 @@
   background: var(--gdp-accent, #49488d);
   transition: width 0.3s ease;
 }
+.ganguram-delivery-progress[data-gdpr-state="blocked"] .ganguram-delivery-progress__bar-fill { background: #c0392b; }
 
-.ganguram-delivery-progress__message { margin: 0; font-weight: 500; }
-.ganguram-delivery-progress__message[hidden] { display: none; }
-
-.ganguram-delivery-progress__charge { margin: 0.25rem 0 0; opacity: 0.85; }
+.ganguram-delivery-progress__charge { margin: 0.3rem 0 0; opacity: 0.85; }
 .ganguram-delivery-progress__charge[hidden] { display: none; }
 
 .ganguram-delivery-progress__services {
@@ -47,13 +57,31 @@
   gap: 0.4rem;
 }
 .ganguram-delivery-progress__services[hidden] { display: none; }
-
-.ganguram-delivery-progress__service {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.4rem;
-}
+.ganguram-delivery-progress__service { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem; }
 .ganguram-delivery-progress__service-name { font-weight: 600; }
 .ganguram-delivery-progress__service-charge { opacity: 0.9; }
 .ganguram-delivery-progress__service-note { width: 100%; font-size: 0.92em; opacity: 0.7; }
+
+/* compact drawer: a touch tighter */
+.ganguram-delivery-progress--drawer { padding: 0.5rem 0.65rem; font-size: 0.82em; }
+
+/* MOV notice near the checkout button */
+.ganguram-mov-notice {
+  margin: 0 0 0.6rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid rgba(192, 57, 43, 0.45);
+  border-radius: 8px;
+  background: rgba(192, 57, 43, 0.06);
+  color: currentColor;
+  font-size: 0.85em;
+  line-height: 1.4;
+  font-weight: 500;
+}
+.ganguram-mov-notice[hidden] { display: none !important; }
+
+/* checkout button visually marked as blocked (the actual block is the JS guard) */
+.button.ganguram-mov-blocked,
+.ganguram-mov-blocked {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

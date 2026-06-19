@@ -1,32 +1,33 @@
 {%- comment -%}
-  Ganguram — Cart delivery progress + service options config (Phase 2.11C).
+  Ganguram — Cart delivery progress + MOV checkout-guard config (Phase 2.11C / 2.11C.1).
 
   Publishes window.GanguramDeliveryProgressConfig (display copy) and loads the
   advisory cart UI (assets/ganguram-delivery-progress.js + .css). The UI reads
-  window.GanguramDeliveryRules (getProgressData / getServiceOptions) and paints a
-  read-only MOV/free-delivery progress bar + delivery service options into the
-  cart panel rendered by snippets/ganguram-delivery-progress.liquid.
+  window.GanguramDeliveryRules (getProgressData / getServiceOptions) and updates,
+  from one shared state: the cart progress/MOV panel, a notice near the checkout
+  button, and a soft checkout guard (intercept when below the minimum order value).
 
-  ADVISORY / DISPLAY ONLY: no MOV enforcement, no checkout change, no shipping-charge
+  ADVISORY / CART-SIDE ONLY: no Shopify checkout change, no final shipping-charge
   change, no cart mutation, no ShipZip/SBZ/zipLogic/Google/resolver change, no
-  settings_data.json. Fail-open (no rules / no selection -> the panel hides).
+  settings_data.json. Fail-open (no rules / no selection / no MOV -> nothing blocked).
 
-  Copy uses Liquid-SAFE tokens __AMOUNT__ / __DATE__. A single-brace placeholder
-  token must NOT appear inside a Liquid output tag — Shopify's Liquid parser treats
-  the inner brace as the start of a tag and fails the import. The JS replaces these
-  tokens at runtime (and still accepts the older single-brace form). Per-rule
-  customer messages (customer_message_for_cart_value / _delivery_date) are also shown.
+  Copy uses Liquid-SAFE tokens __MOV__ / __SUBTOTAL__ / __REMAINING__ / __AMOUNT__ /
+  __DATE__. A single-brace placeholder token must NOT appear inside a Liquid output
+  tag — Shopify's Liquid parser treats the inner brace as a tag start and fails the
+  import. The JS replaces these tokens at runtime.
 {%- endcomment -%}
 <script>
   window.GanguramDeliveryProgressConfig = {
     enabled: true,
     copy: {
-      movRemaining: {{ 'Add __AMOUNT__ to reach the minimum order.' | json }},
-      freeDeliveryRemaining: {{ 'Add __AMOUNT__ more for free delivery.' | json }},
-      freeDeliveryUnlocked: {{ 'You’ve unlocked free delivery!' | json }},
-      minimumMet: {{ 'Minimum order reached.' | json }},
-      deliveryChargeFrom: {{ 'Delivery from __AMOUNT__' | json }},
+      movLabel: {{ 'Minimum order:' | json }},
+      cartValueLabel: {{ 'Cart value:' | json }},
+      addMore: {{ 'Add __REMAINING__ more to continue' | json }},
+      minReached: {{ 'Minimum order reached. You can continue to checkout.' | json }},
+      checkoutNotice: {{ 'Minimum order for this delivery area is __MOV__. Add __REMAINING__ more to continue.' | json }},
+      freeDeliveryHint: {{ 'add __AMOUNT__ for free delivery' | json }},
       freeDelivery: {{ 'Free delivery' | json }},
+      deliveryChargeFrom: {{ 'Delivery from __AMOUNT__' | json }},
       datePickerNote: {{ 'Choose a delivery date' | json }},
       earliestNote: {{ 'earliest __DATE__' | json }},
       standardLabel: {{ 'Standard delivery' | json }},
