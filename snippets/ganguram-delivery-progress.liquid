@@ -1,0 +1,18 @@
+{%- comment -%}
+  Ganguram — cart delivery progress + service options panel (Phase 2.11C).
+
+  Read-only markup, rendered at the top of the cart (drawer + page) when the cart
+  has items. Populated client-side by assets/ganguram-delivery-progress.js from
+  window.GanguramDeliveryRules (getProgressData / getServiceOptions) + the selected
+  delivery location. Starts hidden; shows only when admin delivery rules resolve.
+  data-gdpr-cart-total carries the live cart total in PAISE (re-rendered on cart
+  updates). Display/advisory only — no cart/checkout logic here.
+{%- endcomment -%}
+<div class="ganguram-delivery-progress" data-ganguram-delivery-progress data-gdpr-cart-total="{{ cart.total_price }}" hidden>
+  <div class="ganguram-delivery-progress__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" data-gdpr-bar hidden>
+    <div class="ganguram-delivery-progress__bar-fill" data-gdpr-bar-fill></div>
+  </div>
+  <p class="ganguram-delivery-progress__message" data-gdpr-message hidden></p>
+  <p class="ganguram-delivery-progress__charge" data-gdpr-charge hidden></p>
+  <ul class="ganguram-delivery-progress__services" data-gdpr-services hidden></ul>
+</div>

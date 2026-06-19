@@ -559,5 +559,8 @@
   {%- comment -%} Delivery rule engine foundation (Phase 2.11B) — reads admin-configured rules from the `ganguram_delivery_rule` metaobject and resolves the rule for the selected pincode/zone (window.GanguramDeliveryRules). Data/resolver only; fail-open; NO UI/progress bar, NO MOV enforcement, NO checkout/charge/SBZ/ShipZip/zipLogic/resolver change. {%- endcomment -%}
   {%- render 'ganguram-delivery-rules-config' -%}
 
+  {%- comment -%} Cart delivery progress + service options (Phase 2.11C) — ADVISORY cart UI: reads window.GanguramDeliveryRules (getProgressData/getServiceOptions) and paints a read-only MOV/free-delivery progress bar + standard/4-hour service options into the cart panel. Display only; fail-open; NO MOV enforcement, NO checkout/shipping-charge change, NO cart mutation, NO SBZ/ShipZip/zipLogic/Google/resolver change. {%- endcomment -%}
+  {%- render 'ganguram-delivery-progress-config' -%}
+
 </body>
 </html>

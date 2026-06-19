@@ -1,0 +1,37 @@
+{%- comment -%}
+  Ganguram — Cart delivery progress + service options config (Phase 2.11C).
+
+  Publishes window.GanguramDeliveryProgressConfig (display copy) and loads the
+  advisory cart UI (assets/ganguram-delivery-progress.js + .css). The UI reads
+  window.GanguramDeliveryRules (getProgressData / getServiceOptions) and paints a
+  read-only MOV/free-delivery progress bar + delivery service options into the
+  cart panel rendered by snippets/ganguram-delivery-progress.liquid.
+
+  ADVISORY / DISPLAY ONLY: no MOV enforcement, no checkout change, no shipping-charge
+  change, no cart mutation, no ShipZip/SBZ/zipLogic/Google/resolver change, no
+  settings_data.json. Fail-open (no rules / no selection -> the panel hides).
+
+  Copy uses {amount}/{date} tokens replaced at runtime in JS — they are plain
+  string literals here (JSON-safe via | json), never a setting default, so there is
+  no placeholder-inside-default Liquid issue. Per-rule customer messages
+  (customer_message_for_cart_value / _delivery_date) are shown in addition.
+{%- endcomment -%}
+<script>
+  window.GanguramDeliveryProgressConfig = {
+    enabled: true,
+    copy: {
+      movRemaining: {{ 'Add {amount} to reach the minimum order.' | json }},
+      freeDeliveryRemaining: {{ 'Add {amount} more for free delivery.' | json }},
+      freeDeliveryUnlocked: {{ 'You’ve unlocked free delivery!' | json }},
+      minimumMet: {{ 'Minimum order reached.' | json }},
+      deliveryChargeFrom: {{ 'Delivery from {amount}' | json }},
+      freeDelivery: {{ 'Free delivery' | json }},
+      datePickerNote: {{ 'Choose a delivery date' | json }},
+      earliestNote: {{ 'earliest {date}' | json }},
+      standardLabel: {{ 'Standard delivery' | json }},
+      fourHourLabel: {{ '4-hour delivery' | json }}
+    }
+  };
+</script>
+{{ 'ganguram-delivery-progress.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ganguram-delivery-progress.js' | asset_url }}" defer></script>
