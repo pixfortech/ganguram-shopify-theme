@@ -38,6 +38,10 @@
     var c = cfg().copy || {};
     var d = {
       movLabel: 'Minimum order:',
+      movLabelEstimated: 'Estimated minimum order:',
+      estimatedNote: 'Delivery and minimum order are estimated from your pincode. For accurate delivery options, please enter your complete address.',
+      confirmedNote: 'Delivery options confirmed for your address.',
+      fourHourIneligible: '4-hour delivery is not available because the following item(s) are not eligible for quick delivery: __ITEMS__',
       cartValueLabel: 'Cart value:',
       addMore: 'Add __REMAINING__ more to continue',
       minReached: 'Minimum order reached. You can continue to checkout.',
@@ -102,6 +106,19 @@
     } catch (e) { return ''; }
   }
 
+  // Names of cart items that are NOT quick-commerce eligible (block 4-hour).
+  function nonQuickCommerceItemNames() {
+    var names = [];
+    var lines = document.querySelectorAll('[data-ganguram-cart-line]');
+    for (var i = 0; i < lines.length; i++) {
+      if (String(lines[i].getAttribute('data-ganguram-quick-commerce')) !== 'true') {
+        var n = String(lines[i].getAttribute('data-ganguram-product-title') || '').trim();
+        if (n && names.indexOf(n) === -1) { names.push(n); }
+      }
+    }
+    return names;
+  }
+
   // ---- one shared computation (so panel + notice + guard never disagree) ----
   function computeState() {
     if (!enabled()) { return null; }
@@ -111,11 +128,36 @@
     try { location = z.getSelectedDeliveryLocation(); } catch (e) { return null; }
     if (!location || !location.pincode || location.isServiceable !== true) { return null; }
     var subtotal = readSubtotal();
-    var data = dr.getProgressData(subtotal, location);
+
+    // Pincode-only = ESTIMATED (no distanceKm -> zone/pincode rules). A full
+    // address yields a CONFIRMED driving distanceKm -> distance-slab rules.
+    var gd = window.GanguramDistance;
+    var dist = (gd && typeof gd.getForPincode === 'function') ? gd.getForPincode(location.pincode) : { distanceKm: null, confirmed: false };
+    var confirmed = !!(dist && dist.confirmed && dist.distanceKm != null);
+    var distOpts = confirmed ? { distanceKm: dist.distanceKm } : {};
+
+    var data = dr.getProgressData(subtotal, location, distOpts);
     if (!data || data.reason === 'none' || !data.rule) { return null; } // no rules -> fail open
     var mov = data.mov;
     var movMet = (mov == null) ? true : (data.movMet === true);
-    var svc = dr.getServiceOptions(location, { fourHourEligibleCart: cartFourHourEligible() });
+
+    var eligible = cartFourHourEligible();
+    var svcOpts = { fourHourEligibleCart: eligible };
+    if (confirmed) { svcOpts.distanceKm = dist.distanceKm; }
+    var svc = dr.getServiceOptions(location, svcOpts);
+
+    // 4-hour blocked items: only when a 4-hour option WOULD apply (cart eligible)
+    // but the cart has non-quick-commerce items.
+    var blockedItems = [];
+    if (!eligible) {
+      var potOpts = { fourHourEligibleCart: true };
+      if (confirmed) { potOpts.distanceKm = dist.distanceKm; }
+      var pot = dr.getServiceOptions(location, potOpts);
+      var hasFour = false, po = (pot && pot.options) || [];
+      for (var k = 0; k < po.length; k++) { if (po[k].serviceType === 'four_hour') { hasFour = true; break; } }
+      if (hasFour) { blockedItems = nonQuickCommerceItemNames(); }
+    }
+
     return {
       location: location, subtotal: subtotal, data: data,
       mov: mov, movMet: movMet, movRemaining: data.movRemaining,
@@ -124,7 +166,10 @@
       freeDeliveryMet: data.freeDeliveryMet,
       freeDeliveryRemaining: data.freeDeliveryRemaining,
       blocked: (mov != null && !movMet),
-      serviceOptions: (svc && svc.options) || []
+      serviceOptions: (svc && svc.options) || [],
+      confirmed: confirmed,
+      distanceKm: confirmed ? dist.distanceKm : null,
+      fourHourBlockedItems: blockedItems
     };
   }
 
@@ -166,12 +211,19 @@
       var subLine = panel.querySelector('[data-gdpr-subtotal-line]');
       var linesWrap = panel.querySelector('[data-gdpr-lines]');
       if (st.mov != null) {
-        setText(panel.querySelector('[data-gdpr-mov-label]'), copy('movLabel'));
+        setText(panel.querySelector('[data-gdpr-mov-label]'), st.confirmed ? copy('movLabel') : copy('movLabelEstimated'));
         setText(panel.querySelector('[data-gdpr-mov]'), fmtMoney(st.mov));
         setText(panel.querySelector('[data-gdpr-subtotal-label]'), copy('cartValueLabel'));
         setText(panel.querySelector('[data-gdpr-subtotal]'), fmtMoney(st.subtotal));
         show(movLine); show(subLine); show(linesWrap);
       } else { hide(movLine); hide(subLine); hide(linesWrap); }
+
+      // estimated (pincode) vs confirmed (full address) note
+      var estEl = panel.querySelector('[data-gdpr-estimate]');
+      if (estEl) {
+        var estText = st.confirmed ? copy('confirmedNote') : copy('estimatedNote');
+        setText(estEl, estText); if (estText) { show(estEl); } else { hide(estEl); }
+      }
 
       // status message
       var msgEl = panel.querySelector('[data-gdpr-message]');
@@ -214,7 +266,17 @@
         } else { hide(svcEl); }
       }
 
+      // 4-hour not available because some items aren't quick-commerce eligible
+      var fhEl = panel.querySelector('[data-gdpr-fourhour-notice]');
+      if (fhEl) {
+        if (st.fourHourBlockedItems && st.fourHourBlockedItems.length) {
+          setText(fhEl, tmpl(copy('fourHourIneligible'), { items: st.fourHourBlockedItems.join(', ') }));
+          show(fhEl);
+        } else { setText(fhEl, ''); hide(fhEl); }
+      }
+
       panel.setAttribute('data-gdpr-state', st.blocked ? 'blocked' : 'ok');
+      panel.setAttribute('data-gdpr-confirmed', st.confirmed ? 'true' : 'false');
       show(panel);
     } catch (e) { hide(panel); }
   }
@@ -289,6 +351,7 @@
     observeCartForms();
     window.addEventListener('ganguram:delivery-location-changed', renderAll);
     window.addEventListener('ganguram:delivery-label-updated', renderAll);
+    window.addEventListener('ganguram:delivery-distance-updated', renderAll);
     document.addEventListener('click', onCheckoutClick, true);
     document.addEventListener('submit', onCartSubmit, true);
   }

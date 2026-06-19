@@ -109,7 +109,7 @@
     }
     var place;
     try { place = pred.toPlace(); } catch (err) { setAddrStatus('Couldn’t read that address. Please enter your pincode below.', 'error'); focusManualInput(); return; }
-    place.fetchFields({ fields: ['addressComponents'] })
+    place.fetchFields({ fields: ['addressComponents', 'location'] })
       .then(function () {
         var comps = place.addressComponents || [];
         var countryC = compOf(comps, 'country');
@@ -121,7 +121,9 @@
           setAddrStatus('Couldn’t read a pincode from that address. Please enter your 6-digit pincode below.', 'error');
           focusManualInput(); return;
         }
-        applyPincode(pin, comps);
+        // Full address selected -> commit the pincode, then (privacy-minimal) compute
+        // the actual DRIVING distance for confirmed distance-slab delivery rules.
+        if (applyPincode(pin, comps)) { notifyDistance(pin, place.location); }
       })
       .catch(function () {
         setAddrStatus('Couldn’t read that address. Please enter your pincode below.', 'error'); focusManualInput();
@@ -129,15 +131,27 @@
   }
 
   // Route the pincode through the SAME validate+commit path as the manual input.
+  // Returns true when the pincode was accepted + committed.
   function applyPincode(pin, comps) {
-    var z = zone(); if (!z) { setAddrStatus('Delivery lookup is unavailable. Please reload.', 'error'); return; }
+    var z = zone(); if (!z) { setAddrStatus('Delivery lookup is unavailable. Please reload.', 'error'); return false; }
     var test = z.classifyPincode(pin);
     if (!test || test.zone === 'unknown' || test.isServiceable !== true) {
-      setAddrStatus('That pincode is not serviceable. Please try another.', 'error'); return;
+      setAddrStatus('That pincode is not serviceable. Please try another.', 'error'); return false;
     }
     z.setSelectedPincode(pin);   // persists + fires the change event (recent added; popup closes)
     enrichRecent(pin, comps);    // attach a privacy-minimal summary to that recent entry
     setAddrStatus('', '');
+    return true;
+  }
+
+  // Hand the selected full-address coordinates to the distance provider (Phase
+  // 2.11D), which computes the driving distance and confirms it for the cart
+  // rules. Privacy: only the resulting distanceKm is stored, never the coordinates.
+  function notifyDistance(pin, dest) {
+    var gd = window.GanguramDistance;
+    if (gd && typeof gd.computeAndStore === 'function' && dest) {
+      try { gd.computeAndStore(pin, dest); } catch (e) {}
+    }
   }
 
   // ---- lightweight, privacy-minimal summary on the recent entry -------------
