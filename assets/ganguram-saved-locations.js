@@ -25,6 +25,19 @@
   var MAX = 5;
 
   function zone() { return window.GanguramZone || null; }
+
+  // Customer-facing label (city/name + pincode; never the internal zone label).
+  // Uses the shared helper; falls back to a safe local rule if it isn't loaded.
+  function displayLabel(loc) {
+    if (window.GanguramDisplayLabel && typeof window.GanguramDisplayLabel.get === 'function') {
+      return window.GanguramDisplayLabel.get(loc);
+    }
+    if (!loc || !loc.pincode) { return ''; }
+    if (loc.city) { return loc.city + ' ' + loc.pincode; }
+    if (loc.isKolkata || loc.zone === 'kolkata' || loc.zone === 'quick_commerce') { return 'Kolkata ' + loc.pincode; }
+    return String(loc.pincode);
+  }
+
   function safeLS() {
     try { var t = '__gz_rl__'; window.localStorage.setItem(t, t); window.localStorage.removeItem(t); return window.localStorage; }
     catch (e) { return null; }
@@ -86,7 +99,7 @@
       b.className = 'ganguram-delivery-popup__chip';
       b.setAttribute('data-gdp-recent-item', '');
       b.setAttribute('data-gdp-pin', r.pincode);
-      b.textContent = (r.label ? r.label + ' ' : '') + r.pincode;
+      b.textContent = displayLabel(r);
       var x = document.createElement('button');
       x.type = 'button';
       x.className = 'ganguram-delivery-popup__chip-remove';

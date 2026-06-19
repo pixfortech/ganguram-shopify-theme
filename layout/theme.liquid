@@ -514,6 +514,9 @@
   {%- comment -%} Delivery zone resolver (Phase 2.1a) — defines window.GanguramZone. No UI / cart / checkout / visibility logic. {%- endcomment -%}
   {%- render 'zone-resolver' -%}
 
+  {%- comment -%} Customer-facing delivery location display labels (UI hotfix) — one helper (window.GanguramDisplayLabel) used by the header/popup/recent/cart for the visible label. Display only; internal zones/labels unchanged. Loaded after the resolver, before the UI modules that use it. {%- endcomment -%}
+  <script src="{{ 'ganguram-display-label.js' | asset_url }}" defer></script>
+
   {%- comment -%} Delivering-to header widget (Phase 2.1b; CSS moved to <head> by hotfix to avoid icon FOUC) — UI only; loaded after the resolver. {%- endcomment -%}
   <script src="{{ 'ganguram-delivery-widget.js' | asset_url }}" defer></script>
 

@@ -23,12 +23,24 @@
   }
   function q(root, sel) { return root.querySelector(sel); }
 
+  // Customer-facing label (city/name + pincode; never the internal zone label).
+  // Uses the shared helper; falls back to a safe local rule if it isn't loaded.
+  function displayLabel(loc) {
+    if (window.GanguramDisplayLabel && typeof window.GanguramDisplayLabel.get === 'function') {
+      return window.GanguramDisplayLabel.get(loc);
+    }
+    if (!loc || !loc.pincode) { return ''; }
+    if (loc.city) { return loc.city + ' ' + loc.pincode; }
+    if (loc.isKolkata || loc.zone === 'kolkata' || loc.zone === 'quick_commerce') { return 'Kolkata ' + loc.pincode; }
+    return String(loc.pincode);
+  }
+
   // --- display -------------------------------------------------------------
   function renderOne(w, loc) {
     var valueEl = q(w, '[data-gdw-value]');
     var clearBtn = q(w, '[data-gdw-clear]');
     if (loc && loc.pincode) {
-      valueEl.textContent = (loc.label ? loc.label + ' ' : '') + loc.pincode;
+      valueEl.textContent = displayLabel(loc);
       w.setAttribute('data-gdw-zone', loc.zone || '');
       if (clearBtn) { clearBtn.hidden = false; }
     } else {
@@ -102,7 +114,7 @@
       return; // do not store invalid input
     }
     var loc = z.setSelectedPincode(raw); // persists + fires event -> renderAll
-    setStatus(w, 'Delivering to ' + (loc.label ? loc.label + ' ' : '') + loc.pincode + '.', 'ok');
+    setStatus(w, 'Delivering to ' + displayLabel(loc) + '.', 'ok');
     // close shortly after, so the status is briefly visible
     window.setTimeout(function () { closePanel(w); }, 900);
   }
