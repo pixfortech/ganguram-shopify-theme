@@ -1,0 +1,48 @@
+/* Ganguram — Google Places address search (Phase 2.9B). Scoped to the delivery
+   popup; matches the redesigned 2.8B style. Display/helper only. */
+
+.ganguram-delivery-popup__addr-search { margin-top: 1rem; }
+.ganguram-delivery-popup__addr-search[hidden] { display: none; }
+
+/* The label reuses .ganguram-delivery-popup__label (small, muted, uppercase). */
+
+.ganguram-delivery-popup__addr-search-slot { display: block; width: 100%; min-width: 0; }
+/* The PlaceAutocompleteElement is a web component; size its host to the field width.
+   Its internals are shadow DOM (limited styling) — keep the container clean so it
+   reads as a native field row. */
+.ganguram-delivery-popup__addr-search-slot gmp-place-autocomplete,
+.ganguram-delivery-popup__addr-search-slot [data-gdp-address-el] {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ganguram-delivery-popup__addr-search-status {
+  margin: 0.4rem 0 0;
+  min-height: 1em;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.35;
+  color: var(--gdp-muted, #8a8f9c);
+}
+.ganguram-delivery-popup__addr-search-status[data-gdp-state="error"] { color: #c0392b; }
+
+/* A subtle "or" divider between address search and the manual pincode field. */
+.ganguram-delivery-popup__addr-search-or {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.85rem 0 0.1rem;
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gdp-muted, #8a8f9c);
+}
+.ganguram-delivery-popup__addr-search-or::before,
+.ganguram-delivery-popup__addr-search-or::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--gdp-line, rgba(22, 22, 30, 0.10));
+}

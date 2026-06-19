@@ -35,6 +35,19 @@
       <span class="ganguram-delivery-popup__current-value" data-gdp-current-value></span>
     </div>
 
+    {%- comment -%}
+      Optional Google Places address search (Phase 2.9B). Pincode-finder only —
+      hidden until assets/ganguram-places-address-search.js confirms a key is set;
+      on selecting an address it extracts the pincode and commits via
+      GanguramZone.setSelectedPincode (same path as the manual input below).
+    {%- endcomment -%}
+    <div class="ganguram-delivery-popup__addr-search" data-gdp-address-search-section hidden>
+      <label class="ganguram-delivery-popup__label" for="gdp-address-search">Find by address</label>
+      <div class="ganguram-delivery-popup__addr-search-slot" id="gdp-address-search" data-gdp-address-search></div>
+      <p class="ganguram-delivery-popup__addr-search-status" data-gdp-address-status role="status" aria-live="polite"></p>
+      <p class="ganguram-delivery-popup__addr-search-or">or enter a pincode</p>
+    </div>
+
     {%- comment -%} Pincode entry. {%- endcomment -%}
     <div class="ganguram-delivery-popup__field">
       <label class="ganguram-delivery-popup__label" for="gdp-input">Enter pincode</label>
