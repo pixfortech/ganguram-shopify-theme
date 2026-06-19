@@ -6,6 +6,8 @@
   the shared zone eligibility rule (window.GanguramZoneRules). No checkout / MOV /
   date-slot / shipping-rate / payment / ShipZip / SBZ / zipLogic logic.
 {%- endcomment -%}
+{%- capture gdp_fallback_undo_message -%}Items removed. Undo available for {seconds} seconds.{%- endcapture -%}
+{%- assign gdp_undo_message = settings.ganguram_cart_undo_message | default: gdp_fallback_undo_message -%}
 <script>
   window.GanguramCartConfig = {
     updateUrl: {{ routes.cart_url | append: '/update.js' | json }},
@@ -14,7 +16,7 @@
     allProductsUrl: {{ routes.all_products_collection_url | default: '/collections/all' | json }},
     undoEnabled: {% if settings.ganguram_cart_undo_enabled == false %}false{% else %}true{% endif %},
     undoSeconds: {{ settings.ganguram_cart_undo_seconds | default: 10 | json }},
-    undoMessage: {{ settings.ganguram_cart_undo_message | default: 'Items removed. Undo available for {seconds} seconds.' | json }}
+    undoMessage: {{ gdp_undo_message | json }}
   };
 </script>
 {{ 'ganguram-cart-eligibility.css' | asset_url | stylesheet_tag }}
