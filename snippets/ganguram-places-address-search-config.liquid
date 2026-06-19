@@ -1,0 +1,24 @@
+{%- comment -%}
+  Ganguram — Google Places address search config (Phase 2.9B).
+
+  Publishes window.GanguramPlacesConfig (enable flag + the merchant's dedicated
+  browser key + India region) and loads the scoped module. The module is a
+  PINCODE-FINDER only: it extracts a pincode from a selected address and commits it
+  via GanguramZone.setSelectedPincode — the pincode/zone stays the source of truth.
+
+  The key is NOT hard-coded in JS and NOT committed; it is entered in the Theme
+  Editor (Theme settings → "Ganguram — Address search"). Use a BROWSER key
+  restricted by HTTP referrer and to Maps JavaScript API + Places API (New). The
+  module self-gates: with no key / disabled, the search stays hidden and the manual
+  pincode flow is untouched. The Maps JS API loads lazily (only when the popup opens
+  / the search is focused), so it never loads if the popup is never opened.
+{%- endcomment -%}
+<script>
+  window.GanguramPlacesConfig = {
+    enabled: {% if settings.ganguram_places_enabled %}true{% else %}false{% endif %},
+    apiKey: {{ settings.ganguram_places_api_key | default: '' | json }},
+    country: 'in'
+  };
+</script>
+{{ 'ganguram-places-address-search.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ganguram-places-address-search.js' | asset_url }}" defer></script>
