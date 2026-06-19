@@ -1,23 +1,30 @@
 /*
- * Ganguram — Cart delivery progress + service options (Phase 2.11C)
+ * Ganguram — Cart delivery progress + MOV checkout guard (Phase 2.11C / 2.11C.1)
  * ---------------------------------------------------------------------------
- * ADVISORY cart UI. Consumes window.GanguramDeliveryRules:
- *   - getProgressData(cartSubtotal, location)  -> MOV / free-delivery progress
+ * ADVISORY, CART-SIDE ONLY. Consumes window.GanguramDeliveryRules:
+ *   - getProgressData(cartSubtotal, location)  -> MOV / delivery-charge data
  *   - getServiceOptions(location, options)     -> standard / 4-hour service options
- * and paints a small, read-only panel at the top of the cart (drawer + page):
- *   - a progress bar + "add X more" message toward the MOV / free-delivery threshold,
- *   - a display-only delivery charge line,
- *   - the available delivery SERVICE options (standard + 4-hour), each showing its
- *     charge and — for standard — its date-picker requirement / earliest date.
+ * and, for the SAME computed state, updates three surfaces consistently:
+ *   1. the cart PANEL (drawer + page): minimum-order / cart-value lines, a status
+ *      message, a horizontal progress line, the delivery charge, and the available
+ *      delivery service options;
+ *   2. a NOTICE near the checkout button explaining the true reason when the cart
+ *      is below the minimum order value (so customers see "Add ₹X more to meet the
+ *      minimum order" BEFORE checkout — not Shopify's generic "Shipping not
+ *      available" message);
+ *   3. a soft CHECKOUT GUARD: when below MOV it marks the checkout button blocked
+ *      and intercepts checkout clicks / cart-form submit (preventDefault), showing
+ *      the notice. When MOV is met, checkout proceeds normally.
  *
- * It is DISPLAY/ADVISORY ONLY. It NEVER enforces a minimum order, blocks or changes
- * checkout, sets the real shipping charge, mutates the cart, or touches ShipZip /
- * SBZ / zipLogic / Google / the pincode resolver / settings_data.json. The 4-hour
- * option is hidden when the cart is not 4-hour-eligible (all lines must be Quick
- * Commerce). Fully FAIL-OPEN: no rules / no selection / any error -> the panel just
- * hides and nothing breaks.
+ * It NEVER changes Shopify checkout, the final shipping charge, ShipZip / SBZ /
+ * zipLogic, the pincode resolver, Google code, or settings_data.json, and never
+ * mutates the cart. The guard is a cart-side advisory block only (bypassable like
+ * any client gate). Fully FAIL-OPEN: no rules / no selection / no MOV / any error
+ * -> nothing is blocked and the panel/notice hide.
  *
- * Money is PAISE (matching cart.total_price). No jQuery / Bootstrap / FontAwesome.
+ * Money is PAISE (matching cart.total_price). Liquid-safe copy tokens __MOV__ /
+ * __SUBTOTAL__ / __REMAINING__ / __AMOUNT__ / __DATE__ are replaced here in JS.
+ * No jQuery / Bootstrap / FontAwesome.
  * ---------------------------------------------------------------------------
  */
 (function () {
@@ -30,12 +37,14 @@
   function copy(key) {
     var c = cfg().copy || {};
     var d = {
-      movRemaining: 'Add __AMOUNT__ to reach the minimum order.',
-      freeDeliveryRemaining: 'Add __AMOUNT__ more for free delivery.',
-      freeDeliveryUnlocked: 'You’ve unlocked free delivery!',
-      minimumMet: 'Minimum order reached.',
-      deliveryChargeFrom: 'Delivery from __AMOUNT__',
+      movLabel: 'Minimum order:',
+      cartValueLabel: 'Cart value:',
+      addMore: 'Add __REMAINING__ more to continue',
+      minReached: 'Minimum order reached. You can continue to checkout.',
+      checkoutNotice: 'Minimum order for this delivery area is __MOV__. Add __REMAINING__ more to continue.',
+      freeDeliveryHint: 'add __AMOUNT__ for free delivery',
       freeDelivery: 'Free delivery',
+      deliveryChargeFrom: 'Delivery from __AMOUNT__',
       datePickerNote: 'Choose a delivery date',
       earliestNote: 'earliest __DATE__',
       standardLabel: 'Standard delivery',
@@ -43,9 +52,8 @@
     };
     return (c[key] != null) ? String(c[key]) : d[key];
   }
-  // Replace Liquid-safe tokens __AMOUNT__ / __DATE__ (the form used in the snippet —
-  // single-brace {amount} breaks Shopify's Liquid parser) with the given values.
-  // The legacy {amount}/{date} form is still accepted for backward compatibility.
+  // Replace Liquid-safe tokens __TOKEN__ (the form used in the snippet — single-brace
+  // {token} breaks Shopify's Liquid parser) with values; legacy {token} still works.
   function tmpl(s, vars) {
     s = String(s == null ? '' : s);
     vars = vars || {};
@@ -58,13 +66,25 @@
   function zone() { return window.GanguramZone || null; }
   function fmtMoney(paise) { var dr = rules(); return (dr && typeof dr.formatMoney === 'function') ? dr.formatMoney(paise) : ''; }
 
-  function containers() { return document.querySelectorAll('[data-ganguram-delivery-progress]'); }
-  function hide(el) { try { el.setAttribute('hidden', 'hidden'); } catch (e) {} }
+  function panels() { return document.querySelectorAll('[data-ganguram-delivery-progress]'); }
+  function notices() { return document.querySelectorAll('[data-ganguram-mov-notice]'); }
+  function checkoutButtons() { return document.querySelectorAll('#CheckOut, [name="checkout"]'); }
+  function show(el) { if (el) { el.removeAttribute('hidden'); } }
+  function hide(el) { if (el) { el.setAttribute('hidden', 'hidden'); } }
+  function setText(el, t) { if (el) { el.textContent = (t == null ? '' : t); } }
+
+  function readSubtotal() {
+    var els = document.querySelectorAll('[data-gdpr-cart-total]');
+    for (var i = 0; i < els.length; i++) {
+      var v = parseInt(els[i].getAttribute('data-gdpr-cart-total'), 10);
+      if (isFinite(v) && v >= 0) { return v; }
+    }
+    return 0;
+  }
 
   // Cart is 4-hour eligible only if it has items and EVERY line is Quick Commerce.
-  function cartFourHourEligible(container) {
-    var scope = (container && container.closest && container.closest('cart-form')) || document;
-    var lines = scope.querySelectorAll('[data-ganguram-cart-line]');
+  function cartFourHourEligible() {
+    var lines = document.querySelectorAll('[data-ganguram-cart-line]');
     if (!lines.length) { return false; }
     for (var i = 0; i < lines.length; i++) {
       if (String(lines[i].getAttribute('data-ganguram-quick-commerce')) !== 'true') { return false; }
@@ -82,30 +102,50 @@
     } catch (e) { return ''; }
   }
 
+  // ---- one shared computation (so panel + notice + guard never disagree) ----
+  function computeState() {
+    if (!enabled()) { return null; }
+    var dr = rules(), z = zone();
+    if (!dr || !z) { return null; }
+    var location;
+    try { location = z.getSelectedDeliveryLocation(); } catch (e) { return null; }
+    if (!location || !location.pincode || location.isServiceable !== true) { return null; }
+    var subtotal = readSubtotal();
+    var data = dr.getProgressData(subtotal, location);
+    if (!data || data.reason === 'none' || !data.rule) { return null; } // no rules -> fail open
+    var mov = data.mov;
+    var movMet = (mov == null) ? true : (data.movMet === true);
+    var svc = dr.getServiceOptions(location, { fourHourEligibleCart: cartFourHourEligible() });
+    return {
+      location: location, subtotal: subtotal, data: data,
+      mov: mov, movMet: movMet, movRemaining: data.movRemaining,
+      deliveryCharge: data.deliveryCharge,
+      freeDeliveryThreshold: data.freeDeliveryThreshold,
+      freeDeliveryMet: data.freeDeliveryMet,
+      freeDeliveryRemaining: data.freeDeliveryRemaining,
+      blocked: (mov != null && !movMet),
+      serviceOptions: (svc && svc.options) || []
+    };
+  }
+
   function buildServiceLi(o) {
     var li = document.createElement('li');
     li.className = 'ganguram-delivery-progress__service';
     li.setAttribute('data-gdpr-service', o.serviceType || '');
-
     var name = document.createElement('span');
     name.className = 'ganguram-delivery-progress__service-name';
     name.textContent = o.serviceLabel || (o.serviceType === 'four_hour' ? copy('fourHourLabel') : copy('standardLabel'));
     li.appendChild(name);
-
     if (o.deliveryCharge != null) {
       var ch = document.createElement('span');
       ch.className = 'ganguram-delivery-progress__service-charge';
       ch.textContent = (o.deliveryCharge === 0) ? copy('freeDelivery') : fmtMoney(o.deliveryCharge);
       li.appendChild(ch);
     }
-
     var notes = [];
     if (o.datePickerRequired) {
       var note = copy('datePickerNote');
-      if (o.defaultDateOffsetDays != null) {
-        var d = earliestDate(o.defaultDateOffsetDays);
-        if (d) { note += ' · ' + tmpl(copy('earliestNote'), { date: d }); }
-      }
+      if (o.defaultDateOffsetDays != null) { var d = earliestDate(o.defaultDateOffsetDays); if (d) { note += ' · ' + tmpl(copy('earliestNote'), { date: d }); } }
       notes.push(note);
     }
     if (o.customerMessageForDeliveryDate) { notes.push(o.customerMessageForDeliveryDate); }
@@ -119,77 +159,116 @@
     return li;
   }
 
-  function render(container) {
+  function renderPanel(panel, st) {
+    if (!st) { hide(panel); return; }
     try {
-      if (!enabled()) { hide(container); return; }
-      var dr = rules(); var z = zone();
-      if (!dr || !z) { hide(container); return; }
-      var location = z.getSelectedDeliveryLocation();
-      if (!location || !location.pincode || location.isServiceable !== true) { hide(container); return; }
+      var movLine = panel.querySelector('[data-gdpr-mov-line]');
+      var subLine = panel.querySelector('[data-gdpr-subtotal-line]');
+      var linesWrap = panel.querySelector('[data-gdpr-lines]');
+      if (st.mov != null) {
+        setText(panel.querySelector('[data-gdpr-mov-label]'), copy('movLabel'));
+        setText(panel.querySelector('[data-gdpr-mov]'), fmtMoney(st.mov));
+        setText(panel.querySelector('[data-gdpr-subtotal-label]'), copy('cartValueLabel'));
+        setText(panel.querySelector('[data-gdpr-subtotal]'), fmtMoney(st.subtotal));
+        show(movLine); show(subLine); show(linesWrap);
+      } else { hide(movLine); hide(subLine); hide(linesWrap); }
 
-      var subtotal = parseInt(container.getAttribute('data-gdpr-cart-total'), 10);
-      if (!isFinite(subtotal) || subtotal < 0) { subtotal = 0; }
+      // status message
+      var msgEl = panel.querySelector('[data-gdpr-message]');
+      var message = '';
+      if (st.mov != null && !st.movMet) { message = tmpl(copy('addMore'), { remaining: fmtMoney(st.movRemaining) }); }
+      else if (st.mov != null) { message = copy('minReached'); }
+      setText(msgEl, message); if (message) { show(msgEl); } else { hide(msgEl); }
 
-      var data = dr.getProgressData(subtotal, location);
-      if (!data || data.reason === 'none' || !data.rule) { hide(container); return; } // fail open: no rules
-
-      // ---- progress bar + message --------------------------------------------
-      var barEl = container.querySelector('[data-gdpr-bar]');
-      var fillEl = container.querySelector('[data-gdpr-bar-fill]');
-      var msgEl = container.querySelector('[data-gdpr-message]');
-      var target = null, message = '';
-      if (data.mov != null && !data.movMet) {
-        target = data.mov;
-        message = tmpl(copy('movRemaining'), { amount: fmtMoney(data.movRemaining) });
-      } else if (data.freeDeliveryThreshold != null && !data.freeDeliveryMet) {
-        target = data.freeDeliveryThreshold;
-        message = tmpl(copy('freeDeliveryRemaining'), { amount: fmtMoney(data.freeDeliveryRemaining) });
-      } else if (data.freeDeliveryMet) {
-        message = copy('freeDeliveryUnlocked');
-      } else if (data.mov != null) {
-        message = copy('minimumMet');
-      }
-      var pct = target ? Math.max(0, Math.min(100, Math.round(subtotal / target * 100))) : 100;
-      if (barEl && fillEl) {
+      // progress bar (toward MOV)
+      var barEl = panel.querySelector('[data-gdpr-bar]');
+      var fillEl = panel.querySelector('[data-gdpr-bar-fill]');
+      if (st.mov != null && barEl && fillEl) {
+        var pct = (st.mov > 0) ? Math.max(0, Math.min(100, Math.round(st.subtotal / st.mov * 100))) : 100;
         fillEl.style.width = pct + '%';
-        if (message) { barEl.removeAttribute('hidden'); barEl.setAttribute('aria-valuenow', String(pct)); }
-        else { barEl.setAttribute('hidden', 'hidden'); }
-      }
-      if (msgEl) { msgEl.textContent = message; if (message) { msgEl.removeAttribute('hidden'); } else { msgEl.setAttribute('hidden', 'hidden'); } }
+        barEl.setAttribute('aria-valuenow', String(pct));
+        show(barEl);
+      } else { hide(barEl); }
 
-      // ---- delivery charge (display only) ------------------------------------
-      var chargeEl = container.querySelector('[data-gdpr-charge]');
+      // delivery charge (display only) + optional free-delivery hint
+      var chargeEl = panel.querySelector('[data-gdpr-charge]');
       if (chargeEl) {
         var chargeText = '';
-        if (data.freeDeliveryMet) { chargeText = copy('freeDelivery'); }
-        else if (data.deliveryCharge != null) {
-          chargeText = (data.deliveryCharge === 0) ? copy('freeDelivery') : tmpl(copy('deliveryChargeFrom'), { amount: fmtMoney(data.deliveryCharge) });
+        if (st.freeDeliveryMet) { chargeText = copy('freeDelivery'); }
+        else if (st.deliveryCharge != null) {
+          chargeText = (st.deliveryCharge === 0) ? copy('freeDelivery') : tmpl(copy('deliveryChargeFrom'), { amount: fmtMoney(st.deliveryCharge) });
+          if (st.freeDeliveryThreshold != null && st.freeDeliveryRemaining != null && st.freeDeliveryRemaining > 0) {
+            chargeText += ' · ' + tmpl(copy('freeDeliveryHint'), { amount: fmtMoney(st.freeDeliveryRemaining) });
+          }
         }
-        if (chargeText) { chargeEl.textContent = chargeText; chargeEl.removeAttribute('hidden'); }
-        else { chargeEl.setAttribute('hidden', 'hidden'); }
+        setText(chargeEl, chargeText); if (chargeText) { show(chargeEl); } else { hide(chargeEl); }
       }
 
-      // ---- service options (standard + 4-hour; 4-hour hidden if cart ineligible)
-      var svcEl = container.querySelector('[data-gdpr-services]');
+      // service options — shown when checkout is allowed (MOV met / no MOV)
+      var svcEl = panel.querySelector('[data-gdpr-services]');
       if (svcEl) {
         svcEl.textContent = '';
-        var svc = dr.getServiceOptions(location, { fourHourEligibleCart: cartFourHourEligible(container) });
-        var opts = (svc && svc.options) || [];
-        for (var i = 0; i < opts.length; i++) { svcEl.appendChild(buildServiceLi(opts[i])); }
-        if (opts.length) { svcEl.removeAttribute('hidden'); } else { svcEl.setAttribute('hidden', 'hidden'); }
+        if (!st.blocked && st.serviceOptions.length) {
+          for (var i = 0; i < st.serviceOptions.length; i++) { svcEl.appendChild(buildServiceLi(st.serviceOptions[i])); }
+          show(svcEl);
+        } else { hide(svcEl); }
       }
 
-      container.removeAttribute('hidden');
-    } catch (e) { hide(container); } // fully fail-open
+      panel.setAttribute('data-gdpr-state', st.blocked ? 'blocked' : 'ok');
+      show(panel);
+    } catch (e) { hide(panel); }
+  }
+
+  function renderNotice(notice, st) {
+    try {
+      if (st && st.blocked) {
+        setText(notice, tmpl(copy('checkoutNotice'), { mov: fmtMoney(st.mov), remaining: fmtMoney(st.movRemaining) }));
+        show(notice);
+      } else { setText(notice, ''); hide(notice); }
+    } catch (e) { hide(notice); }
+  }
+
+  function guardButtons(st) {
+    var blocked = !!(st && st.blocked);
+    var btns = checkoutButtons();
+    for (var i = 0; i < btns.length; i++) {
+      var b = btns[i];
+      if (blocked) { b.classList.add('ganguram-mov-blocked'); b.setAttribute('aria-disabled', 'true'); }
+      else { b.classList.remove('ganguram-mov-blocked'); b.removeAttribute('aria-disabled'); }
+    }
   }
 
   function renderAll() {
-    var els = containers();
-    for (var i = 0; i < els.length; i++) { render(els[i]); }
+    var st = computeState();
+    var ps = panels(); for (var i = 0; i < ps.length; i++) { renderPanel(ps[i], st); }
+    var ns = notices(); for (var j = 0; j < ns.length; j++) { renderNotice(ns[j], st); }
+    guardButtons(st);
+    return st;
   }
 
-  // The cart re-renders (qty change / refreshCart) replace the panel markup; observe
-  // the cart-form(s) and re-paint. Mirrors the cart-attributes summary approach.
+  // ---- soft checkout guard (cart-side advisory; never changes checkout) -----
+  function isBlocked() { var st = computeState(); return !!(st && st.blocked); }
+  function revealNotices() {
+    var st = renderAll();
+    var ns = notices();
+    for (var i = 0; i < ns.length; i++) {
+      if (!ns[i].hasAttribute('hidden') && ns[i].scrollIntoView) { try { ns[i].scrollIntoView({ block: 'center' }); } catch (e) {} break; }
+    }
+    return st;
+  }
+  function onCheckoutClick(e) {
+    var t = e.target;
+    if (!t || !t.closest) { return; }
+    var hit = t.closest('#CheckOut, [name="checkout"], .shopify-payment-button, [data-shopify="payment-button"], .additional-checkout-buttons, [data-ganguram-checkout]');
+    if (!hit) { return; }
+    if (isBlocked()) { e.preventDefault(); e.stopPropagation(); revealNotices(); }
+  }
+  function onCartSubmit(e) {
+    var f = e.target;
+    if (f && f.id === 'cart' && isBlocked()) { e.preventDefault(); e.stopPropagation(); revealNotices(); }
+  }
+
+  // Re-paint after cart re-renders (qty change / refreshCart replace the markup).
   function observeCartForms() {
     if (!('MutationObserver' in window)) { return; }
     var forms = document.querySelectorAll('cart-form');
@@ -210,10 +289,11 @@
     observeCartForms();
     window.addEventListener('ganguram:delivery-location-changed', renderAll);
     window.addEventListener('ganguram:delivery-label-updated', renderAll);
+    document.addEventListener('click', onCheckoutClick, true);
+    document.addEventListener('submit', onCartSubmit, true);
   }
 
-  // small public hook (handy for re-render / testing); not required for operation
-  window.GanguramDeliveryProgress = { render: renderAll };
+  window.GanguramDeliveryProgress = { render: renderAll, isCheckoutBlocked: isBlocked };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
