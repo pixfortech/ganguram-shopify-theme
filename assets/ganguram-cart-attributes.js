@@ -174,13 +174,26 @@
   }
 
   // ---- optional read-only "Delivering to:" summary --------------------------
+  // Customer-facing label (city/name + pincode; never the internal zone label).
+  // Uses the shared helper; falls back to a safe local rule if it isn't loaded.
+  // DISPLAY ONLY: the stored "Delivery Zone" / "Delivery Zone Label" cart
+  // attributes still use the internal zone + label (see desiredAttributes()).
+  function displayLabel(loc) {
+    if (window.GanguramDisplayLabel && typeof window.GanguramDisplayLabel.get === 'function') {
+      return window.GanguramDisplayLabel.get(loc);
+    }
+    if (!loc || !loc.pincode) { return ''; }
+    if (loc.city) { return loc.city + ' ' + loc.pincode; }
+    if (loc.isKolkata || loc.zone === 'kolkata' || loc.zone === 'quick_commerce') { return 'Kolkata ' + loc.pincode; }
+    return String(loc.pincode);
+  }
   function renderSummary() {
     if (!summaryEnabled()) { return; }
     var els = document.querySelectorAll('[data-ganguram-cart-delivery-summary]');
     if (!els.length) { return; }
     var loc = currentLoc();
     var show = !!(loc && loc.pincode && loc.isServiceable === true);
-    var value = show ? ((loc.label ? loc.label + ' ' : '') + loc.pincode) : '';
+    var value = show ? displayLabel(loc) : '';
     for (var i = 0; i < els.length; i++) {
       var el = els[i];
       try {
