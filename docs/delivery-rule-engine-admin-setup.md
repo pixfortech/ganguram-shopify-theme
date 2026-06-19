@@ -44,6 +44,13 @@ This guide explains how a store admin creates the **admin‑configurable deliver
 | Free delivery threshold | `free_delivery_threshold` | Decimal | – | In **rupees**; subtotal at/above which charge is waived. Optional. |
 | 4‑hour eligible | `four_hour_eligible` | True/false (boolean) | – | Whether 4‑Hour delivery applies for this rule. |
 | Customer message | `customer_message` | Single line text | – | Optional message the 2.11C UI may show. |
+| **Service type** | `service_type` | Single line text | – | The delivery **service** this rule is for: `standard` or `four_hour` (blank ⇒ `standard`). Create **one rule per service** for a slab to offer both. |
+| **Service label** | `service_label` | Single line text | – | Customer‑facing service name, e.g. `Standard delivery`, `4‑hour delivery`. |
+| **Date picker required** | `date_picker_required` | True/false (boolean) | – | `standard` ⇒ **true** (customer picks a date); `four_hour` ⇒ **false**. |
+| **Default date offset (days)** | `default_date_offset_days` | Integer | – | Default delivery date offset from today (e.g. `1` = tomorrow). `0` is kept (same‑day). |
+| **Requires 4‑hour‑eligible cart** | `requires_four_hour_eligible_cart` | True/false (boolean) | – | Set **true** on `four_hour` rules. The option is shown only when the cart is 4‑hour‑eligible (see §2c). |
+| **Cart‑value message** | `customer_message_for_cart_value` | Single line text | – | Optional message about the order value / MOV for this service. |
+| **Delivery‑date message** | `customer_message_for_delivery_date` | Single line text | – | Optional message about the delivery date for this service. |
 
 > **Money fields must be `Decimal` in rupees.** The theme reads them as numbers and multiplies by 100 to get paise. Do **not** use a `Money` field type — its Liquid value is an object and won't serialize here.
 
@@ -117,7 +124,45 @@ The resolver picks the **first** matching tier (most‑specific‑wins); within 
 
 ## 2b. Where the distance comes from (future Google Distance Matrix)
 
-`resolve()` / `getProgressData()` accept an optional **`{ distanceKm }`** (km from the outlet to the selected address). **Phase 2.11B does NOT compute it** — `distanceKm` is simply absent today, so address selections currently resolve like manual entries (`exact → prefix → state → PAN India`). A **future, separate** integration (Google **Distance Matrix**, an app, or a precomputed pincode→distance table) will supply `distanceKm`, at which point the radius/band tiers activate. **No Google code is added or changed by this phase.**
+`resolve()` / `getProgressData()` / `getServiceOptions()` accept an optional **`{ distanceKm }`** (km from the outlet to the selected address). **Phase 2.11B does NOT compute it** — `distanceKm` is simply absent today, so address selections currently resolve like manual entries (`exact → prefix → state → PAN India`). A **future, separate** integration (Google **Distance Matrix**, an app, or a precomputed pincode→distance table) will supply `distanceKm`, at which point the radius/band tiers activate. **No Google code is added or changed by this phase.**
+
+## 2c. Delivery service options (standard + 4‑hour)
+
+A single slab can offer **multiple delivery services** — create **one rule per service**, all sharing the slab's match criteria (e.g. the same `local_radius_km`). Example for the 0–5 km slab:
+
+**Standard** — `name`: `Kolkata 0–5 km Standard` · `local_radius_km`: `5` · `service_type`: `standard` · `service_label`: `Standard delivery` · `date_picker_required`: ✓ · `default_date_offset_days`: `1` · `min_order_value`: `300` · `delivery_charge`: `40`
+
+**4‑hour** — `name`: `Kolkata 0–5 km 4‑hour` · `local_radius_km`: `5` · `service_type`: `four_hour` · `service_label`: `4‑hour delivery` · `date_picker_required`: ✗ · `requires_four_hour_eligible_cart`: ✓ · `four_hour_eligible`: ✓ · `min_order_value`: `500` · `delivery_charge`: `80`
+
+`getServiceOptions(location, options)` returns the **best rule per service** for the location, so 2.11C can show both:
+
+```js
+// options: { distanceKm, state, fourHourEligibleCart }  — all optional.
+// fourHourEligibleCart is true / false / undefined(unknown), from the existing
+// 4-hour engine; it decides whether the 4-hour option is offered (see below).
+var svc = window.GanguramDeliveryRules.getServiceOptions(location, { distanceKm: 3 });
+
+// svc = {
+//   reason,            // the resolved slab's reason (exact_pincode|prefix|distance|local_radius|state|pan_india|default|none)
+//   primary,           // the 'standard' option (or first), for the base MOV/progress display
+//   fourHourEligibleCartKnown,  fourHourEligibleCart,
+//   options: [ {        // standard first, then four_hour
+//     serviceType, serviceLabel, reason, name, priority,
+//     mov, deliveryCharge, freeDeliveryThreshold,         // paise or null
+//     fourHourEligible, datePickerRequired, defaultDateOffsetDays,
+//     requiresFourHourEligibleCart,
+//     customerMessageForCartValue, customerMessageForDeliveryDate, message,
+//     eligible          // true | null(unknown — requires a 4-hour-eligible cart)
+//   }, ... ]
+// }
+```
+
+**4‑hour eligibility (req #5 / #6):** a rule with `requires_four_hour_eligible_cart: true` is only offered when the cart qualifies for 4‑hour delivery (the existing 4‑hour engine decides this).
+- Pass **`fourHourEligibleCart: false`** ⇒ the 4‑hour option is **dropped**.
+- Pass **`fourHourEligibleCart: true`** ⇒ included with `eligible: true`.
+- **Omit it (unknown)** ⇒ included with `eligible: null` and `requiresFourHourEligibleCart: true`, so **2.11C can filter it safely** once the cart's eligibility is known.
+
+**PAN India** has no `four_hour` rule, so `getServiceOptions` returns **standard only** there. Everything is **display/advisory** and **fails open** (no rules ⇒ `options: []`).
 
 ---
 

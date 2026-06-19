@@ -38,9 +38,17 @@
  * taken from location.state, else options.state, else the read-only enrichment
  * caches (ganguram.pincodeCityCache / ganguram.recentLocations).
  *
+ * SERVICE OPTIONS (2.11B.2): the same slab can offer multiple delivery SERVICES
+ * (e.g. "standard" + "four_hour"). getServiceOptions() returns the best rule PER
+ * service type for the location, carrying each service's date-picker / offset /
+ * 4-hour-eligibility requirements and customer messages. A four-hour option is
+ * dropped when the cart is known ineligible (req #5) and kept with eligible:null
+ * when eligibility is unknown so Phase 2.11C can filter it safely (req #6).
+ *
  * Public API:
  *   getRules()
  *   resolve(location, options)               options: { distanceKm, state }
+ *   getServiceOptions(location, options)     options: { distanceKm, state, fourHourEligibleCart }
  *   getProgressData(cartSubtotal, location, options)   (DATA ONLY — no UI)
  *   formatMoney(paise)
  * No jQuery / Bootstrap / FontAwesome.
@@ -119,7 +127,15 @@
           deliveryCharge: num(r.deliveryCharge),
           freeDeliveryThreshold: num(r.freeDeliveryThreshold),
           fourHourEligible: r.fourHourEligible === true,
-          message: r.message || ''
+          message: r.message || '',
+          // delivery service option fields (2.11B.2)
+          serviceType: trim(r.serviceType).toLowerCase(),
+          serviceLabel: r.serviceLabel || '',
+          datePickerRequired: r.datePickerRequired === true,
+          defaultDateOffsetDays: (function () { var n = num(r.defaultDateOffsetDays); return n == null ? null : Math.round(n); })(),
+          requiresFourHourEligibleCart: r.requiresFourHourEligibleCart === true,
+          customerMessageForCartValue: r.customerMessageForCartValue || '',
+          customerMessageForDeliveryDate: r.customerMessageForDeliveryDate || ''
         };
       });
   }
@@ -146,50 +162,56 @@
     };
   }
 
-  // ---- resolution (most-specific-wins) -------------------------------------
-  function resolve(location, options) {
+  function normService(r) { return r.serviceType || 'standard'; } // blank -> 'standard' (default service)
+
+  // ---- shared resolution context (used by resolve + getServiceOptions) -----
+  function buildContext(location, options) {
     options = options || {};
     var loc = location || currentLocation();
     var pin = loc ? normPin(loc.pincode) : '';
     var state = (loc && loc.state) ? String(loc.state) : (options.state ? String(options.state) : stateFor(pin));
     state = state ? state.trim().toLowerCase() : '';
     var distanceKm = num(options.distanceKm);
-    var rules = getRules();
-    if (!rules.length) { return pack(null, 'none'); }
-
-    // 1) exact pincode — always highest (explicit per-pincode override)
-    if (pin) {
-      var exact = rules.filter(function (r) { return r.pincodes.indexOf(pin) !== -1; }).sort(byPriorityDesc);
-      if (exact.length) { return pack(exact[0], 'exact_pincode'); }
-    }
-
-    // Distance mode: a distance is supplied AND the admin configured at least one
-    // band/radius rule. In that case distance is AUTHORITATIVE for local-vs-remote
-    // and pincode-prefix local is bypassed (so a far address is never "local").
-    var hasDistanceRules = rules.some(function (r) {
+    var allRules = getRules();
+    // Distance mode is GLOBAL (based on whether ANY rule defines a band/radius), so
+    // local-vs-remote is decided the same way for every service type.
+    var hasDistanceRules = allRules.some(function (r) {
       return r.localRadiusKm != null || r.distanceMinKm != null || r.distanceMaxKm != null;
     });
-    var distanceMode = (distanceKm != null && hasDistanceRules);
+    return { pin: pin, state: state, distanceKm: distanceKm, distanceMode: (distanceKm != null && hasDistanceRules), allRules: allRules };
+  }
+
+  // Most-specific-wins over a GIVEN rule subset, using a shared context.
+  // Returns { rule, reason }. resolve() runs it over ALL rules; getServiceOptions()
+  // runs it once per service type so each service yields its best rule for the slab.
+  function resolveAmong(rules, ctx) {
+    var pin = ctx.pin, state = ctx.state, distanceKm = ctx.distanceKm, distanceMode = ctx.distanceMode;
+    if (!rules.length) { return { rule: null, reason: 'none' }; }
+
+    // 1) exact pincode — always highest
+    if (pin) {
+      var exact = rules.filter(function (r) { return r.pincodes.indexOf(pin) !== -1; }).sort(byPriorityDesc);
+      if (exact.length) { return { rule: exact[0], reason: 'exact_pincode' }; }
+    }
 
     if (distanceMode) {
-      // 3a) explicit distance band (most specific)
+      // 3a) distance band
       var band = rules.filter(function (r) {
         var hasBand = r.distanceMinKm != null || r.distanceMaxKm != null;
         var aboveMin = r.distanceMinKm == null || distanceKm >= r.distanceMinKm;
         var belowMax = r.distanceMaxKm == null || distanceKm <= r.distanceMaxKm;
         return hasBand && aboveMin && belowMax;
       }).sort(byPriorityDesc);
-      if (band.length) { return pack(band[0], 'distance'); }
+      if (band.length) { return { rule: band[0], reason: 'distance' }; }
 
-      // 3b) local radius (within radius -> local/Kolkata). Smallest radius that
-      //     still contains the distance wins, then priority. BEYOND every radius
-      //     -> no match here; skip prefix and fall through (requirement #6).
+      // 3b) local radius (smallest radius that still contains the distance wins).
+      //     Beyond every radius -> no match; prefix is skipped (requirement #6).
       var rad = rules
         .filter(function (r) { return r.localRadiusKm != null && distanceKm <= r.localRadiusKm; })
         .sort(function (a, b) { return (a.localRadiusKm - b.localRadiusKm) || byPriorityDesc(a, b); });
-      if (rad.length) { return pack(rad[0], 'local_radius'); }
+      if (rad.length) { return { rule: rad[0], reason: 'local_radius' }; }
     } else if (pin) {
-      // 2) pincode prefix (manual entry / no distance) — longest prefix wins
+      // 2) pincode prefix (manual / no distance) — longest prefix wins
       var pref = rules
         .map(function (r) {
           var best = 0;
@@ -201,26 +223,109 @@
         })
         .filter(function (x) { return x.plen > 0; })
         .sort(function (a, b) { return (b.plen - a.plen) || byPriorityDesc(a.r, b.r); });
-      if (pref.length) { return pack(pref[0].r, 'prefix'); }
+      if (pref.length) { return { rule: pref[0].r, reason: 'prefix' }; }
     }
 
-    // 4) state (state_key / state_name / state)
+    // 4) state
     if (state) {
       var st = rules.filter(function (r) {
         return r.stateNames.indexOf(state) !== -1 || r.stateKeys.indexOf(state) !== -1;
       }).sort(byPriorityDesc);
-      if (st.length) { return pack(st[0], 'state'); }
+      if (st.length) { return { rule: st[0], reason: 'state' }; }
     }
 
     // 5) PAN India default
     var pi = rules.filter(isPanIndiaDefault).sort(byPriorityDesc);
-    if (pi.length) { return pack(pi[0], 'pan_india'); }
+    if (pi.length) { return { rule: pi[0], reason: 'pan_india' }; }
 
-    // 6) global default / catch-all
+    // 6) global default
     var def = rules.filter(isGlobalDefault).sort(byPriorityDesc);
-    if (def.length) { return pack(def[0], 'default'); }
+    if (def.length) { return { rule: def[0], reason: 'default' }; }
 
-    return pack(null, 'none');
+    return { rule: null, reason: 'none' };
+  }
+
+  function resolve(location, options) {
+    var ctx = buildContext(location, options);
+    var r = resolveAmong(ctx.allRules, ctx);
+    return pack(r.rule, r.reason);
+  }
+
+  // ---- delivery service options (2.11B.2) ----------------------------------
+  // Returns the best rule PER service type for the location — e.g. a 'standard'
+  // and a 'four_hour' option for the same distance slab — so Phase 2.11C can offer
+  // delivery service choices. DATA ONLY; no UI, no enforcement.
+  function serviceOption(r, reason) {
+    return {
+      serviceType: normService(r),
+      serviceLabel: r.serviceLabel,
+      reason: reason,
+      name: r.name,
+      priority: r.priority,
+      mov: r.mov,
+      deliveryCharge: r.deliveryCharge,
+      freeDeliveryThreshold: r.freeDeliveryThreshold,
+      fourHourEligible: r.fourHourEligible,
+      datePickerRequired: r.datePickerRequired,
+      defaultDateOffsetDays: r.defaultDateOffsetDays,
+      requiresFourHourEligibleCart: r.requiresFourHourEligibleCart,
+      customerMessageForCartValue: r.customerMessageForCartValue,
+      customerMessageForDeliveryDate: r.customerMessageForDeliveryDate,
+      message: r.message,
+      eligible: true // refined below for options that require a 4-hour-eligible cart
+    };
+  }
+
+  // options: { distanceKm, state, fourHourEligibleCart }  (all optional)
+  //   fourHourEligibleCart: true | false | undefined(unknown).
+  // A four-hour option (requiresFourHourEligibleCart) is DROPPED when the cart is
+  // known ineligible (req #5); when eligibility is unknown it is kept with
+  // eligible:null so Phase 2.11C can filter it safely once it knows (req #6).
+  function getServiceOptions(location, options) {
+    options = options || {};
+    var ctx = buildContext(location, options);
+    var four = options.fourHourEligibleCart;
+    var known = (four === true || four === false);
+
+    // distinct service types present (blank normalized to 'standard')
+    var seen = {}, services = [];
+    for (var i = 0; i < ctx.allRules.length; i++) {
+      var s = normService(ctx.allRules[i]);
+      if (!seen[s]) { seen[s] = 1; services.push(s); }
+    }
+
+    var out = [];
+    services.forEach(function (svc) {
+      var subset = ctx.allRules.filter(function (r) { return normService(r) === svc; });
+      var res = resolveAmong(subset, ctx);
+      if (!res.rule) { return; }
+      var o = serviceOption(res.rule, res.reason);
+      if (o.requiresFourHourEligibleCart) {
+        if (four === false) { return; }              // known ineligible -> drop (req #5)
+        o.eligible = (four === true) ? true : null;   // null = unknown -> 2.11C filters (req #6)
+      }
+      out.push(o);
+    });
+
+    // standard first, then four_hour, then others; tie-break by priority desc
+    var rank = { standard: 0, four_hour: 1 };
+    out.sort(function (a, b) {
+      var ra = (a.serviceType in rank) ? rank[a.serviceType] : 2;
+      var rb = (b.serviceType in rank) ? rank[b.serviceType] : 2;
+      return (ra - rb) || ((b.priority || 0) - (a.priority || 0));
+    });
+
+    var primary = null;
+    for (var j = 0; j < out.length; j++) { if (out[j].serviceType === 'standard') { primary = out[j]; break; } }
+    if (!primary && out.length) { primary = out[0]; }
+
+    return {
+      reason: primary ? primary.reason : 'none',
+      primary: primary,
+      fourHourEligibleCartKnown: known,
+      fourHourEligibleCart: known ? four : null,
+      options: out
+    };
   }
 
   // ---- progress data (DATA ONLY — no UI) -----------------------------------
@@ -273,8 +378,9 @@
   window.GanguramDeliveryRules = {
     getRules: getRules,
     resolve: resolve,
+    getServiceOptions: getServiceOptions,
     getProgressData: getProgressData,
     formatMoney: formatMoney,
-    version: 2
+    version: 3
   };
 })();
