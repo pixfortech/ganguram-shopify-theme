@@ -7,9 +7,11 @@
   reuses window.GanguramZoneRules + GanguramZone. No checkout / shipping-rate / MOV /
   ShipZip / SBZ / zipLogic logic, no pincode lists.
 {%- endcomment -%}
+{%- capture gdp_fallback_pa_message -%}This product is not available for delivery to the selected pincode: {pincode}.{%- endcapture -%}
+{%- assign gdp_pa_message = settings.ganguram_pavl_message | default: gdp_fallback_pa_message -%}
 <script>
   window.GanguramProductAvailabilityConfig = {
-    message: {{ settings.ganguram_pavl_message | default: 'This product is not available for delivery to the selected pincode: {pincode}.' | json }},
+    message: {{ gdp_pa_message | json }},
     redirectEnabled: {% if settings.ganguram_pavl_redirect_enabled %}true{% else %}false{% endif %},
     redirectSeconds: {{ settings.ganguram_pavl_redirect_seconds | default: 8 | json }},
     redirectTarget: {{ settings.ganguram_pavl_redirect_target | default: '/' | json }}
