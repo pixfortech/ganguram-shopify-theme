@@ -76,6 +76,13 @@ This guide explains how a store admin creates the **admin‑configurable deliver
 - `min_order_value`: `300` · `delivery_charge`: `40` · `free_delivery_threshold`: `600`
 - *Used when a customer types a **pincode only** (no address ⇒ no distance). For **address** selections, the radius rule (A) decides local vs PAN India instead.*
 
+**B2. Kolkata ZONE FALLBACK** *(makes the cart panel show today — see §2a callout)*
+- `name`: `Kolkata (zone fallback)` · `active`: ✓ · `priority`: `0`
+- `zone_key`: `kolkata` · `city`: `Kolkata` · `service_type`: `standard`
+- **no** `local_radius_km` / `distance_min_km` / `distance_max_km` / `exact_pincode` / `pincode_prefix`
+- `min_order_value`: `300` · `delivery_charge`: `40` · `free_delivery_threshold`: `600` · `date_picker_required`: ✓ · `default_date_offset_days`: `1`
+- *Matches **any** Kolkata pincode when no distance is available. Add a `four_hour` twin (same fields, `service_type: four_hour`, `requires_four_hour_eligible_cart: ✓`) to also offer 4‑hour in the fallback. Distance/radius rules (A) still win once a distance exists.*
+
 **C. Per‑state override** *(req #2)*
 - `name`: `West Bengal` · `active`: ✓ · `priority`: `0`
 - `state_name`: `West Bengal`  *(or `state_key`: `WB`)*
@@ -116,11 +123,22 @@ The resolver picks the **first** matching tier (most‑specific‑wins); within 
    - **Beyond every band/radius ⇒ the address is *remote*: prefix rules are skipped** and it falls through to state / PAN India **even if the pincode is in West Bengal** (req #6).
    - *Otherwise (manual pincode, or no radius/band rules configured):* **`prefix`** — longest matching `pincode_prefix`.
 3. **`state`** — `state` / `state_key` / `state_name` matches the location's state.
-4. **`pan_india`** — the PAN India default (`zone_key: pan_india`).
-5. **`default`** — the global catch‑all.
-6. **`none`** — nothing matched and no default exists (fail‑open; no UI shown).
+4. **`zone`** — **ZONE FALLBACK** (until a Distance Matrix integration exists): a rule whose **only** criterion is `zone_key` = the selected **local** zone (`kolkata` / `quick_commerce`), with **no** pincode / prefix / state / radius / band. Non‑distance‑mode only.
+5. **`pan_india`** — the PAN India default (`zone_key: pan_india`).
+6. **`default`** — the global catch‑all.
+7. **`none`** — nothing matched and no default exists (fail‑open; no UI shown).
 
-> **Manual vs address (req #3, #6, #7):** a *manual pincode* has no coordinates, so it uses `exact → prefix → state → PAN India` (set up **B**/**C**/**D** to cover it). A *Google address* has coordinates, so **distance/radius is authoritative** — within the radius it's local (A), beyond it it's state/PAN India. Because of this, **prefer the radius rule (A) over a broad prefix rule** for local coverage; reserve `pincode_prefix` for narrow, intentional overrides.
+> ### ⚠️ Make the cart panel show today (zone fallback)
+> The cart currently knows only the **pincode** (e.g. `Kolkata 700006`); a **distance is not available yet** (that needs the future Distance Matrix — §2b). A rule that matches **only** by `local_radius_km` / `distance_min_km` / `distance_max_km` therefore matches **nothing** without a distance, so the panel stays hidden.
+>
+> **Fix:** add a **zone fallback rule** per local zone (and per service). For Kolkata standard:
+> - `name`: `Kolkata (zone fallback)` · `active`: ✓ · `zone_key`: `kolkata` · `city`: `Kolkata`
+> - **no** `local_radius_km`, `distance_min_km`, `distance_max_km`, `exact_pincode`, `pincode_prefix`
+> - `service_type`: `standard` · `min_order_value`, `delivery_charge`, `free_delivery_threshold` as desired
+>
+> Add a matching `four_hour` zone-fallback rule if you want the 4‑hour option in the no‑distance fallback. Once a Distance Matrix integration supplies `distanceKm`, the **radius/band rules take priority** (tier 2) and this fallback is **skipped in distance mode**, so a far address never becomes "local" (req #6). The fallback does **not** change distance-band behaviour.
+
+> **Manual vs address (req #3, #6, #7):** a *manual pincode* has no coordinates, so it uses `exact → prefix → state → zone fallback → PAN India`. A *Google address* has coordinates, so **distance/radius is authoritative** — within the radius it's local, beyond it it's state/PAN India.
 
 ## 2b. Where the distance comes from (future Google Distance Matrix)
 
@@ -143,7 +161,7 @@ A single slab can offer **multiple delivery services** — create **one rule per
 var svc = window.GanguramDeliveryRules.getServiceOptions(location, { distanceKm: 3 });
 
 // svc = {
-//   reason,            // the resolved slab's reason (exact_pincode|prefix|distance|local_radius|state|pan_india|default|none)
+//   reason,            // the resolved slab's reason (exact_pincode|prefix|distance|local_radius|state|zone|pan_india|default|none)
 //   primary,           // the 'standard' option (or first), for the base MOV/progress display
 //   fourHourEligibleCartKnown,  fourHourEligibleCart,
 //   options: [ {        // standard first, then four_hour
@@ -190,7 +208,7 @@ The 2.11C UI consumes the helper — it does **not** re‑read the metaobject it
 var data = window.GanguramDeliveryRules.getProgressData(cartTotalPaise /*, location, { distanceKm } */);
 
 // data = {
-//   rule, reason,                 // reason: exact_pincode | prefix | distance | local_radius | state | pan_india | default | none
+//   rule, reason,                 // reason: exact_pincode | prefix | distance | local_radius | state | zone | pan_india | default | none
 //   cartSubtotal,                 // paise
 //   mov, deliveryCharge, freeDeliveryThreshold,   // paise or null
 //   fourHourEligible, message,
