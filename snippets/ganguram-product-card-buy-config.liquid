@@ -1,0 +1,22 @@
+{%- comment -%}
+  Ganguram — Product-card "Buy now" config (Phase 2.11D.1).
+
+  Publishes window.GanguramProductCardBuyConfig and loads
+  assets/ganguram-product-card-buy.js + .css. The "Buy now" button (rendered only
+  on single-variant product cards by snippets/quick-buy.liquid) reuses the theme's
+  existing AJAX add, then proceeds to checkout ONLY when the cart-side MOV /
+  checkout guard allows; otherwise it opens the cart drawer with the minimum-order
+  notice. No Shopify checkout / final shipping-charge / ShipZip / SBZ / zipLogic /
+  resolver / settings_data.json change. Fail-open.
+
+  Loaded AFTER ganguram-delivery-progress-config so window.GanguramDeliveryProgress
+  (the guard) is available.
+{%- endcomment -%}
+<script>
+  window.GanguramProductCardBuyConfig = {
+    cartUrl: {{ routes.cart_url | json }},
+    checkoutUrl: "/checkout"
+  };
+</script>
+{{ 'ganguram-product-card-buy.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ganguram-product-card-buy.js' | asset_url }}" defer></script>

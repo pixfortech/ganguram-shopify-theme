@@ -1,0 +1,12 @@
+/*
+ * Ganguram — Product-card "Add to cart" + "Buy now" layout (Phase 2.11D.1).
+ * Stacks the two buttons on single-variant product cards. Display only; the
+ * theme's button styles are reused. No layout change for multi-variant cards.
+ */
+.ganguram-card-buy__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.ganguram-card-buy__buttons .ganguram-buy-now { margin: 0; }
+.ganguram-card-buy__buttons [data-ganguram-buy-now].working { opacity: 0.7; pointer-events: none; }

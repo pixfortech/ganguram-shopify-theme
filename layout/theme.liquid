@@ -565,5 +565,8 @@
   {%- comment -%} Cart delivery progress + service options (Phase 2.11C) — ADVISORY cart UI: reads window.GanguramDeliveryRules (getProgressData/getServiceOptions) and paints a read-only MOV/free-delivery progress bar + standard/4-hour service options into the cart panel. Display only; fail-open; NO MOV enforcement, NO checkout/shipping-charge change, NO cart mutation, NO SBZ/ShipZip/zipLogic/Google/resolver change. {%- endcomment -%}
   {%- render 'ganguram-delivery-progress-config' -%}
 
+  {%- comment -%} Product-card "Buy now" (Phase 2.11D.1) — adds an express Buy now next to Add to cart on single-variant product cards; reuses the theme AJAX add and proceeds to checkout ONLY if the cart-side MOV/checkout guard allows, else opens the cart drawer. Fail-open; NO checkout/shipping-charge/ShipZip/SBZ/zipLogic/resolver/settings_data change. {%- endcomment -%}
+  {%- render 'ganguram-product-card-buy-config' -%}
+
 </body>
 </html>

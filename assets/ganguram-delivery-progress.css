@@ -14,10 +14,10 @@
 }
 .ganguram-delivery-progress[hidden] { display: none !important; }
 
-/* minimum-order / cart-value lines: detailed (page) only; compact (drawer) hides them */
+/* minimum-order / cart-value lines: shown in BOTH the drawer and the cart page
+   (2.11D.1 — previously hidden in the drawer, which made MOV appear inconsistent). */
 .ganguram-delivery-progress__lines { display: flex; flex-wrap: wrap; gap: 0.15rem 1rem; margin: 0 0 0.4rem; }
 .ganguram-delivery-progress__lines[hidden] { display: none; }
-.ganguram-delivery-progress--drawer .ganguram-delivery-progress__lines { display: none; }
 .ganguram-delivery-progress__line[hidden] { display: none; }
 .ganguram-delivery-progress__line-label { opacity: 0.7; }
 .ganguram-delivery-progress__line-value { font-weight: 600; }

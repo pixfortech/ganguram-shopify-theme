@@ -70,6 +70,18 @@
   function zone() { return window.GanguramZone || null; }
   function fmtMoney(paise) { var dr = rules(); return (dr && typeof dr.formatMoney === 'function') ? dr.formatMoney(paise) : ''; }
 
+  // DEV-ONLY debug tracing (never customer-facing). Enable with ?ganguram_debug=1,
+  // localStorage['ganguram.debug']='1', or window.GanguramDeliveryProgressConfig.debug.
+  function isDebug() {
+    try {
+      if (cfg().debug === true) { return true; }
+      if (window.localStorage && window.localStorage.getItem('ganguram.debug') === '1') { return true; }
+      if (typeof location !== 'undefined' && /[?&]ganguram_debug=1\b/.test(location.search || '')) { return true; }
+    } catch (e) {}
+    return false;
+  }
+  function dbg() { if (isDebug()) { try { console.log.apply(console, ['[GanguramDeliveryProgress]'].concat([].slice.call(arguments))); } catch (e) {} } }
+
   function panels() { return document.querySelectorAll('[data-ganguram-delivery-progress]'); }
   function notices() { return document.querySelectorAll('[data-ganguram-mov-notice]'); }
   function checkoutButtons() { return document.querySelectorAll('#CheckOut, [name="checkout"]'); }
@@ -158,7 +170,7 @@
       if (hasFour) { blockedItems = nonQuickCommerceItemNames(); }
     }
 
-    return {
+    var result = {
       location: location, subtotal: subtotal, data: data,
       mov: mov, movMet: movMet, movRemaining: data.movRemaining,
       deliveryCharge: data.deliveryCharge,
@@ -171,6 +183,13 @@
       distanceKm: confirmed ? dist.distanceKm : null,
       fourHourBlockedItems: blockedItems
     };
+    dbg('state', {
+      pincode: location.pincode, confirmed: confirmed, distanceKmPassed: distOpts.distanceKm,
+      reason: data.reason, mov: mov, movMet: movMet, subtotal: subtotal,
+      services: result.serviceOptions.map(function (o) { return o.serviceType; }),
+      fourHourBlocked: blockedItems
+    });
+    return result;
   }
 
   function buildServiceLi(o) {
@@ -207,16 +226,22 @@
   function renderPanel(panel, st) {
     if (!st) { hide(panel); return; }
     try {
+      // minimum-order + cart-value lines — shown in BOTH drawer and page (2.11D.1).
+      // Cart value always shows when the panel shows; the minimum-order line shows
+      // whenever the resolved rule has an MOV (estimated label for pincode-only,
+      // confirmed label for a full address).
       var movLine = panel.querySelector('[data-gdpr-mov-line]');
       var subLine = panel.querySelector('[data-gdpr-subtotal-line]');
       var linesWrap = panel.querySelector('[data-gdpr-lines]');
+      setText(panel.querySelector('[data-gdpr-subtotal-label]'), copy('cartValueLabel'));
+      setText(panel.querySelector('[data-gdpr-subtotal]'), fmtMoney(st.subtotal));
+      show(subLine);
       if (st.mov != null) {
         setText(panel.querySelector('[data-gdpr-mov-label]'), st.confirmed ? copy('movLabel') : copy('movLabelEstimated'));
         setText(panel.querySelector('[data-gdpr-mov]'), fmtMoney(st.mov));
-        setText(panel.querySelector('[data-gdpr-subtotal-label]'), copy('cartValueLabel'));
-        setText(panel.querySelector('[data-gdpr-subtotal]'), fmtMoney(st.subtotal));
-        show(movLine); show(subLine); show(linesWrap);
-      } else { hide(movLine); hide(subLine); hide(linesWrap); }
+        show(movLine);
+      } else { hide(movLine); }
+      show(linesWrap);
 
       // estimated (pincode) vs confirmed (full address) note
       var estEl = panel.querySelector('[data-gdpr-estimate]');
