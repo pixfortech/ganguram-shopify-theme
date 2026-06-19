@@ -1,0 +1,40 @@
+{%- comment -%}
+  Ganguram — Delivery location -> cart attributes config (Phase 2.10A).
+
+  Publishes window.GanguramCartAttributesConfig (localized Ajax cart URLs + the
+  cart attribute key names + the optional read-only "Delivering to" summary label),
+  then loads the scoped module. The module mirrors the SELECTED pincode/zone (via
+  window.GanguramZone, the single source of truth) into Shopify cart attributes so
+  the delivery context travels with the cart/order for admin visibility.
+
+  Handoff ONLY: it does NOT autofill or change checkout, does NOT change the
+  checkout URL or button behaviour, does NOT touch MOV / date-slot / shipping rates
+  / SBZ / ShipZip / zipLogic / payment, does NOT change product/cart eligibility or
+  cart removal/undo, adds NO Google Maps, and never writes localStorage["Zipcode"].
+  Fail-open: any Ajax error is a silent console warning and never blocks checkout.
+  Privacy: stores only pincode, zone, zone label, a coarse source label and (only
+  if already captured as a short safe city/state summary) that summary — never a
+  full street address, lat/lng, or place_id.
+
+  Attribute key names are kept here as plain literals (JSON-safe via | json) so they
+  are single-sourced and never embed placeholder tokens inside a default string.
+{%- endcomment -%}
+<script>
+  window.GanguramCartAttributesConfig = {
+    enabled: true,
+    updateUrl: {{ routes.cart_url | append: '/update.js' | json }},
+    cartUrl: {{ routes.cart_url | append: '.js' | json }},
+    debounceMs: 600,
+    summaryEnabled: true,
+    summaryLabel: {{ 'Delivering to:' | json }},
+    keys: {
+      pincode: {{ 'Delivery Pincode' | json }},
+      zone: {{ 'Delivery Zone' | json }},
+      zoneLabel: {{ 'Delivery Zone Label' | json }},
+      source: {{ 'Delivery Location Source' | json }},
+      addressSummary: {{ 'Delivery Address Summary' | json }}
+    }
+  };
+</script>
+{{ 'ganguram-cart-attributes.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ganguram-cart-attributes.js' | asset_url }}" defer></script>

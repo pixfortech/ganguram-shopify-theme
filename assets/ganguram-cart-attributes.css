@@ -1,0 +1,32 @@
+/*
+ * Ganguram — read-only cart delivery summary (Phase 2.10A).
+ * Subtle, Local-theme-native, display-only. Scoped to .ganguram-cart-delivery-summary.
+ * Inherits the cart's own text colour (currentColor) so it is always readable on
+ * whatever cart background the merchant uses — no inverted/low-contrast text, no
+ * heavy background fill. Neutral border works on both light and dark surfaces.
+ */
+.ganguram-cart-delivery-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4em;
+  margin: 0 0 1rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(128, 128, 128, 0.25);
+  border-radius: 6px;
+  font-size: 0.875em;
+  line-height: 1.3;
+  color: currentColor;
+}
+
+.ganguram-cart-delivery-summary[hidden] {
+  display: none !important;
+}
+
+.ganguram-cart-delivery-summary__label {
+  opacity: 0.7;
+}
+
+.ganguram-cart-delivery-summary__value {
+  font-weight: 600;
+}
