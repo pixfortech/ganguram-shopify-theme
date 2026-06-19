@@ -550,5 +550,8 @@
   {%- comment -%} Product page pincode availability (Phase 2.7C hotfix) — product pages only; disables Add to Cart/Buy Now + message when the product is not deliverable to the selected pincode. Reuses the zone rule; no checkout/shipping/ShipZip logic. {%- endcomment -%}
   {%- render 'ganguram-product-availability-config' -%}
 
+  {%- comment -%} Delivery location -> cart attributes handoff (Phase 2.10A) — mirrors the selected pincode/zone into Shopify cart attributes via the Ajax cart API for admin/order visibility. Reads GanguramZone only; fail-open. No checkout autofill, no MOV/date-slot/shipping/SBZ/ShipZip/zipLogic/payment, no eligibility/removal/undo change. {%- endcomment -%}
+  {%- render 'ganguram-cart-attributes-config' -%}
+
 </body>
 </html>

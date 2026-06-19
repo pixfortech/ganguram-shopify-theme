@@ -16,6 +16,7 @@
 	<form action="{{ routes.cart_url }}" method="post" novalidate class="cart__form {% if cart.item_count == 0 %} cart--empty {% endif %}" id="cart">
 	
 		<div class="cart-holder cart-block element--has-border--body element--border-radius element--no-border-on-small margin-bottom--regular" data-items="{{ cart.items.size }}">
+			{%- if cart.item_count > 0 -%}{%- render 'ganguram-cart-delivery-summary' -%}{%- endif -%}
 
 			<div class="cart-form__items {% if cart.item_count == 0 %} gutter--regular {% endif %}">
 				{%- if cart.item_count > 0 -%}

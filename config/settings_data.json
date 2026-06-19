@@ -72,6 +72,8 @@
     "social_linkedin": "https://linkedin.com//company/ganguramoriginal",
     "ganguram_4h_inactive_behaviour": "hide",
     "ganguram_ecr_seconds": 2,
+    "ganguram_places_enabled": true,
+    "ganguram_places_api_key": "AIzaSyBPP8E71qfFID6gR986MipcqllnG7kjAdM",
     "sections": {
       "popups": {
         "type": "popups",

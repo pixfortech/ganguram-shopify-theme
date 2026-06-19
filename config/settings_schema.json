@@ -1776,7 +1776,6 @@
 				"type": "text",
 				"id": "ganguram_places_api_key",
 				"label": "Google Places browser API key",
-				"default": "",
 				"info": "Use a DEDICATED browser key (not the stores-map key). Restrict it by HTTP referrer to your store domain, and restrict its APIs to Maps JavaScript API + Places API (New). Both APIs must be enabled in Google Cloud. The key is public by design; referrer + API restrictions are the protection."
 			}
 		]
