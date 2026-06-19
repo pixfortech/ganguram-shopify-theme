@@ -151,7 +151,7 @@ DeliveryRule {
   meta:     priority/specificity, default/fallback rule
 }
 ```
-Plus a **default/fallback** rule (e.g. PAN-India: higher MOV, flat/である charge, no 4-hour).
+Plus a **default/fallback** rule (e.g. PAN-India: higher MOV, flat per-order charge, no 4-hour).
 
 ### Option comparison
 
