@@ -6,15 +6,30 @@
 
 /* The label reuses .ganguram-delivery-popup__label (small, muted, uppercase). */
 
-.ganguram-delivery-popup__addr-search-slot { display: block; width: 100%; min-width: 0; }
+.ganguram-delivery-popup__addr-search-slot { display: block; width: 100%; min-width: 0; color-scheme: light; }
 /* The PlaceAutocompleteElement is a web component; size its host to the field width.
-   Its internals are shadow DOM (limited styling) — keep the container clean so it
-   reads as a native field row. */
+   Its internals are shadow DOM (limited styling), and by default it follows the OS
+   colour scheme — which made it render as a dark/black field inside the light popup.
+   Force a LIGHT appearance so it matches the manual pincode field:
+   - color-scheme:light is the reliable lever for the shadow-DOM input,
+   - the host bg/text/border mirror the popup's own field tokens,
+   - the --gmpx-* custom properties are a best-effort pass-through for component
+     versions that expose them (ignored safely otherwise). */
 .ganguram-delivery-popup__addr-search-slot gmp-place-autocomplete,
 .ganguram-delivery-popup__addr-search-slot [data-gdp-address-el] {
   display: block;
   width: 100%;
   box-sizing: border-box;
+  color-scheme: light;
+  background: #fff;
+  color: var(--gdp-text, #20242e);
+  border: 1px solid var(--gdp-field-border, rgba(22, 22, 30, 0.18));
+  border-radius: var(--gdp-radius-sm, 9px);
+  --gmpx-color-surface: #ffffff;
+  --gmpx-color-on-surface: var(--gdp-text, #20242e);
+  --gmpx-color-on-surface-variant: var(--gdp-text-2, #585e6c);
+  --gmpx-color-primary: var(--gdp-accent, #49488d);
+  --gmpx-font-family-base: inherit;
 }
 
 .ganguram-delivery-popup__addr-search-status {

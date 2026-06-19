@@ -26,6 +26,18 @@
   function zone() { return window.GanguramZone || null; }
   function inDesignMode() { return !!(window.Shopify && window.Shopify.designMode); }
 
+  // Customer-facing label (city/name + pincode; never the internal zone label).
+  // Uses the shared helper; falls back to a safe local rule if it isn't loaded.
+  function displayLabel(loc) {
+    if (window.GanguramDisplayLabel && typeof window.GanguramDisplayLabel.get === 'function') {
+      return window.GanguramDisplayLabel.get(loc);
+    }
+    if (!loc || !loc.pincode) { return ''; }
+    if (loc.city) { return loc.city + ' ' + loc.pincode; }
+    if (loc.isKolkata || loc.zone === 'kolkata' || loc.zone === 'quick_commerce') { return 'Kolkata ' + loc.pincode; }
+    return String(loc.pincode);
+  }
+
   // -------------------------------------------------------------------------
   // public guard helpers
   // -------------------------------------------------------------------------
@@ -61,7 +73,7 @@
     var loc = currentLoc();
     var val = q('[data-gdp-current-value]');
     if (loc && loc.pincode && loc.isServiceable === true) {
-      if (val) { val.textContent = (loc.label ? loc.label + ' ' : '') + loc.pincode; }
+      if (val) { val.textContent = displayLabel(loc); }
       el.hidden = false;
     } else {
       if (val) { val.textContent = ''; }
@@ -132,7 +144,7 @@
     // instead of onZoneChange closing instantly. No filtering logic is duplicated here.
     suppressAutoClose = true;
     var loc = z.setSelectedPincode(raw);
-    setStatus('Products updated for ' + (loc.label ? loc.label + ' ' : '') + loc.pincode + '.', 'ok');
+    setStatus('Products updated for ' + displayLabel(loc) + '.', 'ok');
     setTitle('Choose delivery location');
     setCurrent();
     clearTimeout(successTimer);
