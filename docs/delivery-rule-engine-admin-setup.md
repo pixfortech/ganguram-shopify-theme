@@ -10,6 +10,8 @@ This guide explains how a store admin creates the **admin‑configurable deliver
 > **Source-of-truth decision:** Phase 2.11A chose **Shopify metaobjects**. The theme reads them **directly** via `shop.metaobjects.ganguram_delivery_rule.values` — **no shop metafield is required for the theme**. (The shop metafield `shop.metafields.ganguram.delivery_rules` is only needed later for a Shopify Function / app — see §3.)
 >
 > **Model update (state + distance/radius):** rules now also support a **default PAN India MOV**, **per‑state overrides**, and a **local‑delivery radius** (treat a Google address within *N* km of the outlet as local/Kolkata; beyond it, as PAN India even if the pincode is in West Bengal). See **§2a** for the resolution order, and **§2b** for how a distance is supplied.
+>
+> **Phase 2.11D update (pincode estimate vs full‑address distance):** the theme now **actually computes** the driving distance for a **selected full address** (Google Distance Matrix), so the radius/band tiers in §2a are **live** for address selections. A **pincode‑only** selection stays an **estimate** (no distance ⇒ zone/prefix rules) and the cart shows estimated MOV/delivery guidance; a **full address** is **confirmed** (driving distance ⇒ distance slabs). This needs one new setting (**outlet origin**) and the **Distance Matrix API** — see **§2d**. Customers are **never forced** to enter a full address before checkout.
 
 ---
 
@@ -140,9 +142,18 @@ The resolver picks the **first** matching tier (most‑specific‑wins); within 
 
 > **Manual vs address (req #3, #6, #7):** a *manual pincode* has no coordinates, so it uses `exact → prefix → state → zone fallback → PAN India`. A *Google address* has coordinates, so **distance/radius is authoritative** — within the radius it's local, beyond it it's state/PAN India.
 
-## 2b. Where the distance comes from (future Google Distance Matrix)
+## 2b. Where the distance comes from (Google Distance Matrix — Phase 2.11D)
 
-`resolve()` / `getProgressData()` / `getServiceOptions()` accept an optional **`{ distanceKm }`** (km from the outlet to the selected address). **Phase 2.11B does NOT compute it** — `distanceKm` is simply absent today, so address selections currently resolve like manual entries (`exact → prefix → state → PAN India`). A **future, separate** integration (Google **Distance Matrix**, an app, or a precomputed pincode→distance table) will supply `distanceKm`, at which point the radius/band tiers activate. **No Google code is added or changed by this phase.**
+`resolve()` / `getProgressData()` / `getServiceOptions()` accept an optional **`{ distanceKm }`** (km from the outlet to the selected address). **Phase 2.11D supplies it for full addresses:** when a customer picks a **Google address** in the popup search, `assets/ganguram-distance.js` computes the **actual driving distance** (Distance Matrix) from the outlet origin and **confirms** it, so the radius/band tiers in §2a activate for that selection.
+
+A **pincode‑only** selection (manual entry, a recent/saved pincode) has **no coordinates**, so `distanceKm` stays absent and it resolves like before (`exact → prefix → state → zone fallback → PAN India`) — an **estimate**. So:
+
+| Selection | Distance | Resolution | Cart shows |
+|---|---|---|---|
+| Manual / recent **pincode** | none (estimate) | `exact → prefix → state → zone → PAN India` | **Estimated** MOV + "enter your complete address for accurate options" |
+| Google **full address** | driving km (confirmed) | distance **band / radius** tiers (§2a) | **Confirmed** MOV for the matched slab |
+
+Setup (outlet origin + Distance Matrix API) is in **§2d**. If the origin is blank or the API isn't enabled, everything **fails open** to the pincode estimate — nothing breaks.
 
 ## 2c. Delivery service options (standard + 4‑hour)
 
@@ -184,6 +195,36 @@ var svc = window.GanguramDeliveryRules.getServiceOptions(location, { distanceKm:
 
 ---
 
+## 2d. Pincode estimate vs full‑address driving distance (Phase 2.11D)
+
+Phase 2.11D wires the **actual driving distance** into the cart so a **full address** gives a precise result while a **pincode** stays a quick estimate. It **reuses the existing Phase 2.9B Google key** (no new key) and **does not force** a full address before checkout.
+
+### One‑time setup
+
+1. **Theme settings → "Ganguram - Address search" → "Outlet origin (lat,lng) for driving distance"** (`ganguram_outlet_origin`). Enter your outlet's coordinates as `lat,lng` (e.g. `22.5726,88.3639`). **Leave blank to keep pincode‑only estimates** (the distance feature stays off — fail‑open).
+2. **Google Cloud:** enable the **Distance Matrix API** on the **same browser key** used for the address search (`ganguram_places_api_key`). Keep the key restricted by **HTTP referrer** (your store domain) and to the APIs you use (Maps JavaScript + Places (New) + Geocoding + Distance Matrix).
+3. Create the **distance band / `local_radius_km` rules** in §2 so the confirmed distance has slabs to match (e.g. `0–5`, `5.01–10`, `10.01–15`, `15.01–20` km). Keep the **zone‑fallback** rules (§2a) so the **pincode estimate** still shows a panel.
+
+### How it behaves
+
+- **Pincode‑only (estimate):** the cart identifies the city/zone from the pincode and shows **"Estimated minimum order:"** plus the note *"Delivery and minimum order are estimated from your pincode. For accurate delivery options, please enter your complete address."* Standard delivery continues on the pincode/zone/product rules. **No accurate distance is claimed from a pincode alone.**
+- **Full address (confirmed):** on selecting a Google address, the theme computes the **driving distance** from the outlet origin and matches the **distance slab** (§2a tier 2). The cart shows **"Minimum order:"** (confirmed) and *"Delivery options confirmed for your address."* The result is the accurate one.
+- **Every location change first drops to the estimate**, then an address selection re‑confirms the distance asynchronously — the cart re‑renders when it arrives (`ganguram:delivery-distance-updated`).
+- **MOV / progress (both drawer + page):** below MOV ⇒ *"Minimum order for this delivery area is ₹MOV. Add ₹REMAINING more to continue."* and a **soft checkout guard** (cart‑side). MOV met ⇒ checkout proceeds.
+
+### 4‑hour (quick‑commerce) eligibility messaging
+
+4‑hour delivery is offered only when **location/distance/time qualify AND every cart line is quick‑commerce eligible** (the existing 4‑hour engine + cart attributes decide this):
+
+- If the cart is **mixed** (a 4‑hour option would otherwise apply for this area), the cart shows: *"4‑hour delivery is not available because the following item(s) are not eligible for quick delivery: ITEM_NAMES."* — naming the offending lines from their cart‑line product titles, and the 4‑hour option is dropped (Standard remains).
+- If **all** items are eligible, 4‑hour is shown **only if** the area/distance/time also qualify.
+
+### Privacy & safety
+
+`ganguram-distance.js` stores **only** the resulting `distanceKm` + pincode in `localStorage` (`ganguram.deliveryDistance`) — **never** the address or coordinates. It **never** changes Shopify checkout, the final shipping charge, ShipZip/SBZ/zipLogic, the pincode resolver, or `settings_data.json`. If the Distance Matrix call fails, times out (8 s), or the API isn't enabled, it **fails open** to the pincode estimate.
+
+---
+
 ## 3. (Later) Connect entries to `shop.metafields.ganguram.delivery_rules`
 
 **Not required for the theme.** This step is only for the **future hard‑enforcement track** (a Shopify **Cart/Checkout Validation Function**, which reads metafields — not theme settings).
@@ -196,15 +237,15 @@ Shop metafields are typically set via the GraphQL Admin API or an app (the admin
 
 ---
 
-## 4. How Phase 2.11C (progress bar) will read this
+## 4. How the cart UI (Phase 2.11C / 2.11D) reads this
 
-The 2.11C UI consumes the helper — it does **not** re‑read the metaobject itself:
+The cart UI consumes the helper — it does **not** re‑read the metaobject itself:
 
 ```js
 // cart.total_price is in PAISE; pass it directly. location defaults to the
-// current GanguramZone selection when omitted. The 3rd arg (options) is optional
-// and may carry { distanceKm } once a Distance Matrix integration exists (§2b);
-// today it is absent, so address selections resolve like manual pincode entries.
+// current GanguramZone selection when omitted. The 3rd arg (options) is optional;
+// Phase 2.11D passes { distanceKm } for a CONFIRMED full address (§2b/§2d) and
+// omits it for a pincode‑only estimate (resolves like a manual pincode entry).
 var data = window.GanguramDeliveryRules.getProgressData(cartTotalPaise /*, location, { distanceKm } */);
 
 // data = {

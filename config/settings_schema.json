@@ -1777,6 +1777,12 @@
 				"id": "ganguram_places_api_key",
 				"label": "Google Places browser API key",
 				"info": "Use a DEDICATED browser key (not the stores-map key). Restrict it by HTTP referrer to your store domain, and restrict its APIs to Maps JavaScript API + Places API (New). Both APIs must be enabled in Google Cloud. The key is public by design; referrer + API restrictions are the protection."
+			},
+			{
+				"type": "text",
+				"id": "ganguram_outlet_origin",
+				"label": "Outlet origin (lat,lng) for driving distance",
+				"info": "Your outlet location as \"lat,lng\" (e.g. 22.5726,88.3639). When set, a SELECTED FULL ADDRESS computes the actual driving distance (confirmed) for the distance-slab delivery rules. Requires the Google Maps Distance Matrix API enabled on the key above. Leave blank to use pincode-only estimates."
 			}
 		]
 	}

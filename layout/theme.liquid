@@ -531,6 +531,9 @@
   {%- comment -%} Google Places address search (Phase 2.9B) — optional pincode-finder in the popup; extracts a pincode and commits via GanguramZone.setSelectedPincode. Self-gates on a merchant key; Maps JS lazy-loads on popup open. No checkout autofill / filtering / cart logic. {%- endcomment -%}
   {%- render 'ganguram-places-address-search-config' -%}
 
+  {%- comment -%} Driving-distance provider (Phase 2.11D) — for a SELECTED FULL ADDRESS, reuses the Phase 2.9B Google setup to compute the actual driving distance (confirmed distanceKm) used by the cart distance-slab rules. Needs the outlet origin setting + Distance Matrix API. Fail-open (no origin -> estimated pincode path). No checkout/shipping/SBZ/ShipZip/zipLogic/resolver/settings_data change. {%- endcomment -%}
+  {%- render 'ganguram-distance-config' -%}
+
   {%- comment -%} Manual-pincode -> city enrichment (display hotfix) — when a selected pincode's city is unknown, asynchronously reuses the Phase 2.9B Google setup (no new key) to resolve the city and refresh the shared display label everywhere. Display/enrichment only; fail-open; Google not loaded on page load. No resolver/zone/filtering/cart-logic change. {%- endcomment -%}
   <script src="{{ 'ganguram-pincode-enrich.js' | asset_url }}" defer></script>
 
