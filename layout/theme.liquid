@@ -556,5 +556,8 @@
   {%- comment -%} Delivery location -> cart attributes handoff (Phase 2.10A) — mirrors the selected pincode/zone into Shopify cart attributes via the Ajax cart API for admin/order visibility. Reads GanguramZone only; fail-open. No checkout autofill, no MOV/date-slot/shipping/SBZ/ShipZip/zipLogic/payment, no eligibility/removal/undo change. {%- endcomment -%}
   {%- render 'ganguram-cart-attributes-config' -%}
 
+  {%- comment -%} Delivery rule engine foundation (Phase 2.11B) — reads admin-configured rules from the `ganguram_delivery_rule` metaobject and resolves the rule for the selected pincode/zone (window.GanguramDeliveryRules). Data/resolver only; fail-open; NO UI/progress bar, NO MOV enforcement, NO checkout/charge/SBZ/ShipZip/zipLogic/resolver change. {%- endcomment -%}
+  {%- render 'ganguram-delivery-rules-config' -%}
+
 </body>
 </html>
