@@ -37,6 +37,7 @@
         {%- assign gdr_dmin = r.distance_min_km.value -%}
         {%- assign gdr_dmax = r.distance_max_km.value -%}
         {%- assign gdr_lr = r.local_radius_km.value -%}
+        {%- assign gdr_dod = r.default_date_offset_days.value -%}
         {
           "name": {{ r.name.value | default: '' | json }},
           "active": {% if r.active.value == false %}false{% else %}true{% endif %},
@@ -55,7 +56,14 @@
           "deliveryCharge": {% if gdr_dc != blank %}{{ gdr_dc | times: 100 | round }}{% else %}null{% endif %},
           "freeDeliveryThreshold": {% if gdr_fdt != blank %}{{ gdr_fdt | times: 100 | round }}{% else %}null{% endif %},
           "fourHourEligible": {% if r.four_hour_eligible.value == true %}true{% else %}false{% endif %},
-          "message": {{ r.customer_message.value | default: '' | json }}
+          "message": {{ r.customer_message.value | default: '' | json }},
+          "serviceType": {{ r.service_type.value | default: '' | json }},
+          "serviceLabel": {{ r.service_label.value | default: '' | json }},
+          "datePickerRequired": {% if r.date_picker_required.value == true %}true{% else %}false{% endif %},
+          "defaultDateOffsetDays": {% if gdr_dod != blank %}{{ gdr_dod | json }}{% else %}null{% endif %},
+          "requiresFourHourEligibleCart": {% if r.requires_four_hour_eligible_cart.value == true %}true{% else %}false{% endif %},
+          "customerMessageForCartValue": {{ r.customer_message_for_cart_value.value | default: '' | json }},
+          "customerMessageForDeliveryDate": {{ r.customer_message_for_delivery_date.value | default: '' | json }}
         }{%- unless forloop.last -%},{%- endunless -%}
       {%- endfor -%}
     ]
