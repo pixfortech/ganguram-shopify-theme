@@ -1,0 +1,59 @@
+/*
+ * Ganguram — cart delivery progress + service options (Phase 2.11C). Subtle,
+ * Local-theme-native, display-only. Scoped to .ganguram-delivery-progress.
+ * Inherits the cart's text colour (currentColor) — no inverted/low-contrast text,
+ * no heavy fill. Neutral borders work on light and dark surfaces.
+ */
+.ganguram-delivery-progress {
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid rgba(128, 128, 128, 0.22);
+  border-radius: 8px;
+  font-size: 0.85em;
+  line-height: 1.4;
+  color: currentColor;
+}
+.ganguram-delivery-progress[hidden] { display: none !important; }
+
+.ganguram-delivery-progress__bar {
+  height: 6px;
+  margin: 0 0 0.5rem;
+  border-radius: 999px;
+  background: rgba(128, 128, 128, 0.18);
+  overflow: hidden;
+}
+.ganguram-delivery-progress__bar[hidden] { display: none; }
+.ganguram-delivery-progress__bar-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: var(--gdp-accent, #49488d);
+  transition: width 0.3s ease;
+}
+
+.ganguram-delivery-progress__message { margin: 0; font-weight: 500; }
+.ganguram-delivery-progress__message[hidden] { display: none; }
+
+.ganguram-delivery-progress__charge { margin: 0.25rem 0 0; opacity: 0.85; }
+.ganguram-delivery-progress__charge[hidden] { display: none; }
+
+.ganguram-delivery-progress__services {
+  list-style: none;
+  margin: 0.55rem 0 0;
+  padding: 0.55rem 0 0;
+  border-top: 1px solid rgba(128, 128, 128, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.ganguram-delivery-progress__services[hidden] { display: none; }
+
+.ganguram-delivery-progress__service {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+.ganguram-delivery-progress__service-name { font-weight: 600; }
+.ganguram-delivery-progress__service-charge { opacity: 0.9; }
+.ganguram-delivery-progress__service-note { width: 100%; font-size: 0.92em; opacity: 0.7; }
