@@ -220,7 +220,14 @@
                 clearTimeout(timer);
                 if (status !== 'OK' || !results || !results.length) { finish(null); return; }
                 var comps = results[0].address_components || [];
-                var city = pickComponent(comps, ['locality', 'postal_town', 'sublocality', 'sublocality_level_1']);
+                // Generic for ANY Indian pincode Google can resolve — no hardcoded
+                // city list. Prefer the most specific place name (locality/town),
+                // then fall back to district / taluka for rural pincodes that have
+                // no locality, then state. Whatever Google returns is what we show.
+                var city = pickComponent(comps, [
+                  'locality', 'postal_town', 'sublocality', 'sublocality_level_1',
+                  'administrative_area_level_3', 'administrative_area_level_2'
+                ]);
                 var state = pickComponent(comps, ['administrative_area_level_1']);
                 finish((city || state) ? { city: city, state: state } : null);
               }
