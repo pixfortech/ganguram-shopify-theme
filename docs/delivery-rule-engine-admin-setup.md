@@ -223,6 +223,24 @@ Phase 2.11D wires the **actual driving distance** into the cart so a **full addr
 
 `ganguram-distance.js` stores **only** the resulting `distanceKm` + pincode in `localStorage` (`ganguram.deliveryDistance`) — **never** the address or coordinates. It **never** changes Shopify checkout, the final shipping charge, ShipZip/SBZ/zipLogic, the pincode resolver, or `settings_data.json`. If the Distance Matrix call fails, times out (8 s), or the API isn't enabled, it **fails open** to the pincode estimate.
 
+### Diagnosing a full address that stays "estimated" (2.11D.1 — DEV ONLY)
+
+If a full address keeps showing the *estimated* message, turn on **debug** (no customer‑facing text changes): add **`?ganguram_debug=1`** to the URL, or run `localStorage.setItem('ganguram.debug','1')` in the browser console, then reselect the address and watch the console. `window.GanguramDistance.debugState()` prints `{ enabled, origin, store, selectedPincode, lastReason }`. Common `lastReason` values: `disabled` (outlet origin blank), `bad-origin` (lat,lng unparseable), `no-service` (Distance Matrix API not enabled on the key), `status-REQUEST_DENIED` (key/referrer/API restriction), `no-dest-coords` (the place had no location). 2.11D.1 also **geocodes the selected full‑address string** when the place's `location` field is missing, so a missing coordinate no longer silently falls back to the estimate.
+
+---
+
+## 2e. Product‑card "Add to cart" + "Buy now" (Phase 2.11D.1)
+
+On **single‑variant** product cards the card now shows two buttons — **Add to cart** (adds + opens the cart drawer) and **Buy now** (express). **Multi‑variant** products are unchanged (they keep the theme's "Choose options" flow). It is wired in `snippets/quick-buy.liquid` (gated by a `show_buy_now` flag passed **only** from `snippets/product-item.liquid`, so every other quick‑buy usage is untouched) and driven by `assets/ganguram-product-card-buy.js`.
+
+**Buy now respects the guard.** It reuses the theme's existing AJAX add, then:
+
+- proceeds to **/checkout** only when the cart‑side **MOV / checkout guard allows** it;
+- if the cart is **below MOV** (blocked), it opens the **cart drawer** with the minimum‑order notice instead of going to checkout;
+- if the guard isn't loaded (unknown), it **never auto‑checkouts** — it opens the cart drawer / cart page.
+
+It **does not** change Shopify checkout, the final shipping charge, ShipZip/SBZ/zipLogic, product availability, or the pincode zone visibility. Fail‑open.
+
 ---
 
 ## 3. (Later) Connect entries to `shop.metafields.ganguram.delivery_rules`

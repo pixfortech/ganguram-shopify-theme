@@ -20,14 +20,20 @@
 {%- else -%}
 
   {%- if product.has_only_default_variant and settings.product_card_quick_buy_always_show_modal == false -%}
-    <quick-add-to-cart class="quick-add-to-cart {% if quick_buy_minimal == true %}quick-add-to-cart--minimal{% endif %}" data-js-product-component>
+    <quick-add-to-cart class="quick-add-to-cart {% if quick_buy_minimal == true %}quick-add-to-cart--minimal{% endif %}{% if show_buy_now %} ganguram-card-buy{% endif %}" data-js-product-component>
       <product-form {% unless settings.cart_action == 'no-overlay' %} data-ajax-cart {% endunless %} data-product-url="{{ product.url }}">
-        <div class="quick-add-to-cart-button">
+        <div class="quick-add-to-cart-button{% if show_buy_now %} ganguram-card-buy__buttons{% endif %}">
           {%- form 'product', product -%}
             <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
             <button class="button button--{{ settings.product_card_button_style }} {{ button_classes }} button--loader" data-js-product-add-to-cart type="submit" name="add">
               {%- liquid
+                # Ganguram (Phase 2.11D.1): on product cards (show_buy_now) the primary
+                # button is "Add to cart"; a sibling "Buy now" button is added below.
+                # Every other quick-buy usage is unchanged.
                 assign default_button_text = 'products.grid.quick_buy' | t
+                if show_buy_now
+                  assign default_button_text = 'products.page.add_to_cart_button' | t
+                endif
                 assign quick_buy_button_text = quick_buy_button_text | default: default_button_text
               -%}
               <span class="button__text {% if layout == 'shop' %} text-size--regular {% endif %} {% if quick_buy_minimal == true %}visually-hidden{% endif %}">{{ quick_buy_button_text }}</span>
@@ -42,7 +48,14 @@
                 <svg class="button__preloader-element" viewBox="25 25 50 50"><circle cx="50" cy="50" r="20" fill="none" stroke-width="4"/></svg>
               </span>
             </button>
-          {%- endform -%} 
+
+            {%- comment -%} Ganguram Buy now — adds, then proceeds to checkout ONLY if the cart-side MOV/checkout guard allows (else opens the cart drawer). Handled by ganguram-product-card-buy.js. Fail-open. {%- endcomment -%}
+            {%- if show_buy_now -%}
+              <button class="button button--{{ settings.product_card_button_style }} button--outline {{ button_classes }} ganguram-buy-now" type="button" data-ganguram-buy-now>
+                <span class="button__text {% if layout == 'shop' %} text-size--regular {% endif %}">{{ 'products.grid.quick_buy' | t }}</span>
+              </button>
+            {%- endif -%}
+          {%- endform -%}
         </div>
       </product-form>
     </quick-add-to-cart>

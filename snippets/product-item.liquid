@@ -263,7 +263,7 @@
               class="product-item__quick-buy" 
               {{ block.shopify_attributes }}
             >
-              {%- render 'quick-buy', product: product, button_classes: 'button--regular button--fullwidth', layout: layout -%}
+              {%- render 'quick-buy', product: product, button_classes: 'button--regular button--fullwidth', layout: layout, show_buy_now: true -%}
             </div>
           {%- elsif settings.product_card_show_out_of_stock == false -%}
             <div 

@@ -109,7 +109,7 @@
     }
     var place;
     try { place = pred.toPlace(); } catch (err) { setAddrStatus('Couldn’t read that address. Please enter your pincode below.', 'error'); focusManualInput(); return; }
-    place.fetchFields({ fields: ['addressComponents', 'location'] })
+    place.fetchFields({ fields: ['addressComponents', 'location', 'formattedAddress'] })
       .then(function () {
         var comps = place.addressComponents || [];
         var countryC = compOf(comps, 'country');
@@ -123,7 +123,7 @@
         }
         // Full address selected -> commit the pincode, then (privacy-minimal) compute
         // the actual DRIVING distance for confirmed distance-slab delivery rules.
-        if (applyPincode(pin, comps)) { notifyDistance(pin, place.location); }
+        if (applyPincode(pin, comps)) { notifyDistance(pin, place); }
       })
       .catch(function () {
         setAddrStatus('Couldn’t read that address. Please enter your pincode below.', 'error'); focusManualInput();
@@ -147,11 +147,52 @@
   // Hand the selected full-address coordinates to the distance provider (Phase
   // 2.11D), which computes the driving distance and confirms it for the cart
   // rules. Privacy: only the resulting distanceKm is stored, never the coordinates.
-  function notifyDistance(pin, dest) {
+  // 2.11D.1: read the place's `location` when present, else GEOCODE the selected
+  // full address string (address-level, still "confirmed") so a missing location
+  // field doesn't silently leave the cart on the pincode estimate.
+  function locOf(place) {
+    var l = place && place.location;
+    if (!l) { return null; }
+    var lat = (typeof l.lat === 'function') ? l.lat() : l.lat;
+    var lng = (typeof l.lng === 'function') ? l.lng() : l.lng;
+    lat = parseFloat(lat); lng = parseFloat(lng);
+    return (isFinite(lat) && isFinite(lng)) ? { lat: lat, lng: lng } : null;
+  }
+  function geocodeAddress(addr) {
+    if (!addr || !enabled()) { return Promise.resolve(null); }
+    return loadGoogle().then(geocodingLib).then(function (lib) {
+      var Geocoder = (lib && lib.Geocoder) || (window.google && window.google.maps && window.google.maps.Geocoder);
+      if (typeof Geocoder !== 'function') { return null; }
+      return new Promise(function (resolve) {
+        var done = false, finish = function (v) { if (!done) { done = true; resolve(v); } };
+        var timer = setTimeout(function () { finish(null); }, 8000); // never wedge
+        try {
+          new Geocoder().geocode(
+            { address: addr, componentRestrictions: { country: country().toUpperCase() } },
+            function (results, status) {
+              clearTimeout(timer);
+              if (status !== 'OK' || !results || !results.length) { finish(null); return; }
+              finish(locOf(results[0].geometry || {}));
+            }
+          );
+        } catch (e) { clearTimeout(timer); finish(null); }
+      });
+    }).catch(function () { return null; });
+  }
+  function addressCoords(place) {
+    var direct = locOf(place);
+    if (direct) { return Promise.resolve(direct); }
+    var addr = place && (place.formattedAddress || place.formatted_address);
+    return geocodeAddress(addr);
+  }
+  function notifyDistance(pin, place) {
     var gd = window.GanguramDistance;
-    if (gd && typeof gd.computeAndStore === 'function' && dest) {
-      try { gd.computeAndStore(pin, dest); } catch (e) {}
-    }
+    if (!gd || typeof gd.computeAndStore !== 'function') { return; }
+    try {
+      addressCoords(place).then(function (coords) {
+        if (coords) { try { gd.computeAndStore(pin, coords); } catch (e) {} }
+      });
+    } catch (e) {}
   }
 
   // ---- lightweight, privacy-minimal summary on the recent entry -------------
