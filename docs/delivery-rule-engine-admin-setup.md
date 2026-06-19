@@ -8,6 +8,8 @@ This guide explains how a store admin creates the **admin‑configurable deliver
 > **Phase 2.11B is foundation only.** Creating these rules does **not** change anything customers see yet — there is **no progress bar, no MOV enforcement, and no checkout/charge change**. The UI that uses these rules is **Phase 2.11C**. Until the metaobject exists, the theme reads an empty rule set and everything **fails open** (no errors).
 >
 > **Source-of-truth decision:** Phase 2.11A chose **Shopify metaobjects**. The theme reads them **directly** via `shop.metaobjects.ganguram_delivery_rule.values` — **no shop metafield is required for the theme**. (The shop metafield `shop.metafields.ganguram.delivery_rules` is only needed later for a Shopify Function / app — see §3.)
+>
+> **Model update (state + distance/radius):** rules now also support a **default PAN India MOV**, **per‑state overrides**, and a **local‑delivery radius** (treat a Google address within *N* km of the outlet as local/Kolkata; beyond it, as PAN India even if the pincode is in West Bengal). See **§2a** for the resolution order, and **§2b** for how a distance is supplied.
 
 ---
 
@@ -31,9 +33,12 @@ This guide explains how a store admin creates the **admin‑configurable deliver
 | Exact pincode | `exact_pincode` | Single line text | – | One or more exact pincodes, **comma‑separated** (e.g. `700020, 700019`). |
 | Pincode prefix | `pincode_prefix` | Single line text | – | One or more prefixes, comma‑separated (e.g. `7000, 711`). Longest match wins. |
 | City | `city` | Single line text | – | Optional, display/reference only. |
-| State | `state` | Single line text | – | Optional, display/reference only. |
-| Distance min (km) | `distance_min_km` | Decimal | – | **Future** — distance band lower bound. Leave blank for now. |
-| Distance max (km) | `distance_max_km` | Decimal | – | **Future** — distance band upper bound. Leave blank for now. |
+| State | `state` | Single line text | – | A state name (e.g. `West Bengal`). Doubles as a **state match value** (case‑insensitive) and display. |
+| State key | `state_key` | Single line text | – | State match by code(s), comma‑separated (e.g. `WB`). Case‑insensitive. |
+| State name | `state_name` | Single line text | – | State match by full name(s), comma‑separated (e.g. `West Bengal, Bengal`). Case‑insensitive. |
+| Local radius (km) | `local_radius_km` | Decimal | – | If a Google address is **within** this many km of the outlet, the rule is treated as **local/Kolkata**. Used only when a distance is available (smallest radius wins). |
+| Distance min (km) | `distance_min_km` | Decimal | – | Distance **band** lower bound (km). Used only when a distance is available. |
+| Distance max (km) | `distance_max_km` | Decimal | – | Distance **band** upper bound (km). Used only when a distance is available. |
 | Minimum order value | `min_order_value` | Decimal | – | In **rupees** (e.g. `300`). The theme converts to paise. |
 | Delivery charge | `delivery_charge` | Decimal | – | In **rupees** (display only in the theme). |
 | Free delivery threshold | `free_delivery_threshold` | Decimal | – | In **rupees**; subtotal at/above which charge is waived. Optional. |
@@ -52,46 +57,67 @@ This guide explains how a store admin creates the **admin‑configurable deliver
 
 *(Numbers below are **illustrative** — set your real MOV / charge / thresholds.)*
 
-**A. Kolkata (zone default)**
-- `name`: `Kolkata` · `active`: ✓ · `priority`: `0`
-- `zone_key`: `kolkata`
+**A. Local delivery by radius** *(address‑based local/Kolkata — req #4/#5)*
+- `name`: `Local (within 20 km)` · `active`: ✓ · `priority`: `0`
+- `local_radius_km`: `20`  ·  `zone_key`: `kolkata` *(label only)*
+- `min_order_value`: `300` · `delivery_charge`: `40` · `free_delivery_threshold`: `600` · `four_hour_eligible`: ✓
+- *Applies when a Google address is within 20 km of the outlet. Add tighter rules (e.g. `local_radius_km: 5`) for nearer free/cheaper delivery — the **smallest** radius that still contains the address wins.*
+
+**B. Kolkata pincodes (manual fallback)** *(pincode‑based local — req #3/#7)*
+- `name`: `Kolkata pincodes` · `active`: ✓ · `priority`: `0`
+- `pincode_prefix`: `700, 711`
 - `min_order_value`: `300` · `delivery_charge`: `40` · `free_delivery_threshold`: `600`
-- `four_hour_eligible`: ✗
+- *Used when a customer types a **pincode only** (no address ⇒ no distance). For **address** selections, the radius rule (A) decides local vs PAN India instead.*
 
-**B. Quick Commerce (zone)**
-- `name`: `Quick Commerce` · `active`: ✓ · `priority`: `0`
-- `zone_key`: `quick_commerce`
-- `min_order_value`: `400` · `delivery_charge`: `60` · `free_delivery_threshold`: `800`
-- `four_hour_eligible`: ✓
+**C. Per‑state override** *(req #2)*
+- `name`: `West Bengal` · `active`: ✓ · `priority`: `0`
+- `state_name`: `West Bengal`  *(or `state_key`: `WB`)*
+- `min_order_value`: `500` · `delivery_charge`: `80`
 
-**C. PAN India (zone default)**
+**D. PAN India default** *(req #1)*
 - `name`: `PAN India` · `active`: ✓ · `priority`: `0`
 - `zone_key`: `pan_india`
 - `min_order_value`: `750` · `delivery_charge`: `120` · `free_delivery_threshold`: `1500`
-- `four_hour_eligible`: ✗
 
-**D. Exact‑pincode override** *(beats zone rules for that pincode)*
+**E. Exact‑pincode override** *(highest — wins over everything for that pincode)*
 - `name`: `Park Street free delivery` · `active`: ✓ · `priority`: `10`
 - `exact_pincode`: `700016`
-- `min_order_value`: `250` · `delivery_charge`: `0` · `free_delivery_threshold`: `400`
-- `four_hour_eligible`: ✓
+- `min_order_value`: `250` · `delivery_charge`: `0` · `free_delivery_threshold`: `400` · `four_hour_eligible`: ✓
 
-**E. Pincode‑prefix rule** *(beats zone, loses to exact)*
-- `name`: `Howrah belt` · `active`: ✓ · `priority`: `0`
-- `pincode_prefix`: `711`
-- `min_order_value`: `350` · `delivery_charge`: `50`
+**F. Extra distance band (optional)** *(finer address‑based bands)*
+- `name`: `20–50 km` · `active`: ✓
+- `distance_min_km`: `20` · `distance_max_km`: `50`
+- `min_order_value`: `600` · `delivery_charge`: `150`
 
-**F. Future distance band** *(inert until distance is supplied — Phase 2.11C+/app)*
-- `name`: `0–5 km` · `active`: ✓
-- `distance_min_km`: `0` · `distance_max_km`: `5`
-- `min_order_value`: `200` · `delivery_charge`: `30`
-
-**G. Default / fallback** *(matches when nothing else does)*
+**G. Global default / fallback** *(matches when nothing else does)*
 - `name`: `Default` · `active`: ✓ · `priority`: `-100`
-- `zone_key`: *(blank — or `default`)*; **no** pincode/prefix/distance
+- `zone_key`: *(blank — or `default`)*; **no** pincode/prefix/state/distance/radius
 - `min_order_value`: `750` · `delivery_charge`: `120`
 
 Once these exist (with Storefront access on), the theme picks them up automatically on the next page load — no theme deploy needed.
+
+---
+
+## 2a. Rule resolution order (what wins)
+
+The resolver picks the **first** matching tier (most‑specific‑wins); within a tier, higher `priority` wins:
+
+1. **`exact_pincode`** — explicit per‑pincode rule (always highest).
+2. **Distance mode** *(a distance is available **and** at least one radius/band rule exists)*:
+   1. **`distance`** — the address falls inside a `distance_min_km..distance_max_km` band.
+   2. **`local_radius`** — the address is within a `local_radius_km` (smallest radius wins) ⇒ **local/Kolkata**.
+   - **Beyond every band/radius ⇒ the address is *remote*: prefix rules are skipped** and it falls through to state / PAN India **even if the pincode is in West Bengal** (req #6).
+   - *Otherwise (manual pincode, or no radius/band rules configured):* **`prefix`** — longest matching `pincode_prefix`.
+3. **`state`** — `state` / `state_key` / `state_name` matches the location's state.
+4. **`pan_india`** — the PAN India default (`zone_key: pan_india`).
+5. **`default`** — the global catch‑all.
+6. **`none`** — nothing matched and no default exists (fail‑open; no UI shown).
+
+> **Manual vs address (req #3, #6, #7):** a *manual pincode* has no coordinates, so it uses `exact → prefix → state → PAN India` (set up **B**/**C**/**D** to cover it). A *Google address* has coordinates, so **distance/radius is authoritative** — within the radius it's local (A), beyond it it's state/PAN India. Because of this, **prefer the radius rule (A) over a broad prefix rule** for local coverage; reserve `pincode_prefix` for narrow, intentional overrides.
+
+## 2b. Where the distance comes from (future Google Distance Matrix)
+
+`resolve()` / `getProgressData()` accept an optional **`{ distanceKm }`** (km from the outlet to the selected address). **Phase 2.11B does NOT compute it** — `distanceKm` is simply absent today, so address selections currently resolve like manual entries (`exact → prefix → state → PAN India`). A **future, separate** integration (Google **Distance Matrix**, an app, or a precomputed pincode→distance table) will supply `distanceKm`, at which point the radius/band tiers activate. **No Google code is added or changed by this phase.**
 
 ---
 
@@ -113,11 +139,13 @@ The 2.11C UI consumes the helper — it does **not** re‑read the metaobject it
 
 ```js
 // cart.total_price is in PAISE; pass it directly. location defaults to the
-// current GanguramZone selection when omitted.
-var data = window.GanguramDeliveryRules.getProgressData(cartTotalPaise);
+// current GanguramZone selection when omitted. The 3rd arg (options) is optional
+// and may carry { distanceKm } once a Distance Matrix integration exists (§2b);
+// today it is absent, so address selections resolve like manual pincode entries.
+var data = window.GanguramDeliveryRules.getProgressData(cartTotalPaise /*, location, { distanceKm } */);
 
 // data = {
-//   rule, reason,                 // reason: exact_pincode | prefix | distance | zone | default | none
+//   rule, reason,                 // reason: exact_pincode | prefix | distance | local_radius | state | pan_india | default | none
 //   cartSubtotal,                 // paise
 //   mov, deliveryCharge, freeDeliveryThreshold,   // paise or null
 //   fourHourEligible, message,
@@ -131,8 +159,8 @@ if (data.mov != null && !data.movMet) {
 }
 ```
 
-- `resolve(location, options)` returns just the matched rule + its values + `reason`.
-- `getProgressData(cartSubtotal, location)` adds the cart‑relative numbers (remaining amounts, met flags).
+- `resolve(location, options)` returns just the matched rule + its values + `reason`; `options` may include `{ distanceKm, state }`.
+- `getProgressData(cartSubtotal, location, options)` adds the cart‑relative numbers (remaining amounts, met flags).
 - Everything is **display/advisory** in 2.11C and **fails open** (no rules ⇒ `reason: "none"`, null values, no UI shown).
 
 ---
