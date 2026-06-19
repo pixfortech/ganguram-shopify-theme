@@ -30,21 +30,28 @@
   function copy(key) {
     var c = cfg().copy || {};
     var d = {
-      movRemaining: 'Add {amount} to reach the minimum order.',
-      freeDeliveryRemaining: 'Add {amount} more for free delivery.',
+      movRemaining: 'Add __AMOUNT__ to reach the minimum order.',
+      freeDeliveryRemaining: 'Add __AMOUNT__ more for free delivery.',
       freeDeliveryUnlocked: 'You’ve unlocked free delivery!',
       minimumMet: 'Minimum order reached.',
-      deliveryChargeFrom: 'Delivery from {amount}',
+      deliveryChargeFrom: 'Delivery from __AMOUNT__',
       freeDelivery: 'Free delivery',
       datePickerNote: 'Choose a delivery date',
-      earliestNote: 'earliest {date}',
+      earliestNote: 'earliest __DATE__',
       standardLabel: 'Standard delivery',
       fourHourLabel: '4-hour delivery'
     };
     return (c[key] != null) ? String(c[key]) : d[key];
   }
+  // Replace Liquid-safe tokens __AMOUNT__ / __DATE__ (the form used in the snippet —
+  // single-brace {amount} breaks Shopify's Liquid parser) with the given values.
+  // The legacy {amount}/{date} form is still accepted for backward compatibility.
   function tmpl(s, vars) {
-    return String(s == null ? '' : s).replace(/\{(\w+)\}/g, function (_, k) { return (vars && vars[k] != null) ? vars[k] : ''; });
+    s = String(s == null ? '' : s);
+    vars = vars || {};
+    return s
+      .replace(/__([A-Z0-9]+)__/g, function (_, k) { var kk = k.toLowerCase(); return (vars[kk] != null) ? vars[kk] : ''; })
+      .replace(/\{(\w+)\}/g, function (_, k) { return (vars[k] != null) ? vars[k] : ''; });
   }
 
   function rules() { return window.GanguramDeliveryRules || null; }
