@@ -111,6 +111,7 @@
         "image_DzMfKE": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/mishti-dahi-cup.jpg",
             "title": "Mishti Doi",
             "caption": "Fresh in Kolkata",
             "link": "/collections/doi",
@@ -121,6 +122,7 @@
         "image_ddmjCX": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/khir-chum-chum.jpg",
             "title": "Rosher Mishti",
             "caption": "Fresh in Kolkata",
             "link": "/collections/rosher-mishti",
@@ -128,19 +130,10 @@
             "seo_h_tag": "h3"
           }
         },
-        "image_9N37VN": {
-          "type": "image",
-          "settings": {
-            "title": "Tattya",
-            "caption": "Kolkata Orders",
-            "link": "/collections/tattya",
-            "open_in_new_window": false,
-            "seo_h_tag": "h3"
-          }
-        },
         "image_giftboxes": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/gift-box-2.jpg",
             "title": "Gift Boxes",
             "caption": "Kolkata Orders",
             "link": "/collections/gift-boxes",
@@ -151,6 +144,7 @@
         "image_sweetstray": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/celebration-dala-grande-tray-of-35.jpg",
             "title": "Sweets Tray",
             "caption": "Kolkata Orders",
             "link": "/collections/sweets-tray",
@@ -167,7 +161,6 @@
         "image_UFxdy6",
         "image_DzMfKE",
         "image_ddmjCX",
-        "image_9N37VN",
         "image_giftboxes",
         "image_sweetstray"
       ],
