@@ -297,6 +297,31 @@ The theme rule engine is the **advisory/UX** layer. **Guaranteed** behavior is *
 
 Internal **eligibility/zone stays with `GanguramZone`** — these rules never decide serviceability; the `active`/`serviceable`‑style fields are display hints only.
 
+### 5a. Showing "4 Hours Delivery" as a real checkout rate (ShipZip) — Phase 2.11D.2
+
+**Why the cart shows the 4‑hour message but checkout shows only "Delivery ₹50":** the cart UI is **advisory** — it cannot create a Shopify **checkout shipping rate**. Checkout rates come from your **shipping‑rate app (ShipZip)** + Shopify shipping settings. **The 4‑hour rate must exist and qualify in ShipZip.** The theme’s job is only to **hand the eligibility signal to the app**, which it now does.
+
+**What the theme writes to the cart (2.11D.2)** — readable by the app at checkout (localStorage/DOM are **not**):
+
+| Cart attribute | Value | Meaning |
+|---|---|---|
+| `ganguram_all_quick_commerce` | `true` / `false` / *(blank if cart empty)* | `true` only when **every** cart line has the **`Quick Commerce`** tag. |
+| `ganguram_delivery_mode_candidates` | `standard` or `standard,four_hour` | `four_hour` is added only when all‑QC **and** a local (Kolkata / quick_commerce) zone is selected. |
+| `ganguram_selected_pincode` | e.g. `700055` | The selected delivery pincode. |
+| `ganguram_delivery_zone` | `kolkata` / `quick_commerce` / `pan_india` | The selected zone. |
+
+**Configure ShipZip (admin) to USE them:**
+
+1. Create a shipping rate **"4 Hours Delivery"** (its own price; this is the real rate — the theme never sets it).
+2. Add a condition so it shows **only** for the 4‑hour case. Prefer, in order of reliability:
+   - **Cart‑attribute condition** (if your ShipZip plan supports it): show when `ganguram_all_quick_commerce = true` **and** `ganguram_delivery_mode_candidates` contains `four_hour`. This is the **only** clean way to enforce *"every item is Quick Commerce"*.
+   - **Zipcode condition:** restrict the rate to your Kolkata quick‑commerce pincodes (use `ganguram_selected_pincode` / the destination pincode).
+   - **Product‑tag condition (fallback):** match the `Quick Commerce` tag — but most apps match *"cart **contains** a tagged item"*, which would wrongly show 4‑hour for **mixed** carts. Only use this if ShipZip offers an *"**all** items must match"* option; otherwise rely on the cart‑attribute condition above.
+3. Keep the standard rate as‑is for everything else (mixed carts, non‑QC, PAN India) so unrelated shipping is unchanged.
+4. The **date / slot picker** for the 4‑hour method is configured in your date/SBZ app **per delivery method** — the theme’s `date_picker_required` is advisory only.
+
+**Acceptance maps to ShipZip, not the theme:** all‑QC cart ⇒ both rates show *(ShipZip rule on `four_hour`)*; mixed / non‑QC / PAN India ⇒ only standard *(condition fails — `ganguram_all_quick_commerce=false` or no `four_hour` candidate)*. If ShipZip **cannot** read cart attributes on your plan, the 4‑hour rate must be gated by **zipcode + an “all items match” product‑tag rule**, or by a **separate shipping profile** for the Quick‑Commerce products — there is no theme‑only way to add the checkout rate.
+
 ---
 
 ### Related docs

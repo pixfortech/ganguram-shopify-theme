@@ -1,9 +1,18 @@
 /*
- * Ganguram — Delivery location -> cart attributes handoff  (Phase 2.10A)
+ * Ganguram — Delivery location -> cart attributes handoff  (Phase 2.10A / 2.11D.2)
  * ---------------------------------------------------------------------------
  * Mirrors the SELECTED delivery location (pincode + zone, via GanguramZone — the
  * single source of truth) into Shopify CART ATTRIBUTES, so the delivery context
- * travels with the cart/order for admin visibility and a future checkout handoff.
+ * travels with the cart/order for admin visibility and a shipping-app handoff.
+ *
+ * 2.11D.2: ALSO writes app-facing eligibility signals a shipping-rate app (ShipZip)
+ * can match on to offer / hide its 4-hour rate — ganguram_all_quick_commerce
+ * ('true' only when EVERY cart line is Quick-Commerce-tagged), ganguram_delivery_
+ * mode_candidates ('standard' or 'standard,four_hour'), ganguram_selected_pincode,
+ * ganguram_delivery_zone. This only EXPOSES the cart's eligibility to the app via
+ * cart attributes (the one channel that survives into checkout — localStorage/DOM
+ * do not). It does NOT create, change or fake any shipping rate; the app/admin
+ * still owns the actual 4-hour rate, its zipcode match and its time window.
  *
  * HANDOFF ONLY. This module:
  *   - listens to the existing 'ganguram:delivery-location-changed' event,
@@ -53,7 +62,15 @@
       zone: k.zone || 'Delivery Zone',
       zoneLabel: k.zoneLabel || 'Delivery Zone Label',
       source: k.source || 'Delivery Location Source',
-      addressSummary: k.addressSummary || 'Delivery Address Summary'
+      addressSummary: k.addressSummary || 'Delivery Address Summary',
+      // App-facing (snake_case) signals a shipping-rate app (e.g. ShipZip) can match
+      // on to offer / hide the 4-hour rate. These do NOT change checkout or rates —
+      // they only EXPOSE the cart's Quick-Commerce eligibility + location to the app,
+      // which remains the sole owner of the actual rate (Phase 2.11D.2).
+      allQuickCommerce: k.allQuickCommerce || 'ganguram_all_quick_commerce',
+      deliveryModeCandidates: k.deliveryModeCandidates || 'ganguram_delivery_mode_candidates',
+      selectedPincode: k.selectedPincode || 'ganguram_selected_pincode',
+      deliveryZone: k.deliveryZone || 'ganguram_delivery_zone'
     };
   }
 
@@ -96,6 +113,24 @@
     return 'manual';
   }
 
+  // ---- cart Quick-Commerce eligibility (read-only, from the cart-line DOM) ----
+  // The cart drawer (global) + cart page render each line with
+  // data-ganguram-quick-commerce="true|false" (set ONLY from the 'Quick Commerce'
+  // product tag). "All quick commerce" = the cart has items and EVERY line is true.
+  function cartQuickCommerceState() {
+    var lines = document.querySelectorAll('[data-ganguram-cart-line]');
+    if (!lines.length) { return { hasItems: false, allQuickCommerce: false }; }
+    for (var i = 0; i < lines.length; i++) {
+      if (String(lines[i].getAttribute('data-ganguram-quick-commerce')) !== 'true') {
+        return { hasItems: true, allQuickCommerce: false };
+      }
+    }
+    return { hasItems: true, allQuickCommerce: true };
+  }
+  function isLocalZone(loc) {
+    return !!(loc && (loc.zone === 'kolkata' || loc.zone === 'quick_commerce' || loc.isKolkata === true || loc.isQuickCommerce === true));
+  }
+
   // ---- desired attribute map ------------------------------------------------
   // Blank values are intentional: /cart/update.js removes an attribute when its
   // value is '', which is exactly how we "clear" the handoff.
@@ -103,6 +138,7 @@
     var K = keys();
     var out = {};
     out[K.pincode] = ''; out[K.zone] = ''; out[K.zoneLabel] = ''; out[K.source] = ''; out[K.addressSummary] = '';
+    out[K.allQuickCommerce] = ''; out[K.deliveryModeCandidates] = ''; out[K.selectedPincode] = ''; out[K.deliveryZone] = '';
     var loc = currentLoc();
     if (loc && loc.pincode && loc.isServiceable === true) {
       var rec = recentFor(loc.pincode);
@@ -111,6 +147,22 @@
       out[K.zoneLabel] = loc.label || '';
       out[K.source] = inferSource(detail, rec);
       out[K.addressSummary] = safeSummary(rec); // '' when no safe summary exists -> pincode+zone only
+
+      // App-facing signals (ShipZip etc.). selectedPincode/deliveryZone mirror the
+      // human-readable pincode/zone under stable snake_case keys; allQuickCommerce is
+      // 'true'/'false' (blank when the cart is empty); deliveryModeCandidates lists
+      // 'standard' (always) + 'four_hour' ONLY when every cart line is Quick Commerce
+      // AND a local (Kolkata / quick_commerce) zone is selected. The app still owns
+      // the final rate, time-window and zipcode checks.
+      out[K.selectedPincode] = loc.pincode;
+      out[K.deliveryZone] = loc.zone || '';
+      var qc = cartQuickCommerceState();
+      if (qc.hasItems) {
+        out[K.allQuickCommerce] = qc.allQuickCommerce ? 'true' : 'false';
+        var cand = ['standard'];
+        if (qc.allQuickCommerce && isLocalZone(loc)) { cand.push('four_hour'); }
+        out[K.deliveryModeCandidates] = cand.join(',');
+      }
     }
     return out;
   }
@@ -217,7 +269,10 @@
     var schedule = function () {
       if (pending) { return; }
       pending = true;
-      var run = function () { pending = false; renderSummary(); };
+      // Re-paint the summary AND re-sync attributes: cart contents may have changed
+      // (add/remove), which changes the Quick-Commerce eligibility signal. doSync is
+      // debounced + idempotent (diffs against /cart.js), so this is cheap.
+      var run = function () { pending = false; renderSummary(); scheduleSync(null); };
       if (window.requestAnimationFrame) { window.requestAnimationFrame(run); } else { setTimeout(run, 0); }
     };
     var obs = new MutationObserver(schedule);
