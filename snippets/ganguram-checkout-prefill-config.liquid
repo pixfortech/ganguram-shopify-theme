@@ -15,7 +15,13 @@
 {%- endcomment -%}
 <script>
   window.GanguramCheckoutPrefillConfig = {
-    enabled: true,
+    // OFF by default (Phase 2.11F.4). The prefill REDIRECTS the standard checkout
+    // button to /checkout?checkout[shipping_address][...], which SKIPS the cart page.
+    // If you use a CART-PAGE delivery date/slot picker (e.g. ShipZip) where the date is
+    // required before checkout, that redirect would bypass it. Enable this ONLY if your
+    // date picker is at checkout (not a required cart-page step), or once you've moved
+    // address prefill to a Checkout UI Extension. See docs §8d.
+    enabled: false,
     checkoutUrl: "/checkout"
   };
 </script>
