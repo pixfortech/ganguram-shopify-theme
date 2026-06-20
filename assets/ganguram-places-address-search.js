@@ -293,11 +293,42 @@
       .catch(function () { return null; });
   }
 
+  // Geocode an Indian pincode to its CENTROID coordinates {lat,lng}, or null.
+  // Reuses the same lazy Maps loader + key + enable gate as lookupCityByPincode.
+  // Used (Phase 2.11F.1) for an APPROXIMATE pincode-only distance estimate in the
+  // delivery-location popup — never the final business rule.
+  function geocodePincodeCoords(pincode) {
+    var pin = String(pincode || '').replace(/\D/g, '').slice(0, 6);
+    if (pin.length !== 6 || !enabled()) { return Promise.resolve(null); }
+    return loadGoogle()
+      .then(geocodingLib)
+      .then(function (lib) {
+        var Geocoder = (lib && lib.Geocoder) || (window.google && window.google.maps && window.google.maps.Geocoder);
+        if (typeof Geocoder !== 'function') { return null; }
+        return new Promise(function (resolve) {
+          var done = false, finish = function (v) { if (!done) { done = true; resolve(v); } };
+          var timer = setTimeout(function () { finish(null); }, 8000); // never wedge the caller
+          try {
+            new Geocoder().geocode(
+              { componentRestrictions: { country: country().toUpperCase(), postalCode: pin } },
+              function (results, status) {
+                clearTimeout(timer);
+                if (status !== 'OK' || !results || !results.length) { finish(null); return; }
+                finish(locOf(results[0].geometry || {}));
+              }
+            );
+          } catch (e) { clearTimeout(timer); finish(null); }
+        });
+      })
+      .catch(function () { return null; });
+  }
+
   // Expose a tiny Google-owning surface for the enrichment module to reuse, so the
   // merchant key, the lazy loader and the enable gate stay in ONE place.
   window.GanguramPlaces = window.GanguramPlaces || {};
   window.GanguramPlaces.loadMaps = loadGoogle;
   window.GanguramPlaces.lookupCityByPincode = lookupCityByPincode;
+  window.GanguramPlaces.geocodePincode = geocodePincodeCoords;
 
   function init() {
     if (!popup()) { return; }

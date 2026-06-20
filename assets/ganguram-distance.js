@@ -84,6 +84,14 @@
   function writeStore(o) { var s = safeLS(); if (!s) { return; } try { s.setItem(STORE_KEY, JSON.stringify(o)); } catch (e) {} }
   function clearStore() { var s = safeLS(); if (!s) { return; } try { s.removeItem(STORE_KEY); } catch (e) {} }
 
+  // APPROXIMATE pincode-centroid distance (Phase 2.11F.1) — a separate, lower-trust
+  // store used only for the popup ESTIMATE when no full address has confirmed a
+  // distance. Always labelled approximate; never a business rule.
+  var APPROX_KEY = 'ganguram.deliveryDistanceApprox';
+  function readApprox() { var s = safeLS(); if (!s) { return null; } try { var o = JSON.parse(s.getItem(APPROX_KEY) || 'null'); return (o && typeof o === 'object') ? o : null; } catch (e) { return null; } }
+  function writeApprox(o) { var s = safeLS(); if (!s) { return; } try { s.setItem(APPROX_KEY, JSON.stringify(o)); } catch (e) {} }
+  function clearApprox() { var s = safeLS(); if (!s) { return; } try { s.removeItem(APPROX_KEY); } catch (e) {} }
+
   function currentSelectedPin() {
     var z = window.GanguramZone;
     if (z && typeof z.getSelectedDeliveryLocation === 'function') { try { return norm((z.getSelectedDeliveryLocation() || {}).pincode); } catch (e) {} }
@@ -168,13 +176,59 @@
     }).catch(function () { setReason('exception'); return null; });
   }
 
-  // A new (non-address) location change makes any prior confirmed distance stale:
-  // every change first drops to ESTIMATED; an address selection re-confirms it via
-  // computeAndStore AFTER this event fires.
-  function onChange() { dlog('location changed -> clearing confirmed distance (back to estimate)'); clearStore(); setReason('cleared'); }
+  function getApproxForPincode(pincode) {
+    var p = norm(pincode), s = readApprox();
+    if (s && norm(s.pincode) === p && typeof s.distanceKm === 'number' && isFinite(s.distanceKm)) {
+      return { distanceKm: s.distanceKm, approximate: true };
+    }
+    return null;
+  }
+
+  // Best available distance ESTIMATE for the popup: a confirmed full-address distance
+  // (approximate:false) if present, else the approximate pincode-centroid one, else
+  // { distanceKm:null }. Display only.
+  function getEstimate(pincode) {
+    var conf = getForPincode(pincode);
+    if (conf.confirmed) { return { distanceKm: conf.distanceKm, approximate: false, confirmed: true }; }
+    var ap = getApproxForPincode(pincode);
+    if (ap) { return { distanceKm: ap.distanceKm, approximate: true, confirmed: false }; }
+    return { distanceKm: null, approximate: false, confirmed: false };
+  }
+
+  // Geocode the pincode to its CENTROID and compute an APPROXIMATE distance. Skips
+  // if a confirmed full-address distance already exists for the pincode. Fires the
+  // distance event (approximate:true) so the popup re-renders. Fail-open.
+  function computeApproxForPincode(pincode) {
+    var p = norm(pincode);
+    if (!p || !enabled() || !origin()) { return Promise.resolve(null); }
+    if (getForPincode(p).confirmed) { return Promise.resolve(null); } // address already better
+    var ex = getApproxForPincode(p); if (ex) { return Promise.resolve(ex.distanceKm); } // cached
+    var places = window.GanguramPlaces;
+    if (!places || typeof places.geocodePincode !== 'function') { setReason('no-geocoder'); return Promise.resolve(null); }
+    dlog('approx distance: geocoding pincode centroid', p);
+    return places.geocodePincode(p).then(function (coords) {
+      if (!coords) { setReason('no-pincode-coords'); return null; }
+      return computeDrivingDistanceKm(coords).then(function (km) {
+        if (km == null) { return null; }
+        if (currentSelectedPin() && currentSelectedPin() !== p) { return null; } // selection moved on
+        writeApprox({ pincode: p, distanceKm: km, ts: Date.now() });
+        dlog('approx', km, 'km for pincode', p, '-> firing', EVENT_DISTANCE);
+        fire(EVENT_DISTANCE, { pincode: p, distanceKm: km, confirmed: false, approximate: true });
+        return km;
+      });
+    }).catch(function () { return null; });
+  }
+
+  // A new (non-address) location change makes any prior distance stale: every change
+  // first drops to ESTIMATED; an address selection re-confirms via computeAndStore,
+  // and the popup re-runs computeApproxForPincode for a fresh pincode estimate.
+  function onChange() { dlog('location changed -> clearing distances (back to estimate)'); clearStore(); clearApprox(); setReason('cleared'); }
 
   window.GanguramDistance = {
     getForPincode: getForPincode,
+    getEstimate: getEstimate,
+    getApproxForPincode: getApproxForPincode,
+    computeApproxForPincode: computeApproxForPincode,
     setConfirmedDistance: setConfirmedDistance,
     computeDrivingDistanceKm: computeDrivingDistanceKm,
     computeAndStore: computeAndStore,

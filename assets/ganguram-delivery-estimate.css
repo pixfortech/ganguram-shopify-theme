@@ -1,0 +1,31 @@
+/*
+ * Ganguram — Delivery estimate card in the delivery-location popup (Phase 2.11F.1).
+ * Compact, display only. NO HARDCODED COLOURS — theme design-system variables only,
+ * so it follows the Shopify customiser: --color-borders-main (border/chips),
+ * --color-secondary-text-main (labels/note), currentColor (values).
+ */
+.ganguram-delivery-estimate {
+  margin: 0.5rem 0 0;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--color-borders-main);
+  border-radius: 10px;
+  font-size: 0.9em;
+  line-height: 1.4;
+  color: currentColor;
+}
+.ganguram-delivery-estimate[hidden] { display: none !important; }
+.ganguram-delivery-estimate__title { margin: 0 0 0.35rem; font-weight: 700; }
+.ganguram-delivery-estimate__status { margin: 0 0 0.3rem; font-weight: 600; }
+.ganguram-delivery-estimate__row { display: flex; justify-content: space-between; gap: 0.75rem; padding: 0.1rem 0; }
+.ganguram-delivery-estimate__label { color: var(--color-secondary-text-main); }
+.ganguram-delivery-estimate__value { font-weight: 600; text-align: right; }
+.ganguram-delivery-estimate__modes { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem; margin: 0.35rem 0 0; }
+.ganguram-delivery-estimate__chip {
+  display: inline-flex;
+  padding: 0.06rem 0.5rem;
+  border: 1px solid var(--color-borders-main);
+  border-radius: 999px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+.ganguram-delivery-estimate__note { margin: 0.4rem 0 0; font-size: 0.9em; color: var(--color-secondary-text-main); }

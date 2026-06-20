@@ -25,7 +25,7 @@
 	<form action="{{ routes.cart_url }}" method="post" novalidate class="cart__form {% if cart.item_count == 0 %} cart--empty {% endif %}" id="cart">
 	
 		<div class="cart-holder" data-items="{{ cart.items.size }}">
-			{%- if cart.item_count > 0 -%}{%- render 'ganguram-cart-delivery-summary' -%}{%- render 'ganguram-delivery-progress', context: 'drawer' -%}{%- endif -%}
+			{%- if cart.item_count > 0 -%}{%- comment -%} 2.11F.1: the standalone "Delivering to:" summary is removed — the compact delivery card (below) is the only cart delivery surface; the full estimate lives in the delivery-location popup. {%- endcomment -%}{%- render 'ganguram-delivery-progress', context: 'drawer' -%}{%- endif -%}
 
 			<div class="cart__items">
 
