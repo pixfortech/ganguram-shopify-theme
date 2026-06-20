@@ -75,9 +75,20 @@
     return (c === 'quick' || c === '4-hour' || c === '4-hour-delivery') ? 'quick' : 'normal';
   }
 
+  // Cart eligibility REUSES the shared cart-level predicate (2.11H): an item is fine if
+  // it can be delivered by ANY available mode (standard OR 4-hour). This keeps the
+  // validator in sync with the delivery panel and the product display rule. Falls back
+  // to the per-context display rule if the newer helper is unavailable. Fail-safe: when
+  // no rule is exposed, returns null and nothing is ever flagged (no removal).
   function rule() {
-    return (window.GanguramZoneRules && typeof window.GanguramZoneRules.isProductVisibleForContext === 'function')
-      ? window.GanguramZoneRules.isProductVisibleForContext : null;
+    var r = window.GanguramZoneRules;
+    if (r && typeof r.isProductDeliverableToZone === 'function') {
+      return function (tags, zone) { return r.isProductDeliverableToZone(tags, zone); };
+    }
+    if (r && typeof r.isProductVisibleForContext === 'function') {
+      return function (tags, zone, ctx) { return r.isProductVisibleForContext(tags, zone, ctx); };
+    }
+    return null;
   }
 
   // Read cart lines from the Liquid-stamped DOM (drawer + page), de-duped by key.
@@ -99,7 +110,8 @@
         qty: parseInt(el.getAttribute('data-qty') || '1', 10) || 1,
         k: el.getAttribute('data-ganguram-kolkata') === 'true',
         p: el.getAttribute('data-ganguram-pan-india') === 'true',
-        q: el.getAttribute('data-ganguram-quick-commerce') === 'true'
+        q: el.getAttribute('data-ganguram-quick-commerce') === 'true',
+        ld: el.getAttribute('data-ganguram-local-delivery') === 'true'
       });
     }
     return out;
@@ -108,12 +120,10 @@
   // Internal-only specific reason (kept for debugging on the card; NOT shown to the
   // customer — the customer-facing text is the simple pincode message below).
   function reasonDetail(line, zone, ctx) {
-    if (!line.k && !line.p && !line.q) { return 'Delivery eligibility tag missing'; }
-    if (zone === 'pan_india') {
-      if (line.k && !line.p) { return 'Available only for Kolkata delivery'; }
-      if (line.q && !line.p && !line.k) { return 'Available only for 4 Hours Delivery'; }
-      return 'Not available for PAN India delivery';
-    }
+    if (!line.k && !line.p && !line.q && !line.ld) { return 'Delivery eligibility tag missing'; }
+    // A line is only "affected" when not deliverable; under PAN India that means it lacks
+    // the explicit PAN India tag (Kolkata / Local Delivery / Quick Commerce do not qualify).
+    if (zone === 'pan_india') { return 'Available only for local delivery (not PAN India)'; }
     if (ctx === 'quick') {
       if (line.k && !line.q) { return 'Available only for Kolkata delivery'; }
       return 'Not eligible for the selected delivery mode';
@@ -132,7 +142,7 @@
     if (!fn) { return []; }                  // rules missing -> never affected (fail safe)
     var out = [];
     cartLines().forEach(function (l) {
-      if (!fn({ kolkata: l.k, panIndia: l.p, quickCommerce: l.q }, zone, ctx)) {
+      if (!fn({ kolkata: l.k, panIndia: l.p, quickCommerce: l.q, localDelivery: l.ld }, zone, ctx)) {
         l.detail = reasonDetail(l, zone, ctx);
         out.push(l);
       }
@@ -187,9 +197,11 @@
     openPincode();
   }
 
-  // ✕ / backdrop / Esc — during a warning behaves like "Keep current pincode";
-  // during the final confirmation it just closes.
+  // ✕ / backdrop / Esc — during a pincode-change warning behaves like "Keep current
+  // pincode"; during a review (load/cart/checkout) it records the dismissed set so we do
+  // not re-pop it for the same cart, then closes (fail-open — never mutates the cart).
   function onClose() {
+    if (modalMode === 'review' && currentReviewSig) { dismissedSig = currentReviewSig; }
     if (pending) { onKeepCurrent(); } else { dismiss(); }
   }
 
@@ -224,6 +236,7 @@
       .then(function (r) { return r.json(); })
       .then(function (cart) {
         var emptied = !!cart && cart.item_count === 0;
+        dismissedSig = null;                        // cart changed -> allow a fresh review if needed
         if (typeof window.refreshCart === 'function') { try { window.refreshCart(false); } catch (e) {} }
         dismiss();                                  // close the warning modal — no second modal
         showToast(remove.length, entered, snapshot);
@@ -234,6 +247,9 @@
 
   // ---- modal UI -------------------------------------------------------------
   var modal = null;
+  var modalMode = null;        // 'change' (pincode-change warning) | 'review' (load/cart/checkout) | null
+  var currentReviewSig = null; // signature of the invalid set currently under review
+  var dismissedSig = null;     // invalid-set signature the customer dismissed (don't auto re-pop)
   function openPincode() {
     if (window.GanguramDelivery && typeof window.GanguramDelivery.openDeliveryLocationPopup === 'function') {
       window.GanguramDelivery.openDeliveryLocationPopup('Enter a delivery pincode to continue.');
@@ -242,7 +258,7 @@
     var t = document.querySelector('[data-gdw-trigger]');
     if (t) { t.click(); }
   }
-  function dismiss() { if (modal) { modal.setAttribute('hidden', ''); } }
+  function dismiss() { if (modal) { modal.setAttribute('hidden', ''); } modalMode = null; }
   function el(tag, cls) { var e = document.createElement(tag); if (cls) { e.className = cls; } return e; }
 
   function buildModal() {
@@ -323,6 +339,7 @@
 
   function showWarning(affected, pincode) {
     if (!modal) { modal = buildModal(); }
+    modalMode = 'change';
     modal._heading.textContent = 'Some items are not deliverable to the selected pincode';
     modal._sub.textContent = 'The following items are not deliverable to ' + pincode +
       '. You can keep your current pincode, change the pincode, or continue with the selected pincode and remove these items from your cart.';
@@ -335,6 +352,86 @@
     ]);
     show();
   }
+
+  // ---- proactive review (Phase 2.11H): surface items already in the cart that are not
+  // deliverable to the ALREADY-accepted pincode (page load, cart change, checkout press).
+  // Unlike showWarning (a pincode-CHANGE warning), this never restores a previous pincode
+  // and never auto-removes — the customer chooses Remove or Change pincode. Fail-open.
+  function invalidSignature(affected, pincode) {
+    return String(pincode) + '|' + affected.map(function (l) { return l.key; }).sort().join(',');
+  }
+  // A cart line counts as "on screen" only when it has a layout box (offsetParent set).
+  // In a CLOSED cart drawer the lines are display:none -> offsetParent null, so we do not
+  // pop the modal on every background page load; the cart PAGE shows them, and the
+  // checkout press (force) bypasses this gate. offsetParent undefined (non-DOM / test) -> shown.
+  function anyCartLineVisible() {
+    var els = document.querySelectorAll(LINE_SEL);
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (typeof el.offsetParent === 'undefined') { return true; }
+      if (el.offsetParent !== null) { return true; }
+    }
+    return false;
+  }
+  function showReview(affected, pincode) {
+    if (!modal) { modal = buildModal(); }
+    pending = null;                       // review is NOT a pincode-change warning
+    modalMode = 'review';
+    currentReviewSig = invalidSignature(affected, pincode);
+    modal._heading.textContent = 'Some items are not deliverable to the selected pincode';
+    modal._sub.textContent = 'The following items cannot be delivered to ' + pincode +
+      '. Remove them to continue, or change your delivery pincode.';
+    modal._sub.removeAttribute('hidden');
+    fillList(affected, pincode);
+    setActions([
+      { label: 'Change pincode', cls: 'ganguram-cart-elig__btn ganguram-cart-elig__btn--primary', onClick: function () { onReviewChangePincode(); } },
+      { label: 'Remove unavailable items', cls: 'ganguram-cart-elig__btn ganguram-cart-elig__btn--danger', onClick: function () { onRemoveUnavailable(); } }
+    ]);
+    show();
+  }
+  function onReviewChangePincode() {
+    if (currentReviewSig) { dismissedSig = currentReviewSig; }
+    dismiss();
+    openPincode();
+  }
+  // The mutating path for a review: remove the not-deliverable lines, keep the pincode.
+  function onRemoveUnavailable() {
+    if (busy) { return; }
+    var loc = activeLoc();
+    if (!loc) { dismiss(); return; }
+    var affected = computeAffected(loc.zone, deliveryContext());
+    if (!affected.length) { dismiss(); return; }
+    removeLines(affected, loc.pincode, lastAccepted ? lastAccepted.pincode : loc.pincode);
+  }
+  // Re-check the current (accepted) pincode against the current cart. opts:
+  //   force         -> always show (checkout press); ignores the visibility + dismissed gates
+  //   requireVisible -> only auto-show when a cart line is actually on screen
+  function validateCurrent(opts) {
+    opts = opts || {};
+    if (busy) { return; }
+    var loc = activeLoc();
+    if (!loc) { if (modalMode === 'review') { dismiss(); } return; }
+    var affected = computeAffected(loc.zone, deliveryContext());
+    if (!affected.length) {                         // all deliverable -> clear any stale review
+      dismissedSig = null;
+      if (modalMode === 'review') { dismiss(); }
+      return;
+    }
+    var sig = invalidSignature(affected, loc.pincode);
+    if (modalMode === 'review') { fillList(affected, loc.pincode); currentReviewSig = sig; return; } // open -> refresh
+    if (pending) { return; }                        // a pincode-change warning owns the modal
+    if (!opts.force) {
+      if (opts.requireVisible && !anyCartLineVisible()) { return; }
+      if (sig === dismissedSig) { return; }         // already dismissed this exact set
+    }
+    showReview(affected, loc.pincode);
+  }
+  function hasInvalidItems() {
+    var loc = activeLoc();
+    if (!loc) { return false; }
+    return computeAffected(loc.zone, deliveryContext()).length > 0;
+  }
+
   // ---- final confirmation toast (NOT a second modal) + Undo -----------------
   var toast = null;
   var toastTimer = null;
@@ -447,12 +544,43 @@
       .finally(function () { busy = false; });
   }
 
+  // Re-validate when the cart markup re-renders (qty change / refreshCart / line removal).
+  function observeCart() {
+    if (!('MutationObserver' in window)) { return; }
+    var forms = document.querySelectorAll('cart-form');
+    if (!forms.length) { return; }
+    var queued = false;
+    var schedule = function () {
+      if (queued) { return; }
+      queued = true;
+      var run = function () { queued = false; validateCurrent({ requireVisible: true }); };
+      if (window.requestAnimationFrame) { window.requestAnimationFrame(run); } else { setTimeout(run, 0); }
+    };
+    var obs = new MutationObserver(schedule);
+    for (var i = 0; i < forms.length; i++) { try { obs.observe(forms[i], { childList: true, subtree: true }); } catch (e) {} }
+  }
+
   // ---- triggers -------------------------------------------------------------
   function init() {
     var loc = activeLoc();
-    lastAccepted = loc ? { pincode: loc.pincode, zone: loc.zone } : null; // adopt current as accepted; never warn on load
+    lastAccepted = loc ? { pincode: loc.pincode, zone: loc.zone } : null; // adopt current as accepted
     window.addEventListener(EVENT, onChange);
+    observeCart();
+    // Surface an ALREADY-invalid cart (e.g. a PAN India pincode chosen earlier with a
+    // local-only item still in the cart). Gated to a visible cart surface so it never
+    // pops on a background page; the cart page shows it, the drawer shows it on open/
+    // change, and the checkout press forces it. Fail-open if no rule / no pincode.
+    validateCurrent({ requireVisible: true });
   }
+
+  // Public API for the delivery panel's checkout guard (Phase 2.11H): force the review
+  // modal when the customer presses checkout with not-deliverable items, and report state.
+  window.GanguramCartEligibility = {
+    reviewNow: function () { validateCurrent({ force: true }); },
+    validate: function () { validateCurrent({ requireVisible: true }); },
+    hasInvalidItems: hasInvalidItems
+  };
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

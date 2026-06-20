@@ -25,6 +25,14 @@
 .ganguram-delivery-progress__prompt[hidden] { display: none; }
 .ganguram-delivery-progress[data-gdpr-state="prompt"] { border-style: dashed; }
 
+/* not-deliverable state (2.11H): cart holds item(s) invalid for the selected zone.
+   Emphasised with the theme accent border (no hardcoded warning colour). */
+.ganguram-delivery-progress[data-gdpr-state="invalid"] {
+  border-color: var(--color-accent-main);
+  border-width: 2px;
+}
+.ganguram-delivery-progress[data-gdpr-state="invalid"] .ganguram-delivery-progress__prompt { color: currentColor; }
+
 .ganguram-delivery-progress__status { margin: 0; font-weight: 600; }
 .ganguram-delivery-progress__status[hidden] { display: none; }
 

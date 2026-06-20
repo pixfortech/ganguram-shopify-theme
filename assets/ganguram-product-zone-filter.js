@@ -70,28 +70,50 @@
   // tags, the active zone name, and the surface context ('normal' | 'quick').
   function isProductVisibleForContext(tags, zone, context) {
     if (!zone) { return true; }                       // no pincode -> show everything
-    var k = tags.kolkata, p = tags.panIndia, q = tags.quickCommerce;
-    if (!k && !p && !q) { return false; }             // no zone tag -> hidden after pincode
+    var k = tags.kolkata, p = tags.panIndia, q = tags.quickCommerce, ld = tags.localDelivery;
+    if (!k && !p && !q && !ld) { return false; }      // no zone tag -> hidden after pincode
     if (zone === 'pan_india') {
       if (context === 'quick') { return false; }      // 4 Hours Delivery never shows for PAN India
-      return p;                                        // normal grids -> only PAN India products
+      return p;                                        // PAN India: ONLY an explicit "PAN India" tag.
+      //                                                  Local Delivery / Kolkata / Quick Commerce do
+      //                                                  NOT make a product PAN-India-deliverable.
     }
     // kolkata or quick_commerce pincode (QC ⊆ Kolkata serviceable area):
     if (context === 'quick') { return q; }            // 4 Hours Delivery grid -> only Quick Commerce
-    return k;                                          // normal grids -> only Kolkata products
+    return k || ld;                                    // normal grids -> Kolkata OR Local Delivery
   }
 
-  // Expose the rule so other modules (e.g. cart eligibility, Phase 2.7A) reuse the
-  // EXACT same logic — single source of truth. Read-only; does not change the matrix.
+  // Cart-level eligibility (Phase 2.11H): is a product DELIVERABLE to a zone by ANY
+  // available mode? Standard (the "normal" surface) is always possible where a zone
+  // resolves; 4 Hours Delivery (the "quick" surface) only in the quick-commerce area.
+  // PAN India has no 4-hour. This is the predicate the CART uses (an item is fine if it
+  // can arrive by standard OR 4-hour), so the cart never contradicts the delivery panel:
+  //   - Kolkata / Local Delivery item in a local pincode -> deliverable (standard)
+  //   - Quick-Commerce-only item in a quick-commerce pincode -> deliverable (4-hour)
+  //   - local-only item (no PAN India tag) in a PAN India pincode -> NOT deliverable
+  // The per-grid PRODUCT DISPLAY still uses isProductVisibleForContext(context) so the
+  // 4-hour grid keeps showing only Quick-Commerce products. Pure, fail-open (no zone ->
+  // deliverable). Does not change any rate / ShipZip / checkout logic.
+  function isProductDeliverableToZone(tags, zone) {
+    if (!zone) { return true; }                                  // no pincode -> never block
+    if (isProductVisibleForContext(tags, zone, 'normal')) { return true; }
+    if (zone === 'quick_commerce' && isProductVisibleForContext(tags, zone, 'quick')) { return true; }
+    return false;
+  }
+
+  // Expose the rules so other modules (e.g. cart eligibility, Phase 2.7A; delivery
+  // panel, 2.11H) reuse the EXACT same logic — single source of truth. Read-only.
   window.GanguramZoneRules = window.GanguramZoneRules || {};
   window.GanguramZoneRules.isProductVisibleForContext = isProductVisibleForContext;
+  window.GanguramZoneRules.isProductDeliverableToZone = isProductDeliverableToZone;
 
   function cardAllowed(card, zoneName) {
     if (!zoneName) { return true; }
     var tags = {
       kolkata: card.getAttribute('data-ganguram-kolkata') === 'true',
       panIndia: card.getAttribute('data-ganguram-pan-india') === 'true',
-      quickCommerce: card.getAttribute('data-ganguram-quick-commerce') === 'true'
+      quickCommerce: card.getAttribute('data-ganguram-quick-commerce') === 'true',
+      localDelivery: card.getAttribute('data-ganguram-local-delivery') === 'true'
     };
     return isProductVisibleForContext(tags, zoneName, contextOf(card));
   }

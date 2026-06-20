@@ -16,11 +16,14 @@
 
 {%- assign product_variant = product.selected_or_first_available_variant -%}
 
-{%- comment -%} Phase 2.2 — delivery-zone tags exposed for the pincode product filter (display only). {%- endcomment -%}
+{%- comment -%} Phase 2.2 — delivery-zone tags exposed for the pincode product filter (display only).
+  Phase 2.11H — added Local Delivery so local-only products stay visible in normal Kolkata grids and are
+  treated as local (NOT PAN India). The same four tags back the cart-eligibility validator. {%- endcomment -%}
 {%- liquid
   assign gz_kolkata = false
   assign gz_pan_india = false
   assign gz_quick_commerce = false
+  assign gz_local_delivery = false
   if product.tags contains 'Kolkata'
     assign gz_kolkata = true
   endif
@@ -30,9 +33,12 @@
   if product.tags contains 'Quick Commerce'
     assign gz_quick_commerce = true
   endif
+  if product.tags contains 'Local Delivery'
+    assign gz_local_delivery = true
+  endif
 -%}
 
-<div id="product-item-{{ product.id }}" class="product-item card{% unless blank_product or product.available %} product-item--sold-out{% endunless %}" data-js-product-item data-ganguram-product-card data-ganguram-kolkata="{{ gz_kolkata }}" data-ganguram-pan-india="{{ gz_pan_india }}" data-ganguram-quick-commerce="{{ gz_quick_commerce }}">
+<div id="product-item-{{ product.id }}" class="product-item card{% unless blank_product or product.available %} product-item--sold-out{% endunless %}" data-js-product-item data-ganguram-product-card data-ganguram-kolkata="{{ gz_kolkata }}" data-ganguram-pan-india="{{ gz_pan_india }}" data-ganguram-quick-commerce="{{ gz_quick_commerce }}" data-ganguram-local-delivery="{{ gz_local_delivery }}">
 
   {%- liquid
     
