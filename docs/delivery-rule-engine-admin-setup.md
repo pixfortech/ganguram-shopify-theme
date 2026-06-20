@@ -425,6 +425,18 @@ The cart delivery panel is intentionally **compact, premium, mobile-first**:
 - **Google distance is a supporting estimate only.** For a **pincode** it geocodes the **pincode centroid** and shows an **approximate** distance ("Approx. N km · Approx. distance based on pincode", basis "Delivery estimate based on your pincode."). For a **full address** it uses the confirmed coordinates ("N km", basis "Delivery estimate based on your selected address."). It **never** overrides ShipZip / pincode / zone serviceability or the checkout rate.
 - **ShipZip still owns the actual checkout shipping rate**, and the **final delivery charge may still be determined by ShipZip** at checkout — the popup distance/charge is an estimate. Needs the outlet origin + Distance Matrix + Geocoding APIs (§2d); fail‑open without them.
 
+### 8c. 4‑hour cart/checkout sync (Phase 2.11F.3)
+
+**Root cause of "cart says 4 Hours not available but checkout offers it":** the cart used to decide 4‑hour availability from whether a metaobject **`four_hour` rule** resolved. A merchant can configure the 4‑hour rate in **ShipZip** without creating a metaobject `four_hour` rule, so the cart wrongly showed *"4 Hours not available for this area."*
+
+**Fix (theme side):** the cart + popup now derive "4 Hours available" from the **quick‑commerce ZONE** (`isQuickCommerce` / the `quick_commerce` pincode list in the resolver) **+ all‑items‑Quick‑Commerce** — the **same basis ShipZip and the `ganguram_delivery_mode_candidates` attribute use**. So an all‑QC cart in a quick‑commerce pincode (e.g. **700006**) shows **"4 Hours available"** + **"Standard also available"**, even with no metaobject `four_hour` rule (a rule only supplies the displayed charge). The cart **never** asserts "not available" just because a rule is missing (req B); the **only** hard negative is a **mixed cart** (some items aren't Quick Commerce). A metaobject `four_hour` rule is **optional** — add one only if you want the 4‑hour charge shown in the cart/popup.
+
+**ShipZip — required config (theme cannot create rates) (req D):**
+- **4 Hours Delivery** available for **all‑QC eligible local carts** — gate on `ganguram_all_quick_commerce = true` + `ganguram_delivery_mode_candidates` contains `four_hour` (or the quick‑commerce zipcodes). See §5a.
+- **Standard Delivery / Next Day Delivery must remain available for the SAME carts.** Do **not** restrict Standard to non‑QC carts, and do **not** let 4‑hour replace Standard — a customer may want the same Quick‑Commerce item tomorrow. Keep a Standard rate that matches the local pincodes regardless of `ganguram_all_quick_commerce`.
+
+**Date/slot app — required config (req E):** both methods need their own slot flow — **4 Hours Delivery → express / 4‑hour slot**, **Standard / Next Day → normal date picker**. If the date app is per‑delivery‑method, ensure **Standard has its own date‑picker configuration** so it still works alongside the 4‑hour express flow.
+
 ---
 
 ### Related docs

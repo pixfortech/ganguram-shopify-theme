@@ -113,21 +113,31 @@
     var data = dr ? dr.getProgressData(ct == null ? 0 : ct, loc, distOpts) : null;
     var hasRule = !!(data && data.reason !== 'none' && data.rule);
 
-    var svcOpts = { fourHourEligibleCart: cartFourHourEligible() };
+    var eligibleCart = cartFourHourEligible();
+    var svcOpts = { fourHourEligibleCart: eligibleCart };
     if (distOpts.distanceKm != null) { svcOpts.distanceKm = distOpts.distanceKm; }
     var svc = (dr && hasRule) ? dr.getServiceOptions(loc, svcOpts) : null;
+    var serviceOptions = (svc && svc.options) || [];
+
+    // 4-hour from the quick-commerce ZONE (matches the cart + ShipZip, Phase 2.11F.3),
+    // not just a metaobject rule — so the popup doesn't contradict checkout either.
+    var fourHourArea = !!(loc.isQuickCommerce === true || loc.zone === 'quick_commerce');
+    var hasFourOpt = false;
+    for (var i = 0; i < serviceOptions.length; i++) { if (serviceOptions[i].serviceType === 'four_hour') { hasFourOpt = true; break; } }
+    var fourHourAvailable = (eligibleCart && fourHourArea) || hasFourOpt;
 
     return {
       label: displayLabel(loc),
       isAddress: isAddress,
       distanceKm: distanceKm, approximate: distanceApprox,
       hasRule: hasRule,
+      fourHourAvailable: fourHourAvailable, hasFourOpt: hasFourOpt,
       mov: hasRule ? data.mov : null,
       movMet: hasRule ? (data.movMet === true) : true,
       movRemaining: hasRule ? data.movRemaining : 0,
       freeDeliveryMet: hasRule ? data.freeDeliveryMet : false,
       cartTotal: ct,
-      serviceOptions: (svc && svc.options) || []
+      serviceOptions: serviceOptions
     };
   }
 
@@ -164,6 +174,8 @@
         : (o.deliveryCharge === 0 ? copy('freeDelivery') : fmtMoney(o.deliveryCharge));
       body.appendChild(row(name, chg));
     }
+    // 4-hour available from the zone but no metaobject rule -> show it, charge at checkout
+    if (st.fourHourAvailable && !st.hasFourOpt) { body.appendChild(row(copy('fourHourLabel'), copy('chargeAtCheckout'))); }
     var note = document.createElement('p'); note.className = 'ganguram-delivery-estimate__note';
     note.textContent = st.isAddress ? copy('basedOnAddress') : copy('basedOnPincode');
     body.appendChild(note);

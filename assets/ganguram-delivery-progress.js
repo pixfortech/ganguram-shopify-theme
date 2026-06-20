@@ -161,6 +161,12 @@
   function isLocalZone(loc) {
     return !!(loc && (loc.zone === 'kolkata' || loc.zone === 'quick_commerce' || loc.isKolkata === true || loc.isQuickCommerce === true));
   }
+  // 4-hour AREA eligibility = the quick-commerce zone (the resolver's quick_commerce
+  // pincode list). This is the source ShipZip + the cart-attribute handoff use, so the
+  // cart's "4 Hours available" never contradicts checkout (Phase 2.11F.3).
+  function fourHourAreaEligible(loc) {
+    return !!(loc && (loc.isQuickCommerce === true || loc.zone === 'quick_commerce'));
+  }
   // Customer-facing "city + pincode" label (never the internal zone names). Reuses
   // the shared display-label helper; falls back to a safe local rule.
   function displayLabelFor(loc) {
@@ -217,26 +223,33 @@
     var svc = dr.getServiceOptions(location, svcOpts);
     var serviceOptions = (svc && svc.options) || [];
 
-    // 4-hour blocked items: only when a 4-hour option WOULD apply (cart eligible)
-    // but the cart has non-quick-commerce items.
-    var blockedItems = [];
-    if (!eligible) {
+    // 4-hour AVAILABILITY comes from the ZONE resolver (quick_commerce pincodes) +
+    // cart quick-commerce eligibility — the SAME basis ShipZip uses and that the cart
+    // attribute handoff sends (ganguram_delivery_mode_candidates). It is NOT tied to a
+    // metaobject four_hour RULE resolving (a rule only supplies the charge). This keeps
+    // the cart IN SYNC with checkout: an all-QC cart in a quick-commerce pincode shows
+    // "4 Hours available" even when no four_hour rule exists, because ShipZip offers it.
+    // Would 4-hour apply for an all-QC cart HERE? True when the pincode is a quick-
+    // commerce zone (ShipZip's basis) OR a metaobject four_hour rule would resolve.
+    var fourHourArea = fourHourAreaEligible(location);
+    var fourHourRuleApplies = false;
+    if (!fourHourArea) {
       var potOpts = { fourHourEligibleCart: true };
       if (confirmed) { potOpts.distanceKm = dist.distanceKm; }
-      var pot = dr.getServiceOptions(location, potOpts);
-      var hasFour = false, po = (pot && pot.options) || [];
-      for (var k = 0; k < po.length; k++) { if (po[k].serviceType === 'four_hour') { hasFour = true; break; } }
-      if (hasFour) { blockedItems = nonQuickCommerceItemNames(); }
+      var pot = dr.getServiceOptions(location, potOpts), po = (pot && pot.options) || [];
+      for (var k = 0; k < po.length; k++) { if (po[k].serviceType === 'four_hour') { fourHourRuleApplies = true; break; } }
     }
+    var fourHourPossible = fourHourArea || fourHourRuleApplies;
+    var fourHourAvailable = eligible && fourHourPossible; // -> "4 Hours available"
 
-    // Reason the 4-hour mode isn't offered: 'mixed' (some items not QC) or
-    // 'pincode' (cart is all-QC + local zone, but no 4-hour rule for this pincode).
-    var hasFourOption = false;
-    for (var s = 0; s < serviceOptions.length; s++) { if (serviceOptions[s].serviceType === 'four_hour') { hasFourOption = true; break; } }
+    // DEFINITE negative only: a MIXED cart where 4-hour WOULD apply (some items aren't
+    // quick-commerce). NEVER assert "not available" just because a metaobject four_hour
+    // rule is missing — the theme can't see ShipZip, so it must not contradict it (req B).
+    var blockedItems = [];
     var fourHourReason = '';
-    if (!hasFourOption) {
+    if (!eligible && fourHourPossible) {
+      blockedItems = nonQuickCommerceItemNames();
       if (blockedItems.length) { fourHourReason = 'mixed'; }
-      else if (eligible && isLocalZone(location)) { fourHourReason = 'pincode'; }
     }
 
     var result = {
@@ -251,6 +264,7 @@
       serviceOptions: serviceOptions,
       confirmed: confirmed,
       distanceKm: confirmed ? dist.distanceKm : null,
+      fourHourAvailable: fourHourAvailable,
       fourHourBlockedItems: blockedItems,
       fourHourReason: fourHourReason
     };
@@ -258,7 +272,7 @@
       pincode: location.pincode, confirmed: confirmed, distanceKmPassed: distOpts.distanceKm,
       reason: data.reason, mov: mov, movMet: movMet, subtotal: subtotal,
       services: serviceOptions.map(function (o) { return o.serviceType; }),
-      fourHourReason: fourHourReason, fourHourBlocked: blockedItems
+      fourHourArea: fourHourArea, fourHourAvailable: fourHourAvailable, fourHourReason: fourHourReason
     });
     return result;
   }
@@ -352,15 +366,12 @@
     var modesEl = panel.querySelector('[data-gdpr-modes]');
     if (!modesEl) { return; }
     modesEl.textContent = '';
-    var opts = st.serviceOptions || [];
-    var hasFour = false, hasStd = false, i;
-    for (i = 0; i < opts.length; i++) {
-      if (opts[i].serviceType === 'four_hour') { hasFour = true; }
-      else if (opts[i].serviceType === 'standard') { hasStd = true; }
-    }
+    // 4-hour comes from zone eligibility (st.fourHourAvailable), NOT just a rule. Standard
+    // is ALWAYS offered when a rule resolved — it must never disappear because 4-hour exists.
+    var hasFour = !!st.fourHourAvailable, i;
     var chips = [];
     if (hasFour) { chips.push({ text: copy('chipFourHour'), accent: true }); }
-    if (hasStd) { chips.push({ text: hasFour ? copy('chipStandardAlso') : copy('chipStandard'), accent: false }); }
+    chips.push({ text: hasFour ? copy('chipStandardAlso') : copy('chipStandard'), accent: false });
     var ch = st.deliveryCharge; // one concise charge chip, only if useful
     if (st.freeDeliveryMet || ch === 0) { chips.push({ text: copy('chipFree'), accent: false }); }
     else if (ch == null) { chips.push({ text: copy('chipChargeAtCheckout'), accent: false }); }
