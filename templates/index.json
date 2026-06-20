@@ -258,6 +258,7 @@
         "16540673826052f668-0": {
           "type": "card",
           "settings": {
+            "image": "shopify://shop_images/nolen-gur-pata-sandesh.jpg",
             "caption": "Since 1885",
             "title": "Heritage Bengali Mithai",
             "subtitle": "",
@@ -277,6 +278,7 @@
         "16540673826052f668-1": {
           "type": "card",
           "settings": {
+            "image": "shopify://shop_images/kaju-barfi.jpg",
             "caption": "Premium gifting",
             "title": "Dry-Fruit Mithai",
             "subtitle": "",
@@ -296,6 +298,7 @@
         "16540673826052f668-2": {
           "type": "card",
           "settings": {
+            "image": "shopify://shop_images/mishti-maharashtrian-fusion.jpg",
             "caption": "Delivered across India",
             "title": "Packed Sweets & Snacks",
             "subtitle": "",
@@ -564,7 +567,7 @@
         "remove_bottom_margin": false,
         "color_background_main": "#ffffff",
         "section_background_gradient": "",
-        "color_text_main": "#5c8e61",
+        "color_text_main": "#49488D",
         "section_visibility": "always"
       }
     },
@@ -663,135 +666,6 @@
         "remove_margin": false,
         "seo_h_tag": "h2",
         "section_visibility": "always"
-      }
-    },
-    "16546982542e923b5a": {
-      "type": "featured-product",
-      "blocks": {
-        "16546982534861ca3b-1": {
-          "type": "price",
-          "settings": {}
-        },
-        "16546982534861ca3b-0": {
-          "type": "title",
-          "settings": {
-            "seo_h_tag": "h2"
-          }
-        },
-        "rating_99467t": {
-          "type": "rating",
-          "settings": {}
-        },
-        "16546982534861ca3b-4": {
-          "type": "description",
-          "settings": {
-            "heading": "",
-            "subtitle": "",
-            "tooltip_info": "",
-            "collapsible": false,
-            "opened_by_default": false,
-            "layout": "compact",
-            "text_color": "rgba(0,0,0,0)",
-            "bg_color": "rgba(0,0,0,0)",
-            "darken_header": false
-          }
-        },
-        "space_K3qE87": {
-          "type": "space",
-          "settings": {}
-        },
-        "space_9QJWLr": {
-          "type": "space",
-          "settings": {}
-        },
-        "nutriscore_UQz6BH": {
-          "type": "nutriscore",
-          "settings": {
-            "title": "Nutriscore",
-            "subtitle": "",
-            "tooltip_info": "Make healthier food choices at a glance. It assigns a score to food and beverages based on their nutritional quality, represented by a color-coded scale from A (green) to E (red)",
-            "active_item": 3,
-            "active_item_dynamic": "",
-            "label_1": "A",
-            "color_1": "#007517",
-            "label_2": "B",
-            "color_2": "#94c11e",
-            "label_3": "C",
-            "color_3": "#ffde00",
-            "label_4": "D",
-            "color_4": "#f29200",
-            "label_5": "E",
-            "color_5": "#dd1e01",
-            "collapsible": false,
-            "opened_by_default": false,
-            "layout": "boxed",
-            "text_color": "rgba(0,0,0,0)",
-            "bg_color": "rgba(0,0,0,0)",
-            "darken_header": false
-          }
-        },
-        "space_QCfGAj": {
-          "type": "space",
-          "settings": {}
-        },
-        "16546982534861ca3b-2": {
-          "type": "variant_picker",
-          "settings": {
-            "variants_style": "radio",
-            "metaobject_swatch_metafields": "",
-            "show_quantities": "no",
-            "inventory_color_low": "rgba(0,0,0,0)",
-            "inventory_color_enough": "rgba(0,0,0,0)",
-            "inventory_color_out": "rgba(0,0,0,0)"
-          }
-        },
-        "511f8032-4664-4c08-b843-b3178a8f143a": {
-          "type": "space",
-          "settings": {}
-        },
-        "16546982534861ca3b-3": {
-          "type": "buy_buttons",
-          "settings": {
-            "show_price": true,
-            "show_quantity_selector": true,
-            "show_preorder": false,
-            "show_dynamic_checkout": true,
-            "show_gift_card_recipient": false,
-            "color_text_buttons": "rgba(0,0,0,0)",
-            "color_accent_buttons": "rgba(0,0,0,0)",
-            "style_buttons": "solid"
-          }
-        }
-      },
-      "block_order": [
-        "16546982534861ca3b-1",
-        "16546982534861ca3b-0",
-        "rating_99467t",
-        "16546982534861ca3b-4",
-        "space_K3qE87",
-        "space_9QJWLr",
-        "nutriscore_UQz6BH",
-        "space_QCfGAj",
-        "16546982534861ca3b-2",
-        "511f8032-4664-4c08-b843-b3178a8f143a",
-        "16546982534861ca3b-3"
-      ],
-      "disabled": true,
-      "settings": {
-        "product": "",
-        "gallery_ratio": "natural",
-        "other_media_ratio": "natural",
-        "video_fit": true,
-        "gallery_fit": false,
-        "show_border": true,
-        "gallery_card_design": false,
-        "gallery_padding": 0,
-        "gallery_pagination": "dots",
-        "enable_zoom": true,
-        "enable_video_looping": true,
-        "enable_video_autoplay": false,
-        "disable_parallax": false,
-        "default_to_first_variant": true
       }
     },
     "flex_grid_QryJ3i": {
@@ -959,152 +833,6 @@
         "section_visibility": "always"
       }
     },
-    "1654161920efe5f084": {
-      "type": "text-columns-icons",
-      "blocks": {
-        "1654161920f21316cf-0": {
-          "type": "image",
-          "settings": {
-            "icon": "earth-globe",
-            "title": "Vegan",
-            "caption": "Plant based goodness",
-            "link": "",
-            "open_in_new_window": false,
-            "color_background_main": "#d0e2cb",
-            "color_icons_main": "rgba(0,0,0,0)",
-            "seo_h_tag": "h3"
-          }
-        },
-        "f428896f-4051-4df9-8bab-e7cd918d1ac7": {
-          "type": "image",
-          "settings": {
-            "icon": "favorite",
-            "title": "Gluten-Free",
-            "caption": "Only whole foods that don't contain gluten",
-            "link": "",
-            "open_in_new_window": false,
-            "color_background_main": "#e5dfcf",
-            "color_icons_main": "rgba(0,0,0,0)",
-            "seo_h_tag": "h3"
-          }
-        },
-        "c68ec8a9-9eee-49a9-b3f4-b878d866cf14": {
-          "type": "image",
-          "settings": {
-            "icon": "take-out-box",
-            "title": "Paleo",
-            "caption": "Ancient ingredients, modern flavors",
-            "link": "",
-            "open_in_new_window": false,
-            "color_background_main": "#d4e4de",
-            "color_icons_main": "rgba(0,0,0,0)",
-            "seo_h_tag": "h3"
-          }
-        },
-        "133b6423-8e5b-4a12-abea-4494b902a1e0": {
-          "type": "image",
-          "settings": {
-            "icon": "apple",
-            "title": "Keto",
-            "caption": "Good fats served in flavor-forward food",
-            "link": "",
-            "open_in_new_window": false,
-            "color_background_main": "#e6cfcf",
-            "color_icons_main": "rgba(0,0,0,0)",
-            "seo_h_tag": "h3"
-          }
-        },
-        "3c446a41-840a-492a-83c7-3e7de3370076": {
-          "type": "image",
-          "settings": {
-            "icon": "pizza-slice",
-            "title": "Plant-Based",
-            "caption": "Introducing",
-            "link": "",
-            "open_in_new_window": false,
-            "color_background_main": "#d3e2e1",
-            "color_icons_main": "rgba(0,0,0,0)",
-            "seo_h_tag": "h3"
-          }
-        }
-      },
-      "block_order": [
-        "1654161920f21316cf-0",
-        "f428896f-4051-4df9-8bab-e7cd918d1ac7",
-        "c68ec8a9-9eee-49a9-b3f4-b878d866cf14",
-        "133b6423-8e5b-4a12-abea-4494b902a1e0",
-        "3c446a41-840a-492a-83c7-3e7de3370076"
-      ],
-      "disabled": true,
-      "settings": {
-        "heading": "Shop By Lifestyle",
-        "subheading": "",
-        "section_heading_layout": "section-heading--center",
-        "show_section_button": false,
-        "button_label": "",
-        "cta_url": "",
-        "open_in_new_window": false,
-        "style": "slider",
-        "layout": "grid-5 grid-portable-4 grid-lap-3 grid-palm-2 smel",
-        "border_radius": 200,
-        "section_background_color": "rgba(0,0,0,0)",
-        "section_background_gradient": "",
-        "section_heading_color": "rgba(0,0,0,0)",
-        "descrease_margin": false,
-        "remove_margin": false,
-        "seo_h_tag": "h2",
-        "section_visibility": "always"
-      }
-    },
-    "1655121489db318f96": {
-      "type": "shop-the-look",
-      "blocks": {
-        "1655121489da0fd0f2-0": {
-          "type": "price",
-          "settings": {}
-        },
-        "1655121489da0fd0f2-1": {
-          "type": "title",
-          "settings": {}
-        },
-        "ffd8f1c9-28ad-4008-a0c2-02d31f483ede": {
-          "type": "rating",
-          "settings": {}
-        },
-        "1655121489da0fd0f2-2": {
-          "type": "quick_buy",
-          "settings": {}
-        }
-      },
-      "block_order": [
-        "1655121489da0fd0f2-0",
-        "1655121489da0fd0f2-1",
-        "ffd8f1c9-28ad-4008-a0c2-02d31f483ede",
-        "1655121489da0fd0f2-2"
-      ],
-      "disabled": true,
-      "settings": {
-        "heading": "Shop Hot Meals",
-        "subheading": "",
-        "section_heading_layout": "section-heading--left",
-        "show_section_button": false,
-        "button_label": "",
-        "cta_url": "",
-        "open_in_new_window": false,
-        "product_list": [],
-        "color_background_main": "#f2f2f2",
-        "color_borders_main": "#eeeeee",
-        "color_hide_borders": true,
-        "color_hide_shadow": false,
-        "section_background_color": "rgba(0,0,0,0)",
-        "section_background_gradient": "",
-        "section_heading_color": "rgba(0,0,0,0)",
-        "descrease_margin": false,
-        "remove_margin": false,
-        "seo_h_tag": "h2",
-        "section_visibility": "always"
-      }
-    },
     "16551304148266b5a5": {
       "type": "rich-text",
       "blocks": {
@@ -1152,314 +880,6 @@
         "color_hide_borders": true,
         "color_hide_shadow": false,
         "section_visibility": "always"
-      }
-    },
-    "16551212489c663a1e": {
-      "type": "featured-collection",
-      "blocks": {
-        "1655121248aee0f086-0": {
-          "type": "price",
-          "settings": {}
-        },
-        "1655121248aee0f086-1": {
-          "type": "title",
-          "settings": {}
-        },
-        "00a6a182-0604-4cb4-80a4-3c8337e16c08": {
-          "type": "rating",
-          "settings": {}
-        },
-        "1655121248aee0f086-2": {
-          "type": "quick_buy",
-          "settings": {}
-        }
-      },
-      "block_order": [
-        "1655121248aee0f086-0",
-        "1655121248aee0f086-1",
-        "00a6a182-0604-4cb4-80a4-3c8337e16c08",
-        "1655121248aee0f086-2"
-      ],
-      "settings": {
-        "heading": "Dry-Fruit Mithai",
-        "subheading": "",
-        "show_view_all": true,
-        "section_heading_layout": "section-heading--left",
-        "style": "grid",
-        "layout_desktop": "four-columns",
-        "layout_mobile": "grid-palm-2",
-        "products_number": 8,
-        "collection": "dry-fruits-mishti",
-        "collection_1": "",
-        "collection_2": "",
-        "collection_3": "",
-        "color_background_main": "rgba(0,0,0,0)",
-        "color_text_main": "rgba(0,0,0,0)",
-        "color_button_main": "rgba(0,0,0,0)",
-        "color_borders_main": "rgba(0,0,0,0)",
-        "color_shadow_main": "rgba(0,0,0,0)",
-        "color_hide_borders": false,
-        "color_hide_shadow": false,
-        "section_background_color": "rgba(0,0,0,0)",
-        "section_background_gradient": "",
-        "section_heading_color": "rgba(0,0,0,0)",
-        "descrease_margin": false,
-        "remove_margin": false,
-        "seo_h_tag": "h2",
-        "section_visibility": "always"
-      }
-    },
-    "d57de2d5-c548-48dd-a4a3-581d89d355b5": {
-      "type": "image-with-hotspots",
-      "blocks": {
-        "909cc9c2-e352-4947-a592-611a30a5a8d7": {
-          "type": "text",
-          "settings": {
-            "title": "Certified Gluten-Free",
-            "description": "<p>Every product in our collection is carefully vetted to ensure it meets gluten-free standards, giving you peace of mind with every purchase.</p>",
-            "vertical_offset_desktop": 27,
-            "horizontal_offset_desktop": 34,
-            "vertical_offset_mobile": 34,
-            "horizontal_offset_mobile": 87,
-            "mobile_hide": false,
-            "tooltip_position_desktop": "left",
-            "tooltip_position_mobile": "left"
-          }
-        },
-        "cccac557-f008-408d-b6e6-508c125f3831": {
-          "type": "text",
-          "settings": {
-            "title": "Inclusive Options",
-            "description": "<p>Our collection includes vegan, organic, and allergy-friendly choices, catering to diverse dietary needs.</p>",
-            "vertical_offset_desktop": 78,
-            "horizontal_offset_desktop": 68,
-            "vertical_offset_mobile": 50,
-            "horizontal_offset_mobile": 50,
-            "mobile_hide": false,
-            "tooltip_position_desktop": "top",
-            "tooltip_position_mobile": "bottom"
-          }
-        },
-        "3325a923-d079-46e4-b89b-9f25656d441a": {
-          "type": "text",
-          "settings": {
-            "title": "High-Quality Ingredients",
-            "description": "<p>We prioritize natural, wholesome ingredients to bring you delicious, gluten-free options without compromise.</p>",
-            "vertical_offset_desktop": 64,
-            "horizontal_offset_desktop": 32,
-            "vertical_offset_mobile": 57,
-            "horizontal_offset_mobile": 12,
-            "mobile_hide": false,
-            "tooltip_position_desktop": "bottom",
-            "tooltip_position_mobile": "right"
-          }
-        },
-        "033a0dec-5c12-4422-a579-a7792e36158a": {
-          "type": "text",
-          "settings": {
-            "title": "Wide Variety",
-            "description": "<p>From snacks and baking essentials to meal options, our gluten-free collection offers something for every taste and occasion.</p>",
-            "vertical_offset_desktop": 28,
-            "horizontal_offset_desktop": 60,
-            "vertical_offset_mobile": 48,
-            "horizontal_offset_mobile": 77,
-            "mobile_hide": false,
-            "tooltip_position_desktop": "bottom",
-            "tooltip_position_mobile": "left"
-          }
-        }
-      },
-      "block_order": [
-        "909cc9c2-e352-4947-a592-611a30a5a8d7",
-        "cccac557-f008-408d-b6e6-508c125f3831",
-        "3325a923-d079-46e4-b89b-9f25656d441a",
-        "033a0dec-5c12-4422-a579-a7792e36158a"
-      ],
-      "disabled": true,
-      "settings": {
-        "heading": "Explore Organic",
-        "subheading": "",
-        "section_heading_layout": "section-heading--left",
-        "show_section_button": false,
-        "button_label": "",
-        "cta_url": "",
-        "open_in_new_window": false,
-        "color_text": "#000000",
-        "color_background": "#ffffff",
-        "section_background_color": "rgba(0,0,0,0)",
-        "section_background_gradient": "",
-        "section_heading_color": "rgba(0,0,0,0)",
-        "descrease_margin": false,
-        "remove_margin": false,
-        "seo_h_tag": "h2",
-        "section_visibility": "always"
-      }
-    },
-    "16553621956de397b6": {
-      "type": "testimonials",
-      "blocks": {
-        "16553621951e01132c-0": {
-          "type": "testimonial",
-          "settings": {
-            "author_name": "Michael Smith",
-            "author_title": "Customer",
-            "quote": "<p>Great products. Always fresh, eco stuff that i can't find anywhere else in the city. I wouldn't imagine my daily life without them!</p>"
-          }
-        },
-        "16553621951e01132c-1": {
-          "type": "testimonial",
-          "settings": {
-            "author_name": "John Forest",
-            "author_title": "Customer",
-            "quote": "<p>What i love about this shop is the fact that they have great assistance after buying. They offer free recipes and a lot of freebies on each purchase.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "16553621951e01132c-0",
-        "16553621951e01132c-1"
-      ],
-      "disabled": true,
-      "settings": {
-        "heading": "",
-        "subheading": "",
-        "section_heading_layout": "section-heading--center",
-        "show_section_button": false,
-        "button_label": "",
-        "cta_url": "",
-        "open_in_new_window": false,
-        "quote_font": "crimson_text_i4",
-        "quote_font_size": 34,
-        "quote_line_height": 1.1,
-        "content_alignment": "center",
-        "color_background_main": "rgba(0,0,0,0)",
-        "color_text_main": "#000000",
-        "color_borders_main": "rgba(0,0,0,0)",
-        "color_shadow_main": "rgba(0,0,0,0)",
-        "color_hide_borders": false,
-        "color_hide_shadow": false,
-        "section_background_color": "rgba(0,0,0,0)",
-        "section_background_gradient": "",
-        "section_heading_color": "rgba(0,0,0,0)",
-        "remove_margin": false,
-        "seo_h_tag": "h2"
-      }
-    },
-    "16551127939786a43a": {
-      "type": "blog-posts",
-      "blocks": {
-        "165511279388d6ad87-0": {
-          "type": "info",
-          "settings": {
-            "show_date": true,
-            "show_author": false,
-            "show_comments_number": false
-          }
-        },
-        "165511279388d6ad87-1": {
-          "type": "title",
-          "settings": {}
-        },
-        "6d7d92cc-64fe-4f89-9974-bb98f18308a0": {
-          "type": "summary",
-          "disabled": true,
-          "settings": {
-            "excerpt_limit": 20
-          }
-        }
-      },
-      "block_order": [
-        "165511279388d6ad87-0",
-        "165511279388d6ad87-1",
-        "6d7d92cc-64fe-4f89-9974-bb98f18308a0"
-      ],
-      "settings": {
-        "title": "Latest Articles",
-        "subheading": "",
-        "show_view_all": true,
-        "section_heading_layout": "section-heading--left",
-        "blog": "",
-        "emphasize_first": false,
-        "blog_show_image": true,
-        "image_aspect_ratio": "1.33333",
-        "section_background_color": "rgba(0,0,0,0)",
-        "section_background_gradient": "",
-        "section_heading_color": "rgba(0,0,0,0)",
-        "descrease_margin": false,
-        "remove_margin": false,
-        "seo_h_tag": "h2",
-        "section_visibility": "always"
-      }
-    },
-    "166124485020a4ae62": {
-      "type": "content-toggles",
-      "blocks": {
-        "16612448501816a8ab-0": {
-          "type": "text",
-          "settings": {
-            "title": "WINE TASTING",
-            "subtitle": "Saint Germain.  Thu Sep 24th  6.00pm - 8.00pm",
-            "icon": "map-marker",
-            "button_label": "Register",
-            "button_link": "",
-            "body": "<p>Spend a decadent afternoon in our Saint Germain store with a wine and cheese tasting, guided by a knowledgeable sommelier. </p><p></p><p>Sample wines from various regions, including Rhone, Bordeaux and Sancerre, learning how each region produces different wines. </p><p></p><p>- Find out the proper way to taste wine. <br/>- Nibble on wine-friendly snacks like French cheeses and cured meats for lunch while you sip in a comfortable converted wine cellar in the center of Paris. <br/>- Taste five different wines from regions such as Bordeaux, Sancerre and Champagne Sample artisanal cheese and tasty charcuterie <br/>- Learn about the best wine-tasting techniques from your trained sommelier guide Relax<br/></p><p></p>",
-            "constrain_image_width": false,
-            "image_width": 300,
-            "hide_block_if": false
-          }
-        },
-        "16612448501816a8ab-1": {
-          "type": "text",
-          "settings": {
-            "title": "Free cooking class",
-            "subtitle": "Champs Élysées.  Wed Oct 11th  5.00pm - 8.00pm",
-            "icon": "map-marker",
-            "button_label": "Register",
-            "button_link": "",
-            "body": "",
-            "constrain_image_width": false,
-            "image_width": 300,
-            "hide_block_if": false
-          }
-        },
-        "16612448501816a8ab-2": {
-          "type": "text",
-          "settings": {
-            "title": "Pumpkin carving contest",
-            "subtitle": "La Défense.  Fri Oct 18th  5.00pm - 8.00pm",
-            "icon": "map-marker",
-            "button_label": "Register",
-            "button_link": "",
-            "body": "<p>This year’s contest will be conducted as follows: </p><p>Pumpkins will be <span style=\"text-decoration:underline\">carved </span>at home and brought to school on <strong>Wednesday, October 30th, </strong><span style=\"text-decoration:underline\"><strong>no </strong></span><strong>later than 9:00am</strong>. Pumpkins will be displayed in the front hall, and the judging will take place on Wednesday, October 30th at 3:00pm. They will be lit and displayed on the stage for the school to view on Thursday at 1:00pm. </p><p>A <span style=\"text-decoration:underline\">battery operated candle </span>must be provided by the student in order for the pumpkin to be lit.</p>",
-            "constrain_image_width": false,
-            "image_width": 300,
-            "hide_block_if": false
-          }
-        }
-      },
-      "block_order": [
-        "16612448501816a8ab-0",
-        "16612448501816a8ab-1",
-        "16612448501816a8ab-2"
-      ],
-      "disabled": true,
-      "settings": {
-        "heading": "Upcoming Events",
-        "subheading": "",
-        "section_heading_layout": "section-heading--left",
-        "show_section_button": false,
-        "button_label": "",
-        "cta_url": "",
-        "open_cta_in_new_window": false,
-        "open_first": false,
-        "toggle_size": "small",
-        "enable_structured_data": false,
-        "form_enable": false,
-        "form_title": "Contact form",
-        "image_enable": false,
-        "link": "",
-        "open_in_new_window": false,
-        "seo_h_tag": "h2"
       }
     },
     "165597098555c514a4": {
@@ -1539,26 +959,6 @@
         "seo_h_tag": "h2",
         "section_visibility": "always"
       }
-    },
-    "1655112847aaa4cc50": {
-      "type": "newsletter",
-      "settings": {
-        "show_icon": true,
-        "title": "Sign up for our newsletter",
-        "text": "<p>Sign up to hear about fresh-batch mithai, festive gifting and new arrivals.</p>",
-        "color_background_main": "#e7e7e7",
-        "color_text_main": "#000000",
-        "color_borders_main": "rgba(0,0,0,0)",
-        "color_shadow_main": "rgba(0,0,0,0)",
-        "color_hide_borders": true,
-        "color_hide_shadow": false,
-        "section_background_color": "#e7e7e7",
-        "section_background_gradient": "",
-        "descrease_margin": false,
-        "remove_margin": true,
-        "seo_h_tag": "h2",
-        "section_visibility": "always"
-      }
     }
   },
   "order": [
@@ -1570,17 +970,8 @@
     "flex_grid_DhRTt8",
     "1657094048f07fb2a2",
     "flex_grid_haPGC6",
-    "16546982542e923b5a",
     "flex_grid_QryJ3i",
-    "1654161920efe5f084",
-    "1655121489db318f96",
     "16551304148266b5a5",
-    "16551212489c663a1e",
-    "d57de2d5-c548-48dd-a4a3-581d89d355b5",
-    "16553621956de397b6",
-    "16551127939786a43a",
-    "166124485020a4ae62",
-    "165597098555c514a4",
-    "1655112847aaa4cc50"
+    "165597098555c514a4"
   ]
 }
