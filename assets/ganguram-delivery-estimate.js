@@ -32,9 +32,8 @@
       basedOnAddress: 'Delivery estimate based on your selected address.',
       locationLabel: 'Location:',
       distanceLabel: 'Distance:',
-      distanceApprox: 'Approx. __KM__ km',
-      distanceExact: '__KM__ km',
-      distanceApproxNote: 'Approx. distance based on pincode',
+      distanceFromDispatch: '__KM__ km from our dispatch location',
+      distanceApproxLine: 'Approx. __KM__ km · based on your pincode',
       movLabel: 'Minimum order:',
       cartValueLabel: 'Cart value:',
       remainingLabel: 'Add to continue:',
@@ -86,14 +85,30 @@
     var loc; try { loc = z && z.getSelectedDeliveryLocation(); } catch (e) { return null; }
     if (!loc || !loc.pincode || loc.isServiceable !== true) { return null; }
 
-    var d = dist();
-    var est = (d && typeof d.getEstimate === 'function') ? d.getEstimate(loc.pincode) : { distanceKm: null, approximate: false, confirmed: false };
-    // No distance yet -> kick off the approximate pincode-centroid geocode (re-renders on event).
-    if (d && est.distanceKm == null && typeof d.computeApproxForPincode === 'function') {
-      try { d.computeApproxForPincode(loc.pincode); } catch (e) {}
-    }
-    var distOpts = (est.confirmed && est.distanceKm != null) ? { distanceKm: est.distanceKm } : {};
+    // BASIS comes from the SELECTED-ADDRESS store (2.11F.2 root-cause fix), NOT from
+    // whether a distance could be computed. A selected Google address -> address basis
+    // even if the Distance Matrix call hasn't returned / failed.
+    var ga = window.GanguramAddress;
+    var addr = (ga && typeof ga.getSelectedAddress === 'function') ? ga.getSelectedAddress() : null;
+    var isAddress = !!(addr && addr.source === 'selected_address');
 
+    var d = dist();
+    var conf = (d && typeof d.getForPincode === 'function') ? d.getForPincode(loc.pincode) : { distanceKm: null, confirmed: false };
+    var approx = (d && typeof d.getApproxForPincode === 'function') ? d.getApproxForPincode(loc.pincode) : null;
+
+    // Distance: a selected address uses the CONFIRMED driving distance (exact); a
+    // pincode uses the approximate centroid distance. Kick off whichever is missing.
+    var distanceKm = null, distanceApprox = false;
+    if (isAddress) {
+      if (conf.confirmed) { distanceKm = conf.distanceKm; distanceApprox = false; }
+      // the confirmed compute is triggered by the places module on selection.
+    } else {
+      if (approx) { distanceKm = approx.distanceKm; distanceApprox = true; }
+      else if (d && typeof d.computeApproxForPincode === 'function') { try { d.computeApproxForPincode(loc.pincode); } catch (e) {} }
+    }
+
+    // Only a CONFIRMED (address) distance feeds the rules' distance slabs.
+    var distOpts = conf.confirmed ? { distanceKm: conf.distanceKm } : {};
     var ct = cartTotalPaise();
     var data = dr ? dr.getProgressData(ct == null ? 0 : ct, loc, distOpts) : null;
     var hasRule = !!(data && data.reason !== 'none' && data.rule);
@@ -104,12 +119,12 @@
 
     return {
       label: displayLabel(loc),
-      distanceKm: est.distanceKm, approximate: est.approximate, confirmed: est.confirmed,
+      isAddress: isAddress,
+      distanceKm: distanceKm, approximate: distanceApprox,
       hasRule: hasRule,
       mov: hasRule ? data.mov : null,
       movMet: hasRule ? (data.movMet === true) : true,
       movRemaining: hasRule ? data.movRemaining : 0,
-      deliveryCharge: hasRule ? data.deliveryCharge : null,
       freeDeliveryMet: hasRule ? data.freeDeliveryMet : false,
       cartTotal: ct,
       serviceOptions: (svc && svc.options) || []
@@ -134,36 +149,26 @@
     if (st.label) { body.appendChild(row(copy('locationLabel'), st.label)); }
     if (st.distanceKm != null) {
       var km = Math.round(st.distanceKm * 10) / 10;
-      var dval = st.approximate ? tmpl(copy('distanceApprox'), { km: km }) : tmpl(copy('distanceExact'), { km: km });
+      var dval = st.isAddress ? tmpl(copy('distanceFromDispatch'), { km: km }) : tmpl(copy('distanceApproxLine'), { km: km });
       body.appendChild(row(copy('distanceLabel'), dval));
     }
     if (st.mov != null) { body.appendChild(row(copy('movLabel'), fmtMoney(st.mov))); }
     if (st.cartTotal != null) { body.appendChild(row(copy('cartValueLabel'), fmtMoney(st.cartTotal))); }
     if (st.mov != null && !st.movMet && st.cartTotal != null) { body.appendChild(row(copy('remainingLabel'), fmtMoney(st.movRemaining))); }
-    if (st.hasRule) {
-      var chargeVal = st.freeDeliveryMet ? copy('freeDelivery')
-        : (st.deliveryCharge == null) ? copy('chargeAtCheckout')
-        : (st.deliveryCharge === 0 ? copy('freeDelivery') : fmtMoney(st.deliveryCharge));
-      body.appendChild(row(copy('chargeLabel'), chargeVal));
-    }
-    // available modes (chips)
-    if (st.serviceOptions.length) {
-      var modesWrap = document.createElement('div'); modesWrap.className = 'ganguram-delivery-estimate__modes';
-      var lbl = document.createElement('span'); lbl.className = 'ganguram-delivery-estimate__label'; lbl.textContent = copy('modesLabel'); modesWrap.appendChild(lbl);
-      for (var i = 0; i < st.serviceOptions.length; i++) {
-        var o = st.serviceOptions[i];
-        var chip = document.createElement('span'); chip.className = 'ganguram-delivery-estimate__chip';
-        chip.textContent = o.serviceLabel || (o.serviceType === 'four_hour' ? copy('fourHourLabel') : copy('standardLabel'));
-        modesWrap.appendChild(chip);
-      }
-      body.appendChild(modesWrap);
+    // per-mode delivery charge (show the rule charge when known; else final at checkout)
+    for (var i = 0; i < st.serviceOptions.length; i++) {
+      var o = st.serviceOptions[i];
+      var name = o.serviceLabel || (o.serviceType === 'four_hour' ? copy('fourHourLabel') : copy('standardLabel'));
+      var chg = (st.freeDeliveryMet && o.serviceType !== 'four_hour') ? copy('freeDelivery')
+        : (o.deliveryCharge == null) ? copy('chargeAtCheckout')
+        : (o.deliveryCharge === 0 ? copy('freeDelivery') : fmtMoney(o.deliveryCharge));
+      body.appendChild(row(name, chg));
     }
     var note = document.createElement('p'); note.className = 'ganguram-delivery-estimate__note';
-    var basis = st.confirmed ? copy('basedOnAddress') : copy('basedOnPincode');
-    if (st.approximate && st.distanceKm != null) { basis += ' ' + copy('distanceApproxNote') + '.'; }
-    note.textContent = basis; body.appendChild(note);
+    note.textContent = st.isAddress ? copy('basedOnAddress') : copy('basedOnPincode');
+    body.appendChild(note);
 
-    card.setAttribute('data-gde-basis', st.confirmed ? 'address' : 'pincode');
+    card.setAttribute('data-gde-basis', st.isAddress ? 'address' : 'pincode');
     show(card);
   }
 

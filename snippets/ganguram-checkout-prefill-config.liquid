@@ -1,0 +1,22 @@
+{%- comment -%}
+  Ganguram — Checkout shipping-address prefill config (Phase 2.11F.2).
+
+  Publishes window.GanguramCheckoutPrefillConfig and loads
+  assets/ganguram-checkout-prefill.js. When the customer selected a full Google
+  address in the delivery popup and clicks the STANDARD checkout button, it appends
+  the documented checkout[shipping_address][...] parameters (from window.GanguramAddress)
+  to the checkout URL so Shopify opens with the shipping address prefilled.
+
+  Standard checkout button only — Shop Pay / dynamic checkout buttons bypass the cart
+  form and cannot be prefilled this way (limitation, documented in §9). Respects the
+  MOV soft guard; only fills safely-known fields; preserves cart / attributes /
+  discounts / payment. Fail-open. Set enabled:false to turn it off. No checkout /
+  shipping-rate / ShipZip / SBZ / zipLogic / resolver / settings_data change.
+{%- endcomment -%}
+<script>
+  window.GanguramCheckoutPrefillConfig = {
+    enabled: true,
+    checkoutUrl: "/checkout"
+  };
+</script>
+<script src="{{ 'ganguram-checkout-prefill.js' | asset_url }}" defer></script>

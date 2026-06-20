@@ -103,13 +103,14 @@
 
   function onSelect(e) {
     setAddrStatus('', '');
+    var prevPin = selectedPincode();
     var pred = e && e.placePrediction;
     if (!pred || typeof pred.toPlace !== 'function') {
       setAddrStatus('Couldn’t read that address. Please enter your pincode below.', 'error'); focusManualInput(); return;
     }
     var place;
     try { place = pred.toPlace(); } catch (err) { setAddrStatus('Couldn’t read that address. Please enter your pincode below.', 'error'); focusManualInput(); return; }
-    place.fetchFields({ fields: ['addressComponents', 'location', 'formattedAddress'] })
+    place.fetchFields({ fields: ['addressComponents', 'location', 'formattedAddress', 'id'] })
       .then(function () {
         var comps = place.addressComponents || [];
         var countryC = compOf(comps, 'country');
@@ -121,13 +122,58 @@
           setAddrStatus('Couldn’t read a pincode from that address. Please enter your 6-digit pincode below.', 'error');
           focusManualInput(); return;
         }
-        // Full address selected -> commit the pincode, then (privacy-minimal) compute
-        // the actual DRIVING distance for confirmed distance-slab delivery rules.
-        if (applyPincode(pin, comps)) { notifyDistance(pin, place); }
+        // Full address SELECTED -> commit the pincode, SAVE the structured address
+        // (so the popup switches to selected-address basis even if distance fails),
+        // then compute the actual driving distance.
+        if (applyPincode(pin, comps)) {
+          saveStructuredAddress(place, comps, pin);
+          notifyDistance(pin, place);
+          if (prevPin && prevPin.length === 6 && prevPin !== pin) {
+            setAddrStatus('The selected address has a different pincode from the delivery checker. We have updated the delivery pincode to match your selected address.', 'note');
+          }
+        }
       })
       .catch(function () {
         setAddrStatus('Couldn’t read that address. Please enter your pincode below.', 'error'); focusManualInput();
       });
+  }
+
+  function selectedPincode() {
+    var z = zone();
+    if (z && typeof z.getSelectedDeliveryLocation === 'function') { try { return String((z.getSelectedDeliveryLocation() || {}).pincode || '').replace(/\D/g, '').slice(0, 6); } catch (e) {} }
+    return '';
+  }
+
+  // Build a structured address from the Google place + components and store it via
+  // window.GanguramAddress (Phase 2.11F.2). Only confirmed fields; never invented.
+  function compText(comps, type, useShort) {
+    var c = compOf(comps, type);
+    if (!c) { return ''; }
+    return String((useShort ? c.shortText : c.longText) || c.longText || c.shortText || '');
+  }
+  function saveStructuredAddress(place, comps, pin) {
+    var ga = window.GanguramAddress;
+    if (!ga || typeof ga.setSelectedAddress !== 'function') { return; }
+    try {
+      var fa = (place && (place.formattedAddress || place.formatted_address)) || '';
+      var address1 = (compText(comps, 'street_number') + ' ' + compText(comps, 'route')).trim();
+      if (!address1 && fa) { address1 = String(fa).split(',')[0].trim(); }
+      var a2parts = [compText(comps, 'premise'), compText(comps, 'sublocality') || compText(comps, 'sublocality_level_1') || compText(comps, 'neighborhood')];
+      var address2 = a2parts.filter(Boolean).join(', ');
+      var coords = locOf(place);
+      ga.setSelectedAddress({
+        pincode: pin,
+        place_id: (place && (place.id || place.place_id)) || '',
+        formatted_address: fa,
+        address1: address1,
+        address2: address2,
+        city: compText(comps, 'locality') || compText(comps, 'postal_town') || compText(comps, 'administrative_area_level_2'),
+        state: compText(comps, 'administrative_area_level_1'),
+        country: compText(comps, 'country'),
+        lat: coords ? coords.lat : null,
+        lng: coords ? coords.lng : null
+      });
+    } catch (e) {}
   }
 
   // Route the pincode through the SAME validate+commit path as the manual input.

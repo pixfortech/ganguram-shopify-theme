@@ -534,6 +534,9 @@
   {%- comment -%} Driving-distance provider (Phase 2.11D) — for a SELECTED FULL ADDRESS, reuses the Phase 2.9B Google setup to compute the actual driving distance (confirmed distanceKm) used by the cart distance-slab rules. Needs the outlet origin setting + Distance Matrix API. Fail-open (no origin -> estimated pincode path). No checkout/shipping/SBZ/ShipZip/zipLogic/resolver/settings_data change. {%- endcomment -%}
   {%- render 'ganguram-distance-config' -%}
 
+  {%- comment -%} Selected structured address store (Phase 2.11F.2) — window.GanguramAddress. Tracks whether a full Google address was SELECTED (vs pincode only), so the popup estimate + checkout prefill use the address basis even if a driving distance can't be computed. Display/handoff only; fail-open. No resolver/MOV/ShipZip/settings_data change. {%- endcomment -%}
+  <script src="{{ 'ganguram-address.js' | asset_url }}" defer></script>
+
   {%- comment -%} Manual-pincode -> city enrichment (display hotfix) — when a selected pincode's city is unknown, asynchronously reuses the Phase 2.9B Google setup (no new key) to resolve the city and refresh the shared display label everywhere. Display/enrichment only; fail-open; Google not loaded on page load. No resolver/zone/filtering/cart-logic change. {%- endcomment -%}
   <script src="{{ 'ganguram-pincode-enrich.js' | asset_url }}" defer></script>
 
@@ -576,6 +579,9 @@
 
   {%- comment -%} Delivery estimate in the location popup (Phase 2.11F.1) — after a pincode/address resolves, renders status/city/distance/MOV/cart value/charge/modes into the popup ([data-ganguram-delivery-estimate]). Google distance is a SUPPORTING estimate (approximate for pincode-only); ShipZip/zone rules stay the source of truth. Display only; fail-open. No checkout/shipping/ShipZip/SBZ/zipLogic/resolver/settings_data change. {%- endcomment -%}
   {%- render 'ganguram-delivery-estimate-config' -%}
+
+  {%- comment -%} Checkout shipping-address prefill (Phase 2.11F.2) — when a full Google address was selected in the popup, appends checkout[shipping_address][...] params to the STANDARD checkout URL so Shopify prefills the shipping address. Standard button only (not Shop Pay/dynamic); respects the MOV guard; preserves cart/attributes/discounts/payment; fail-open. No checkout/shipping-rate/ShipZip/SBZ/zipLogic/resolver/settings_data change. {%- endcomment -%}
+  {%- render 'ganguram-checkout-prefill-config' -%}
 
 </body>
 </html>

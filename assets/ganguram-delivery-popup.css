@@ -350,3 +350,6 @@ html.gdp-open { overflow: hidden; }
   .ganguram-delivery-popup__overlay { opacity: 1; }
   .ganguram-delivery-popup__dialog { opacity: 1; transform: none; }
 }
+
+/* "Find by address" helper hint (Phase 2.11F.2) — theme-muted, no hardcoded colour */
+.ganguram-delivery-popup__addr-search-help { margin: 0.25rem 0 0; font-size: 0.85em; color: var(--gdp-muted); }
