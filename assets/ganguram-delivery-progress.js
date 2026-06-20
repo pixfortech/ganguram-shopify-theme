@@ -38,14 +38,17 @@
     var c = cfg().copy || {};
     var d = {
       movLabel: 'Minimum order:',
-      movLabelEstimated: 'Estimated minimum order:',
-      estimatedNote: 'Delivery and minimum order are estimated from your pincode. For accurate delivery options, please enter your complete address.',
-      confirmedNote: 'Delivery options confirmed for your address.',
+      // 2.11E: pincode/zone is accurate, not an estimate — these legacy keys are unused.
+      movLabelEstimated: 'Minimum order:',
+      estimatedNote: '',
+      confirmedNote: '',
+      deliveringTo: 'Delivering to __LABEL__',
+      chargeAtCheckout: 'Final delivery charge will be confirmed at checkout.',
       fourHourIneligible: '4-hour delivery is not available because the following item(s) are not eligible for quick delivery: __ITEMS__',
       cartValueLabel: 'Cart value:',
-      addMore: 'Add __REMAINING__ more to continue',
-      minReached: 'Minimum order reached. You can continue to checkout.',
-      checkoutNotice: 'Minimum order for this delivery area is __MOV__. Add __REMAINING__ more to continue.',
+      addMore: 'Add __REMAINING__ more to reach the minimum order for __PINCODE__',
+      minReached: 'Minimum order reached for __PINCODE__',
+      checkoutNotice: 'Minimum order value for your area is __MOV__. Please add __REMAINING__ more to continue.',
       freeDeliveryHint: 'add __AMOUNT__ for free delivery',
       freeDelivery: 'Free delivery',
       deliveryChargeFrom: 'Delivery from __AMOUNT__',
@@ -132,24 +135,64 @@
   }
 
   // ---- one shared computation (so panel + notice + guard never disagree) ----
+
+  // Catalog message (Phase 2.11E) with a graceful fallback to local copy().
+  function msg(code, vars) {
+    var m = window.GanguramDeliveryMessages;
+    if (m && typeof m.get === 'function') { var t = m.get(code, vars); if (t) { return t; } }
+    return '';
+  }
+  function cartHasItems() { return document.querySelectorAll('[data-ganguram-cart-line]').length > 0; }
+  function isLocalZone(loc) {
+    return !!(loc && (loc.zone === 'kolkata' || loc.zone === 'quick_commerce' || loc.isKolkata === true || loc.isQuickCommerce === true));
+  }
+  // Customer-facing "city + pincode" label (never the internal zone names). Reuses
+  // the shared display-label helper; falls back to a safe local rule.
+  function displayLabelFor(loc) {
+    if (window.GanguramDisplayLabel && typeof window.GanguramDisplayLabel.get === 'function') {
+      try { var l = window.GanguramDisplayLabel.get(loc); if (l) { return l; } } catch (e) {}
+    }
+    if (!loc || !loc.pincode) { return ''; }
+    if (loc.city) { return loc.city + ' ' + loc.pincode; }
+    if (isLocalZone(loc)) { return 'Kolkata ' + loc.pincode; }
+    return String(loc.pincode);
+  }
+  // Friendly zone wording for customers (never "quick_commerce"/"pan_india").
+  function zoneFriendly(loc) {
+    if (!loc) { return ''; }
+    if (isLocalZone(loc)) { return 'Kolkata'; }
+    if (loc.zone === 'pan_india' || loc.isPanIndia === true) { return 'Pan India'; }
+    return '';
+  }
+
   function computeState() {
     if (!enabled()) { return null; }
     var dr = rules(), z = zone();
     if (!dr || !z) { return null; }
     var location;
     try { location = z.getSelectedDeliveryLocation(); } catch (e) { return null; }
-    if (!location || !location.pincode || location.isServiceable !== true) { return null; }
+
+    var hasItems = cartHasItems();
+    // No pincode / not serviceable yet -> show an accurate PROMPT (never blocks
+    // checkout; the MOV guard is the only block). Only meaningful with items.
+    if (!location || !location.pincode) {
+      return hasItems ? { promptCode: 'NO_PINCODE', blocked: false, serviceOptions: [], fourHourBlockedItems: [] } : null;
+    }
+    if (location.isServiceable !== true) {
+      return hasItems ? { promptCode: 'NOT_SERVICEABLE', location: location, blocked: false, serviceOptions: [], fourHourBlockedItems: [] } : null;
+    }
     var subtotal = readSubtotal();
 
-    // Pincode-only = ESTIMATED (no distanceKm -> zone/pincode rules). A full
-    // address yields a CONFIRMED driving distanceKm -> distance-slab rules.
+    // Pincode/zone is the PRIMARY source of truth and is treated as ACCURATE for
+    // cart-level info (MOV, zone, modes). A full address only REFINES the distance
+    // slab (supporting, not a different business rule).
     var gd = window.GanguramDistance;
     var dist = (gd && typeof gd.getForPincode === 'function') ? gd.getForPincode(location.pincode) : { distanceKm: null, confirmed: false };
     var confirmed = !!(dist && dist.confirmed && dist.distanceKm != null);
     var distOpts = confirmed ? { distanceKm: dist.distanceKm } : {};
 
     var data = dr.getProgressData(subtotal, location, distOpts);
-    if (!data || data.reason === 'none' || !data.rule) { return null; } // no rules -> fail open
+    if (!data || data.reason === 'none' || !data.rule) { return null; } // no rule -> fail open (panel hidden)
     var mov = data.mov;
     var movMet = (mov == null) ? true : (data.movMet === true);
 
@@ -157,6 +200,7 @@
     var svcOpts = { fourHourEligibleCart: eligible };
     if (confirmed) { svcOpts.distanceKm = dist.distanceKm; }
     var svc = dr.getServiceOptions(location, svcOpts);
+    var serviceOptions = (svc && svc.options) || [];
 
     // 4-hour blocked items: only when a 4-hour option WOULD apply (cart eligible)
     // but the cart has non-quick-commerce items.
@@ -170,24 +214,36 @@
       if (hasFour) { blockedItems = nonQuickCommerceItemNames(); }
     }
 
+    // Reason the 4-hour mode isn't offered: 'mixed' (some items not QC) or
+    // 'pincode' (cart is all-QC + local zone, but no 4-hour rule for this pincode).
+    var hasFourOption = false;
+    for (var s = 0; s < serviceOptions.length; s++) { if (serviceOptions[s].serviceType === 'four_hour') { hasFourOption = true; break; } }
+    var fourHourReason = '';
+    if (!hasFourOption) {
+      if (blockedItems.length) { fourHourReason = 'mixed'; }
+      else if (eligible && isLocalZone(location)) { fourHourReason = 'pincode'; }
+    }
+
     var result = {
-      location: location, subtotal: subtotal, data: data,
+      location: location, pincode: location.pincode, subtotal: subtotal, data: data,
+      displayLabel: displayLabelFor(location), zoneFriendly: zoneFriendly(location),
       mov: mov, movMet: movMet, movRemaining: data.movRemaining,
       deliveryCharge: data.deliveryCharge,
       freeDeliveryThreshold: data.freeDeliveryThreshold,
       freeDeliveryMet: data.freeDeliveryMet,
       freeDeliveryRemaining: data.freeDeliveryRemaining,
       blocked: (mov != null && !movMet),
-      serviceOptions: (svc && svc.options) || [],
+      serviceOptions: serviceOptions,
       confirmed: confirmed,
       distanceKm: confirmed ? dist.distanceKm : null,
-      fourHourBlockedItems: blockedItems
+      fourHourBlockedItems: blockedItems,
+      fourHourReason: fourHourReason
     };
     dbg('state', {
       pincode: location.pincode, confirmed: confirmed, distanceKmPassed: distOpts.distanceKm,
       reason: data.reason, mov: mov, movMet: movMet, subtotal: subtotal,
-      services: result.serviceOptions.map(function (o) { return o.serviceType; }),
-      fourHourBlocked: blockedItems
+      services: serviceOptions.map(function (o) { return o.serviceType; }),
+      fourHourReason: fourHourReason, fourHourBlocked: blockedItems
     });
     return result;
   }
@@ -226,39 +282,66 @@
   function renderPanel(panel, st) {
     if (!st) { hide(panel); return; }
     try {
-      // minimum-order + cart-value lines — shown in BOTH drawer and page (2.11D.1).
-      // Cart value always shows when the panel shows; the minimum-order line shows
-      // whenever the resolved rule has an MOV (estimated label for pincode-only,
-      // confirmed label for a full address).
+      var promptEl = panel.querySelector('[data-gdpr-prompt]');
+      var dtoEl = panel.querySelector('[data-gdpr-delivering-to]');
       var movLine = panel.querySelector('[data-gdpr-mov-line]');
       var subLine = panel.querySelector('[data-gdpr-subtotal-line]');
       var linesWrap = panel.querySelector('[data-gdpr-lines]');
+      var msgEl = panel.querySelector('[data-gdpr-message]');
+      var barEl = panel.querySelector('[data-gdpr-bar]');
+      var estEl = panel.querySelector('[data-gdpr-estimate]');
+      var chargeEl = panel.querySelector('[data-gdpr-charge]');
+      var svcEl = panel.querySelector('[data-gdpr-services]');
+      var fhEl = panel.querySelector('[data-gdpr-fourhour-notice]');
+
+      // 2.11E: the misleading "estimated from your pincode" note is retired — once a
+      // pincode is known the cart shows ACCURATE info, so this legacy node stays empty.
+      if (estEl) { setText(estEl, ''); hide(estEl); }
+
+      // ---- prompt state: no pincode / not serviceable (never blocks checkout) ----
+      if (st.promptCode) {
+        if (dtoEl) { hide(dtoEl); }
+        hide(linesWrap); hide(movLine); hide(subLine); hide(barEl); hide(chargeEl); hide(svcEl); hide(fhEl);
+        var pText = msg(st.promptCode) || (st.promptCode === 'NOT_SERVICEABLE'
+          ? 'Sorry, we currently do not deliver to this pincode.'
+          : 'Please enter your delivery pincode to check delivery availability.');
+        if (promptEl) { setText(promptEl, pText); show(promptEl); }
+        else if (msgEl) { setText(msgEl, pText); show(msgEl); }
+        panel.setAttribute('data-gdpr-state', 'prompt');
+        panel.removeAttribute('data-gdpr-confirmed');
+        show(panel);
+        return;
+      }
+      if (promptEl) { setText(promptEl, ''); hide(promptEl); }
+
+      // ---- "Delivering to <city + pincode> · <zone>" (accurate, pincode-derived) ----
+      if (dtoEl) {
+        var dtext = '';
+        if (st.displayLabel) {
+          dtext = tmpl(copy('deliveringTo'), { label: st.displayLabel });
+          if (st.zoneFriendly) { dtext += ' · ' + st.zoneFriendly; }
+        }
+        setText(dtoEl, dtext); if (dtext) { show(dtoEl); } else { hide(dtoEl); }
+      }
+
+      // ---- minimum-order + cart-value lines (both drawer + page) ----
       setText(panel.querySelector('[data-gdpr-subtotal-label]'), copy('cartValueLabel'));
       setText(panel.querySelector('[data-gdpr-subtotal]'), fmtMoney(st.subtotal));
       show(subLine);
       if (st.mov != null) {
-        setText(panel.querySelector('[data-gdpr-mov-label]'), st.confirmed ? copy('movLabel') : copy('movLabelEstimated'));
+        setText(panel.querySelector('[data-gdpr-mov-label]'), copy('movLabel'));
         setText(panel.querySelector('[data-gdpr-mov]'), fmtMoney(st.mov));
         show(movLine);
       } else { hide(movLine); }
       show(linesWrap);
 
-      // estimated (pincode) vs confirmed (full address) note
-      var estEl = panel.querySelector('[data-gdpr-estimate]');
-      if (estEl) {
-        var estText = st.confirmed ? copy('confirmedNote') : copy('estimatedNote');
-        setText(estEl, estText); if (estText) { show(estEl); } else { hide(estEl); }
-      }
-
-      // status message
-      var msgEl = panel.querySelector('[data-gdpr-message]');
+      // ---- MOV status message (references the pincode — goal 2) ----
       var message = '';
-      if (st.mov != null && !st.movMet) { message = tmpl(copy('addMore'), { remaining: fmtMoney(st.movRemaining) }); }
-      else if (st.mov != null) { message = copy('minReached'); }
+      if (st.mov != null && !st.movMet) { message = tmpl(copy('addMore'), { remaining: fmtMoney(st.movRemaining), pincode: st.pincode || '' }); }
+      else if (st.mov != null) { message = tmpl(copy('minReached'), { pincode: st.pincode || '' }); }
       setText(msgEl, message); if (message) { show(msgEl); } else { hide(msgEl); }
 
-      // progress bar (toward MOV)
-      var barEl = panel.querySelector('[data-gdpr-bar]');
+      // ---- progress bar (toward MOV) ----
       var fillEl = panel.querySelector('[data-gdpr-bar-fill]');
       if (st.mov != null && barEl && fillEl) {
         var pct = (st.mov > 0) ? Math.max(0, Math.min(100, Math.round(st.subtotal / st.mov * 100))) : 100;
@@ -267,8 +350,7 @@
         show(barEl);
       } else { hide(barEl); }
 
-      // delivery charge (display only) + optional free-delivery hint
-      var chargeEl = panel.querySelector('[data-gdpr-charge]');
+      // ---- delivery charge: show what we know, else "confirmed at checkout" ----
       if (chargeEl) {
         var chargeText = '';
         if (st.freeDeliveryMet) { chargeText = copy('freeDelivery'); }
@@ -277,12 +359,11 @@
           if (st.freeDeliveryThreshold != null && st.freeDeliveryRemaining != null && st.freeDeliveryRemaining > 0) {
             chargeText += ' · ' + tmpl(copy('freeDeliveryHint'), { amount: fmtMoney(st.freeDeliveryRemaining) });
           }
-        }
+        } else { chargeText = copy('chargeAtCheckout'); } // pincode known but no charge in the rule
         setText(chargeEl, chargeText); if (chargeText) { show(chargeEl); } else { hide(chargeEl); }
       }
 
-      // service options — shown when checkout is allowed (MOV met / no MOV)
-      var svcEl = panel.querySelector('[data-gdpr-services]');
+      // ---- service options (modes) — shown when checkout is allowed (MOV met) ----
       if (svcEl) {
         svcEl.textContent = '';
         if (!st.blocked && st.serviceOptions.length) {
@@ -291,13 +372,15 @@
         } else { hide(svcEl); }
       }
 
-      // 4-hour not available because some items aren't quick-commerce eligible
-      var fhEl = panel.querySelector('[data-gdpr-fourhour-notice]');
+      // ---- why 4-hour isn't offered (mixed cart names items; else pincode) ----
       if (fhEl) {
-        if (st.fourHourBlockedItems && st.fourHourBlockedItems.length) {
-          setText(fhEl, tmpl(copy('fourHourIneligible'), { items: st.fourHourBlockedItems.join(', ') }));
-          show(fhEl);
-        } else { setText(fhEl, ''); hide(fhEl); }
+        var fhText = '';
+        if (st.fourHourReason === 'mixed' && st.fourHourBlockedItems && st.fourHourBlockedItems.length) {
+          fhText = msg('MIXED_CART_ITEMS', { items: st.fourHourBlockedItems.join(', ') }) || tmpl(copy('fourHourIneligible'), { items: st.fourHourBlockedItems.join(', ') });
+        } else if (st.fourHourReason === 'pincode') {
+          fhText = msg('QC_NOT_AVAILABLE');
+        }
+        setText(fhEl, fhText); if (fhText) { show(fhEl); } else { hide(fhEl); }
       }
 
       panel.setAttribute('data-gdpr-state', st.blocked ? 'blocked' : 'ok');

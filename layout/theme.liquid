@@ -562,7 +562,10 @@
   {%- comment -%} Delivery rule engine foundation (Phase 2.11B) — reads admin-configured rules from the `ganguram_delivery_rule` metaobject and resolves the rule for the selected pincode/zone (window.GanguramDeliveryRules). Data/resolver only; fail-open; NO UI/progress bar, NO MOV enforcement, NO checkout/charge/SBZ/ShipZip/zipLogic/resolver change. {%- endcomment -%}
   {%- render 'ganguram-delivery-rules-config' -%}
 
-  {%- comment -%} Cart delivery progress + service options (Phase 2.11C) — ADVISORY cart UI: reads window.GanguramDeliveryRules (getProgressData/getServiceOptions) and paints a read-only MOV/free-delivery progress bar + standard/4-hour service options into the cart panel. Display only; fail-open; NO MOV enforcement, NO checkout/shipping-charge change, NO cart mutation, NO SBZ/ShipZip/zipLogic/Google/resolver change. {%- endcomment -%}
+  {%- comment -%} Delivery message catalog (Phase 2.11E) — one customer-facing source of truth for delivery/pincode/MOV/mode messages (window.GanguramDeliveryMessages). THEME-side codes are shown in the cart; APP-side codes are owned here so the merchant can mirror them in ShipZip / the date-slot app. Display only; no checkout/shipping/SBZ/ShipZip/zipLogic/resolver/settings_data change. {%- endcomment -%}
+  {%- render 'ganguram-delivery-messages-config' -%}
+
+  {%- comment -%} Cart delivery progress + service options (Phase 2.11C / 2.11E) — ADVISORY cart UI: reads window.GanguramDeliveryRules (getProgressData/getServiceOptions) + the selected pincode/zone (primary source of truth) and paints accurate delivering-to / MOV / progress / charge / modes into the cart panel. Display only; fail-open; NO MOV enforcement, NO checkout/shipping-charge change, NO cart mutation, NO SBZ/ShipZip/zipLogic/Google/resolver change. {%- endcomment -%}
   {%- render 'ganguram-delivery-progress-config' -%}
 
   {%- comment -%} Product-card "Buy now" (Phase 2.11D.1) — adds an express Buy now next to Add to cart on single-variant product cards; reuses the theme AJAX add and proceeds to checkout ONLY if the cart-side MOV/checkout guard allows, else opens the cart drawer. Fail-open; NO checkout/shipping-charge/ShipZip/SBZ/zipLogic/resolver/settings_data change. {%- endcomment -%}
