@@ -405,6 +405,19 @@ The cart delivery panel is intentionally **compact, premium, mobile-first**:
 
 **Limits (unchanged):** the theme renders only in the **cart**, never inside Shopify's **hosted checkout**. A finer **per‑charge breakdown** (weight slab / distance / surcharge) or a checkout‑side breakdown would require exposing more metaobject fields and/or a **Checkout UI Extension** (app). **ShipZip remains the source of the actual shipping rates** (§5a). This phase is UI/UX only — no business rule (ShipZip, cart attributes, MOV, Quick‑Commerce eligibility, PAN India, mixed‑cart, product visibility, checkout rates, date/slot) changed.
 
+### 8b. Full‑address selection, estimate basis & checkout prefill (Phase 2.11F.2)
+
+**A full address is "selected" only via Google.** It counts as a selected address when the customer **picks a Places suggestion** (or a typed address resolves through the Geocoder). On selection the theme saves a **structured record** (`window.GanguramAddress`): `place_id, formatted_address, address1, address2, city, state, country, zip, lat, lng, source: "selected_address"`. A pincode‑only entry saves `source: "pincode"` (+ city/state/centroid coords when Google resolves them). If the customer **types but doesn't select**, the popup shows a hint — *"Select an address from the suggestions to calculate a more accurate delivery estimate."* — and stays in pincode mode.
+
+**Estimate basis is driven by the selected‑address store, not by the distance** (the 2.11F.1 bug was that a selected address with a failed Distance Matrix call fell back to "pincode"):
+- **Selected address** → *"Delivery estimate based on your selected address."*, distance *"N km from our dispatch location"* (exact, when available). **Never** "Approx."
+- **Pincode only** → *"Delivery estimate based on your pincode."*, distance *"Approx. N km · based on your pincode"* (pincode centroid).
+- **Per‑mode charges** show the rule charge when known (e.g. *Standard ₹50*, *4 Hours ₹80*) and *"Final charge at checkout"* only when the rule has no charge — never invented; ShipZip still sets the final charge.
+
+**Checkout shipping prefill.** When a full address is selected and the customer clicks the **standard** checkout button, `assets/ganguram-checkout-prefill.js` appends the documented `checkout[shipping_address][address1|address2|city|province|country|zip]` parameters (from the structured address) to the checkout URL so Shopify opens with the shipping address prefilled. It fills **only safely‑known** fields (never email/name/phone), respects the MOV guard, and preserves the cart, cart attributes, discount codes and payment flow. Set `enabled:false` in `ganguram-checkout-prefill-config.liquid` to disable.
+
+**Limitation — dynamic checkout buttons.** Shop Pay / "Buy with …" / dynamic checkout buttons bypass the cart form, so they **cannot** be prefilled this way; the theme leaves them untouched (normal behaviour). For prefill there, use a **Checkout UI Extension** (app) reading the cart attributes. **ShipZip remains the source of the final checkout shipping rates** regardless of prefill. If the address pincode differs from the manually entered one, the popup updates the delivery pincode to the address and notes it.
+
 ### 8a. Cart vs popup split (Phase 2.11F.1)
 
 - **The cart is a compact summary only.** The standalone "Delivering to: …" line is **removed** (it was the Phase 2.10A summary, redundant). The cart shows: delivery available/unavailable, mode chips, the MOV progress bar **only when an MOV rule exists**, and one **collapsed** "Delivery details" accordion. The pincode is **not** a headline — it lives only inside the accordion. No repeated checkout‑confirmation text, no long distance/zone explanation.
