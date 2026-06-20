@@ -1,0 +1,48 @@
+{%- comment -%}
+  Ganguram — local-delivery date picker config (cart drawer + cart page).
+
+  Publishes window.GanguramDeliveryDatePickerConfig and loads
+  assets/ganguram-delivery-datepicker.js (+ .css). Builds a theme-native date/time
+  picker in the cart drawer + /cart page for LOCAL delivery, saves the selection as
+  cart attributes, and softly blocks checkout until a required date is chosen.
+
+  IMPORTANT — attributeKeys must MATCH the exact cart-attribute names ShipZip / your
+  date-slot app reads (so the date travels to the order + the app). Defaults below are
+  the common ShipZip names; verify in the order's cart attributes and adjust if needed.
+  If you change them here, also change the data-gdd-saved-* names in
+  snippets/ganguram-delivery-datepicker.liquid so the selection restores after re-render.
+
+  timeSlots: leave [] for date-only; add slots (e.g. "10:00 - 13:00") to show a time
+  select. requireTime makes a slot mandatory. minOffsetDays:1 = earliest = next day.
+  No ShipZip rate / service-code / MOV / pincode / product-visibility change. Fail-open.
+{%- endcomment -%}
+<script>
+  window.GanguramDeliveryDatePickerConfig = {
+    enabled: true,
+    minOffsetDays: 1,
+    maxOffsetDays: 10,
+    disabledWeekdays: [],
+    requireDate: true,
+    requireTime: false,
+    timeSlots: [],
+    attributeKeys: {
+      date: {{ 'Delivery-Date' | json }},
+      time: {{ 'Delivery-Time' | json }},
+      method: {{ 'Delivery Method' | json }}
+    },
+    copy: {
+      title: {{ 'Delivery date' | json }},
+      dateLabel: {{ 'Choose a delivery date' | json }},
+      timeLabel: {{ 'Choose a time slot' | json }},
+      datePlaceholder: {{ 'Select a date' | json }},
+      timePlaceholder: {{ 'Select a time' | json }},
+      typeStandard: {{ 'Standard / Next Day' | json }},
+      typeFourHour: {{ '4 Hours (Express)' | json }},
+      expressNote: {{ '4 Hours Delivery is express — delivered today, no date needed.' | json }},
+      errorDate: {{ 'Please select a delivery date before checkout.' | json }},
+      errorDateTime: {{ 'Please select a delivery date and time before checkout.' | json }}
+    }
+  };
+</script>
+{{ 'ganguram-delivery-datepicker.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ganguram-delivery-datepicker.js' | asset_url }}" defer></script>

@@ -1,0 +1,62 @@
+/*
+ * Ganguram — local-delivery date picker (cart drawer + cart page).
+ * Compact, premium, mobile-first. NO HARDCODED COLOURS — theme design-system
+ * variables only (Shopify customiser): --color-borders-main (border/inputs),
+ * --color-secondary-text-main (labels), --color-accent-main (selected type),
+ * --color-foreground-accent-main (text on accent), currentColor (text).
+ */
+.ganguram-delivery-datepicker {
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--color-borders-main);
+  border-radius: 10px;
+  font-size: 0.85em;
+  line-height: 1.4;
+  color: currentColor;
+}
+.ganguram-delivery-datepicker[hidden] { display: none !important; }
+.ganguram-delivery-datepicker__title { margin: 0 0 0.4rem; font-weight: 700; }
+
+/* delivery-type chips (Standard / 4 Hours) */
+.ganguram-delivery-datepicker__types { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0 0 0.5rem; }
+.ganguram-delivery-datepicker__types[hidden] { display: none; }
+.ganguram-delivery-datepicker__type {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--color-borders-main);
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.92em;
+}
+.ganguram-delivery-datepicker__type input { accent-color: var(--color-accent-main); margin: 0; }
+
+/* date / time fields */
+.ganguram-delivery-datepicker__field { margin: 0 0 0.4rem; }
+.ganguram-delivery-datepicker__field[hidden] { display: none; }
+.ganguram-delivery-datepicker__label { display: block; margin: 0 0 0.2rem; color: var(--color-secondary-text-main); }
+.ganguram-delivery-datepicker__select {
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--color-borders-main);
+  border-radius: 8px;
+  background: transparent;
+  color: currentColor;
+  font: inherit;
+}
+
+.ganguram-delivery-datepicker__express { margin: 0.2rem 0 0; font-size: 0.92em; font-style: italic; color: var(--color-secondary-text-main); }
+.ganguram-delivery-datepicker__express[hidden] { display: none; }
+
+.ganguram-delivery-datepicker__error {
+  margin: 0.45rem 0 0;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--color-borders-main);
+  border-left: 3px solid var(--color-accent-main);
+  border-radius: 8px;
+  font-weight: 600;
+}
+.ganguram-delivery-datepicker__error[hidden] { display: none; }
+
+/* compact drawer */
+.ganguram-delivery-datepicker--drawer { padding: 0.5rem 0.65rem; font-size: 0.82em; }
