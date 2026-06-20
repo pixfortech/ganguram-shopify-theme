@@ -131,9 +131,9 @@
     if (line.q && !line.k) { return 'Available only for 4 Hours Delivery'; }
     return 'Not eligible for the selected delivery mode';
   }
-  // Simple, professional customer-facing reason for the entered pincode.
+  // Short, subtle per-item reason shown on each unavailable-item card.
   function customerReason(pincode) {
-    return 'Delivery is not available for the selected pincode: ' + pincode + '.';
+    return 'Not available for delivery to ' + pincode;
   }
 
   // Affected (ineligible) lines for a zone/context, each annotated with .detail.
@@ -250,6 +250,22 @@
   var modalMode = null;        // 'change' (pincode-change warning) | 'review' (load/cart/checkout) | null
   var currentReviewSig = null; // signature of the invalid set currently under review
   var dismissedSig = null;     // invalid-set signature the customer dismissed (don't auto re-pop)
+
+  // Krown Local theme button tokens (2.11H.1 redesign). Primary = solid (fills to the
+  // brand accent on hover); secondary + destructive = subtle outline. No hardcoded
+  // colours — the theme has no red token, so the destructive intent is carried by the
+  // copy + a helper line, not an aggressive red block. Mobile-first: all full-width.
+  var BTN_BASE = 'button button--small button--fullwidth ganguram-cart-elig__btn';
+  var BTN_PRIMARY = BTN_BASE + ' button--solid ganguram-cart-elig__btn--primary';
+  var BTN_SECONDARY = BTN_BASE + ' button--outline button--outline-hover ganguram-cart-elig__btn--secondary';
+  var BTN_DANGER = BTN_BASE + ' button--outline button--outline-hover ganguram-cart-elig__btn--danger';
+  var REMOVE_HELPER = 'This will remove the listed items from your cart.';
+  // One short, non-repetitive explanation shared by both the change warning and the review.
+  function unavailableMessage(pincode) {
+    return 'These items cannot be delivered to ' + pincode +
+      '. You can keep your current pincode, choose another pincode, or remove the unavailable items and continue.';
+  }
+
   function openPincode() {
     if (window.GanguramDelivery && typeof window.GanguramDelivery.openDeliveryLocationPopup === 'function') {
       window.GanguramDelivery.openDeliveryLocationPopup('Enter a delivery pincode to continue.');
@@ -267,12 +283,14 @@
     root.setAttribute('role', 'dialog');
     root.setAttribute('aria-modal', 'true');
     root.setAttribute('aria-labelledby', 'ganguram-cart-elig-heading');
+    root.setAttribute('aria-describedby', 'ganguram-cart-elig-sub');
     root.setAttribute('hidden', '');
 
     var backdrop = el('div', 'ganguram-cart-elig__backdrop');
     backdrop.addEventListener('click', onClose);
 
     var panel = el('div', 'ganguram-cart-elig__panel');
+    panel.setAttribute('tabindex', '-1');
     var close = el('button', 'ganguram-cart-elig__close');
     close.type = 'button';
     close.setAttribute('aria-label', 'Close');
@@ -282,6 +300,7 @@
     var heading = el('p', 'ganguram-cart-elig__heading');
     heading.id = 'ganguram-cart-elig-heading';
     var sub = el('p', 'ganguram-cart-elig__sub');
+    sub.id = 'ganguram-cart-elig-sub';
     var list = el('ul', 'ganguram-cart-elig__list');
     var actions = el('div', 'ganguram-cart-elig__actions');
 
@@ -293,10 +312,28 @@
     root.appendChild(backdrop);
     root.appendChild(panel);
     document.body.appendChild(root);
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) { onClose(); } });
+    // Esc closes; Tab is trapped within the dialog (focus stays inside while open).
+    document.addEventListener('keydown', function (e) {
+      if (!modal || modal.hasAttribute('hidden')) { return; }
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key === 'Tab') { trapTab(e); }
+    });
 
-    root._heading = heading; root._sub = sub; root._list = list; root._actions = actions; root._close = close;
+    root._heading = heading; root._sub = sub; root._list = list; root._actions = actions; root._close = close; root._panel = panel;
     return root;
+  }
+  // Keep keyboard focus inside the open dialog (simple, dependency-free focus trap).
+  function focusable() {
+    if (!modal) { return []; }
+    return Array.prototype.slice.call(modal.querySelectorAll('button, a[href], [tabindex]:not([tabindex="-1"])'))
+      .filter(function (n) { return !n.hasAttribute('disabled'); });
+  }
+  function trapTab(e) {
+    var f = focusable(); if (f.length < 2) { return; }
+    var first = f[0], last = f[f.length - 1], active = null;
+    try { active = document.activeElement; } catch (err) {}
+    if (e.shiftKey && active === first) { e.preventDefault(); try { last.focus(); } catch (err) {} }
+    else if (!e.shiftKey && active === last) { e.preventDefault(); try { first.focus(); } catch (err) {} }
   }
   function itemCard(l, pincode) {
     var li = el('li', 'ganguram-cart-elig__item');
@@ -328,6 +365,11 @@
   function setActions(buttons) {
     modal._actions.textContent = '';
     buttons.forEach(function (b) {
+      if (b.note) {                                    // helper line above a destructive action
+        var note = el('p', 'ganguram-cart-elig__helper');
+        note.textContent = b.note;
+        modal._actions.appendChild(note);
+      }
       var node = b.href ? el('a', b.cls) : el('button', b.cls);
       if (b.href) { node.href = b.href; } else { node.type = 'button'; }
       node.textContent = b.label;
@@ -335,20 +377,27 @@
       modal._actions.appendChild(node);
     });
   }
-  function show() { modal.removeAttribute('hidden'); if (modal._close && modal._close.focus) { modal._close.focus(); } }
+  // Open and move focus to the recommended (safe) primary action; fall back to Close.
+  function show() {
+    modal.removeAttribute('hidden');
+    var target = modal.querySelector('.ganguram-cart-elig__btn--primary') || modal._close;
+    if (target && target.focus) { try { target.focus(); } catch (e) {} }
+  }
 
+  // Mobile-first action order (stacked): Change pincode (primary, recommended) ->
+  // Keep current pincode (secondary) -> Remove unavailable items (destructive, last).
+  // "Remove unavailable items" replaces the old, ambiguous "Continue with selected pincode".
   function showWarning(affected, pincode) {
     if (!modal) { modal = buildModal(); }
     modalMode = 'change';
-    modal._heading.textContent = 'Some items are not deliverable to the selected pincode';
-    modal._sub.textContent = 'The following items are not deliverable to ' + pincode +
-      '. You can keep your current pincode, change the pincode, or continue with the selected pincode and remove these items from your cart.';
+    modal._heading.textContent = 'Some items are unavailable for this pincode';
+    modal._sub.textContent = unavailableMessage(pincode);
     modal._sub.removeAttribute('hidden');
     fillList(affected, pincode);
     setActions([
-      { label: 'Keep current pincode', cls: 'ganguram-cart-elig__btn ganguram-cart-elig__btn--primary', onClick: function () { onKeepCurrent(); } },
-      { label: 'Change pincode', cls: 'ganguram-cart-elig__btn', onClick: function () { onChangePincode(); } },
-      { label: 'Continue with selected pincode', cls: 'ganguram-cart-elig__btn ganguram-cart-elig__btn--danger', onClick: function () { onConfirm(); } }
+      { label: 'Change pincode', cls: BTN_PRIMARY, onClick: function () { onChangePincode(); } },
+      { label: 'Keep current pincode', cls: BTN_SECONDARY, onClick: function () { onKeepCurrent(); } },
+      { label: 'Remove unavailable items', cls: BTN_DANGER, note: REMOVE_HELPER, onClick: function () { onConfirm(); } }
     ]);
     show();
   }
@@ -378,14 +427,14 @@
     pending = null;                       // review is NOT a pincode-change warning
     modalMode = 'review';
     currentReviewSig = invalidSignature(affected, pincode);
-    modal._heading.textContent = 'Some items are not deliverable to the selected pincode';
-    modal._sub.textContent = 'The following items cannot be delivered to ' + pincode +
-      '. Remove them to continue, or change your delivery pincode.';
+    modal._heading.textContent = 'Some items are unavailable for this pincode';
+    modal._sub.textContent = unavailableMessage(pincode);
     modal._sub.removeAttribute('hidden');
     fillList(affected, pincode);
     setActions([
-      { label: 'Change pincode', cls: 'ganguram-cart-elig__btn ganguram-cart-elig__btn--primary', onClick: function () { onReviewChangePincode(); } },
-      { label: 'Remove unavailable items', cls: 'ganguram-cart-elig__btn ganguram-cart-elig__btn--danger', onClick: function () { onRemoveUnavailable(); } }
+      { label: 'Change pincode', cls: BTN_PRIMARY, onClick: function () { onReviewChangePincode(); } },
+      { label: 'Keep current pincode', cls: BTN_SECONDARY, onClick: function () { onReviewKeepCurrent(); } },
+      { label: 'Remove unavailable items', cls: BTN_DANGER, note: REMOVE_HELPER, onClick: function () { onRemoveUnavailable(); } }
     ]);
     show();
   }
@@ -393,6 +442,12 @@
     if (currentReviewSig) { dismissedSig = currentReviewSig; }
     dismiss();
     openPincode();
+  }
+  // Review-mode "Keep current pincode": close without changing the cart (the pincode is
+  // already accepted; nothing to restore). Remember the set so it does not re-pop.
+  function onReviewKeepCurrent() {
+    if (currentReviewSig) { dismissedSig = currentReviewSig; }
+    dismiss();
   }
   // The mutating path for a review: remove the not-deliverable lines, keep the pincode.
   function onRemoveUnavailable() {
