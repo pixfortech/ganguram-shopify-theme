@@ -392,6 +392,21 @@ The warning **never blocks checkout** (only the MOV soft guard blocks). Wording 
 
 ---
 
+## 8. Cart delivery panel UX (Phase 2.11F)
+
+The cart delivery panel is intentionally **compact, premium, mobile-first**:
+
+- **Main view shows only:** a short **status** ("Delivery available"), compact **delivery‑mode chips** (e.g. "4 Hours available · Standard also available · Charge at checkout"), the **MOV summary** ("₹530 / ₹700 minimum order" → "Minimum order reached"), a **theme‑coloured progress bar**, and a one‑line action ("Add ₹170 more to continue"). A short 4‑hour reason appears only when useful.
+- **The pincode is de‑emphasised** — it is **not** a repeated headline; it lives only inside the collapsed accordion.
+- **One collapsed accordion, "Delivery details"** holds everything detailed (pincode, zone, cart value, MOV, per‑method charge, the long mixed‑cart item list) and the checkout‑confirmation note **exactly once** — never duplicated in the main view.
+- **Pincode mismatch warning is separate** — it renders near the checkout button (§7), not inside the delivery card.
+
+**Theme colours, never hardcoded.** The progress‑bar fill and the accent chip use **`--color-accent-main`** (the brand colour from the Shopify customiser); the track/borders/chips use `--color-borders-main`; muted text uses `--color-secondary-text-main`; text‑on‑accent uses `--color-foreground-accent-main`. Change the brand colour in the customiser and the panel + progress bar follow automatically — there are **no hex/rgb colours** in the cart CSS.
+
+**Limits (unchanged):** the theme renders only in the **cart**, never inside Shopify's **hosted checkout**. A finer **per‑charge breakdown** (weight slab / distance / surcharge) or a checkout‑side breakdown would require exposing more metaobject fields and/or a **Checkout UI Extension** (app). **ShipZip remains the source of the actual shipping rates** (§5a). This phase is UI/UX only — no business rule (ShipZip, cart attributes, MOV, Quick‑Commerce eligibility, PAN India, mixed‑cart, product visibility, checkout rates, date/slot) changed.
+
+---
+
 ### Related docs
 - `docs/delivery-rule-source-of-truth-audit.md` — Phase 2.11A decision (why metaobjects).
 - `docs/checkout-feasibility-and-delivery-rules-audit.md` — Phase 2.10B feasibility + GO/NO‑GO.

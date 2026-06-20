@@ -1,13 +1,16 @@
 /*
- * Ganguram — Checkout pincode mismatch warning (Phase 2.11E — Requirement B).
- * Subtle amber warning near the checkout button. Display/advisory only.
+ * Ganguram — Checkout pincode mismatch warning (Phase 2.11E B / 2.11F).
+ * Separate from the delivery summary card, sits near the checkout button. Clear but
+ * not bulky. NO hardcoded colours — uses the theme design-system variables (set from
+ * the Shopify customiser) so it follows the brand: --color-borders-main (border),
+ * --color-accent-main (attention edge), currentColor (text).
  */
 .ganguram-pincode-mismatch {
   margin: 0 0 0.6rem;
   padding: 0.5rem 0.65rem;
-  border: 1px solid rgba(176, 122, 0, 0.45);
+  border: 1px solid var(--color-borders-main);
+  border-left: 3px solid var(--color-accent-main);
   border-radius: 8px;
-  background: rgba(176, 122, 0, 0.07);
   color: currentColor;
   font-size: 0.85em;
   line-height: 1.4;
