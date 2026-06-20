@@ -100,9 +100,10 @@
         "image_UFxdy6": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/kucho-nimki.jpg",
             "title": "Packed Snacks",
             "caption": "",
-            "link": "/collections/snacks",
+            "link": "/collections/packed-snacks",
             "open_in_new_window": false,
             "seo_h_tag": "h3"
           }
