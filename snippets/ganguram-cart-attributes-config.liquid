@@ -8,9 +8,13 @@
   the delivery context travels with the cart/order for admin visibility.
 
   Handoff ONLY: it does NOT autofill or change checkout, does NOT change the
-  checkout URL or button behaviour, does NOT touch MOV / date-slot / shipping rates
-  / SBZ / ShipZip / zipLogic / payment, does NOT change product/cart eligibility or
-  cart removal/undo, adds NO Google Maps, and never writes localStorage["Zipcode"].
+  checkout URL or button behaviour, does NOT change, create or fake any shipping
+  RATE, MOV, date-slot or payment, does NOT change product/cart eligibility or cart
+  removal/undo, adds NO Google Maps, and never writes localStorage["Zipcode"].
+  Phase 2.11D.2 additionally EXPOSES the cart's Quick-Commerce eligibility + location
+  to a shipping-rate app (e.g. ShipZip) via cart attributes (ganguram_all_quick_
+  commerce / ganguram_delivery_mode_candidates / ganguram_selected_pincode /
+  ganguram_delivery_zone) — the app still owns the actual 4-hour rate.
   Fail-open: any Ajax error is a silent console warning and never blocks checkout.
   Privacy: stores only pincode, zone, zone label, a coarse source label and (only
   if already captured as a short safe city/state summary) that summary — never a
@@ -32,7 +36,11 @@
       zone: {{ 'Delivery Zone' | json }},
       zoneLabel: {{ 'Delivery Zone Label' | json }},
       source: {{ 'Delivery Location Source' | json }},
-      addressSummary: {{ 'Delivery Address Summary' | json }}
+      addressSummary: {{ 'Delivery Address Summary' | json }},
+      allQuickCommerce: {{ 'ganguram_all_quick_commerce' | json }},
+      deliveryModeCandidates: {{ 'ganguram_delivery_mode_candidates' | json }},
+      selectedPincode: {{ 'ganguram_selected_pincode' | json }},
+      deliveryZone: {{ 'ganguram_delivery_zone' | json }}
     }
   };
 </script>
