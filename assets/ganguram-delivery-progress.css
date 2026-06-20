@@ -69,6 +69,26 @@
 .ganguram-delivery-progress__charge { margin: 0.3rem 0 0; opacity: 0.85; }
 .ganguram-delivery-progress__charge[hidden] { display: none; }
 
+/* shipping-charge breakdown accordion (Phase 2.11E — Requirement A) */
+.ganguram-delivery-progress__breakdown { margin: 0.4rem 0 0; font-size: 0.95em; }
+.ganguram-delivery-progress__breakdown[hidden] { display: none; }
+.ganguram-delivery-progress__breakdown-summary {
+  cursor: pointer;
+  font-weight: 600;
+  list-style: revert;
+  padding: 0.1rem 0;
+}
+.ganguram-delivery-progress__breakdown-body {
+  margin: 0.3rem 0 0;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid rgba(128, 128, 128, 0.18);
+  border-radius: 6px;
+}
+.ganguram-delivery-progress__bd-row { display: flex; justify-content: space-between; gap: 0.75rem; padding: 0.1rem 0; }
+.ganguram-delivery-progress__bd-label { opacity: 0.75; }
+.ganguram-delivery-progress__bd-value { font-weight: 600; text-align: right; }
+.ganguram-delivery-progress__bd-note { margin: 0.35rem 0 0; font-size: 0.92em; font-style: italic; opacity: 0.7; }
+
 .ganguram-delivery-progress__services {
   list-style: none;
   margin: 0.55rem 0 0;

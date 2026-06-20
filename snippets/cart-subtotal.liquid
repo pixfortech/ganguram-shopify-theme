@@ -153,6 +153,8 @@
 		{%- comment -%} Ganguram MOV checkout notice (Phase 2.11C.1) — populated client-side; shows the true "minimum order" reason near the checkout button before checkout. Advisory only. {%- endcomment -%}
 		{%- if cart.item_count > 0 -%}
 			<p class="ganguram-mov-notice" data-ganguram-mov-notice data-gdpr-cart-total="{{ cart.total_price }}" role="alert" aria-live="polite" hidden></p>
+			{%- comment -%} Ganguram checkout pincode mismatch warning (Phase 2.11E — Requirement B) — populated client-side when the delivery-checker pincode differs from the customer's saved/checkout pincode. Warning only; never blocks checkout. {%- endcomment -%}
+			<p class="ganguram-pincode-mismatch" data-ganguram-pincode-mismatch role="alert" aria-live="polite" hidden></p>
 		{%- endif -%}
 
 		<div {% unless template contains 'cart' %} class="flex-buttons" {% endunless %}>
