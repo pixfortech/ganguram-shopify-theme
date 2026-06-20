@@ -437,6 +437,17 @@ The cart delivery panel is intentionally **compact, premium, mobile-first**:
 
 **Date/slot app — required config (req E):** both methods need their own slot flow — **4 Hours Delivery → express / 4‑hour slot**, **Standard / Next Day → normal date picker**. If the date app is per‑delivery‑method, ensure **Standard has its own date‑picker configuration** so it still works alongside the 4‑hour express flow.
 
+### 8d. ShipZip date picker vs the theme (Phase 2.11F.4)
+
+**The theme does NOT hide or block the ShipZip date picker.** Verified: no theme CSS targets app/ShipZip elements (only `.ganguram-*` / `[hidden]`); no theme JS removes app elements; the cart‑page app‑block container (`sections/main-cart.liquid` `@app`) is the untouched vendor base; the cart‑attribute sync writes **only** its own keys via a `/cart/update.js` **merge**, so it never overwrites ShipZip's `Delivery‑Date` / `Delivery‑Time` attributes.
+
+**If the date picker isn't showing, it's app/editor placement (not theme code):**
+- A ShipZip **date‑picker app block** must be **added to the cart page** in *Customize → Cart → Add block* (the theme's `templates/cart.json` ships with only the `cart-items` block — no app block placed), and/or its **app embed enabled** in *Customize → App embeds*.
+- A cart‑PAGE app block does **not** render inside the AJAX **cart drawer**. If customers check out from the drawer they won't see a cart‑page picker — send them to the `/cart` page (Theme settings → Cart → open the cart page / "no overlay"), or add the picker as an app block to the drawer if ShipZip supports it.
+- The picker's own conditions (Local Delivery tag, the `STD` rate) must match — that's ShipZip config.
+
+**Theme safeguard:** the **address checkout‑prefill (PR #64) is now OFF by default**. When ON, it redirects the standard checkout button to `/checkout?checkout[shipping_address][...]`, which **skips the cart page** and could bypass a **cart‑page required** ShipZip date step. Enable it (`ganguram-checkout-prefill-config.liquid` → `enabled: true`) **only** if your date picker is at checkout (not a required cart‑page step), or move address prefill to a **Checkout UI Extension**. (Note: the express **"Buy now"** product‑card button similarly goes straight to checkout — it's an opt‑in express path and likewise bypasses a cart‑page date step.) **Service‑code → date‑flow mapping (`4HR` express / `STD` date picker) is ShipZip/date‑app config — the theme can't affect it.**
+
 ---
 
 ### Related docs
