@@ -1,49 +1,65 @@
 /*
- * Ganguram — cart delivery progress + MOV checkout guard (Phase 2.11C / 2.11C.1).
- * Subtle, Local-theme-native, display/advisory only. Inherits the cart's text
- * colour (currentColor) — no inverted/low-contrast text, no heavy fill.
+ * Ganguram — cart delivery panel (Phase 2.11C → 2.11F).
+ * Compact, premium, mobile-first, display/advisory only.
+ *
+ * NO HARDCODED COLOURS. Everything uses the theme's design-system CSS variables
+ * (set from the Shopify customiser via snippets/head-variables.liquid), so the panel
+ * — and especially the MOV progress bar fill — follows the merchant's brand colour
+ * automatically: --color-accent-main (brand/fill), --color-foreground-accent-main
+ * (text on accent), --color-borders-main (track/borders/chips),
+ * --color-secondary-text-main (muted), and currentColor (inherited text).
  */
 .ganguram-delivery-progress {
   margin: 0 0 1rem;
   padding: 0.6rem 0.75rem;
-  border: 1px solid rgba(128, 128, 128, 0.22);
-  border-radius: 8px;
+  border: 1px solid var(--color-borders-main);
+  border-radius: 10px;
   font-size: 0.85em;
   line-height: 1.4;
   color: currentColor;
 }
 .ganguram-delivery-progress[hidden] { display: none !important; }
 
-/* no-pincode / not-serviceable prompt (Phase 2.11E) — accurate, never blocks */
+/* status / prompt (no pincode / not serviceable) */
 .ganguram-delivery-progress__prompt { margin: 0; font-weight: 600; }
 .ganguram-delivery-progress__prompt[hidden] { display: none; }
 .ganguram-delivery-progress[data-gdpr-state="prompt"] { border-style: dashed; }
 
-/* "Delivering to <city + pincode> · <zone>" (Phase 2.11E) */
-.ganguram-delivery-progress__delivering-to {
-  margin: 0 0 0.4rem;
-  font-weight: 600;
-}
-.ganguram-delivery-progress__delivering-to[hidden] { display: none; }
+.ganguram-delivery-progress__status { margin: 0; font-weight: 600; }
+.ganguram-delivery-progress__status[hidden] { display: none; }
 
-/* minimum-order / cart-value lines: shown in BOTH the drawer and the cart page
-   (2.11D.1 — previously hidden in the drawer, which made MOV appear inconsistent). */
-.ganguram-delivery-progress__lines { display: flex; flex-wrap: wrap; gap: 0.15rem 1rem; margin: 0 0 0.4rem; }
-.ganguram-delivery-progress__lines[hidden] { display: none; }
-.ganguram-delivery-progress__line[hidden] { display: none; }
-.ganguram-delivery-progress__line-label { opacity: 0.7; }
-.ganguram-delivery-progress__line-value { font-weight: 600; }
-
-.ganguram-delivery-progress__message { margin: 0; font-weight: 500; }
-.ganguram-delivery-progress__message[hidden] { display: none; }
-.ganguram-delivery-progress[data-gdpr-state="blocked"] .ganguram-delivery-progress__message { font-weight: 600; }
-
-/* horizontal progress line */
-.ganguram-delivery-progress__bar {
-  height: 6px;
-  margin: 0.45rem 0 0;
+/* compact delivery-mode chips */
+.ganguram-delivery-progress__modes { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.35rem 0 0; }
+.ganguram-delivery-progress__modes[hidden] { display: none; }
+.ganguram-delivery-progress__chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.08rem 0.55rem;
+  border: 1px solid var(--color-borders-main);
   border-radius: 999px;
-  background: rgba(128, 128, 128, 0.18);
+  font-size: 0.82em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.ganguram-delivery-progress__chip--accent {
+  background: var(--color-accent-main);
+  color: var(--color-foreground-accent-main);
+  border-color: transparent;
+}
+
+/* MOV summary + action */
+.ganguram-delivery-progress__mov-summary { margin: 0.5rem 0 0.3rem; font-weight: 600; }
+.ganguram-delivery-progress__mov-summary[hidden] { display: none; }
+.ganguram-delivery-progress__message { margin: 0.3rem 0 0; color: var(--color-secondary-text-main); }
+.ganguram-delivery-progress__message[hidden] { display: none; }
+.ganguram-delivery-progress[data-gdpr-state="blocked"] .ganguram-delivery-progress__message { font-weight: 600; color: currentColor; }
+
+/* theme-coloured MOV progress bar — rounded, premium, brand fill, subtle track */
+.ganguram-delivery-progress__bar {
+  height: 8px;
+  margin: 0.1rem 0 0;
+  border-radius: 999px;
+  background: var(--color-borders-main);
   overflow: hidden;
 }
 .ganguram-delivery-progress__bar[hidden] { display: none; }
@@ -51,26 +67,24 @@
   height: 100%;
   width: 0;
   border-radius: 999px;
-  background: var(--gdp-accent, #49488d);
+  background: var(--color-accent-main);
   transition: width 0.3s ease;
 }
-.ganguram-delivery-progress[data-gdpr-state="blocked"] .ganguram-delivery-progress__bar-fill { background: #c0392b; }
 
-/* estimated (pincode) vs confirmed (full address) guidance note */
-.ganguram-delivery-progress__estimate {
-  margin: 0.4rem 0 0;
-  font-size: 0.92em;
-  font-style: italic;
-  opacity: 0.72;
+/* short 4-hour reason — subtle, theme-bordered (no hardcoded warning colour) */
+.ganguram-delivery-progress__fourhour-notice {
+  margin: 0.45rem 0 0;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--color-borders-main);
+  border-left: 2px solid var(--color-accent-main);
+  border-radius: 6px;
+  font-size: 0.9em;
+  color: var(--color-secondary-text-main);
 }
-.ganguram-delivery-progress__estimate[hidden] { display: none; }
-.ganguram-delivery-progress[data-gdpr-confirmed="true"] .ganguram-delivery-progress__estimate { font-style: normal; opacity: 0.8; }
+.ganguram-delivery-progress__fourhour-notice[hidden] { display: none; }
 
-.ganguram-delivery-progress__charge { margin: 0.3rem 0 0; opacity: 0.85; }
-.ganguram-delivery-progress__charge[hidden] { display: none; }
-
-/* shipping-charge breakdown accordion (Phase 2.11E — Requirement A) */
-.ganguram-delivery-progress__breakdown { margin: 0.4rem 0 0; font-size: 0.95em; }
+/* "Delivery details" accordion */
+.ganguram-delivery-progress__breakdown { margin: 0.5rem 0 0; }
 .ganguram-delivery-progress__breakdown[hidden] { display: none; }
 .ganguram-delivery-progress__breakdown-summary {
   cursor: pointer;
@@ -81,55 +95,28 @@
 .ganguram-delivery-progress__breakdown-body {
   margin: 0.3rem 0 0;
   padding: 0.4rem 0.5rem;
-  border: 1px solid rgba(128, 128, 128, 0.18);
-  border-radius: 6px;
+  border: 1px solid var(--color-borders-main);
+  border-radius: 8px;
 }
 .ganguram-delivery-progress__bd-row { display: flex; justify-content: space-between; gap: 0.75rem; padding: 0.1rem 0; }
-.ganguram-delivery-progress__bd-label { opacity: 0.75; }
+.ganguram-delivery-progress__bd-label { color: var(--color-secondary-text-main); }
 .ganguram-delivery-progress__bd-value { font-weight: 600; text-align: right; }
-.ganguram-delivery-progress__bd-note { margin: 0.35rem 0 0; font-size: 0.92em; font-style: italic; opacity: 0.7; }
-
-.ganguram-delivery-progress__services {
-  list-style: none;
-  margin: 0.55rem 0 0;
-  padding: 0.55rem 0 0;
-  border-top: 1px solid rgba(128, 128, 128, 0.18);
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-.ganguram-delivery-progress__services[hidden] { display: none; }
-.ganguram-delivery-progress__service { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem; }
-.ganguram-delivery-progress__service-name { font-weight: 600; }
-.ganguram-delivery-progress__service-charge { opacity: 0.9; }
-.ganguram-delivery-progress__service-note { width: 100%; font-size: 0.92em; opacity: 0.7; }
-
-/* 4-hour-not-available notice (some items aren't quick-commerce eligible) */
-.ganguram-delivery-progress__fourhour-notice {
-  margin: 0.5rem 0 0;
-  padding: 0.4rem 0.5rem;
-  border: 1px solid rgba(176, 122, 0, 0.4);
-  border-radius: 6px;
-  background: rgba(176, 122, 0, 0.07);
-  font-size: 0.9em;
-  line-height: 1.35;
-}
-.ganguram-delivery-progress__fourhour-notice[hidden] { display: none; }
+.ganguram-delivery-progress__bd-note { margin: 0.35rem 0 0; font-size: 0.92em; color: var(--color-secondary-text-main); }
 
 /* compact drawer: a touch tighter */
 .ganguram-delivery-progress--drawer { padding: 0.5rem 0.65rem; font-size: 0.82em; }
 
-/* MOV notice near the checkout button */
+/* MOV notice near the checkout button — subtle, theme-bordered (no hardcoded red) */
 .ganguram-mov-notice {
   margin: 0 0 0.6rem;
   padding: 0.5rem 0.65rem;
-  border: 1px solid rgba(192, 57, 43, 0.45);
+  border: 1px solid var(--color-borders-main);
+  border-left: 3px solid var(--color-accent-main);
   border-radius: 8px;
-  background: rgba(192, 57, 43, 0.06);
   color: currentColor;
   font-size: 0.85em;
   line-height: 1.4;
-  font-weight: 500;
+  font-weight: 600;
 }
 .ganguram-mov-notice[hidden] { display: none !important; }
 

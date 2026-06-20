@@ -1,39 +1,33 @@
 {%- comment -%}
-  Ganguram — cart delivery progress + MOV panel (Phase 2.11C / 2.11C.1).
+  Ganguram — cart delivery panel (Phase 2.11C → 2.11F).
 
-  Read-only markup, rendered at the top of the cart (drawer + page) when the cart
-  has items. Populated client-side by assets/ganguram-delivery-progress.js from
-  window.GanguramDeliveryRules + the selected location. Starts hidden; shows only
-  when an admin delivery rule resolves. data-gdpr-cart-total carries the live cart
-  total in PAISE (re-rendered on cart updates). Display/advisory only.
+  Compact, premium, mobile-first cart delivery summary, rendered at the top of the
+  cart (drawer + page) when the cart has items. Populated client-side by
+  assets/ganguram-delivery-progress.js from window.GanguramDeliveryRules + the
+  selected location. Starts hidden; shows only when an admin delivery rule resolves.
+  data-gdpr-cart-total carries the live cart total in PAISE. Display/advisory only.
 
-  Accepts: context = 'drawer' (compact) | 'page' (detailed). The minimum-order /
-  cart-value lines are shown only in the detailed (page) layout via CSS.
+  2.11F: the MAIN area is intentionally short — a status line, compact delivery-mode
+  chips, a theme-coloured MOV progress bar, and a short action line. Everything
+  detailed (pincode, zone, cart value, MOV, per-mode charge, the checkout note) lives
+  ONCE inside the collapsed "Delivery details" accordion. The pincode is NOT shown as
+  a prominent repeated headline. No hardcoded colours — see the CSS (theme variables).
+
+  Accepts: context = 'drawer' (compact) | 'page' (detailed).
 {%- endcomment -%}
 {%- assign gdpr_context = context | default: 'drawer' -%}
 <div class="ganguram-delivery-progress ganguram-delivery-progress--{{ gdpr_context }}" data-ganguram-delivery-progress data-gdpr-cart-total="{{ cart.total_price }}" data-gdpr-context="{{ gdpr_context }}" hidden>
   <p class="ganguram-delivery-progress__prompt" data-gdpr-prompt role="status" hidden></p>
-  <p class="ganguram-delivery-progress__delivering-to" data-gdpr-delivering-to hidden></p>
-  <div class="ganguram-delivery-progress__lines" data-gdpr-lines hidden>
-    <span class="ganguram-delivery-progress__line" data-gdpr-mov-line hidden>
-      <span class="ganguram-delivery-progress__line-label" data-gdpr-mov-label></span>
-      <span class="ganguram-delivery-progress__line-value" data-gdpr-mov></span>
-    </span>
-    <span class="ganguram-delivery-progress__line" data-gdpr-subtotal-line hidden>
-      <span class="ganguram-delivery-progress__line-label" data-gdpr-subtotal-label></span>
-      <span class="ganguram-delivery-progress__line-value" data-gdpr-subtotal></span>
-    </span>
-  </div>
-  <p class="ganguram-delivery-progress__message" data-gdpr-message hidden></p>
+  <p class="ganguram-delivery-progress__status" data-gdpr-status hidden></p>
+  <div class="ganguram-delivery-progress__modes" data-gdpr-modes hidden></div>
+  <p class="ganguram-delivery-progress__mov-summary" data-gdpr-mov-summary hidden></p>
   <div class="ganguram-delivery-progress__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" data-gdpr-bar hidden>
     <div class="ganguram-delivery-progress__bar-fill" data-gdpr-bar-fill></div>
   </div>
-  <p class="ganguram-delivery-progress__estimate" data-gdpr-estimate hidden></p>
-  <p class="ganguram-delivery-progress__charge" data-gdpr-charge hidden></p>
+  <p class="ganguram-delivery-progress__message" data-gdpr-message hidden></p>
+  <p class="ganguram-delivery-progress__fourhour-notice" data-gdpr-fourhour-notice role="status" hidden></p>
   <details class="ganguram-delivery-progress__breakdown" data-gdpr-breakdown hidden>
     <summary class="ganguram-delivery-progress__breakdown-summary" data-gdpr-breakdown-title></summary>
     <div class="ganguram-delivery-progress__breakdown-body" data-gdpr-breakdown-body></div>
   </details>
-  <ul class="ganguram-delivery-progress__services" data-gdpr-services hidden></ul>
-  <p class="ganguram-delivery-progress__fourhour-notice" data-gdpr-fourhour-notice role="status" hidden></p>
 </div>
