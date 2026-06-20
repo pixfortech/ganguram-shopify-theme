@@ -1,0 +1,42 @@
+{%- comment -%}
+  Ganguram — Delivery estimate config (Phase 2.11F.1).
+
+  Publishes window.GanguramDeliveryEstimateConfig (copy) and loads
+  assets/ganguram-delivery-estimate.js (+ .css). The module renders the delivery
+  ESTIMATE into the delivery-location popup ([data-ganguram-delivery-estimate]) after
+  a pincode/address resolves: status, city/pincode, an approximate (pincode centroid)
+  or confirmed (full address) Google distance, MOV, cart value + remaining, charge
+  estimate and modes.
+
+  The distance is a SUPPORTING estimate only — approximate for a pincode — and never
+  overrides ShipZip / pincode / zone rules or the checkout shipping rate. Display only;
+  fail-open. Liquid-SAFE token __KM__ is replaced in JS. No checkout / shipping /
+  ShipZip / SBZ / zipLogic / resolver / settings_data change.
+{%- endcomment -%}
+<script>
+  window.GanguramDeliveryEstimateConfig = {
+    enabled: true,
+    copy: {
+      title: {{ 'Delivery estimate' | json }},
+      statusAvailable: {{ 'Delivery available' | json }},
+      basedOnPincode: {{ 'Delivery estimate based on your pincode.' | json }},
+      basedOnAddress: {{ 'Delivery estimate based on your selected address.' | json }},
+      locationLabel: {{ 'Location:' | json }},
+      distanceLabel: {{ 'Distance:' | json }},
+      distanceApprox: {{ 'Approx. __KM__ km' | json }},
+      distanceExact: {{ '__KM__ km' | json }},
+      distanceApproxNote: {{ 'Approx. distance based on pincode' | json }},
+      movLabel: {{ 'Minimum order:' | json }},
+      cartValueLabel: {{ 'Cart value:' | json }},
+      remainingLabel: {{ 'Add to continue:' | json }},
+      chargeLabel: {{ 'Delivery charge:' | json }},
+      chargeAtCheckout: {{ 'Final charge at checkout' | json }},
+      freeDelivery: {{ 'Free delivery' | json }},
+      modesLabel: {{ 'Available:' | json }},
+      standardLabel: {{ 'Standard' | json }},
+      fourHourLabel: {{ '4 Hours' | json }}
+    }
+  };
+</script>
+{{ 'ganguram-delivery-estimate.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ganguram-delivery-estimate.js' | asset_url }}" defer></script>

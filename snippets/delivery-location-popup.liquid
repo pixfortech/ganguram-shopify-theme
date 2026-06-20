@@ -36,6 +36,18 @@
     </div>
 
     {%- comment -%}
+      Delivery estimate (Phase 2.11F.1) — populated client-side by
+      assets/ganguram-delivery-estimate.js after a pincode/address resolves. Shows
+      status, city/pincode, an APPROXIMATE (pincode) or confirmed (address) distance,
+      MOV, cart value + remaining, charge estimate and modes. The distance is a
+      supporting estimate only; ShipZip / zone rules remain the source of truth.
+    {%- endcomment -%}
+    <div class="ganguram-delivery-estimate" data-ganguram-delivery-estimate hidden>
+      <p class="ganguram-delivery-estimate__title" data-gde-title></p>
+      <div class="ganguram-delivery-estimate__body" data-gde-body></div>
+    </div>
+
+    {%- comment -%}
       Optional Google Places address search (Phase 2.9B). Pincode-finder only —
       hidden until assets/ganguram-places-address-search.js confirms a key is set;
       on selecting an address it extracts the pincode and commits via

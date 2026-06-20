@@ -405,6 +405,13 @@ The cart delivery panel is intentionally **compact, premium, mobile-first**:
 
 **Limits (unchanged):** the theme renders only in the **cart**, never inside Shopify's **hosted checkout**. A finer **per‑charge breakdown** (weight slab / distance / surcharge) or a checkout‑side breakdown would require exposing more metaobject fields and/or a **Checkout UI Extension** (app). **ShipZip remains the source of the actual shipping rates** (§5a). This phase is UI/UX only — no business rule (ShipZip, cart attributes, MOV, Quick‑Commerce eligibility, PAN India, mixed‑cart, product visibility, checkout rates, date/slot) changed.
 
+### 8a. Cart vs popup split (Phase 2.11F.1)
+
+- **The cart is a compact summary only.** The standalone "Delivering to: …" line is **removed** (it was the Phase 2.10A summary, redundant). The cart shows: delivery available/unavailable, mode chips, the MOV progress bar **only when an MOV rule exists**, and one **collapsed** "Delivery details" accordion. The pincode is **not** a headline — it lives only inside the accordion. No repeated checkout‑confirmation text, no long distance/zone explanation.
+- **The delivery‑location popup owns the estimate/explanation.** After a pincode/address resolves, `assets/ganguram-delivery-estimate.js` renders a compact estimate card in the popup: status, city/pincode, **distance**, MOV, cart value + remaining, charge estimate, and modes.
+- **Google distance is a supporting estimate only.** For a **pincode** it geocodes the **pincode centroid** and shows an **approximate** distance ("Approx. N km · Approx. distance based on pincode", basis "Delivery estimate based on your pincode."). For a **full address** it uses the confirmed coordinates ("N km", basis "Delivery estimate based on your selected address."). It **never** overrides ShipZip / pincode / zone serviceability or the checkout rate.
+- **ShipZip still owns the actual checkout shipping rate**, and the **final delivery charge may still be determined by ShipZip** at checkout — the popup distance/charge is an estimate. Needs the outlet origin + Distance Matrix + Geocoding APIs (§2d); fail‑open without them.
+
 ---
 
 ### Related docs

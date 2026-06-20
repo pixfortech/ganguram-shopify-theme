@@ -574,5 +574,8 @@
   {%- comment -%} Checkout pincode mismatch warning (Phase 2.11E — Requirement B) — warns in the cart when the delivery-checker pincode (ganguram_selected_pincode) matches none of the logged-in customer's saved address pincodes. Warning only; never blocks checkout; fail-open (guest/no saved address -> nothing). The exact checkout-typed pincode needs a Checkout UI Extension (app). No checkout/shipping/ShipZip/SBZ/zipLogic/resolver/settings_data change. {%- endcomment -%}
   {%- render 'ganguram-pincode-mismatch-config' -%}
 
+  {%- comment -%} Delivery estimate in the location popup (Phase 2.11F.1) — after a pincode/address resolves, renders status/city/distance/MOV/cart value/charge/modes into the popup ([data-ganguram-delivery-estimate]). Google distance is a SUPPORTING estimate (approximate for pincode-only); ShipZip/zone rules stay the source of truth. Display only; fail-open. No checkout/shipping/ShipZip/SBZ/zipLogic/resolver/settings_data change. {%- endcomment -%}
+  {%- render 'ganguram-delivery-estimate-config' -%}
+
 </body>
 </html>
