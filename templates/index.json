@@ -24,148 +24,10 @@
             "color_text_main": "rgba(0,0,0,0)"
           },
           "blocks": {}
-        },
-        "slide_image_rWEXcN": {
-          "type": "_slide-image",
-          "settings": {
-            "link": "",
-            "open_in_new_window": false,
-            "color_background_main": "rgba(0,0,0,0)",
-            "color_text_main": "rgba(0,0,0,0)"
-          },
-          "blocks": {
-            "caption_nMnnMq": {
-              "type": "caption",
-              "settings": {
-                "caption": "Freshly crafted in Kolkata, delivered across Kolkata & India",
-                "text_size": "small",
-                "text_background_color": "rgba(0,0,0,0)",
-                "text_color": "rgba(0,0,0,0)"
-              },
-              "blocks": {}
-            },
-            "heading_E7DeUU": {
-              "type": "heading",
-              "settings": {
-                "heading": "Heritage Bengali [br]Mithai, Since 1885",
-                "title_size": "h1",
-                "line_height": "default",
-                "text_color": "#343f36",
-                "seo_h_tag": "h3"
-              },
-              "blocks": {}
-            },
-            "content_group_xhinPE": {
-              "type": "content-group",
-              "settings": {
-                "spacing": "regular"
-              },
-              "blocks": {
-                "button_mp9nKm": {
-                  "type": "button",
-                  "settings": {
-                    "button_label": "SHOP SWEETS",
-                    "link": "/collections/all",
-                    "open_in_new_window": false,
-                    "button_size": "regular",
-                    "button_style": "solid",
-                    "color_text_buttons": "#343f36",
-                    "color_accent_buttons": "rgba(0,0,0,0)"
-                  },
-                  "blocks": {}
-                },
-                "button_FVTX9K": {
-                  "type": "button",
-                  "settings": {
-                    "button_label": "PACKED SNACKS",
-                    "link": "/collections/snacks",
-                    "open_in_new_window": false,
-                    "button_size": "regular",
-                    "button_style": "outline",
-                    "color_text_buttons": "#343f36",
-                    "color_accent_buttons": "rgba(0,0,0,0)"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "button_mp9nKm",
-                "button_FVTX9K"
-              ]
-            }
-          },
-          "block_order": [
-            "caption_nMnnMq",
-            "heading_E7DeUU",
-            "content_group_xhinPE"
-          ]
-        },
-        "slide_image_LLrAYi": {
-          "type": "_slide-image",
-          "settings": {
-            "link": "",
-            "open_in_new_window": false,
-            "color_background_main": "rgba(0,0,0,0)",
-            "color_text_main": "rgba(0,0,0,0)"
-          },
-          "blocks": {
-            "caption_j4d4q3": {
-              "type": "caption",
-              "settings": {
-                "caption": "Premium sweets, packed mithai and festive favourites",
-                "text_size": "regular",
-                "text_background_color": "rgba(0,0,0,0)",
-                "text_color": "rgba(0,0,0,0)"
-              },
-              "blocks": {}
-            },
-            "heading_wzKzeB": {
-              "type": "heading",
-              "settings": {
-                "heading": "Sweets That [br]Travel Beautifully",
-                "title_size": "h1",
-                "line_height": "default",
-                "text_color": "rgba(0,0,0,0)",
-                "seo_h_tag": "h3"
-              },
-              "blocks": {}
-            },
-            "content_group_FDVyLV": {
-              "type": "content-group",
-              "settings": {
-                "spacing": "small"
-              },
-              "blocks": {
-                "button_wf4ffd": {
-                  "type": "button",
-                  "settings": {
-                    "button_label": "SHOP PACKED MITHAI",
-                    "link": "/collections/all",
-                    "open_in_new_window": false,
-                    "button_size": "regular",
-                    "button_style": "solid",
-                    "color_text_buttons": "rgba(0,0,0,0)",
-                    "color_accent_buttons": "rgba(0,0,0,0)"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "button_wf4ffd"
-              ]
-            }
-          },
-          "block_order": [
-            "caption_j4d4q3",
-            "heading_wzKzeB",
-            "content_group_FDVyLV"
-          ]
         }
       },
       "block_order": [
-        "slide_image_KjwNfW",
-        "slide_image_rWEXcN",
-        "slide_image_LLrAYi"
+        "slide_image_KjwNfW"
       ],
       "settings": {
         "desktop_height": "80vh",
@@ -194,6 +56,7 @@
         "image_nb6e3t": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/nolen-gur-jalbhara-sandesh.jpg",
             "title": "Sandesh",
             "caption": "",
             "link": "/collections/sandesh",
@@ -204,6 +67,7 @@
         "image_GkFQKk": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/besan-laddu-1.jpg",
             "title": "Ghee Mishti",
             "caption": "",
             "link": "/collections/ghee-mishti",
@@ -214,6 +78,7 @@
         "image_Af3Dwm": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/kaju-barfi-250-grams.jpg",
             "title": "Dry Fruits Mishti",
             "caption": "",
             "link": "/collections/dry-fruits-mishti",
@@ -224,6 +89,7 @@
         "image_UTmXBm": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/tin-rosogolla.jpg",
             "title": "Packed Mishti",
             "caption": "",
             "link": "/collections/packed-mishti",
