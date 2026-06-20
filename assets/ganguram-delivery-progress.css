@@ -14,6 +14,18 @@
 }
 .ganguram-delivery-progress[hidden] { display: none !important; }
 
+/* no-pincode / not-serviceable prompt (Phase 2.11E) — accurate, never blocks */
+.ganguram-delivery-progress__prompt { margin: 0; font-weight: 600; }
+.ganguram-delivery-progress__prompt[hidden] { display: none; }
+.ganguram-delivery-progress[data-gdpr-state="prompt"] { border-style: dashed; }
+
+/* "Delivering to <city + pincode> · <zone>" (Phase 2.11E) */
+.ganguram-delivery-progress__delivering-to {
+  margin: 0 0 0.4rem;
+  font-weight: 600;
+}
+.ganguram-delivery-progress__delivering-to[hidden] { display: none; }
+
 /* minimum-order / cart-value lines: shown in BOTH the drawer and the cart page
    (2.11D.1 — previously hidden in the drawer, which made MOV appear inconsistent). */
 .ganguram-delivery-progress__lines { display: flex; flex-wrap: wrap; gap: 0.15rem 1rem; margin: 0 0 0.4rem; }

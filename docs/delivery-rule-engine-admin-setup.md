@@ -324,6 +324,50 @@ Internal **eligibility/zone stays with `GanguramZone`** — these rules never de
 
 ---
 
+## 6. Cart delivery intelligence + error ownership (Phase 2.11E)
+
+### Who handles what
+
+| Layer | Owns |
+|---|---|
+| **Theme (cart)** | The **advisory** cart panel: "Delivering to *city + pincode · zone*", **accurate** MOV + progress bar + remaining amount (pincode/zone is the **primary source of truth**), delivery‑charge slab (or "confirmed at checkout"), eligible **modes** (Standard always; 4‑hour when all‑QC + local), and the **reason** a mode is hidden. Plus the cart‑attribute handoff (§5a) and the customer **message wording** (catalog). **Never** sets a checkout rate. |
+| **ShipZip** | The **real checkout shipping rates** — "4 Hours Delivery" and "Standard / Next Day", their prices, zipcode/cart‑attribute conditions, and whether each is offered (§5a). |
+| **Date / slot app (SBZ / date picker)** | The **delivery date & time‑slot** UI and validation **per delivery method** at checkout — Standard gets its date flow, 4‑hour gets its express/slot flow. The theme's `date_picker_required` / `default_date_offset_days` are advisory hints only. |
+
+### Pincode is treated as accurate (not an estimate)
+Once a pincode is known the cart shows accurate delivery info from the **pincode/zone rules** — the old "estimated… please enter your complete address" text is **retired**. A full Google address is used only to **refine the distance slab** (supporting), never as a different business rule. Google pincode‑level distance is approximate and is never the final rule.
+
+### Keep Standard Delivery visible beside 4 Hours Delivery
+4‑hour is an **addition**, not a replacement. In ShipZip, the standard rate must stay offered for eligible carts (don't restrict it to "non‑QC only"). The cart mirrors this: it lists **Standard** for every resolved rule and **adds** 4‑hour when eligible — it never hides Standard because 4‑hour exists. The customer may want the same items tomorrow.
+
+### Error messages — theme‑side vs checkout/app‑side
+One catalog (`window.GanguramDeliveryMessages`, `snippets/ganguram-delivery-messages-config.liquid`) owns all wording so the theme and the apps speak with one voice. **THEME** = the cart can detect it and show it early; **APP** = only knowable at Shopify checkout / inside ShipZip / the date‑slot app (the theme **cannot enforce** these — mirror the wording there).
+
+| # | Case | Code | Owner |
+|---|---|---|---|
+| 1 | No pincode entered | `NO_PINCODE` | THEME (cart prompt) |
+| 2 | Invalid pincode format | `INVALID_PINCODE` | THEME (popup/resolver) |
+| 3 | Pincode not serviceable | `NOT_SERVICEABLE` | THEME (cart prompt) |
+| 4 | Address incomplete | `ADDRESS_INCOMPLETE` | THEME (Places, optional) |
+| 5 | Pincode ↔ city/state mismatch | `PINCODE_CITY_MISMATCH` | THEME (Places) |
+| 6 | MOV not reached | `MOV_NOT_REACHED` | THEME (cart + soft guard) |
+| 7 | Delivery charge unavailable | `CHARGE_UNAVAILABLE` | APP (ShipZip/checkout) |
+| 8 | Cart weight exceeds slab | `WEIGHT_EXCEEDED` | APP (ShipZip rate) |
+| 9 | 4‑hour not available for pincode | `QC_NOT_AVAILABLE` | THEME (cart) |
+| 10 | Mixed QC + non‑QC cart | `MIXED_CART` / `MIXED_CART_ITEMS` | THEME (cart, names items) |
+| 11 | Product not available locally | `PRODUCT_NOT_LOCAL` | THEME (zone filter / availability) |
+| 12 | Product not shippable PAN India | `PRODUCT_NOT_PAN_INDIA` | THEME (zone filter) |
+| 13 | No standard rate returned | `NO_STANDARD_RATE` | APP (checkout) |
+| 14 | No 4‑hour rate returned | `NO_FOUR_HOUR_RATE` | APP (checkout) |
+| 15 | Delivery date not selected | `DATE_NOT_SELECTED` | APP (date/slot app) |
+| 16 | Delivery slot not selected | `SLOT_NOT_SELECTED` | APP (date/slot app) |
+| 17 | Slot expired / full | `SLOT_EXPIRED` | APP (date/slot app) |
+| 18 | App / rate calculation failure | `APP_FAILURE` | APP (checkout) |
+
+The theme shows the **THEME** rows in the cart **before** checkout, so customers rarely hit Shopify's generic *"This order cannot be shipped to the address you entered."* The **APP** rows can only fire at checkout / inside the apps — configure those messages in ShipZip and your date‑slot app to match the catalog wording. **Fail‑open is preserved:** a JavaScript error never blocks checkout; only a confirmed MOV shortfall does (the existing soft guard).
+
+---
+
 ### Related docs
 - `docs/delivery-rule-source-of-truth-audit.md` — Phase 2.11A decision (why metaobjects).
 - `docs/checkout-feasibility-and-delivery-rules-audit.md` — Phase 2.10B feasibility + GO/NO‑GO.

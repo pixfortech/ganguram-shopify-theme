@@ -12,6 +12,8 @@
 {%- endcomment -%}
 {%- assign gdpr_context = context | default: 'drawer' -%}
 <div class="ganguram-delivery-progress ganguram-delivery-progress--{{ gdpr_context }}" data-ganguram-delivery-progress data-gdpr-cart-total="{{ cart.total_price }}" data-gdpr-context="{{ gdpr_context }}" hidden>
+  <p class="ganguram-delivery-progress__prompt" data-gdpr-prompt role="status" hidden></p>
+  <p class="ganguram-delivery-progress__delivering-to" data-gdpr-delivering-to hidden></p>
   <div class="ganguram-delivery-progress__lines" data-gdpr-lines hidden>
     <span class="ganguram-delivery-progress__line" data-gdpr-mov-line hidden>
       <span class="ganguram-delivery-progress__line-label" data-gdpr-mov-label></span>
