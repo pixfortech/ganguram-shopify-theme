@@ -1,27 +1,28 @@
 /*
- * Ganguram — Cart eligibility: confirm-before-remove (Phase 2.7A, no-removal-on-cancel)
+ * Ganguram — Cart eligibility: TRANSACTIONAL confirm-before-remove (Phase 2.7A → 2.11H.2)
  * ---------------------------------------------------------------------------
- * When the customer selects/changes a VALID serviceable pincode and some cart
- * lines are not deliverable to it, we WARN first and remove NOTHING until ONE
- * explicit positive action. The warning offers three clearly separated choices:
+ * When a pincode change would leave some cart lines undeliverable, the new pincode is
+ * NOT committed. We classify the candidate, hold it as a PENDING pincode, and WARN —
+ * without writing localStorage, firing the change event, or touching cart attributes. The
+ * ACTIVE pincode (and the panel/widget/product filter) stay put until the customer makes
+ * ONE explicit choice:
  *
- *   - "Keep current pincode"             -> SAFE. Restore the previous accepted
- *                                           pincode, close the warning, change
- *                                           nothing. (Same as ✕ / backdrop / Esc.)
- *   - "Change pincode"                   -> Restore the previous pincode and
- *                                           reopen the pincode popup. No removal.
- *   - "Continue with selected pincode"   -> the ONLY path that mutates the cart:
- *                                           accept the new pincode, remove only the
- *                                           affected lines, refresh, then show a
- *                                           final confirmation message.
+ *   - "Change pincode"            -> discard the pending pincode, reopen the popup. The
+ *                                    active pincode is unchanged; no removal.
+ *   - "Keep current pincode"      -> discard the pending pincode, close. (Same as ✕ /
+ *                                    backdrop / Esc / ignoring the modal.) No removal.
+ *   - "Remove unavailable items"  -> the ONLY mutating path: remove only the affected
+ *                                    lines, THEN commit the pending pincode, refresh, and
+ *                                    show a final confirmation (with Undo).
  *
- * Removal is triggered from exactly ONE place (onConfirm -> removeLines). Every
- * cancel/close/keep/change path restores the previous pincode and never calls the
- * cart API. The self-induced restore re-dispatch is guarded (suppressNext) so it
- * cannot re-trigger a warning or a removal.
+ * This is enforced by wrapping GanguramZone.setSelectedPincode (installPincodeGuard), so
+ * EVERY entry point (popup, header widget, saved locations, address search) is
+ * transactional. A second "review" flow surfaces items that are already invalid for the
+ * ALREADY-active pincode (page load / cart change / checkout press) — there is no pending
+ * pincode in that flow. Fail-open: no rule / no items / not serviceable -> commit normally.
  *
- * Eligibility REUSES the product-display rule (window.GanguramZoneRules
- * .isProductVisibleForContext). Tags + product url/image/handle are read from
+ * Eligibility REUSES the shared cart rule (window.GanguramZoneRules
+ * .isProductDeliverableToZone). Tags + product url/image/handle are read from
  * Liquid-stamped cart-line attributes (Shopify /cart.js has no product tags).
  * No checkout/MOV/date-slot/shipping/payment/ShipZip/SBZ/zipLogic. No pincode
  * lists, no 4-hour timing, no Google API.
@@ -35,9 +36,9 @@
   var EVENT = 'ganguram:delivery-location-changed';
   var LINE_SEL = '[data-ganguram-cart-line]';
   var busy = false;            // during Ajax removal
-  var suppressNext = false;    // ignore the next change event (self-induced restore)
-  var lastAccepted = null;     // { pincode, zone } the customer has accepted
-  var pending = null;          // { zone, ctx, pincode } while a warning is showing
+  var pending = null;          // { zone, ctx, pincode } while a change warning is showing
+  var pendingPincode = '';     // a CANDIDATE pincode awaiting confirmation (NOT committed)
+  var realSet = null;          // the un-guarded GanguramZone.setSelectedPincode (real commit)
 
   function cfg() { return window.GanguramCartConfig || {}; }
   function updateUrl() {
@@ -66,6 +67,20 @@
     var loc = z.getSelectedDeliveryLocation();
     if (!loc || !loc.pincode || loc.isServiceable !== true) { return null; }
     return loc;
+  }
+  function cartHasItems() { return cartLines().length > 0; }
+  // The currently COMMITTED (active) pincode — the source of truth the panel/cart attrs use.
+  function activePincode() {
+    var z = window.GanguramZone;
+    try { return (z && typeof z.getSelectedPincode === 'function') ? (z.getSelectedPincode() || '') : ''; }
+    catch (e) { return ''; }
+  }
+  // Commit a pincode FOR REAL (un-guarded): writes localStorage + fires the change event,
+  // which is what updates cart attributes, the product filter, the delivery panel + widget.
+  function commit(pincode) {
+    var z = window.GanguramZone;
+    if (realSet) { return realSet.call(z, pincode); }
+    return (z && typeof z.setSelectedPincode === 'function') ? z.setSelectedPincode(pincode) : null;
   }
 
   // 'normal' by default; 'quick' (4 Hours Delivery) only when explicitly signalled.
@@ -150,76 +165,95 @@
     return out;
   }
 
-  // ---- state machine --------------------------------------------------------
-  // Restore the previously accepted pincode WITHOUT removing anything. The
-  // re-dispatch is suppressed so it can never re-warn or re-remove.
-  function restorePrevious() {
-    if (!window.GanguramZone) { return; }
-    suppressNext = true;
-    try {
-      if (lastAccepted && lastAccepted.pincode) {
-        window.GanguramZone.setSelectedPincode(lastAccepted.pincode);
-      } else if (typeof window.GanguramZone.clearSelectedDeliveryLocation === 'function') {
-        window.GanguramZone.clearSelectedDeliveryLocation();
-      } else {
-        suppressNext = false;
+  // ---- transactional pincode guard (Bug B) ----------------------------------
+  // A pincode change is NOT committed while it would strand cart items. We classify the
+  // CANDIDATE and, if some current cart items can't be delivered to it, stash it as a
+  // PENDING pincode and show the confirmation modal — WITHOUT writing localStorage, firing
+  // the change event, or touching cart attributes. The ACTIVE pincode stays put until the
+  // customer confirms by removing the unavailable items. Keep / Change / ✕ / Esc / backdrop
+  // all discard the pending pincode and leave the active one (and the cart) untouched.
+  // Wraps GanguramZone.setSelectedPincode so EVERY entry point (popup, header widget, saved
+  // locations, address search) is transactional. Fail-open: no rule / no items / not
+  // serviceable / cart-eligibility off -> commit normally, exactly as before.
+  function installPincodeGuard() {
+    var z = window.GanguramZone;
+    if (!z || typeof z.setSelectedPincode !== 'function' || z.__ganguramTxnGuard) { return; }
+    realSet = z.setSelectedPincode;
+    z.setSelectedPincode = guardedSet;
+    z.__ganguramTxnGuard = true;
+  }
+  function guardedSet(pincode) {
+    var z = window.GanguramZone, candidate = null;
+    try { candidate = z.classifyPincode(pincode); } catch (e) {}
+    // Intercept only a serviceable change that would strand items in the current cart.
+    if (candidate && candidate.isServiceable === true && !busy && cartHasItems()) {
+      var affected = computeAffected(candidate.zone, deliveryContext());
+      if (affected.length) {
+        pendingPincode = candidate.pincode;     // hold it — DO NOT persist or announce yet
+        showWarning(affected, candidate.pincode);
+        return candidate;                        // classified result, but the active pincode is unchanged
       }
-    } catch (e) { suppressNext = false; }
+    }
+    pendingPincode = '';
+    return commit(pincode);                      // empty cart / all-deliverable / clear -> apply now
+  }
+  function commitPending() {
+    var pin = pendingPincode;
+    pendingPincode = '';
+    if (pin) { commit(pin); }                    // apply the confirmed pincode for real
   }
 
+  // ---- state machine --------------------------------------------------------
+  // The change event now only carries COMMITTED (already-applied) pincodes — the guard
+  // intercepts stranding changes before they commit. Re-validate so the panel / review
+  // stay correct; the transactional warning is shown by the guard, never from here.
   function onChange() {
-    if (suppressNext) { suppressNext = false; return; } // ignore our own restore
-    var loc = activeLoc();
-    if (!loc) {                               // cleared / invalid / unserviceable -> nothing to do
-      pending = null; dismiss(); lastAccepted = null; return;
-    }
-    var ctx = deliveryContext();
-    var affected = computeAffected(loc.zone, ctx);
-    if (!affected.length) {                   // all valid -> accept silently
-      pending = null; dismiss(); lastAccepted = { pincode: loc.pincode, zone: loc.zone }; return;
-    }
-    pending = { zone: loc.zone, ctx: ctx, pincode: loc.pincode }; // some invalid -> WARN
-    showWarning(affected, loc.pincode);
+    validateCurrent({ requireVisible: true });
   }
 
-  // SAFE cancel — restore previous pincode, close, no removal, no popup.
+  // "Keep current pincode" — discard the pending pincode; the ACTIVE one never changed.
   function onKeepCurrent() {
+    pendingPincode = '';
     pending = null;
     dismiss();
-    restorePrevious();
   }
 
-  // Edit — restore previous pincode, close, reopen the pincode popup, no removal.
+  // "Change pincode" — discard the pending pincode and reopen the pincode popup.
   function onChangePincode() {
+    pendingPincode = '';
     pending = null;
     dismiss();
-    restorePrevious();
     openPincode();
   }
 
-  // ✕ / backdrop / Esc — during a pincode-change warning behaves like "Keep current
-  // pincode"; during a review (load/cart/checkout) it records the dismissed set so we do
-  // not re-pop it for the same cart, then closes (fail-open — never mutates the cart).
+  // ✕ / backdrop / Esc — during a change warning behaves like "Keep current pincode"
+  // (discard pending, keep active); during a review it records the dismissed set, then
+  // closes. Either way the active pincode and the cart are never mutated. Fail-open.
   function onClose() {
-    if (modalMode === 'review' && currentReviewSig) { dismissedSig = currentReviewSig; }
-    if (pending) { onKeepCurrent(); } else { dismiss(); }
+    if (modalMode === 'review') { if (currentReviewSig) { dismissedSig = currentReviewSig; } dismiss(); return; }
+    if (modalMode === 'change') { onKeepCurrent(); return; }
+    dismiss();
   }
 
-  // The ONLY mutating path: accept the new pincode and remove the affected lines.
+  // "Remove unavailable items" (change mode) — remove ONLY the affected lines, THEN commit
+  // the pending pincode, so localStorage / cart attributes / the panel update only after
+  // the cart is actually deliverable. Nothing-to-remove -> just commit the pending pincode.
   function onConfirm() {
-    if (busy || !pending) { return; }
-    var loc = activeLoc();
-    if (!loc) { pending = null; dismiss(); return; }
-    var entered = loc.pincode;
-    var previousPincode = lastAccepted ? lastAccepted.pincode : null; // for Undo
-    var affected = computeAffected(loc.zone, deliveryContext());       // recompute from current cart
-    lastAccepted = { pincode: loc.pincode, zone: loc.zone };           // accept the new pincode
+    if (busy) { return; }
+    var entered = pendingPincode || activePincode();
+    var candidate = null;
+    try { candidate = window.GanguramZone.classifyPincode(entered); } catch (e) {}
+    if (!candidate) { pendingPincode = ''; pending = null; dismiss(); return; }
+    var affected = computeAffected(candidate.zone, deliveryContext());
+    var previousPincode = activePincode();        // the still-active pincode (for Undo)
     pending = null;
-    if (!affected.length) { dismiss(); return; }
-    removeLines(affected, entered, previousPincode);
+    if (!affected.length) { commitPending(); dismiss(); return; }
+    removeLines(affected, entered, previousPincode, pendingPincode ? entered : null);
   }
 
-  function removeLines(remove, entered, previousPincode) {
+  // commitAfter (optional): a PENDING pincode to apply ONLY after the removal succeeds
+  // (transactional change). null in review mode (the pincode is already active).
+  function removeLines(remove, entered, previousPincode, commitAfter) {
     busy = true;
     var updates = {};
     remove.forEach(function (l) { updates[l.key] = 0; });
@@ -237,6 +271,7 @@
       .then(function (cart) {
         var emptied = !!cart && cart.item_count === 0;
         dismissedSig = null;                        // cart changed -> allow a fresh review if needed
+        if (commitAfter) { pendingPincode = ''; commit(commitAfter); } // NOW apply the confirmed pincode
         if (typeof window.refreshCart === 'function') { try { window.refreshCart(false); } catch (e) {} }
         dismiss();                                  // close the warning modal — no second modal
         showToast(remove.length, entered, snapshot);
@@ -449,14 +484,15 @@
     if (currentReviewSig) { dismissedSig = currentReviewSig; }
     dismiss();
   }
-  // The mutating path for a review: remove the not-deliverable lines, keep the pincode.
+  // The mutating path for a review: remove the not-deliverable lines, keep the (already
+  // active) pincode — no commit needed (nothing pending in review mode).
   function onRemoveUnavailable() {
     if (busy) { return; }
     var loc = activeLoc();
     if (!loc) { dismiss(); return; }
     var affected = computeAffected(loc.zone, deliveryContext());
     if (!affected.length) { dismiss(); return; }
-    removeLines(affected, loc.pincode, lastAccepted ? lastAccepted.pincode : loc.pincode);
+    removeLines(affected, loc.pincode, loc.pincode, null);
   }
   // Re-check the current (accepted) pincode against the current cart. opts:
   //   force         -> always show (checkout press); ignores the visibility + dismissed gates
@@ -545,20 +581,16 @@
     document.body.appendChild(toast);
   }
 
-  // Restore a specific pincode (the previous one) for Undo, guarded against loops.
+  // Restore a specific pincode (the previous one) for Undo. Uses the REAL (un-guarded)
+  // commit so re-adding the items + restoring the old pincode can't re-trigger the modal.
   function restoreUndoPincode(pin) {
     if (!window.GanguramZone) { return; }
-    suppressNext = true;
     try {
-      if (pin) {
-        window.GanguramZone.setSelectedPincode(pin);
-        var loc = window.GanguramZone.getSelectedDeliveryLocation();
-        lastAccepted = (loc && loc.pincode && loc.isServiceable === true) ? { pincode: loc.pincode, zone: loc.zone } : null;
-      } else if (typeof window.GanguramZone.clearSelectedDeliveryLocation === 'function') {
+      if (pin) { commit(pin); }
+      else if (typeof window.GanguramZone.clearSelectedDeliveryLocation === 'function') {
         window.GanguramZone.clearSelectedDeliveryLocation();
-        lastAccepted = null;
-      } else { suppressNext = false; }
-    } catch (e) { suppressNext = false; }
+      }
+    } catch (e) {}
   }
 
   function onUndo(snapshot, undoBtn, note) {
@@ -617,8 +649,7 @@
 
   // ---- triggers -------------------------------------------------------------
   function init() {
-    var loc = activeLoc();
-    lastAccepted = loc ? { pincode: loc.pincode, zone: loc.zone } : null; // adopt current as accepted
+    installPincodeGuard();                 // make pincode changes transactional (Bug B)
     window.addEventListener(EVENT, onChange);
     observeCart();
     // Surface an ALREADY-invalid cart (e.g. a PAN India pincode chosen earlier with a

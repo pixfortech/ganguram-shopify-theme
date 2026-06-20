@@ -37,12 +37,30 @@
 .ganguram-delivery-datepicker__label { display: block; margin: 0 0 0.2rem; color: var(--color-secondary-text-main); }
 .ganguram-delivery-datepicker__select {
   width: 100%;
-  padding: 0.4rem 0.5rem;
+  padding: 0.4rem 1.7rem 0.4rem 0.55rem;   /* room on the right for the chevron */
   border: 1px solid var(--color-borders-main);
   border-radius: 8px;
-  background: transparent;
-  color: currentColor;
+  /* Solid theme field fill + explicit theme text — fixes the unreadable "Select a date"
+     and the show-through pattern caused by the old transparent fill on a
+     `-webkit-appearance: none` select. */
+  background-color: var(--color-background-main);
+  color: var(--color-text-main);
   font: inherit;
+  line-height: 1.4;
+  appearance: none;
+  -webkit-appearance: none;
+  /* dropdown chevron drawn from currentColor — no image/pattern, no hardcoded colour */
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 0.95rem) 53%, calc(100% - 0.62rem) 53%;
+  background-size: 0.34rem 0.34rem, 0.34rem 0.34rem;
+  background-repeat: no-repeat;
+}
+/* readable options on the native dropdown (some browsers inherit the field colours) */
+.ganguram-delivery-datepicker__select option {
+  color: var(--color-text-main);
+  background-color: var(--color-background-main);
 }
 
 .ganguram-delivery-datepicker__express { margin: 0.2rem 0 0; font-size: 0.92em; font-style: italic; color: var(--color-secondary-text-main); }
