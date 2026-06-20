@@ -16,7 +16,7 @@
 	<form action="{{ routes.cart_url }}" method="post" novalidate class="cart__form {% if cart.item_count == 0 %} cart--empty {% endif %}" id="cart">
 	
 		<div class="cart-holder cart-block element--has-border--body element--border-radius element--no-border-on-small margin-bottom--regular" data-items="{{ cart.items.size }}">
-			{%- if cart.item_count > 0 -%}{%- comment -%} 2.11F.1: standalone "Delivering to:" summary removed — compact delivery card only; full estimate lives in the delivery-location popup. {%- endcomment -%}{%- render 'ganguram-delivery-progress', context: 'page' -%}{%- endif -%}
+			{%- if cart.item_count > 0 -%}{%- comment -%} 2.11F.1: standalone "Delivering to:" summary removed — compact delivery card only; full estimate lives in the delivery-location popup. {%- endcomment -%}{%- render 'ganguram-delivery-progress', context: 'page' -%}{%- render 'ganguram-delivery-datepicker', context: 'page' -%}{%- endif -%}
 
 			<div class="cart-form__items {% if cart.item_count == 0 %} gutter--regular {% endif %}">
 				{%- if cart.item_count > 0 -%}
@@ -31,6 +31,7 @@
 							assign gz_k = false
 							assign gz_p = false
 							assign gz_q = false
+							assign gz_ld = false
 							if item.product.tags contains 'Kolkata'
 								assign gz_k = true
 							endif
@@ -40,9 +41,12 @@
 							if item.product.tags contains 'Quick Commerce'
 								assign gz_q = true
 							endif
+							if item.product.tags contains 'Local Delivery'
+								assign gz_ld = true
+							endif
 						-%}
 
-						<div id="item-{{ item.id }}" class="cart-form-item {% if item.product.id == settings.gift_wrap_product.id %} cart-item--gift-wrapping {% endif %}" data-title="{{ item.product.title | escape }} {%- unless item.product.has_only_default_variant -%} ({{ item.variant.title | escape }}) {%- endunless -%}" data-id="{{ item.key }}" data-qty="{{ item.quantity }}" data-line="{{ forloop.index }}" data-product-id="{{ item.product.id }}" data-ganguram-cart-line data-ganguram-line-key="{{ item.key }}" data-ganguram-variant-id="{{ item.variant.id }}" data-ganguram-product-title="{{ item.product.title | escape }}" data-ganguram-product-url="{{ item.url }}" data-ganguram-product-image="{{ item.image | image_url: width: 120 }}" data-ganguram-product-handle="{{ item.product.handle }}" data-ganguram-kolkata="{{ gz_k }}" data-ganguram-pan-india="{{ gz_p }}" data-ganguram-quick-commerce="{{ gz_q }}" data-js-cart-item>
+						<div id="item-{{ item.id }}" class="cart-form-item {% if item.product.id == settings.gift_wrap_product.id %} cart-item--gift-wrapping {% endif %}" data-title="{{ item.product.title | escape }} {%- unless item.product.has_only_default_variant -%} ({{ item.variant.title | escape }}) {%- endunless -%}" data-id="{{ item.key }}" data-qty="{{ item.quantity }}" data-line="{{ forloop.index }}" data-product-id="{{ item.product.id }}" data-ganguram-cart-line data-ganguram-line-key="{{ item.key }}" data-ganguram-variant-id="{{ item.variant.id }}" data-ganguram-product-title="{{ item.product.title | escape }}" data-ganguram-product-url="{{ item.url }}" data-ganguram-product-image="{{ item.image | image_url: width: 120 }}" data-ganguram-product-handle="{{ item.product.handle }}" data-ganguram-kolkata="{{ gz_k }}" data-ganguram-pan-india="{{ gz_p }}" data-ganguram-quick-commerce="{{ gz_q }}" data-ganguram-local-delivery="{{ gz_ld }}" data-js-cart-item>
 
 							<div class="cart-item__product-info cart-form-item--layout">
 

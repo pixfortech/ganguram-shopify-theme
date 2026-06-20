@@ -439,6 +439,19 @@ The cart delivery panel is intentionally **compact, premium, mobile-first**:
 
 ---
 
+## 9. Theme‑native local‑delivery date picker (cart drawer + cart page)
+
+ShipZip's date picker is a **cart‑page app block** (it does not render in the AJAX cart drawer), and a **hosted‑checkout** picker requires a **Checkout UI Extension** (an app — Checkout Extensibility), not a standard theme. So the theme ships a compact **date/time picker inside the cart drawer AND the `/cart` page** for local delivery (`snippets/ganguram-delivery-datepicker*.liquid` + `assets/ganguram-delivery-datepicker.js/.css`).
+
+- **Checkout‑side date picker?** Not from a standard theme — it needs a **Checkout UI Extension** (app). This theme‑native cart picker is the in‑theme solution; it saves the choice as **cart attributes** so it reaches the order (and ShipZip / your date app, if the attribute names match).
+- **When it shows:** the cart has **`Local Delivery`**‑tagged items **and** the selected pincode is **local/hyperlocal** (`isKolkata`/`isQuickCommerce`). **Never** for PAN‑India‑only carts. Renders in both the drawer and the cart page.
+- **Standard vs 4‑hour:** Standard/Next‑Day → a date select (earliest = next day by default; `minOffsetDays` / `maxOffsetDays` / `disabledWeekdays`), date **required** before checkout (`requireDate`), optional time slots (`timeSlots` + `requireTime`). When the cart is also 4‑hour‑eligible a **type selector** appears: **4 Hours (Express)** → no date needed (kept separate from Standard).
+- **Checkout guard:** soft‑blocks checkout with *"Please select a delivery date before checkout."* (or *"…date and time…"*) until the requirement is met; 4‑hour express is exempt.
+- **Cart attributes written** (configurable — **match ShipZip's exact names**; defaults shown): **`Delivery-Date`**, **`Delivery-Time`**, **`Delivery Method`**. Written via a `/cart/update.js` **merge** (only these keys), so ShipZip's other attributes are never cleared; selecting a value **replaces** only that key. Verify the names in an order's cart attributes and set `attributeKeys` in `ganguram-delivery-datepicker-config.liquid` (and the matching `data-gdd-saved-*` in the snippet) if ShipZip uses different names.
+- **No rate change:** never touches ShipZip rate logic, the `4HR`/`STD` service codes, the delivery‑mode cart‑attribute handoff, or pincode/MOV/product‑visibility logic. Theme variables only (no hardcoded colours). Fail‑open.
+
+---
+
 ### Related docs
 - `docs/delivery-rule-source-of-truth-audit.md` — Phase 2.11A decision (why metaobjects).
 - `docs/checkout-feasibility-and-delivery-rules-audit.md` — Phase 2.10B feasibility + GO/NO‑GO.

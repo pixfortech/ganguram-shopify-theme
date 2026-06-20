@@ -1,0 +1,33 @@
+{%- comment -%}
+  Ganguram — local-delivery date picker (cart drawer + cart page). Phase: cart date picker.
+
+  Compact, theme-native date/time selector populated client-side by
+  assets/ganguram-delivery-datepicker.js. Shows only when the cart has Local-Delivery
+  items AND the selected pincode is local/hyperlocal serviceable (never PAN-India-only).
+  The saved values are mirrored from cart attributes so the selection survives cart
+  re-renders. Display/handoff only — no ShipZip rate / service-code / MOV / pincode change.
+
+  Accepts: context = 'drawer' | 'page'. data-gdd-saved-* read the current cart attributes
+  (default names; override in the config + here together if you change them).
+{%- endcomment -%}
+{%- assign gdd_context = context | default: 'drawer' -%}
+<div class="ganguram-delivery-datepicker ganguram-delivery-datepicker--{{ gdd_context }}"
+  data-ganguram-delivery-datepicker
+  data-gdd-context="{{ gdd_context }}"
+  data-gdd-saved-date="{{ cart.attributes['Delivery-Date'] | escape }}"
+  data-gdd-saved-time="{{ cart.attributes['Delivery-Time'] | escape }}"
+  data-gdd-saved-method="{{ cart.attributes['Delivery Method'] | escape }}"
+  hidden>
+  <p class="ganguram-delivery-datepicker__title" data-gdd-title></p>
+  <div class="ganguram-delivery-datepicker__types" data-gdd-types role="radiogroup" hidden></div>
+  <div class="ganguram-delivery-datepicker__field" data-gdd-date-field hidden>
+    <label class="ganguram-delivery-datepicker__label" for="gdd-date-{{ gdd_context }}" data-gdd-date-label></label>
+    <select class="ganguram-delivery-datepicker__select" id="gdd-date-{{ gdd_context }}" data-gdd-date></select>
+  </div>
+  <div class="ganguram-delivery-datepicker__field" data-gdd-time-field hidden>
+    <label class="ganguram-delivery-datepicker__label" for="gdd-time-{{ gdd_context }}" data-gdd-time-label></label>
+    <select class="ganguram-delivery-datepicker__select" id="gdd-time-{{ gdd_context }}" data-gdd-time></select>
+  </div>
+  <p class="ganguram-delivery-datepicker__express" data-gdd-express hidden></p>
+  <p class="ganguram-delivery-datepicker__error" data-gdd-error role="alert" aria-live="polite" hidden></p>
+</div>
