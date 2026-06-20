@@ -43,7 +43,12 @@
     DATE_NOT_SELECTED:     { text: 'Please select a delivery date before placing the order.', side: 'app' },
     SLOT_NOT_SELECTED:     { text: 'Please select a delivery time slot before placing the order.', side: 'app' },
     SLOT_EXPIRED:          { text: 'This delivery slot is no longer available. Please choose another slot.', side: 'app' },
-    APP_FAILURE:           { text: 'We could not load delivery options at the moment. Please refresh and try again.', side: 'app' }
+    APP_FAILURE:           { text: 'We could not load delivery options at the moment. Please refresh and try again.', side: 'app' },
+    // Requirement B — widget pincode vs the checkout/saved-address pincode. The cart can
+    // compare against a logged-in customer's SAVED address (the prefill); comparing the
+    // exact pincode TYPED at checkout needs a Checkout UI Extension (app) — see §7.
+    CHECKOUT_PINCODE_MISMATCH:       { text: 'The delivery pincode entered at checkout is different from the pincode used to calculate your cart delivery options. Please recheck the pincode to ensure accurate availability, delivery charges, and delivery timing.', side: 'theme' },
+    CHECKOUT_PINCODE_MISMATCH_SHORT: { text: 'Your checkout pincode is different from the pincode used in the delivery checker. Please recheck it to avoid incorrect delivery charges or delivery issues.', side: 'theme' }
   };
 
   function cfg() { return window.GanguramDeliveryMessagesConfig || {}; }

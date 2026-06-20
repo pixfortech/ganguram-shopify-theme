@@ -44,6 +44,10 @@
       confirmedNote: '',
       deliveringTo: 'Delivering to __LABEL__',
       chargeAtCheckout: 'Final delivery charge will be confirmed at checkout.',
+      breakdownTitle: 'Shipping charge details',
+      breakdownNote: 'Final delivery charge may be confirmed at checkout if the complete address changes.',
+      bdZoneLabel: 'Delivery zone:',
+      bdChargeLabel: 'Delivery charge:',
       fourHourIneligible: '4-hour delivery is not available because the following item(s) are not eligible for quick delivery: __ITEMS__',
       cartValueLabel: 'Cart value:',
       addMore: 'Add __REMAINING__ more to reach the minimum order for __PINCODE__',
@@ -279,6 +283,51 @@
     return li;
   }
 
+  // ---- shipping-charge breakdown accordion (Requirement A) ------------------
+  // Shows ONLY what the theme actually knows from the pincode/zone rules (cart
+  // value, zone + pincode, MOV, and the per-mode delivery charge). It NEVER invents
+  // a weight slab / distance charge / express surcharge — those live in ShipZip; any
+  // part the theme can't break down is left to the "confirmed at checkout" note.
+  function bdRow(label, value) {
+    var row = document.createElement('div');
+    row.className = 'ganguram-delivery-progress__bd-row';
+    var l = document.createElement('span'); l.className = 'ganguram-delivery-progress__bd-label'; l.textContent = label;
+    var v = document.createElement('span'); v.className = 'ganguram-delivery-progress__bd-value'; v.textContent = (value == null ? '' : value);
+    row.appendChild(l); row.appendChild(v);
+    return row;
+  }
+  function renderBreakdown(panel, st) {
+    var det = panel.querySelector('[data-gdpr-breakdown]');
+    if (!det) { return; }
+    var body = panel.querySelector('[data-gdpr-breakdown-body]');
+    var titleEl = panel.querySelector('[data-gdpr-breakdown-title]');
+    var opts = st.serviceOptions || [];
+    var hasData = (st.mov != null) || opts.length || (st.deliveryCharge != null);
+    if (!body || !hasData) { hide(det); return; }
+    if (titleEl) { setText(titleEl, copy('breakdownTitle')); }
+    body.textContent = '';
+    body.appendChild(bdRow(copy('cartValueLabel'), fmtMoney(st.subtotal)));
+    if (st.displayLabel) {
+      body.appendChild(bdRow(copy('bdZoneLabel'), st.displayLabel + (st.zoneFriendly ? ' (' + st.zoneFriendly + ')' : '')));
+    }
+    if (st.mov != null) { body.appendChild(bdRow(copy('movLabel'), fmtMoney(st.mov))); }
+    if (opts.length) {
+      for (var i = 0; i < opts.length; i++) {
+        var o = opts[i];
+        var label = o.serviceLabel || (o.serviceType === 'four_hour' ? copy('fourHourLabel') : copy('standardLabel'));
+        var charge = (o.deliveryCharge == null) ? copy('chargeAtCheckout') : (o.deliveryCharge === 0 ? copy('freeDelivery') : fmtMoney(o.deliveryCharge));
+        body.appendChild(bdRow(label, charge));
+      }
+    } else if (st.deliveryCharge != null) {
+      body.appendChild(bdRow(copy('bdChargeLabel'), st.deliveryCharge === 0 ? copy('freeDelivery') : fmtMoney(st.deliveryCharge)));
+    }
+    var note = document.createElement('p');
+    note.className = 'ganguram-delivery-progress__bd-note';
+    note.textContent = copy('breakdownNote');
+    body.appendChild(note);
+    show(det);
+  }
+
   function renderPanel(panel, st) {
     if (!st) { hide(panel); return; }
     try {
@@ -301,6 +350,7 @@
       // ---- prompt state: no pincode / not serviceable (never blocks checkout) ----
       if (st.promptCode) {
         if (dtoEl) { hide(dtoEl); }
+        var detPrompt = panel.querySelector('[data-gdpr-breakdown]'); if (detPrompt) { hide(detPrompt); }
         hide(linesWrap); hide(movLine); hide(subLine); hide(barEl); hide(chargeEl); hide(svcEl); hide(fhEl);
         var pText = msg(st.promptCode) || (st.promptCode === 'NOT_SERVICEABLE'
           ? 'Sorry, we currently do not deliver to this pincode.'
@@ -362,6 +412,9 @@
         } else { chargeText = copy('chargeAtCheckout'); } // pincode known but no charge in the rule
         setText(chargeEl, chargeText); if (chargeText) { show(chargeEl); } else { hide(chargeEl); }
       }
+
+      // ---- shipping-charge breakdown accordion (Requirement A) ----
+      renderBreakdown(panel, st);
 
       // ---- service options (modes) — shown when checkout is allowed (MOV met) ----
       if (svcEl) {

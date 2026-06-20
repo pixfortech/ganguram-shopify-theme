@@ -1,0 +1,16 @@
+/*
+ * Ganguram — Checkout pincode mismatch warning (Phase 2.11E — Requirement B).
+ * Subtle amber warning near the checkout button. Display/advisory only.
+ */
+.ganguram-pincode-mismatch {
+  margin: 0 0 0.6rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid rgba(176, 122, 0, 0.45);
+  border-radius: 8px;
+  background: rgba(176, 122, 0, 0.07);
+  color: currentColor;
+  font-size: 0.85em;
+  line-height: 1.4;
+  font-weight: 500;
+}
+.ganguram-pincode-mismatch[hidden] { display: none !important; }

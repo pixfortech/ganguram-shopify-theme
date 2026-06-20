@@ -38,7 +38,9 @@
       DATE_NOT_SELECTED: {{ 'Please select a delivery date before placing the order.' | json }},
       SLOT_NOT_SELECTED: {{ 'Please select a delivery time slot before placing the order.' | json }},
       SLOT_EXPIRED: {{ 'This delivery slot is no longer available. Please choose another slot.' | json }},
-      APP_FAILURE: {{ 'We could not load delivery options at the moment. Please refresh and try again.' | json }}
+      APP_FAILURE: {{ 'We could not load delivery options at the moment. Please refresh and try again.' | json }},
+      CHECKOUT_PINCODE_MISMATCH: {{ 'The delivery pincode entered at checkout is different from the pincode used to calculate your cart delivery options. Please recheck the pincode to ensure accurate availability, delivery charges, and delivery timing.' | json }},
+      CHECKOUT_PINCODE_MISMATCH_SHORT: {{ 'Your checkout pincode is different from the pincode used in the delivery checker. Please recheck it to avoid incorrect delivery charges or delivery issues.' | json }}
     }
   };
 </script>

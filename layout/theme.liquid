@@ -571,5 +571,8 @@
   {%- comment -%} Product-card "Buy now" (Phase 2.11D.1) — adds an express Buy now next to Add to cart on single-variant product cards; reuses the theme AJAX add and proceeds to checkout ONLY if the cart-side MOV/checkout guard allows, else opens the cart drawer. Fail-open; NO checkout/shipping-charge/ShipZip/SBZ/zipLogic/resolver/settings_data change. {%- endcomment -%}
   {%- render 'ganguram-product-card-buy-config' -%}
 
+  {%- comment -%} Checkout pincode mismatch warning (Phase 2.11E — Requirement B) — warns in the cart when the delivery-checker pincode (ganguram_selected_pincode) matches none of the logged-in customer's saved address pincodes. Warning only; never blocks checkout; fail-open (guest/no saved address -> nothing). The exact checkout-typed pincode needs a Checkout UI Extension (app). No checkout/shipping/ShipZip/SBZ/zipLogic/resolver/settings_data change. {%- endcomment -%}
+  {%- render 'ganguram-pincode-mismatch-config' -%}
+
 </body>
 </html>

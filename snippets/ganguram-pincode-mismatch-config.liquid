@@ -1,0 +1,34 @@
+{%- comment -%}
+  Ganguram — Checkout pincode mismatch warning config (Phase 2.11E — Requirement B).
+
+  Publishes window.GanguramPincodeMismatchConfig (the logged-in customer's SAVED
+  address pincodes — the ones Shopify prefills at checkout) and loads
+  assets/ganguram-pincode-mismatch.js (window.GanguramPincodeMismatch). The module
+  warns IN THE CART when the delivery-checker pincode (ganguram_selected_pincode)
+  matches none of those saved pincodes.
+
+  SHOPIFY LIMITATION: a standard theme cannot read the pincode TYPED on Shopify's
+  hosted checkout, so the exact checkout comparison needs a Checkout UI Extension
+  (app); the cart attribute ganguram_selected_pincode (Phase 2.11D.2) is provided
+  for it. For a guest (no saved address) the array is empty -> no warning (fail-open).
+  See docs/delivery-rule-engine-admin-setup.md §7.
+
+  Warning only — never blocks checkout. The warning wording lives in the message
+  catalog (CHECKOUT_PINCODE_MISMATCH / _SHORT). Set useLong:true for the long copy.
+  No checkout / shipping / ShipZip / SBZ / zipLogic / resolver / settings_data change.
+{%- endcomment -%}
+<script>
+  window.GanguramPincodeMismatchConfig = {
+    enabled: true,
+    useLong: false,
+    savedPincodes: [
+      {%- if customer -%}
+        {%- for address in customer.addresses -%}
+          {{ address.zip | default: '' | json }}{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      {%- endif -%}
+    ]
+  };
+</script>
+{{ 'ganguram-pincode-mismatch.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ganguram-pincode-mismatch.js' | asset_url }}" defer></script>

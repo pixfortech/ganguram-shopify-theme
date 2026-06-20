@@ -368,6 +368,30 @@ The theme shows the **THEME** rows in the cart **before** checkout, so customers
 
 ---
 
+## 7. Shipping-charge breakdown + checkout pincode mismatch (Phase 2.11E A/B)
+
+### A. "Shipping charge details" accordion
+A collapsible breakdown renders in the cart panel wherever a delivery charge shows. It lists **only what the theme actually knows** from the pincode/zone rules — **cart value**, **delivery zone + pincode**, **minimum order**, and the **per‑mode delivery charge** — and ends with: *"Final delivery charge may be confirmed at checkout if the complete address changes."*
+
+> **It never invents charges.** A **weight slab**, a **distance/zone split**, or an **express surcharge** are **ShipZip‑internal** — the metaobject rule carries a single `delivery_charge` per rule, so the accordion shows that as the mode's charge and leaves anything it can't break down to the checkout‑confirmed note. If you want a finer breakdown in the cart, expose those parts as additional metaobject fields (a future phase) — do **not** hardcode them in the theme.
+
+### B. Checkout pincode mismatch warning
+The cart warns when the **delivery‑checker pincode** (`ganguram_selected_pincode`, via `GanguramZone`) differs from the pincode Shopify will use at checkout.
+
+**Shopify limitation (important):** a standard (non‑checkout‑extensibility) theme **cannot read the address typed on Shopify's hosted checkout**, nor render UI there. So the theme does the comparison it *can*:
+
+- **Logged‑in customer:** it compares the checker pincode against the customer's **saved address pincodes** (`customer.addresses[].zip` — the address Shopify prefills) and shows the warning **in the cart, before checkout**. If the checker pincode matches none of them → warn.
+- **Guest, or a brand‑new address typed at checkout:** the theme can't see it. The exact comparison requires a **Checkout UI Extension** (a small app/function). The cart attribute **`ganguram_selected_pincode`** (Phase 2.11D.2) is written precisely so such an extension can compare it to `checkout.shippingAddress.zip` and show the same wording (`CHECKOUT_PINCODE_MISMATCH`).
+
+The warning **never blocks checkout** (only the MOV soft guard blocks). Wording lives in the catalog (`CHECKOUT_PINCODE_MISMATCH` / `_SHORT`). Fail‑open: no saved address / no checker pincode / disabled → no warning.
+
+| Capability | Where it runs |
+|---|---|
+| Warn vs **saved** address pincode | **Theme** (cart, this PR) |
+| Warn vs the **typed‑at‑checkout** pincode | **Checkout UI Extension** (app) reading `ganguram_selected_pincode` |
+
+---
+
 ### Related docs
 - `docs/delivery-rule-source-of-truth-audit.md` — Phase 2.11A decision (why metaobjects).
 - `docs/checkout-feasibility-and-delivery-rules-audit.md` — Phase 2.10B feasibility + GO/NO‑GO.
