@@ -60,6 +60,7 @@
       bdMethodLabel: 'Delivery method:',
       bdChargeLabel: 'Delivery charge:',
       fourHourIneligible: '4-hour delivery is not available because the following item(s) are not eligible for quick delivery: __ITEMS__',
+      itemsNotDeliverable: 'Some items in your cart can’t be delivered to __LABEL__. Please remove them or change your delivery pincode to continue.',
       cartValueLabel: 'Cart value:',
       addMore: 'Add __REMAINING__ more to continue',
       minReached: 'Minimum order reached',
@@ -136,6 +137,31 @@
     } catch (e) { return ''; }
   }
 
+  // Names of cart items that are NOT DELIVERABLE to the selected zone by ANY mode (2.11H).
+  // Reuses the shared cart-level rule (window.GanguramZoneRules.isProductDeliverableToZone)
+  // so the panel, the cart validator and the product display never disagree. Fail-open:
+  // no rule / no serviceable zone -> returns [] (nothing flagged, panel behaves as before).
+  function invalidCartItemNames(location) {
+    var r = window.GanguramZoneRules;
+    if (!r || typeof r.isProductDeliverableToZone !== 'function') { return []; }
+    if (!location || location.isServiceable !== true || !location.zone) { return []; }
+    var names = [], lines = document.querySelectorAll('[data-ganguram-cart-line]');
+    for (var i = 0; i < lines.length; i++) {
+      var el = lines[i];
+      var tags = {
+        kolkata: el.getAttribute('data-ganguram-kolkata') === 'true',
+        panIndia: el.getAttribute('data-ganguram-pan-india') === 'true',
+        quickCommerce: el.getAttribute('data-ganguram-quick-commerce') === 'true',
+        localDelivery: el.getAttribute('data-ganguram-local-delivery') === 'true'
+      };
+      if (!r.isProductDeliverableToZone(tags, location.zone)) {
+        var n = String(el.getAttribute('data-ganguram-product-title') || '').trim();
+        if (names.indexOf(n || 'Item') === -1) { names.push(n || 'Item'); }
+      }
+    }
+    return names;
+  }
+
   // Names of cart items that are NOT quick-commerce eligible (block 4-hour).
   function nonQuickCommerceItemNames() {
     var names = [];
@@ -202,6 +228,21 @@
     if (location.isServiceable !== true) {
       return hasItems ? { promptCode: 'NOT_SERVICEABLE', location: location, blocked: false, serviceOptions: [], fourHourBlockedItems: [] } : null;
     }
+
+    // 2.11H — if the cart holds item(s) not deliverable to this serviceable zone (e.g. a
+    // local-only sweet with a PAN India pincode), surface THAT and block checkout. We must
+    // not present a "Standard / Pan India delivery available" state for a cart that cannot
+    // actually be delivered. Resolving happens via the cart-eligibility modal (remove /
+    // change pincode). Fail-open: helper returns [] when no rule is loaded.
+    var invalidNames = hasItems ? invalidCartItemNames(location) : [];
+    if (invalidNames.length) {
+      return {
+        location: location, displayLabel: displayLabelFor(location), zoneFriendly: zoneFriendly(location),
+        hasInvalid: true, invalidItems: invalidNames,
+        blocked: true, serviceOptions: [], fourHourBlockedItems: []
+      };
+    }
+
     var subtotal = readSubtotal();
 
     // Pincode/zone is the PRIMARY source of truth and is treated as ACCURATE for
@@ -411,6 +452,19 @@
         show(panel);
         return;
       }
+
+      // ---- not-deliverable state: cart holds item(s) invalid for this zone (2.11H) ----
+      // Show a clear message instead of any delivery-mode / charge info; checkout is blocked.
+      if (st.hasInvalid) {
+        hide(statusEl); hide(modesEl); hide(movSumEl); hide(barEl); hide(msgEl); hide(fhEl); if (detEl) { hide(detEl); }
+        var iText = msg('ITEMS_NOT_DELIVERABLE', { label: st.displayLabel }) ||
+          tmpl(copy('itemsNotDeliverable'), { label: st.displayLabel || 'the selected pincode' });
+        if (promptEl) { setText(promptEl, iText); show(promptEl); }
+        panel.setAttribute('data-gdpr-state', 'invalid');
+        panel.removeAttribute('data-gdpr-confirmed');
+        show(panel);
+        return;
+      }
       if (promptEl) { setText(promptEl, ''); hide(promptEl); }
 
       // ---- status (de-emphasised; the pincode/zone live in the accordion) ----
@@ -456,7 +510,9 @@
 
   function renderNotice(notice, st) {
     try {
-      if (st && st.blocked) {
+      // The MOV notice is for the below-minimum block only. The not-deliverable block
+      // (2.11H) is explained by the panel + the cart-eligibility modal, not here.
+      if (st && st.blocked && !st.hasInvalid) {
         setText(notice, tmpl(copy('checkoutNotice'), { mov: fmtMoney(st.mov), remaining: fmtMoney(st.movRemaining) }));
         show(notice);
       } else { setText(notice, ''); hide(notice); }
@@ -491,16 +547,26 @@
     }
     return st;
   }
+  // When blocked, reveal the MOV notice AND — if blocked because the cart holds
+  // not-deliverable items (2.11H) — open the cart-eligibility review modal so the
+  // customer can remove them or change the pincode. Both are cart-side advisory only.
+  function handleBlocked() {
+    var st = revealNotices();
+    if (st && st.hasInvalid && window.GanguramCartEligibility && typeof window.GanguramCartEligibility.reviewNow === 'function') {
+      try { window.GanguramCartEligibility.reviewNow(); } catch (e) {}
+    }
+    return st;
+  }
   function onCheckoutClick(e) {
     var t = e.target;
     if (!t || !t.closest) { return; }
     var hit = t.closest('#CheckOut, [name="checkout"], .shopify-payment-button, [data-shopify="payment-button"], .additional-checkout-buttons, [data-ganguram-checkout]');
     if (!hit) { return; }
-    if (isBlocked()) { e.preventDefault(); e.stopPropagation(); revealNotices(); }
+    if (isBlocked()) { e.preventDefault(); e.stopPropagation(); handleBlocked(); }
   }
   function onCartSubmit(e) {
     var f = e.target;
-    if (f && f.id === 'cart' && isBlocked()) { e.preventDefault(); e.stopPropagation(); revealNotices(); }
+    if (f && f.id === 'cart' && isBlocked()) { e.preventDefault(); e.stopPropagation(); handleBlocked(); }
   }
 
   // Re-paint after cart re-renders (qty change / refreshCart replace the markup).
@@ -529,7 +595,8 @@
     document.addEventListener('submit', onCartSubmit, true);
   }
 
-  window.GanguramDeliveryProgress = { render: renderAll, isCheckoutBlocked: isBlocked };
+  function hasInvalidItems() { var st = computeState(); return !!(st && st.hasInvalid); }
+  window.GanguramDeliveryProgress = { render: renderAll, isCheckoutBlocked: isBlocked, hasInvalidItems: hasInvalidItems };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

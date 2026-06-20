@@ -461,6 +461,38 @@ ShipZip's date picker is a **cart‑page app block** (it does not render in the 
 - **Cart attributes written** (configurable — **match ShipZip's exact names**; defaults shown): **`Delivery-Date`**, **`Delivery-Time`**, **`Delivery Method`**. Written via a `/cart/update.js` **merge** (only these keys), so ShipZip's other attributes are never cleared; selecting a value **replaces** only that key. Verify the names in an order's cart attributes and set `attributeKeys` in `ganguram-delivery-datepicker-config.liquid` (and the matching `data-gdd-saved-*` in the snippet) if ShipZip uses different names.
 - **No rate change:** never touches ShipZip rate logic, the `4HR`/`STD` service codes, the delivery‑mode cart‑attribute handoff, or pincode/MOV/product‑visibility logic. Theme variables only (no hardcoded colours). Fail‑open.
 
+## 10. Product eligibility + collection rendering for pincode delivery (Phase 2.11H)
+
+Fixes two related issues and makes the **product display filter**, the **cart eligibility validator**, and the **cart delivery panel** all read from **one shared rule** so they can never disagree.
+
+### Tags drive everything (admin action)
+Each product's delivery scope comes from its **tags**. Tag products deliberately:
+
+| Tag | Meaning | Shows in normal grids | Shows in the 4‑Hours grid | Deliverable to… |
+| --- | --- | --- | --- | --- |
+| **`Kolkata`** | Local (standard) | ✅ | – | Kolkata / quick‑commerce pincodes |
+| **`Local Delivery`** | Local (standard) | ✅ | – | Kolkata / quick‑commerce pincodes |
+| **`Quick Commerce`** | 4‑hour eligible | – | ✅ | quick‑commerce pincodes (4‑hour) |
+| **`PAN India`** | Ships nationwide | ✅ (PAN India pincodes) | – | **PAN India pincodes only** |
+
+- **A product is PAN‑India‑deliverable ONLY if it carries the `PAN India` tag.** `Kolkata` / `Local Delivery` / `Quick Commerce` do **not** make a product deliverable nationwide. If a sweet should be available **both** locally **and** nationwide, give it **both** sets of tags (e.g. `Kolkata` + `PAN India`).
+- **A local‑only sweet** (e.g. *Nolen Gurer Jalbhara Sandesh*, tagged `Kolkata`/`Quick Commerce` but **not** `PAN India`) is **correctly invalid** for a PAN India pincode such as Bengaluru `560001`.
+
+### Bug 1 — collection showed only 1 product
+Local grids previously showed only products tagged **`Kolkata`**, so a collection of **`Local Delivery`**‑tagged sweets collapsed to the one `Kolkata`‑tagged item. The display rule now treats **`Kolkata` OR `Local Delivery`** as visible in normal local grids, so all of them show. The **column count** (e.g. 4‑column) is a **layout** setting only — it never changes how many products are returned.
+
+### Bug 2 — invalid item slipped through for a PAN India pincode
+- The cart validator now reads a **`data-ganguram-local-delivery`** attribute on each product card / cart line (added in `product-item.liquid`, already present in the cart snippets) and uses a shared **"deliverable by ANY mode"** rule: an item is fine if it can arrive by **standard** (local grids) **or** **4‑hour** (quick‑commerce area). PAN India has no 4‑hour, so a local‑only item is flagged.
+- The validator now surfaces invalid items **on cart load and on cart change** (not only on a pincode change): a review modal offers **"Remove unavailable items"** or **"Change pincode."** Closing it changes nothing (fail‑open); it does not re‑pop for the same cart until something changes.
+- The **delivery panel** no longer shows a "Pan India / Standard" deliverable state for a cart that holds undeliverable items — it shows a clear *"Some items in your cart can't be delivered to …"* message instead.
+- **Checkout is soft‑blocked** while invalid items remain; pressing checkout re‑opens the review modal so the customer can remove the items or change the pincode.
+
+### Single source of truth
+`window.GanguramZoneRules.isProductVisibleForContext(tags, zone, context)` (per‑grid **display**) and the new `window.GanguramZoneRules.isProductDeliverableToZone(tags, zone)` (cart **eligibility**) both live in `assets/ganguram-product-zone-filter.js`. The product filter, `assets/ganguram-cart-eligibility.js`, and `assets/ganguram-delivery-progress.js` all call them — change the matrix in **one** place.
+
+### No rate change
+This phase does **not** touch ShipZip rates, the `4HR`/`STD` service codes, the date‑picker attributes (§9), the delivery‑mode cart‑attribute handoff (§5a/§8c), MOV logic, the pincode resolver, or any checkout‑rate logic. Theme variables only (no hardcoded colours). Fail‑open: with no rule loaded / no pincode, nothing is hidden and nothing is blocked.
+
 ---
 
 ### Related docs
