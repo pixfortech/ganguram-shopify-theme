@@ -130,6 +130,11 @@
   function isLocalZone(loc) {
     return !!(loc && (loc.zone === 'kolkata' || loc.zone === 'quick_commerce' || loc.isKolkata === true || loc.isQuickCommerce === true));
   }
+  // 4-hour AREA eligibility = the quick-commerce zone (matches the cart panel + ShipZip,
+  // Phase 2.11F.3). A Kolkata pincode that is NOT quick-commerce does not get four_hour.
+  function fourHourArea(loc) {
+    return !!(loc && (loc.isQuickCommerce === true || loc.zone === 'quick_commerce'));
+  }
 
   // ---- desired attribute map ------------------------------------------------
   // Blank values are intentional: /cart/update.js removes an attribute when its
@@ -160,7 +165,7 @@
       if (qc.hasItems) {
         out[K.allQuickCommerce] = qc.allQuickCommerce ? 'true' : 'false';
         var cand = ['standard'];
-        if (qc.allQuickCommerce && isLocalZone(loc)) { cand.push('four_hour'); }
+        if (qc.allQuickCommerce && fourHourArea(loc)) { cand.push('four_hour'); }
         out[K.deliveryModeCandidates] = cand.join(',');
       }
     }
