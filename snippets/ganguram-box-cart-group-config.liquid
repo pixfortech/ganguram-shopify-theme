@@ -1,0 +1,21 @@
+{%- comment -%}
+  Ganguram — Custom Sweets Box cart grouping config (Phase 2.12A).
+
+  Publishes window.GanguramBoxCartGroupConfig (copy + currency) and loads the shared box
+  CSS + the cart-grouping JS GLOBALLY (box lines can appear in the cart drawer on any page).
+  Display + a safe grouped-remove only — no price / ShipZip / resolver / MOV / date-picker
+  change. Box lines carry data-ganguram-box-id (stamped in cart-form snippets).
+{%- endcomment -%}
+<script>
+  window.GanguramBoxCartGroupConfig = {
+    currencySymbol: "₹",
+    copy: {
+      columns: {{ '__N__ Columns' | json }},
+      boxTotal: {{ 'Box total:' | json }},
+      removeBox: {{ 'Remove box' | json }},
+      slot: {{ 'Slot __N__' | json }}
+    }
+  };
+</script>
+{{ 'ganguram-box-builder.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ganguram-box-cart-group.js' | asset_url }}" defer></script>

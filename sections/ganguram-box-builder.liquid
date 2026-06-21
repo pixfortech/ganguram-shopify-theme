@@ -1,0 +1,109 @@
+{%- comment -%}
+  Ganguram — Custom Sweets Box Builder (Phase 2.12A).
+
+  Renders the box-builder UI container and publishes window.GanguramBoxBuilderConfig from
+  the section BLOCKS. Each "item" block links a REAL Shopify product/variant, so the price,
+  weight, tax and delivery tags come from Shopify (no fake JS pricing) — the live total is a
+  preview built from those real variant prices, and add-to-cart adds one real-variant line
+  per slot. Delivery eligibility is read from each linked product's tags (Kolkata / PAN India
+  / Quick Commerce / Local Delivery). No ShipZip / service-code / MOV / date-picker change.
+{%- endcomment -%}
+
+{%- if section.settings.enabled -%}
+  <div class="ganguram-box-builder-section">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="ganguram-box-builder-section__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- if section.settings.subheading != blank -%}
+      <p class="ganguram-box-builder-section__sub">{{ section.settings.subheading }}</p>
+    {%- endif -%}
+    <div class="ganguram-box-builder" data-ganguram-box-builder></div>
+  </div>
+
+  <script>
+    window.GanguramBoxBuilderConfig = {
+      enabled: true,
+      boxName: {{ section.settings.box_name | default: 'Custom Sweets Box' | json }},
+      columnCounts: [{{ section.settings.column_counts | default: '4,5,6' | split: ',' | join: ',' }}],
+      defaultColumns: {{ section.settings.default_columns | default: 4 }},
+      currencySymbol: {{ section.settings.currency_symbol | default: '₹' | json }},
+      items: [
+        {%- assign emitted = 0 -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'item' and block.settings.active and block.settings.product != blank -%}
+            {%- assign p = block.settings.product -%}
+            {%- assign v = p.selected_or_first_available_variant -%}
+            {%- if v -%}
+              {%- if emitted > 0 %},{% endif -%}
+              {
+                "id": {{ block.id | json }},
+                "variantId": {{ v.id }},
+                "displayName": {{ block.settings.display_name | default: p.title | json }},
+                "qtyLabel": {{ block.settings.qty_label | default: '' | json }},
+                "price": {{ v.price }},
+                "image": {% if block.settings.image %}{{ block.settings.image | image_url: width: 200 | json }}{% elsif p.featured_image %}{{ p.featured_image | image_url: width: 200 | json }}{% else %}""{% endif %},
+                "handle": {{ p.handle | json }},
+                "available": {% if v.available %}true{% else %}false{% endif %},
+                "kolkata": {% if p.tags contains 'Kolkata' %}true{% else %}false{% endif %},
+                "panIndia": {% if p.tags contains 'PAN India' %}true{% else %}false{% endif %},
+                "quickCommerce": {% if p.tags contains 'Quick Commerce' %}true{% else %}false{% endif %},
+                "localDelivery": {% if p.tags contains 'Local Delivery' %}true{% else %}false{% endif %},
+                "sort": {{ block.settings.sort_order | default: forloop.index }}
+              }
+              {%- assign emitted = emitted | plus: 1 -%}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+      ],
+      copy: {
+        chooseItem: {{ 'Choose an item…' | json }},
+        columnsLabel: {{ section.settings.columns_label | default: 'Number of columns' | json }},
+        fillRemaining: {{ 'Fill remaining columns with __ITEM__' | json }},
+        totalLabel: {{ 'Box total:' | json }},
+        addToCart: {{ section.settings.add_label | default: 'Add box to cart' | json }},
+        incomplete: {{ 'Please select items for all columns.' | json }},
+        itemUnavailable: {{ 'This item is currently unavailable. Please choose another item.' | json }},
+        boxUnavailable: {{ 'This box is not available for the selected pincode.' | json }},
+        priceChanged: {{ 'Your box price has changed. Please review before adding to cart.' | json }},
+        added: {{ 'Box added to your cart.' | json }}
+      }
+    };
+  </script>
+  <script src="{{ 'ganguram-box-builder.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Custom Sweets Box",
+  "tag": "section",
+  "class": "ganguram-box-builder-section-wrapper",
+  "settings": [
+    { "type": "checkbox", "id": "enabled", "label": "Enable box builder", "default": true },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Build your Custom Sweets Box" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Choose your columns, then pick a sweet for each." },
+    { "type": "text", "id": "box_name", "label": "Box name (parent)", "default": "Custom Sweets Box" },
+    { "type": "text", "id": "column_counts", "label": "Allowed column counts (comma‑separated)", "default": "4,5,6", "info": "e.g. 4,5,6" },
+    { "type": "number", "id": "default_columns", "label": "Default column count", "default": 4 },
+    { "type": "text", "id": "currency_symbol", "label": "Currency symbol (preview total)", "default": "₹" },
+    { "type": "text", "id": "columns_label", "label": "Columns label", "default": "Number of columns" },
+    { "type": "text", "id": "add_label", "label": "Add‑to‑cart label", "default": "Add box to cart" }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Box item",
+      "settings": [
+        { "type": "checkbox", "id": "active", "label": "Active", "default": true },
+        { "type": "product", "id": "product", "label": "Linked product (real price/variant)" },
+        { "type": "text", "id": "display_name", "label": "Display name (optional override)" },
+        { "type": "text", "id": "qty_label", "label": "Quantity label", "info": "e.g. x 10" },
+        { "type": "image_picker", "id": "image", "label": "Image (optional override)" },
+        { "type": "number", "id": "sort_order", "label": "Sort order" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Custom Sweets Box", "blocks": [ { "type": "item" }, { "type": "item" }, { "type": "item" }, { "type": "item" } ] }
+  ]
+}
+{% endschema %}
