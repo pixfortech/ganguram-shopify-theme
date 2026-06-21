@@ -531,6 +531,9 @@
   {%- comment -%} Google Places address search (Phase 2.9B) — optional pincode-finder in the popup; extracts a pincode and commits via GanguramZone.setSelectedPincode. Self-gates on a merchant key; Maps JS lazy-loads on popup open. No checkout autofill / filtering / cart logic. {%- endcomment -%}
   {%- render 'ganguram-places-address-search-config' -%}
 
+  {%- comment -%} Shipping ESTIMATE mapping (Phase 2.11I) — pure, config-driven local slab + 4-hour radius mapping (window.GanguramEstimateConfig / GanguramShippingEstimate) used by the popup estimate and the pincode-area distance range. ESTIMATE/display only; ShipZip remains the final checkout rate. No ShipZip/service-code/MOV/eligibility/visibility/date-attr change. {%- endcomment -%}
+  {%- render 'ganguram-shipping-estimate-config' -%}
+
   {%- comment -%} Driving-distance provider (Phase 2.11D) — for a SELECTED FULL ADDRESS, reuses the Phase 2.9B Google setup to compute the actual driving distance (confirmed distanceKm) used by the cart distance-slab rules. Needs the outlet origin setting + Distance Matrix API. Fail-open (no origin -> estimated pincode path). No checkout/shipping/SBZ/ShipZip/zipLogic/resolver/settings_data change. {%- endcomment -%}
   {%- render 'ganguram-distance-config' -%}
 

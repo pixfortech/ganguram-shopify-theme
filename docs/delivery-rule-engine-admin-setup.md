@@ -500,6 +500,33 @@ The unavailable‑items / item‑removal modal matches the **Krown Local** theme
 ### No rate change
 This phase does **not** touch ShipZip rates, the `4HR`/`STD` service codes, the date‑picker attributes (§9), the delivery‑mode cart‑attribute handoff (§5a/§8c), MOV logic, the pincode resolver, or any checkout‑rate logic. Theme variables only (no hardcoded colours). Fail‑open: with no rule loaded / no pincode, nothing is hidden and nothing is blocked.
 
+## 11. Pincode‑area shipping estimate (Phase 2.11I)
+
+The delivery popup now shows a **useful charge ESTIMATE** instead of "Final charge at checkout". **ShipZip remains the source of the final checkout rate** — this is an estimate/UI improvement only.
+
+### Calculation method
+- **Pincode‑only:** geocode the pincode to its **area box** (Google bounds/viewport; centroid if no box), sample the **centre + 4 corners** (optionally + edge midpoints), ask the **Distance Matrix** for all of them in **one** request, take the **min/max** driving distance, and map each to the local slab → a **range** (e.g. *Standard shipping estimate: ₹50–₹100*) or a single price when both ends fall in one slab.
+- **Full address:** use the selected address's **confirmed** driving distance → a **single** slab price (*Standard shipping estimate: ₹70* · *Based on your selected address.*).
+- **4 Hours:** flat **₹10** when within the radius. A pincode area that **straddles** the radius shows *"4 Hours may be available for some addresses in this pincode. Enter your full address to confirm."*; a full address **beyond** the radius does **not** show 4 Hours (conservative — never over‑promises vs checkout).
+
+### Limitations of the pincode‑area estimate
+A pincode covers an area, so the estimate is a **range** sampled from a few points — the exact charge depends on the precise address and is **confirmed at checkout by ShipZip**. The 4‑hour "maybe" wording is shown precisely because parts of a pincode can be inside and others outside the radius. Fail‑open: no Google / API failure / no outlet origin → the popup falls back to *"Final charge confirmed at checkout."*
+
+### Config (easy to change — no JS edit)
+`snippets/ganguram-shipping-estimate-config.liquid` publishes `window.GanguramEstimateConfig`:
+```js
+standardSlabs: [ {maxKm:5,price:50}, {maxKm:10,price:70}, {maxKm:15,price:100}, {maxKm:20,price:150} ],
+fourHour: { maxDistanceKm: 10, flatPrice: 10 },
+cacheVersion: 1, cacheTtlMs: 86400000, sampleEdgeMidpoints: false
+```
+The pure mapping (`assets/ganguram-shipping-estimate.js` → `window.GanguramShippingEstimate`) is the **only** place the slab table lives. The outlet origin is the existing `settings.ganguram_outlet_origin` (§2d).
+
+### Caching
+The pincode‑area distance range is cached in `localStorage` keyed by **pincode + origin + config version** with a TTL (default 24h), so Google is **not** called again for the same pincode in a session. Bump `cacheVersion` to invalidate.
+
+### Confirmation — ShipZip stays the final rate
+No change to **ShipZip rate logic, the `4HR`/`STD` service codes, checkout‑rate logic, pincode‑eligibility, product visibility, MOV, or the date‑picker attribute names.** Theme variables only (no hardcoded colours). `settings_data.json` untouched.
+
 ---
 
 ### Related docs

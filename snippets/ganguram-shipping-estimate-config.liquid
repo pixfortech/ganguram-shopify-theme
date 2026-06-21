@@ -1,0 +1,33 @@
+{%- comment -%}
+  Ganguram — Shipping ESTIMATE config (Phase 2.11I).
+
+  Publishes window.GanguramEstimateConfig (the LOCAL Standard-delivery slabs + the 4-hour
+  radius / flat price + cache settings) and loads assets/ganguram-shipping-estimate.js — the
+  pure, config-driven mapping used by the delivery-popup estimate and the pincode-area
+  distance range. Change the slabs / 4-hour radius HERE; no JS edit needed.
+
+  ESTIMATE / display only — ShipZip remains the source of the FINAL checkout rate. No
+  checkout / ShipZip / service-code (4HR/STD) / MOV / pincode-eligibility / product-
+  visibility / date-picker-attribute change. Fail-open (no Google / API failure ->
+  "Final charge confirmed at checkout").
+{%- endcomment -%}
+<script>
+  window.GanguramEstimateConfig = {
+    // LOCAL Standard-delivery slabs — cumulative km upper bounds, whole rupees.
+    // 0–5 km ₹50 · 5.01–10 km ₹70 · 10.01–15 km ₹100 · 15.01–20 km ₹150.
+    standardSlabs: [
+      { maxKm: 5,  price: 50 },
+      { maxKm: 10, price: 70 },
+      { maxKm: 15, price: 100 },
+      { maxKm: 20, price: 150 }
+    ],
+    // 4-hour (quick-commerce) flat price + serviceable driving radius (km).
+    fourHour: { maxDistanceKm: 10, flatPrice: 10 },
+    currencySymbol: "₹",
+    rangeSeparator: "–",      // en dash
+    cacheVersion: 1,               // bump to invalidate cached pincode-area estimates
+    cacheTtlMs: 86400000,          // 24h — don't re-call Google for the same pincode
+    sampleEdgeMidpoints: false     // sample centre + 4 corners (5 points); true -> + 4 edge midpoints
+  };
+</script>
+<script src="{{ 'ganguram-shipping-estimate.js' | asset_url }}" defer></script>

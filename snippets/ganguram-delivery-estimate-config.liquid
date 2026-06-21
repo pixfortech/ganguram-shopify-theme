@@ -33,7 +33,23 @@
       freeDelivery: {{ 'Free delivery' | json }},
       modesLabel: {{ 'Available:' | json }},
       standardLabel: {{ 'Standard' | json }},
-      fourHourLabel: {{ '4 Hours' | json }}
+      fourHourLabel: {{ '4 Hours' | json }},
+      {%- comment -%} Phase 2.11I — distance-based estimate copy (__PINCODE__ / __PRICE__ replaced in JS). {%- endcomment -%}
+      standardEstimateLabel: {{ 'Standard shipping estimate:' | json }},
+      basedOnArea: {{ 'Based on the delivery area for __PINCODE__. Final charge confirmed at checkout.' | json }},
+      basedOnAddressEstimate: {{ 'Based on your selected address. Final charge confirmed at checkout.' | json }},
+      fourHourFlat: {{ '4 Hours: __PRICE__' | json }},
+      fourHourMaybe: {{ '4 Hours may be available for some addresses in this pincode. Enter your full address to confirm.' | json }},
+      fourHourNotForDistance: {{ 'Not available for this distance' | json }},
+      detailsTitle: {{ 'Delivery details' | json }},
+      pincodeLabel: {{ 'Pincode:' | json }},
+      estimateTypeLabel: {{ 'Estimate type:' | json }},
+      estimateTypeArea: {{ 'Pincode area' | json }},
+      estimateTypeAddress: {{ 'Selected address' | json }},
+      distanceRangeLabel: {{ 'Approx. distance:' | json }},
+      slabRangeLabel: {{ 'Standard slab:' | json }},
+      fourHourDetailLabel: {{ '4 Hours:' | json }},
+      finalAtCheckout: {{ 'Final charge confirmed at checkout.' | json }}
     }
   };
 </script>
