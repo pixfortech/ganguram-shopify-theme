@@ -26,9 +26,10 @@
     requireTime: false,
     timeSlots: [],
     attributeKeys: {
-      date: {{ 'Delivery-Date' | json }},
+      date: {{ 'Delivery-Date' | json }},                 // saved as YYYY-MM-DD (calendar input)
+      dateReadable: {{ 'Delivery Date' | json }},          // readable copy for the order
       time: {{ 'Delivery-Time' | json }},
-      method: {{ 'Delivery Method' | json }}
+      method: {{ 'Delivery Method' | json }}               // READ to restore the toggle; WRITTEN by the method-choice module
     },
     copy: {
       title: {{ 'Delivery date' | json }},

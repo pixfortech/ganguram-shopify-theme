@@ -16,3 +16,14 @@
   background: transparent;
 }
 .ganguram-delivery-method-choice__notice[hidden] { display: none !important; }
+
+/* chosen method + preferred date summary */
+.ganguram-delivery-method-choice__summary {
+  margin: 0 0 0.6rem;
+  font-size: 0.85em;
+  line-height: 1.45;
+  color: currentColor;
+}
+.ganguram-delivery-method-choice__summary[hidden] { display: none !important; }
+.ganguram-delivery-method-choice__summary-row { margin: 0; }
+.ganguram-delivery-method-choice__summary-row + .ganguram-delivery-method-choice__summary-row { color: var(--color-secondary-text-main); }

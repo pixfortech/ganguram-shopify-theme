@@ -42,8 +42,9 @@
     var k = cfg().attributeKeys || {};
     return {
       date: k.date || 'Delivery-Date',
+      dateReadable: k.dateReadable || 'Delivery Date',
       time: k.time || 'Delivery-Time',
-      method: k.method || 'Delivery Method'
+      method: k.method || 'Delivery Method'   // READ for restore; the method-choice module WRITES it
     };
   }
   function timeSlots() { var t = cfg().timeSlots; return Array.isArray(t) ? t.filter(Boolean) : []; }
@@ -88,17 +89,26 @@
     try { return new Intl.DateTimeFormat(undefined, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }).format(dt); }
     catch (e) { return dt.toDateString(); }
   }
-  function buildDates() {
+  // ---- calendar (native <input type="date">) helpers -------------------------
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function ymd(dt) { return dt.getFullYear() + '-' + pad(dt.getMonth() + 1) + '-' + pad(dt.getDate()); }
+  function parseYmd(s) { var p = String(s || '').split('-'); if (p.length !== 3) { return null; } var dt = new Date(+p[0], +p[1] - 1, +p[2]); return isNaN(dt.getTime()) ? null : dt; }
+  function readableDate(s) { var dt = parseYmd(s); return dt ? fmtDate(dt) : ''; }
+  // The selectable window as YYYY-MM-DD min/max bounds for the calendar input.
+  function dateBounds() {
     var min = intOr(cfg().minOffsetDays, 1), max = intOr(cfg().maxOffsetDays, 7);
     if (max < min) { max = min; }
-    var disabled = Array.isArray(cfg().disabledWeekdays) ? cfg().disabledWeekdays : [];
-    var out = [], base = new Date();
-    for (var d = min; d <= max && out.length < 60; d++) {
-      var dt = new Date(base.getFullYear(), base.getMonth(), base.getDate() + d);
-      if (disabled.indexOf(dt.getDay()) !== -1) { continue; }
-      out.push(fmtDate(dt)); // human-readable value (also what's saved as the attribute)
-    }
-    return out;
+    var base = new Date();
+    return {
+      min: ymd(new Date(base.getFullYear(), base.getMonth(), base.getDate() + min)),
+      max: ymd(new Date(base.getFullYear(), base.getMonth(), base.getDate() + max))
+    };
+  }
+  // Native date inputs can't grey out specific weekdays, so a disabled-weekday pick is
+  // rejected on change (validated here) — the only case a heavier custom calendar would add.
+  function isDisabledWeekday(s) {
+    var dis = Array.isArray(cfg().disabledWeekdays) ? cfg().disabledWeekdays : [];
+    var dt = parseYmd(s); return !!(dt && dis.indexOf(dt.getDay()) !== -1);
   }
 
   // ---- cart attribute write (merge — never clears ShipZip's other attributes) --
@@ -112,12 +122,15 @@
       });
     } catch (e) { return null; }
   }
-  function saveSelection(method, date, time) {
+  // Writes the DATE values only: Delivery-Date (YYYY-MM-DD) + a readable copy + optional time.
+  // The readable "Delivery Method" order attribute is owned by the method-choice module (single
+  // owner), so it is NOT written here — only read (via data-gdd-saved-method) to restore the toggle.
+  function saveSelection(date, time) {
     var K = keys(), attrs = {};
-    attrs[K.method] = method || '';
-    attrs[K.date] = date || '';   // '' replaces (clears) only OUR key, e.g. when 4HR/express
+    attrs[K.date] = date || '';                          // YYYY-MM-DD ('' clears — e.g. 4HR/express)
+    attrs[K.dateReadable] = date ? readableDate(date) : '';
     attrs[K.time] = time || '';
-    var sig = method + '|' + date + '|' + time;
+    var sig = date + '|' + time;
     if (sig === lastSig) { return; }
     if (timer) { clearTimeout(timer); }
     timer = setTimeout(function () { timer = null; lastSig = sig; postAttrs(attrs); }, 350);
@@ -189,11 +202,13 @@
       } else { hide(typesEl); }
     }
 
-    // date + optional time selects (built once; restore saved selection)
-    var dateSel = picker.querySelector('[data-gdd-date]');
-    if (dateSel && !dateSel.getAttribute('data-gdd-built')) {
-      fillSelect(dateSel, buildDates(), copy('datePlaceholder'), savedDate);
-      dateSel.setAttribute('data-gdd-built', '1');
+    // date = native CALENDAR input (restore saved YYYY-MM-DD; set the selectable window)
+    var dateInput = picker.querySelector('[data-gdd-date]');
+    if (dateInput) {
+      var b = dateBounds();
+      if (b.min) { dateInput.setAttribute('min', b.min); }
+      if (b.max) { dateInput.setAttribute('max', b.max); }
+      if (savedDate && !dateInput.value) { dateInput.value = savedDate; }   // YYYY-MM-DD from the cart attribute
     }
     setText(picker.querySelector('[data-gdd-date-label]'), copy('dateLabel'));
     var timeSel = picker.querySelector('[data-gdd-time]');
@@ -225,14 +240,17 @@
     }
   }
 
-  function methodLabel(type) { return type === 'four_hour' ? copy('typeFourHour') : copy('typeStandard'); }
-
   function onPickerChange(picker) {
     applyTypeVisibility(picker);
-    var type = selectedType(picker);
-    if (type === 'four_hour') { saveSelection(methodLabel(type), '', ''); }
-    else { saveSelection(methodLabel(type), selectedDate(picker), selectedTime(picker)); }
     clearError();
+    if (selectedType(picker) === 'four_hour') { saveSelection('', ''); return; }   // express: no date
+    var d = selectedDate(picker);
+    if (d && isDisabledWeekday(d)) {                 // reject a disabled-weekday pick (native can't grey it out)
+      var inp = picker.querySelector('[data-gdd-date]'); if (inp) { inp.value = ''; }
+      showError(requireTime() ? 'errorDateTime' : 'errorDate');
+      saveSelection('', selectedTime(picker)); return;
+    }
+    saveSelection(d, selectedTime(picker));
   }
 
   function clearError() { var p = pickers(); for (var i = 0; i < p.length; i++) { var e = p[i].querySelector('[data-gdd-error]'); setText(e, ''); hide(e); } }

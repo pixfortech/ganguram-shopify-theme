@@ -15,12 +15,16 @@ This repo ships step 1 + this guide for step 2. Step 2 (the Shipzy rule, or the 
 
 `assets/ganguram-delivery-method-choice.js` mirrors the chosen method into two cart attributes:
 
-| Attribute | Values |
-|---|---|
-| `ganguram_preferred_delivery_method` | `STD` · `4HR` · `PAN_INDIA` · *(empty = no selection)* |
-| `ganguram_preferred_delivery_label` | `Standard Delivery` · `4 hours delivery` · `PAN India Shipping` · *(empty)* |
+| Attribute | Written by | Values |
+|---|---|---|
+| `ganguram_preferred_delivery_method` | method‑choice | `STD` · `4HR` · `PAN_INDIA` · *(empty = no selection)* |
+| `ganguram_preferred_delivery_label` | method‑choice | `Standard Delivery` · `4 hours delivery` · `PAN India Shipping` · *(empty)* |
+| `Delivery Method` *(readable order attribute)* | method‑choice | `Standard Delivery` · `4 hours delivery` · `PAN India Shipping` · *(empty)* |
+| `Delivery-Date` | date picker | `YYYY-MM-DD` *(Standard only; cleared for 4HR/PAN)* |
+| `Delivery Date` *(readable)* | date picker | e.g. `Tue, 24 Jun 2026` *(Standard only)* |
+| `Delivery-Time` | date picker | the chosen slot, if time slots are enabled *(Standard only)* |
 
-The label is configurable in `snippets/ganguram-delivery-method-choice-config.liquid` — **set it to your exact ShipZip rate names** so the Delivery Customization can match on the label if needed.
+`Delivery Method` and `Delivery-Date`/`Delivery-Time` show in the Shopify **order → Additional details** (they don't start with `_`). **Single owner per attribute:** the method‑choice module owns `Delivery Method` (+ the `ganguram_*` keys); the date picker owns the date values and only *reads* `Delivery Method` to restore its toggle. The labels are configurable in `snippets/ganguram-delivery-method-choice-config.liquid` — **set them to your exact ShipZip rate names** so the Delivery Customization can match on them.
 
 **How the method is derived** (no second selector — it reuses the existing cart UI, so the two can never disagree):
 
@@ -42,12 +46,38 @@ The choice for local Standard‑vs‑4 Hours is the customer's click on the exis
 | `PAN_INDIA` | PAN India Shipping (no local date) | Standard Delivery · 4 hours delivery |
 | *(empty / absent)* | **everything** — do **not** over‑hide | *(nothing — fall back to ShipZip)* |
 
-## 3. Date requirement (already handled by the theme)
+## 3. Calendar date + date requirement
 
-- **STD** → the local date picker still **requires a date** before checkout (unchanged).
-- **4HR / PAN India** → the theme **clears** the `Delivery-Date` / `Delivery-Time` cart attributes so a stale local date can't ride along, and the date picker shows no date requirement.
+The delivery date is a **calendar** — a native `<input type="date">` (replacing the old dropdown). It's reliable, accessible, theme‑stylable, and saves a clean **`Delivery-Date = YYYY-MM-DD`** plus a readable **`Delivery Date`**. The selectable window comes from `minOffsetDays`/`maxOffsetDays`; disabled weekdays (native can't grey them out) are **rejected on selection** with an error.
 
-If the choice becomes invalid because the pincode/cart changed, the theme re‑derives and re‑persists, and shows a soft **"please review your delivery method"** notice (never blocks checkout).
+- **STD** → the calendar is **shown** and a date is **required** before checkout.
+- **4HR** → the calendar is **hidden** (express, no date) and `Delivery-Date`/`Delivery-Time`/`Delivery Date` are **cleared**.
+- **PAN India** → no local calendar; the date attributes are **cleared**.
+
+If the choice becomes invalid because the pincode/cart changed, the theme re‑derives and re‑persists, clears a stale date if the method is no longer Standard, and shows a soft **"please review your delivery method"** notice (never blocks checkout).
+
+### Cart delivery card
+
+The cart shows the estimate (from the delivery panel) plus a method/date summary from the method‑choice module, e.g.:
+
+```
+Delivery Method: Standard Delivery
+Preferred Date: 2026-06-24
+Standard shipping estimate: ₹100
+Final charge confirmed at checkout
+```
+
+The method toggle appears only when local methods are available; the calendar appears only when Standard is selected.
+
+## 3b. Order data + pre‑checkout inspection
+
+After checkout, the cart attributes above appear in the Shopify **order → Additional details**: `Delivery Method`, `Delivery-Date`, `Delivery-Time` (if used), `ganguram_preferred_delivery_method`, `ganguram_preferred_delivery_label`. To confirm them **before** checkout, run in the console on the cart page:
+
+```js
+await GanguramDeliveryMethodChoice.inspectCartAttributes();
+// -> { ganguram_preferred_delivery_method, ganguram_preferred_delivery_label,
+//      'Delivery Method', 'Delivery-Date', 'Delivery Date', 'Delivery-Time' }
+```
 
 ---
 
