@@ -618,6 +618,29 @@ The checkout rate is produced by **ShipZip**, not the theme — **the theme cann
 
 **Fix is in the ShipZip admin** (outlet origin coordinates, distance‑tier table, and that distance — not a flat base — drives the rate). The theme’s job is only to (a) show an accurate estimate and (b) hand ShipZip a clean, geocodable address (Part C).
 
+#### ShipZip rate stuck at ₹50 — root‑cause decision table (Phase 2.12G)
+
+For the reported case the ShipZip rate is **Standard Delivery**, **Base ₹100**, tiers 0–5 ₹50 / 5.01–10 ₹70 / 10.01–15 ₹100 / 15.01–20 ₹150, conditions *Distance ≤ 20 km · Total ≥ ₹300 · State West Bengal · ZipCode All*. The theme computes **15.2 km → ₹150** for Eco Park. Because **Base = ₹100 but checkout shows ₹50**, ₹50 is **not** the base fallback — it is exactly the **0–5 km tier**, i.e. ShipZip is computing a **≤ 5 km** distance.
+
+| # | Test | Observed result | Conclusion | Exact setting to change |
+|---|---|---|---|---|
+| 1 | **Rename** the rate to `Standard Delivery TEST 123` | Checkout label **changes**, still ₹50 | This rate is winning and applying its 0–5 km tier | Go to test 2 / 3 |
+| 1 | Rename the rate | Checkout label **does NOT change** | A **different / duplicate** rate is being returned | Find and delete/disable the duplicate ₹50 rate |
+| 2 | **Tier‑bump**: 0–5=₹51, 5.01–10=₹71, 10.01–15=₹101, 15.01–20=₹151, **Base=₹999** | Checkout shows **₹51** | ShipZip thinks distance is **0–5 km** | Fix ShipZip **origin** (test 3) |
+| 2 | Tier‑bump | **₹151** | ShipZip thinks **15–20 km** (correct) — the earlier ₹50 was a **duplicate** rate | Remove the duplicate (test 1) |
+| 2 | Tier‑bump | **₹999** | **Base/fallback** — no tier matched (distance condition failing) | Check ShipZip can compute a distance at all (origin + geocoding) |
+| 3 | **Origin source** in ShipZip (app default / Shopify fulfilment location / nearest branch / inventory location / store address / warehouse field) | Origin is **New Town / Misti Hub** (or “nearest location”) | Eco Park ≈ **0–5 km** from that wrong origin → ₹50 | Set ShipZip origin/warehouse to **Beadon Street `22.586852842169446, 88.37350202482604`** — the same origin the theme uses (`settings.ganguram_outlet_origin`) |
+| 4 | **Destination geocoding** — compare checkout `address1/zip` with `GanguramCheckoutPrefill.debugState().sending` | Fields clean, zip 700161 | Theme is handing a clean address | If ShipZip still mis‑locates, the issue is ShipZip’s origin, not the address |
+| 5 | **Theme vs ShipZip** — `GanguramDeliveryEstimate.debugState()` | Theme ₹150 @ 15.2 km, checkout ₹50 | The discrepancy is **entirely ShipZip‑side** | One of tests 1–3 above |
+
+> **Most likely root cause:** the ShipZip **origin is not Beadon Street** (it is computing from a New Town / Misti Hub location, or “nearest fulfilment location”), so Eco Park resolves to ≤ 5 km and returns the ₹50 tier. Set the ShipZip rate origin to `22.586852842169446, 88.37350202482604`.
+
+**Console helper (read‑only, run on the cart page):**
+- `GanguramCheckoutPrefill.shipZipDiagnosis()` → theme origin, the selected pincode, the exact address fields being sent, the theme distance (km + metres), the theme’s expected Standard ₹, the slab tiers, and the observed‑rate interpretation map.
+- `GanguramCheckoutPrefill.explainCheckoutRate(50)` → maps the ₹ you see at checkout to a conclusion + the exact setting to change (e.g. `₹50 → ShipZip 0–5 km tier → origin is not Beadon Street → set origin to 22.58…,88.37…`). It uses the theme’s **own** slab table, so it stays correct if the tiers change.
+
+These are **diagnostics only** — they read theme state and print a conclusion; they do **not** touch ShipZip, the rate, service codes, or any business rule.
+
 ### Part C — checkout address prefill (clean, geocodable fields)
 The Standard‑checkout prefill (Phase 2.12B/2.12C) sends Shopify’s `checkout[shipping_address][...]` fields **separately and clean**, never a concatenated blob, so ShipZip geocodes the right point:
 
@@ -626,8 +649,8 @@ The Standard‑checkout prefill (Phase 2.12B/2.12C) sends Shopify’s `checkout[
 
 Verify with `window.GanguramCheckoutPrefill.debugState()` → `sending` (the exact params), `storedLatLng`, and `themeEstimate` (`km` raw, `slabKm` padded, `rate`) — which now uses the **same** slab‑safety padding as the popup/cart, so the three never disagree.
 
-### Part D — guardrails (2.12F)
-Estimate **calculation + diagnostics** only. No change to **ShipZip rates, the `4HR`/`STD` service codes, checkout‑rate logic, the date‑picker attributes, product visibility, MOV, or the unavailable‑items modal.** ShipZip remains the final checkout rate; theme CSS variables only; `settings_data.json` untouched.
+### Part D — guardrails (2.12F / 2.12G)
+Estimate **calculation + read‑only diagnostics** only. No change to **ShipZip rates, the `4HR`/`STD` service codes, checkout‑rate logic, the date‑picker attributes, product eligibility/visibility, MOV, the unavailable‑items modal, metafields/metaobjects, or the Custom Box Builder.** ShipZip remains the final checkout rate; theme CSS variables only; `settings_data.json` untouched (the outlet origin is read from the existing `settings.ganguram_outlet_origin` setting, not modified).
 
 ---
 

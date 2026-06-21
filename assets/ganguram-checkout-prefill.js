@@ -149,7 +149,90 @@
     };
   }
 
-  window.GanguramCheckoutPrefill = { debugState: debugState };
+  // ---- ShipZip rate diagnosis (Phase 2.12G) — READ-ONLY console helper ----------------------
+  // The CHECKOUT shipping rate is produced by ShipZip, which the theme cannot read or set. These
+  // helpers surface the THEME-side truth (outlet origin, destination, driving distance, the slab
+  // the theme expects) and map an OBSERVED checkout rupee value back to a likely ShipZip cause,
+  // using the theme's OWN slab table (which mirrors the ShipZip distance tiers). Console-only; no
+  // rate / service-code / eligibility / MOV / estimate-logic change. Run it on the CART page
+  // (theme JS does not run on Shopify's hosted checkout) and compare with the rate at checkout.
+  function themeOrigin() {
+    try { var d = window.GanguramDistance; var s = (d && typeof d.debugState === 'function') ? d.debugState() : null; return s ? s.origin : null; } catch (e) { return null; }
+  }
+  function slabTable() {
+    try { var se = window.GanguramShippingEstimate; return (se && typeof se.config === 'function') ? (se.config().standardSlabs || []) : []; } catch (e) { return []; }
+  }
+  // Distance band [fromKm, toKm] for a slab index in the cumulative table.
+  function bandFor(slabs, i) { return { fromKm: i === 0 ? 0 : slabs[i - 1].maxKm, toKm: slabs[i].maxKm }; }
+  // The slab the THEME expects for the current confirmed full-address distance (or null).
+  function themeExpected() {
+    var d = window.GanguramDistance, se = window.GanguramShippingEstimate;
+    var addr = fullAddress();
+    var pin = activePincode() || (addr ? (addr.zip || addr.pincode) : '');
+    if (!d || !se || !pin || typeof d.getForPincode !== 'function') { return null; }
+    var conf = d.getForPincode(norm(pin));
+    if (!conf || conf.confirmed !== true || conf.distanceKm == null) { return null; }
+    var slabKm = (typeof se.slabInputKm === 'function') ? se.slabInputKm(conf.distanceKm) : conf.distanceKm;
+    var slab = (typeof se.slabForKm === 'function') ? se.slabForKm(slabKm) : null;
+    if (!slab) { return null; }
+    return { distanceKm: Math.round(conf.distanceKm * 10) / 10, distanceMeters: Math.round(conf.distanceKm * 1000),
+      slabMaxKm: slab.maxKm, rupees: slab.price, formatted: (typeof se.money === 'function') ? se.money(slab.price) : ('₹' + slab.price) };
+  }
+  // Map an OBSERVED checkout rupee value to a likely ShipZip cause + the exact setting to change.
+  function explainCheckoutRate(observed) {
+    observed = Number(observed);
+    var slabs = slabTable(), theme = themeExpected(), origin = themeOrigin();
+    var out = { observedRupees: isFinite(observed) ? observed : null, themeExpected: theme };
+    var hit = -1, i;
+    for (i = 0; i < slabs.length; i++) { if (slabs[i].price === observed) { hit = i; break; } }
+    if (hit >= 0) {
+      var b = bandFor(slabs, hit);
+      out.shipZipTier = '₹' + observed + ' = the ' + b.fromKm + '–' + b.toKm + ' km tier';
+      out.shipZipImpliedDistanceKm = b;
+      if (theme && observed === theme.rupees) {
+        out.conclusion = 'MATCH — ShipZip applied the same tier the theme expects (' + theme.formatted + '). No discrepancy.';
+        out.exactSetting = 'None.';
+      } else {
+        out.conclusion = 'ShipZip applied its ' + b.fromKm + '–' + b.toKm + ' km tier, so ShipZip computed a distance of ~' + b.fromKm + '–' + b.toKm + ' km'
+          + (theme ? ' — but the theme computes ' + theme.distanceKm + ' km (expects ' + theme.formatted + ')' : '')
+          + '. ShipZip is measuring a DIFFERENT distance than the theme, so its ORIGIN or destination GEOCODING is wrong (most likely the ShipZip origin is not Beadon Street).';
+        out.exactSetting = 'Set the ShipZip rate ORIGIN/warehouse to the same outlet the theme uses: ' + JSON.stringify(origin) + ' (Beadon Street). Confirm ShipZip geocodes the checkout address1+zip to Eco Park, not the outlet.';
+        out.alsoRuleOut = 'DUPLICATE rate — rename the rate to "Standard Delivery TEST 123"; if the checkout label does not change, a different rate is being returned.';
+      }
+      out.disambiguateBase = 'If ₹' + observed + ' could also be this rate’s BASE price, set Base=₹999 in the tier-bump test to tell base from tier apart.';
+    } else {
+      out.shipZipTier = 'no distance tier has price ₹' + observed;
+      out.conclusion = '₹' + observed + ' matches no distance tier (' + slabs.map(function (s) { return '₹' + s.price; }).join(' / ') + '), so it is either the ShipZip BASE/fallback price (the distance condition was not met or no tier matched) or a DUPLICATE/other rate.';
+      out.exactSetting = 'Run the tier-bump test (0–5=₹51, 5.01–10=₹71, 10.01–15=₹101, 15.01–20=₹151, Base=₹999): ₹999 => base/fallback; a 51/71/101/151 value => that exact tier; an unchanged ₹' + observed + ' => a duplicate/other rate (use the rename test).';
+    }
+    return out;
+  }
+  // Consolidated THEME-side snapshot to compare against the ShipZip checkout rate.
+  function shipZipDiagnosis() {
+    var slabs = slabTable(), theme = themeExpected(), addr = fullAddress();
+    var pin = activePincode() || (addr ? (addr.zip || addr.pincode) : '');
+    var url = addr ? buildUrl('full_address', addr, pin) : (norm(pin) ? buildUrl('pincode_only', null, pin) : null);
+    return {
+      note: 'CHECKOUT rate is produced by ShipZip; the theme cannot set or override it. Compare these THEME values with the ShipZip rate at checkout.',
+      themeOrigin: themeOrigin(),
+      selectedPincode: activePincode(),
+      sending: paramsOf(url),
+      themeDistanceKm: theme ? theme.distanceKm : null,
+      themeDistanceMeters: theme ? theme.distanceMeters : null,
+      themeExpectedStandard: theme ? theme.formatted : null,
+      themeSlabTiers: slabs.map(function (s, i) { var b = bandFor(slabs, i); return { band: b.fromKm + '–' + b.toKm + ' km', rupees: s.price }; }),
+      observedRateInterpretation: {
+        '50': 'ShipZip 0–5 km tier (or a duplicate ₹50 rate) — ShipZip distance ≤5 km',
+        '70': 'ShipZip 5.01–10 km tier',
+        '100': 'ShipZip 10.01–15 km tier OR the ₹100 base/fallback',
+        '150': 'ShipZip 15.01–20 km tier — matches the theme for Eco Park',
+        '999 (test base)': 'ShipZip base/fallback — no tier matched'
+      },
+      howToUse: 'GanguramCheckoutPrefill.explainCheckoutRate(<the ₹ you see at checkout>) -> conclusion + exact setting.'
+    };
+  }
+
+  window.GanguramCheckoutPrefill = { debugState: debugState, shipZipDiagnosis: shipZipDiagnosis, explainCheckoutRate: explainCheckoutRate };
 
   document.addEventListener('click', onClick, true);
 })();
