@@ -285,6 +285,12 @@
     for (var i = 0; i < forms.length; i++) { try { obs.observe(forms[i], { childList: true }); } catch (e) {} }
   }
   function init() {
+    // HOTFIX (2.12K): when disabled (GanguramDeliveryMethodChoiceConfig.enabled === false) the
+    // module is fully INERT — no cart writes, no DOM insertion, no event listeners — so it cannot
+    // affect the pincode/address auto-fetch, the delivery popup, or the checkout prefill in any
+    // way. The read-only diagnostics (debugState / inspectCartAttributes) stay callable because
+    // the public API is assigned before init runs. Re-enable once the prefill is confirmed.
+    if (!enabled()) { return; }
     // Fully guarded so a method-choice hiccup can NEVER break the pincode / address / popup /
     // checkout-prefill scripts that init around it.
     try { render(); } catch (e) {}

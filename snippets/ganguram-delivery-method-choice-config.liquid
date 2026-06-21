@@ -19,7 +19,13 @@
 {%- endcomment -%}
 <script>
   window.GanguramDeliveryMethodChoiceConfig = {
-    enabled: true,
+    // HOTFIX (2.12K): DISABLED by default to fully isolate the checkout address/pincode prefill.
+    // While false the module is INERT — no cart writes, no DOM, no listeners — so it cannot
+    // affect the pincode/address auto-fetch, the delivery popup, or the prefill. The read-only
+    // diagnostics (GanguramDeliveryMethodChoice.debugState / inspectCartAttributes) still work.
+    // Re-enable (set to true) ONLY after the prefill is confirmed working; then the method/date
+    // -> checkout-hiding handoff resumes. The calendar date picker is a SEPARATE module and stays on.
+    enabled: false,
     updateUrl: {{ routes.cart_url | append: '/update.js' | json }},
     cartUrl: {{ routes.cart_url | append: '.js' | json }},
     debounceMs: 400,

@@ -69,6 +69,14 @@ Final charge confirmed at checkout
 
 The method toggle appears only when local methods are available; the calendar appears only when Standard is selected.
 
+> ⚠️ **Hotfix 2.12K — method‑choice is DISABLED by default.** To fully isolate the checkout
+> address/pincode prefill, `GanguramDeliveryMethodChoiceConfig.enabled` ships as **`false`**, so
+> the module is **inert** (no cart writes, no DOM, no listeners) and cannot affect the
+> pincode/address auto‑fetch, the delivery popup, or the prefill. The **calendar date picker is a
+> separate module and stays on.** The read‑only diagnostics below still work while disabled.
+> **Re‑enable** (`enabled: true` in `snippets/ganguram-delivery-method-choice-config.liquid`)
+> only after the prefill is confirmed working — then the method/date → checkout‑hiding handoff resumes.
+
 ## 3b. Order data + pre‑checkout inspection
 
 After checkout, the cart attributes above appear in the Shopify **order → Additional details**: `Delivery Method`, `Delivery-Date`, `Delivery-Time` (if used), `ganguram_preferred_delivery_method`, `ganguram_preferred_delivery_label`. To confirm them **before** checkout, run in the console on the cart page:
