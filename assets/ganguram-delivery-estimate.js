@@ -158,8 +158,13 @@
         var range = (d && typeof d.getAreaRangeForPincode === 'function') ? d.getAreaRangeForPincode(loc.pincode) : null;
         if (range) {
           estimate = { basis: 'area', minKm: range.minKm, maxKm: range.maxKm, standard: se.standardForRange(range.minKm, range.maxKm), four: se.fourHourForRange(range.minKm, range.maxKm, false) };
-        } else if (d && typeof d.computeAreaRangeForPincode === 'function') {
-          try { d.computeAreaRangeForPincode(loc.pincode); } catch (e) {} // async -> fires event -> re-render
+        } else {
+          // No precise range yet (loading) OR the Routes API failed -> show the configured
+          // FALLBACK slab span (e.g. ₹50–₹150) for this KNOWN LOCAL pincode, not just
+          // "final at checkout". A later successful compute narrows it (fires the event).
+          var fb = (typeof se.fallbackRange === 'function') ? se.fallbackRange() : null;
+          if (fb) { estimate = { basis: 'area', fallback: true, minKm: null, maxKm: null, standard: fb, four: null }; }
+          if (d && typeof d.computeAreaRangeForPincode === 'function') { try { d.computeAreaRangeForPincode(loc.pincode); } catch (e) {} }
         }
       }
     }
@@ -252,7 +257,7 @@
       if (st.pincode) { dbody.appendChild(row(copy('pincodeLabel'), st.pincode)); }
       if (est) {
         dbody.appendChild(row(copy('estimateTypeLabel'), est.basis === 'address' ? copy('estimateTypeAddress') : copy('estimateTypeArea')));
-        dbody.appendChild(row(copy('distanceRangeLabel'), fmtKmRange(est.minKm, est.maxKm)));
+        if (est.minKm != null) { dbody.appendChild(row(copy('distanceRangeLabel'), fmtKmRange(est.minKm, est.maxKm))); }
         if (est.standard) { dbody.appendChild(row(copy('slabRangeLabel'), se.formatRange(est.standard.minPrice, est.standard.maxPrice) + (est.standard.beyond ? '+' : ''))); }
         if (st.fourHourAvailable && est.four) {
           var fourTxt = est.four.state === 'yes' ? se.money(est.four.price)
