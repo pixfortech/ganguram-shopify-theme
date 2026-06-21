@@ -595,6 +595,40 @@ No change to **ShipZip rate logic, the `4HR`/`STD` service codes, checkout‑rat
 ### Confirmation — no rate/ShipZip/eligibility change (2.12D)
 This is a delivery‑state **calculation + rendering** correctness fix. No change to **ShipZip rates, the `4HR`/`STD` service codes, checkout‑rate logic, the date‑picker attributes, product visibility, MOV, or the unavailable‑items modal logic.** ShipZip remains the final checkout rate. Theme variables only. `settings_data.json` untouched.
 
+## 14. Local slab accuracy (anti under‑estimate) + ShipZip diagnostic (Phase 2.12F)
+
+**Symptom.** For an Eco Park‑area address (~15–16 km on the map) the cart/popup **Standard estimate showed ₹100** (the 10.01–15 km tier) instead of **₹150** (15.01–20 km), and at checkout **ShipZip Standard showed ₹50**.
+
+### Part A — slab accuracy (theme estimate)
+A full‑address driving distance is now biased **UP** by a small, configurable safety margin **before** the slab is chosen, so a distance the Routes API returns as e.g. **14.9 km** for an address that is really ~15 km is **never** under‑quoted into the cheaper tier. It is a **display estimate** bias only (ShipZip is the real rate), so it can only ever err toward *not* under‑quoting.
+
+- **Config (no JS edit):** `GanguramEstimateConfig.slabSafetyMarginKm` (default **0.3** km). Set **0** for the exact route distance.
+- **Radius decisions use the RAW distance** (local‑vs‑PAN and the 4‑hour radius are unchanged); **only the Standard price slab** uses the padded distance. The padded value is clamped to `localStandardMaxDistanceKm` so an in‑radius address never shows a “₹150+” (beyond) slab.
+- Applies to a **single full address** only. The pincode‑**area** range is left exact — its `max` end already brackets the uncertainty.
+- **Result:** 14.99 / 15.01 / 15.2 km → **Standard ₹150**; a genuine 7 km stays **₹70**.
+
+**Exact slab diagnostic** — `window.GanguramDeliveryEstimate.debugState()` now reports, for the selected full address: `originLatLng`, `destLatLng`, `routeDistanceMeters` (raw metres from the Routes API), `routeDistanceRawKm`, `slabSafetyMarginKm`, `slabDistanceKm` (the padded value matched to a slab), `slabSelected` `{maxKm, price}`, and `standardEstimate` (the final ₹). `window.GanguramDistance.debugState()` adds `lastDistanceMeters` + `lastDestCoords`.
+
+### Part B — ShipZip diagnostic (checkout ₹50 vs theme ₹150)
+The checkout rate is produced by **ShipZip**, not the theme — **the theme cannot set or override the checkout shipping rate.** So if `debugState()` confirms the theme side is correct (distance ~15–16 km, **Standard estimate ₹150**) but checkout still shows **Standard ₹50**, the discrepancy is on the **ShipZip side**, not the theme:
+
+- **ShipZip isn’t applying the distance tier** (it’s falling back to a base/flat price), **or**
+- **ShipZip’s origin / geocoding is off** (it geocodes the destination to a different point and computes a shorter distance), **or**
+- the ShipZip **rate table tiers** don’t match the theme slabs (0–5 ₹50 · 5.01–10 ₹70 · 10.01–15 ₹100 · 15.01–20 ₹150).
+
+**Fix is in the ShipZip admin** (outlet origin coordinates, distance‑tier table, and that distance — not a flat base — drives the rate). The theme’s job is only to (a) show an accurate estimate and (b) hand ShipZip a clean, geocodable address (Part C).
+
+### Part C — checkout address prefill (clean, geocodable fields)
+The Standard‑checkout prefill (Phase 2.12B/2.12C) sends Shopify’s `checkout[shipping_address][...]` fields **separately and clean**, never a concatenated blob, so ShipZip geocodes the right point:
+
+- `address1` = **one clean** street / premise / POI component (not “name, area, city, …”), `address2` = locality/sublocality, `city`, `province` = `West Bengal`, `zip` = e.g. `700161`, `country`.
+- **pincode‑only** mode sends **country + zip only** (no guessed street/city).
+
+Verify with `window.GanguramCheckoutPrefill.debugState()` → `sending` (the exact params), `storedLatLng`, and `themeEstimate` (`km` raw, `slabKm` padded, `rate`) — which now uses the **same** slab‑safety padding as the popup/cart, so the three never disagree.
+
+### Part D — guardrails (2.12F)
+Estimate **calculation + diagnostics** only. No change to **ShipZip rates, the `4HR`/`STD` service codes, checkout‑rate logic, the date‑picker attributes, product visibility, MOV, or the unavailable‑items modal.** ShipZip remains the final checkout rate; theme CSS variables only; `settings_data.json` untouched.
+
 ---
 
 ### Related docs

@@ -274,11 +274,27 @@
     var del = st.delivery || {};
     var origin = dd.origin || null;
     var cacheKey = (se && typeof se.areaCacheKey === 'function' && origin) ? se.areaCacheKey(st.pincode, origin) : null;
+    // ---- Part A: exact full-address slab math (origin/dest, raw metres+km, padded slab km) ----
+    var rawKm = (del.distanceKm != null) ? del.distanceKm : null;
+    var slabKm = (del.slabDistanceKm != null) ? del.slabDistanceKm : null;
+    var slabSel = (se && slabKm != null && typeof se.slabForKm === 'function') ? se.slabForKm(slabKm) : null;
+    var standardEstimate = (se && del.standard && typeof se.formatRange === 'function') ? (se.formatRange(del.standard.minPrice, del.standard.maxPrice) + (del.standard.beyond ? '+' : '')) : null;
+    var routeMeters = (dd.lastDistanceMeters != null) ? dd.lastDistanceMeters : (rawKm != null ? Math.round(rawKm * 1000) : null);
+    var marginKm = (se && typeof se.config === 'function') ? se.config().slabSafetyMarginKm : null;
     return {
       active: true,
       selectedPincode: st.pincode,
       selectedAddress: st.addressText || null,
       addressLatLng: st.latlng || null,
+      // Part A — slab transparency: every value from coordinates to the final Standard estimate.
+      originLatLng: origin,
+      destLatLng: st.latlng || dd.lastDestCoords || null,
+      routeDistanceMeters: routeMeters,
+      routeDistanceRawKm: rawKm,
+      slabSafetyMarginKm: (marginKm != null) ? marginKm : null,
+      slabDistanceKm: slabKm,
+      slabSelected: slabSel ? { maxKm: slabSel.maxKm, price: slabSel.price, beyond: slabSel.beyond } : null,
+      standardEstimate: standardEstimate,
       localStandardMaxDistanceKm: (del.localStandardMaxDistanceKm != null) ? del.localStandardMaxDistanceKm : null,
       fourHourMaxDistanceKm: (del.fourHourMaxDistanceKm != null) ? del.fourHourMaxDistanceKm : null,
       fourHourEnabled: del.fourHourEnabled !== false,

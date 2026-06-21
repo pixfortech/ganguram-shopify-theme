@@ -36,6 +36,7 @@
       ],
       fourHour: { enabled: true, maxDistanceKm: 10, flatPrice: 10 },  // radius is ADMIN-CONFIGURABLE (e.g. 10 or 20 km)
       panIndia: { perWeightG: 500, pricePerUnit: 80 },   // ₹80 per 500 g (Part B)
+      slabSafetyMarginKm: 0.3,   // bias a full-address distance UP this many km before slab matching (anti under-estimate; 0 disables)
       currencySymbol: '₹',
       rangeSeparator: '–',
       cacheVersion: 1,
@@ -64,6 +65,7 @@
       panIndia: (function () { var p = assign({}, d.panIndia, c.panIndia || {});
         return { perWeightG: num(p.perWeightG) != null && p.perWeightG > 0 ? p.perWeightG : d.panIndia.perWeightG,
           pricePerUnit: num(p.pricePerUnit) != null ? p.pricePerUnit : d.panIndia.pricePerUnit }; })(),
+      slabSafetyMarginKm: (function () { var m = num(c.slabSafetyMarginKm); return (m != null && m >= 0) ? m : d.slabSafetyMarginKm; })(),
       currencySymbol: c.currencySymbol != null ? String(c.currencySymbol) : d.currencySymbol,
       rangeSeparator: c.rangeSeparator != null ? String(c.rangeSeparator) : d.rangeSeparator,
       cacheVersion: c.cacheVersion != null ? c.cacheVersion : d.cacheVersion,
@@ -147,6 +149,26 @@
   function localRadiusKm() { var s = config().standardSlabs; return s.length ? s[s.length - 1].maxKm : 20; }
   function round1(km) { return Math.round(num(km) * 10) / 10; }
 
+  // Bias a raw full-address driving distance UP by the configured safety margin (km) BEFORE
+  // slab matching, so a distance sitting just under a slab boundary is never UNDER-charged —
+  // e.g. a ~15 km address that the Routes API returns as 14.9 km must not show the 10–15 km
+  // (₹100) slab when the true tier is 15–20 km (₹150). DISPLAY ESTIMATE ONLY; ShipZip remains
+  // the authoritative checkout rate, so biasing the estimate up only ever errs toward NOT
+  // under-quoting. Clamped to the local-standard radius so an in-radius address never renders a
+  // "beyond" (₹150+) slab. slabSafetyMarginKm: 0 -> exact route distance (no bias). Applied to a
+  // single full-address distance only — a pincode-AREA range already brackets uncertainty with
+  // its max end, so the range path is left exact.
+  function slabInputKm(km) {
+    var k = num(km);
+    if (k == null || k < 0) { return k; }
+    var margin = config().slabSafetyMarginKm;
+    var padded = k + (margin > 0 ? margin : 0);
+    padded = Math.round(padded * 100) / 100;                        // kill float noise
+    var localMax = localRadiusKm();
+    if (k <= localMax && padded > localMax) { padded = localMax; }  // never push an in-radius address "beyond"
+    return padded;
+  }
+
   // ============================================================================
   // THE single source of truth for the delivery-mode decision (Phase 2.12D).
   // DISTANCE-FIRST: a full-address driving distance (or a pincode-area sampled range)
@@ -182,6 +204,7 @@
     var s = {
       mode: 'prompt', basis: 'none',
       distanceKm: hasDist ? ctx.distanceKm : null,
+      slabDistanceKm: null,
       range: ctx.areaRange || null,
       standard: null, fourHour: null, panIndia: null,
       localStandardMaxDistanceKm: localMax, fourHourMaxDistanceKm: fourMax, fourHourEnabled: fourOn,
@@ -205,7 +228,10 @@
     if (ctx.isAddress && hasDist) {
       var km = ctx.distanceKm; s.basis = 'address';
       if (km <= localMax) {
-        s.mode = 'local'; s.isWithinLocalStandardRadius = true; s.standard = standardForKm(km);
+        // RADIUS decisions (local vs PAN, 4-hour) use the RAW distance; only the PRICE slab is
+        // padded by the safety margin, so a near-boundary distance never under-quotes Standard.
+        s.mode = 'local'; s.isWithinLocalStandardRadius = true;
+        s.slabDistanceKm = slabInputKm(km); s.standard = standardForKm(s.slabDistanceKm);
         s.reasonPan = 'address ' + round1(km) + 'km is within the configured ' + localMax + 'km local‑standard radius -> NOT PAN India';
         if (km <= fourMax) { withinFour(); }
         else { four('no', 'distance ' + round1(km) + 'km > the configured ' + fourMax + 'km 4-hour radius -> 4 Hours not available'); }
@@ -253,6 +279,7 @@
     config: config,
     localRadiusKm: localRadiusKm,
     slabForKm: slabForKm,
+    slabInputKm: slabInputKm,
     standardForKm: standardForKm,
     standardForRange: standardForRange,
     fourHourForRange: fourHourForRange,

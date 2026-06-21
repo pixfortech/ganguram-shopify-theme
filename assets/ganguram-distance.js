@@ -37,8 +37,11 @@
   var EVENT_DISTANCE = 'ganguram:delivery-distance-updated';
   var STORE_KEY = 'ganguram.deliveryDistance'; // { pincode, distanceKm, ts }
 
-  // last computation outcome — DEV-ONLY (never shown to customers)
-  var state = { lastReason: '', lastDistanceKm: null, lastDest: null, lastAt: 0 };
+  // last computation outcome — DEV-ONLY (never shown to customers). lastDistanceMeters /
+  // lastDestCoords / lastOrigin capture the RAW Routes API result for the slab diagnostic.
+  var state = { lastReason: '', lastDistanceKm: null, lastDest: null, lastAt: 0,
+    lastDistanceMeters: null, lastDestCoords: null, lastOrigin: null,
+    lastKmArray: null, lastMetersArray: null, lastDestsCoords: null };
 
   function cfg() { return window.GanguramDistanceConfig || {}; }
   function enabled() { return cfg().enabled === true; }
@@ -165,15 +168,19 @@
       return r.json();
     }).then(function (rows) {
       if (!rows || !rows.length) { setReason('routes-empty'); return null; }
-      var byDest = {};
+      var byDest = {}, byDestM = {};
       for (var i = 0; i < rows.length; i++) {
         var el = rows[i];
         if (el && (el.condition === 'ROUTE_EXISTS' || el.condition == null) && typeof el.distanceMeters === 'number') {
+          byDestM[el.destinationIndex] = el.distanceMeters;       // RAW metres (for the slab diagnostic)
           byDest[el.destinationIndex] = el.distanceMeters / 1000; // metres -> km
         }
       }
       var out = ds.map(function (_, idx) { return (byDest[idx] != null) ? byDest[idx] : null; });
       if (!out.some(function (k) { return k != null; })) { setReason('routes-no-distance'); return null; }
+      // Keep the RAW result around for debugState() (origin, dest coords, metres, km).
+      state.lastOrigin = o; state.lastDestsCoords = ds; state.lastKmArray = out;
+      state.lastMetersArray = ds.map(function (_, idx) { return (byDestM[idx] != null) ? byDestM[idx] : null; });
       dlog('Routes OK ->', out, 'km'); setReason('routes-ok');
       return out;
     }).catch(function (e) { setReason('routes-exception'); dlog('Routes failed', e); return null; });
@@ -182,7 +189,13 @@
   // Single driving distance (full address / pincode centroid) via the Routes API.
   function computeDrivingDistanceKm(dest) {
     state.lastDest = dest;
-    return computeRouteMatrixKm([dest]).then(function (arr) { return (arr && arr[0] != null) ? arr[0] : null; });
+    return computeRouteMatrixKm([dest]).then(function (arr) {
+      var km = (arr && arr[0] != null) ? arr[0] : null;
+      state.lastDistanceKm = km;
+      state.lastDistanceMeters = (state.lastMetersArray && state.lastMetersArray[0] != null) ? state.lastMetersArray[0] : (km != null ? Math.round(km * 1000) : null);
+      state.lastDestCoords = (state.lastDestsCoords && state.lastDestsCoords[0]) || normDest(dest);
+      return km;
+    });
   }
 
   // Compute distance for a selected full address (dest coords) and store it.
@@ -345,7 +358,10 @@
       return {
         enabled: enabled(), origin: origin(), store: readStore(),
         selectedPincode: currentSelectedPin(), lastReason: state.lastReason,
-        lastDistanceKm: state.lastDistanceKm, debug: isDebug()
+        lastDistanceKm: state.lastDistanceKm,
+        lastDistanceMeters: state.lastDistanceMeters,
+        lastDestCoords: state.lastDestCoords,
+        debug: isDebug()
       };
     }
   };
