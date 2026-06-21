@@ -1,28 +1,26 @@
 {%- comment -%}
-  Ganguram — Checkout shipping-address prefill config (Phase 2.11F.2).
+  Ganguram — Conditional checkout shipping-address prefill config (Phase 2.11F.2 → 2.12B).
 
   Publishes window.GanguramCheckoutPrefillConfig and loads
-  assets/ganguram-checkout-prefill.js. When the customer selected a full Google
-  address in the delivery popup and clicks the STANDARD checkout button, it appends
-  the documented checkout[shipping_address][...] parameters (from window.GanguramAddress)
-  to the checkout URL so Shopify opens with the shipping address prefilled.
+  assets/ganguram-checkout-prefill.js. On the STANDARD checkout button it appends the
+  documented checkout[shipping_address][...] params. CONDITIONAL modes (from
+  window.GanguramAddress): a manual pincode -> country + zip ONLY; a selected full Google
+  address -> country + zip + address1 + city + province. Never sends stale/guessed data.
 
-  Standard checkout button only — Shop Pay / dynamic checkout buttons bypass the cart
-  form and cannot be prefilled this way (limitation, documented in §9). Respects the
-  MOV soft guard; only fills safely-known fields; preserves cart / attributes /
-  discounts / payment. Fail-open. Set enabled:false to turn it off. No checkout /
-  shipping-rate / ShipZip / SBZ / zipLogic / resolver / settings_data change.
+  Standard checkout button only (Shop Pay / dynamic buttons bypass the cart form — they
+  can't be prefilled this way). DATE SAFETY: does nothing while checkout is blocked, INCLUDING
+  when a required cart-page delivery date is missing — so it can't bypass that step. Preserves
+  cart / attributes / discounts / payment. Fail-open. Set enabled:false to turn it off. No
+  checkout-rate / ShipZip / SBZ / zipLogic / resolver / MOV / estimate / settings_data change.
 {%- endcomment -%}
 <script>
   window.GanguramCheckoutPrefillConfig = {
-    // OFF by default (Phase 2.11F.4). The prefill REDIRECTS the standard checkout
-    // button to /checkout?checkout[shipping_address][...], which SKIPS the cart page.
-    // If you use a CART-PAGE delivery date/slot picker (e.g. ShipZip) where the date is
-    // required before checkout, that redirect would bypass it. Enable this ONLY if your
-    // date picker is at checkout (not a required cart-page step), or once you've moved
-    // address prefill to a Checkout UI Extension. See docs §8d.
-    enabled: false,
-    checkoutUrl: "/checkout"
+    // Phase 2.12B — ON, and SAFE for a cart-page date picker: the prefill does nothing while
+    // checkout is blocked, INCLUDING when a required delivery date is missing
+    // (GanguramDeliveryDatePicker.isDateMissing), so the redirect can't bypass the date step.
+    enabled: true,
+    checkoutUrl: "/checkout",
+    defaultCountry: "India"
   };
 </script>
 <script src="{{ 'ganguram-checkout-prefill.js' | asset_url }}" defer></script>
