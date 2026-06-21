@@ -175,70 +175,10 @@
         "section_heading_color": "rgba(0,0,0,0)",
         "remove_margin": false
       }
-    },
-    "ganguram_box_builder_qrtLHM": {
-      "type": "ganguram-box-builder",
-      "blocks": {
-        "item_LPfeDV": {
-          "type": "item",
-          "settings": {
-            "active": true,
-            "product": "2-in-1-jalbhara-sandesh-strawberry",
-            "display_name": "",
-            "qty_label": ""
-          }
-        },
-        "item_ytj6w4": {
-          "type": "item",
-          "settings": {
-            "active": true,
-            "product": "2-in-1-jalbhara-sandesh-chocolate",
-            "display_name": "",
-            "qty_label": ""
-          }
-        },
-        "item_jXPQQn": {
-          "type": "item",
-          "settings": {
-            "active": true,
-            "product": "2-in-1-sandesh-chocolate-1",
-            "display_name": "",
-            "qty_label": ""
-          }
-        },
-        "item_NiLThq": {
-          "type": "item",
-          "settings": {
-            "active": true,
-            "product": "2-in-1-sandesh-mango-strawberry",
-            "display_name": "",
-            "qty_label": ""
-          }
-        }
-      },
-      "block_order": [
-        "item_LPfeDV",
-        "item_ytj6w4",
-        "item_jXPQQn",
-        "item_NiLThq"
-      ],
-      "name": "Custom Sweets Box",
-      "settings": {
-        "enabled": true,
-        "heading": "Build your Custom Sweets Box",
-        "subheading": "Choose your columns, then pick a sweet for each.",
-        "box_name": "Custom Sweets Box",
-        "column_counts": "4,5,6",
-        "default_columns": 4,
-        "currency_symbol": "₹",
-        "columns_label": "Number of columns",
-        "add_label": "Add box to cart"
-      }
     }
   },
   "order": [
     "main",
-    "product-recommendations",
-    "ganguram_box_builder_qrtLHM"
+    "product-recommendations"
   ]
 }
