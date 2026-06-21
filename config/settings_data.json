@@ -151,7 +151,16 @@
         }
       }
     },
-    "content_for_index": []
+    "content_for_index": [],
+    "blocks": {
+      "2530237624131658027": {
+        "type": "shopify://apps/shipping-delivery-shipzip/blocks/cs-app-block/1a3d1068-6186-4cb9-936d-3cbb65a9de24",
+        "disabled": true,
+        "settings": {
+          "shippingversion": "v2"
+        }
+      }
+    }
   },
   "installed_preset_name": "Local",
   "presets": {
