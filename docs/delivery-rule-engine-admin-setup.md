@@ -504,13 +504,19 @@ This phase does **not** touch ShipZip rates, the `4HR`/`STD` service codes, the 
 
 The delivery popup now shows a **useful charge ESTIMATE** instead of "Final charge at checkout". **ShipZip remains the source of the final checkout rate** — this is an estimate/UI improvement only.
 
+### Distance API — Routes API (2.11I.1)
+Distances use the Google **Routes API** (`computeRouteMatrix`, REST `https://routes.googleapis.com/distanceMatrix/v2:computeRouteMatrix`, one origin × many destinations in a single request) on the merchant browser key — **not** the legacy `DistanceMatrixService` (which the store key does not enable). Geocoding still uses the Maps JS Geocoder. The key is read from `settings.google_maps_api_key` (via `GanguramDistanceConfig.apiKey`).
+
 ### Calculation method
-- **Pincode‑only:** geocode the pincode to its **area box** (Google bounds/viewport; centroid if no box), sample the **centre + 4 corners** (optionally + edge midpoints), ask the **Distance Matrix** for all of them in **one** request, take the **min/max** driving distance, and map each to the local slab → a **range** (e.g. *Standard shipping estimate: ₹50–₹100*) or a single price when both ends fall in one slab.
+- **Pincode‑only:** geocode the pincode to its **area box** (Google bounds/viewport; centroid if no box), sample the **centre + 4 corners** (optionally + edge midpoints), ask the **Routes API** for all of them in **one** request, take the **min/max** driving distance, and map each to the local slab → a **range** (e.g. *Standard shipping estimate: ₹50–₹100*) or a single price when both ends fall in one slab.
 - **Full address:** use the selected address's **confirmed** driving distance → a **single** slab price (*Standard shipping estimate: ₹70* · *Based on your selected address.*).
 - **4 Hours:** flat **₹10** when within the radius. A pincode area that **straddles** the radius shows *"4 Hours may be available for some addresses in this pincode. Enter your full address to confirm."*; a full address **beyond** the radius does **not** show 4 Hours (conservative — never over‑promises vs checkout).
 
 ### Limitations of the pincode‑area estimate
-A pincode covers an area, so the estimate is a **range** sampled from a few points — the exact charge depends on the precise address and is **confirmed at checkout by ShipZip**. The 4‑hour "maybe" wording is shown precisely because parts of a pincode can be inside and others outside the radius. Fail‑open: no Google / API failure / no outlet origin → the popup falls back to *"Final charge confirmed at checkout."*
+A pincode covers an area, so the estimate is a **range** sampled from a few points — the exact charge depends on the precise address and is **confirmed at checkout by ShipZip**. The 4‑hour "maybe" wording is shown precisely because parts of a pincode can be inside and others outside the radius.
+
+### Fallback (Routes API failure)
+For a **known local pincode**, if the Routes API can't be reached (no key / HTTP error / any failure) the popup does **not** drop to a bare "Final charge at checkout" — it shows the **configured fallback slab span** (*Standard shipping estimate: ₹50–₹150*) with *"Final charge confirmed at checkout."* A later successful compute narrows it. PAN India (no local slabs) keeps the plain "final at checkout" wording.
 
 ### Config (easy to change — no JS edit)
 `snippets/ganguram-shipping-estimate-config.liquid` publishes `window.GanguramEstimateConfig`:

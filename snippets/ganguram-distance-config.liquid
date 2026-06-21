@@ -1,15 +1,16 @@
 {%- comment -%}
-  Ganguram — Driving-distance config (Phase 2.11D).
+  Ganguram — Driving-distance config (Phase 2.11D; Routes API since 2.11I.1).
 
-  Publishes window.GanguramDistanceConfig (outlet origin + enable flag) and loads
-  assets/ganguram-distance.js (window.GanguramDistance). REUSES the Phase 2.9B
-  Google key via window.GanguramPlaces.loadMaps; it needs the Google **Distance
-  Matrix API** enabled on that browser key. Used ONLY for FULL-ADDRESS selections
-  (driving distance -> a confirmed distanceKm for the cart rules' distance slabs).
+  Publishes window.GanguramDistanceConfig (outlet origin + API key + enable flag) and loads
+  assets/ganguram-distance.js (window.GanguramDistance). Distances are computed via the
+  **Routes API** (computeRouteMatrix, REST) on the merchant browser key — NOT the legacy
+  Distance Matrix service. Used for FULL-ADDRESS selections (a confirmed distanceKm for the
+  cart distance slabs) and the pincode-AREA estimate range (Phase 2.11I).
 
-  FAIL-OPEN: no outlet origin set / Distance Matrix unavailable -> no confirmed
-  distance; the cart stays on the estimated pincode/zone path. No checkout /
-  shipping-charge / ShipZip / SBZ / zipLogic / resolver / settings_data.json change.
+  FAIL-OPEN: no outlet origin / no key / Routes API failure -> no confirmed distance; the
+  cart stays on the estimated pincode/zone path and the popup shows the configured fallback
+  range. No checkout / shipping-charge / ShipZip / SBZ / zipLogic / resolver / settings_data
+  change. The browser key must have the **Routes API** enabled (the store key already does).
 
   Origin is the outlet "lat,lng" from the theme setting `ganguram_outlet_origin`
   (Theme settings -> "Ganguram - Address search"). Enabled only when it is set.
@@ -17,7 +18,8 @@
 <script>
   window.GanguramDistanceConfig = {
     enabled: {% if settings.ganguram_outlet_origin != blank %}true{% else %}false{% endif %},
-    origin: {{ settings.ganguram_outlet_origin | default: '' | json }}
+    origin: {{ settings.ganguram_outlet_origin | default: '' | json }},
+    apiKey: {{ settings.google_maps_api_key | default: '' | strip_html | json }}
   };
 </script>
 <script src="{{ 'ganguram-distance.js' | asset_url }}" defer></script>

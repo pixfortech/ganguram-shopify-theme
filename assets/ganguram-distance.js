@@ -11,15 +11,15 @@
  *   - manual pincode -> estimated (no distanceKm)
  *   - full address   -> confirmed (driving distanceKm), used for distance slabs
  *
- * It REUSES the existing Phase 2.9B Google setup (window.GanguramPlaces.loadMaps —
- * same merchant key, lazy loader) and the Distance Matrix API. The outlet origin
- * comes from a theme setting (lat,lng). PRIVACY: it stores only the resulting
- * distanceKm + pincode (never the address coordinates).
+ * Distances are computed via the Google **Routes API** (computeRouteMatrix, REST) on the
+ * merchant browser key — NOT the legacy Distance Matrix service (2.11I.1). Geocoding still
+ * uses the Maps JS Geocoder (Geocoding API). The outlet origin comes from a theme setting
+ * (lat,lng). PRIVACY: it stores only the resulting distanceKm + pincode (never coordinates).
  *
- * Fully FAIL-OPEN: no origin / not enabled / Distance Matrix unavailable or not
- * enabled on the key / any error -> no confirmed distance, everything keeps
- * working on the estimated (pincode) path. Never changes checkout / shipping /
- * ShipZip / SBZ / zipLogic / the resolver / settings_data.json.
+ * Fully FAIL-OPEN: no origin / no key / not enabled / Routes API unavailable / any error ->
+ * no confirmed distance, everything keeps working on the estimated (pincode) path and the
+ * popup shows the configured fallback range. Never changes checkout / shipping / ShipZip /
+ * SBZ / zipLogic / the resolver / settings_data.json.
  *
  * 2.11D.1: hardened destination-coordinate normalization (LatLng object OR
  * {lat,lng} literal OR {latitude,longitude}) and added DEV-ONLY debug tracing
@@ -124,43 +124,65 @@
     fire(EVENT_DISTANCE, { pincode: p, distanceKm: n, confirmed: true });
   }
 
-  // ---- Google Distance Matrix (driving) — reuses GanguramPlaces.loadMaps -----
-  function routesLib(maps) {
-    return (maps && typeof maps.importLibrary === 'function') ? maps.importLibrary('routes') : Promise.resolve(maps);
+  // ---- Routes API (computeRouteMatrix, REST) — replaces the legacy Distance Matrix ----
+  // The store key has the ROUTES API enabled (NOT the legacy Distance Matrix). We POST to
+  // the Routes API Route Matrix endpoint (CORS-supported) with the browser key; it returns
+  // one element per origin×destination carrying distanceMeters. ONE origin + many
+  // destinations => ONE request for the whole pincode area. Fail-open: no key / HTTP error /
+  // any failure -> null (the popup then shows the configured fallback slab range).
+  var ROUTE_MATRIX_URL = 'https://routes.googleapis.com/distanceMatrix/v2:computeRouteMatrix';
+  function apiKey() {
+    var k = cfg().apiKey;
+    if (!k) { try { k = window.GanguramPlacesConfig && window.GanguramPlacesConfig.apiKey; } catch (e) {} }
+    if (!k) { try { k = window.KROWN && window.KROWN.settings && window.KROWN.settings.google_maps_api_key; } catch (e) {} }
+    return String(k || '').trim();
   }
-  function computeDrivingDistanceKm(dest) {
-    state.lastDest = dest;
+  function waypoint(p) { return { waypoint: { location: { latLng: { latitude: p.lat, longitude: p.lng } } } }; }
+
+  // Driving distances (km) from the origin to each destination via the Routes API. Returns
+  // an array aligned to `dests` (null where no route), or null on a hard failure.
+  function computeRouteMatrixKm(dests) {
     var o = origin();
     if (!enabled()) { setReason('disabled'); dlog('disabled (no outlet origin set)'); return Promise.resolve(null); }
     if (!o) { setReason('bad-origin'); dlog('outlet origin unparseable:', cfg().origin); return Promise.resolve(null); }
-    var d = normDest(dest);
-    if (!d) { setReason('no-dest-coords'); dlog('no destination coordinates from', dest); return Promise.resolve(null); }
-    var places = window.GanguramPlaces;
-    if (!places || typeof places.loadMaps !== 'function') { setReason('no-loader'); dlog('GanguramPlaces.loadMaps unavailable'); return Promise.resolve(null); }
-    dlog('compute driving distance origin', o, '-> dest', d);
-    return places.loadMaps().then(routesLib).then(function (lib) {
-      var g = window.google && window.google.maps;
-      var Svc = (lib && lib.DistanceMatrixService) || (g && g.DistanceMatrixService);
-      if (typeof Svc !== 'function') { setReason('no-service'); dlog('DistanceMatrixService unavailable (is the Distance Matrix API enabled on the key?)'); return null; }
-      var unit = (g && g.UnitSystem) ? g.UnitSystem.METRIC : 0;
-      return new Promise(function (resolve) {
-        var done = false, fin = function (v) { if (!done) { done = true; resolve(v); } };
-        var timer = setTimeout(function () { setReason('timeout'); dlog('Distance Matrix timed out (8s)'); fin(null); }, 8000); // never wedge the caller
-        try {
-          new Svc().getDistanceMatrix(
-            { origins: [o], destinations: [d], travelMode: 'DRIVING', unitSystem: unit },
-            function (resp, status) {
-              clearTimeout(timer);
-              if (status !== 'OK' || !resp || !resp.rows || !resp.rows[0]) { setReason('status-' + status); dlog('Distance Matrix status', status); fin(null); return; }
-              var el = resp.rows[0].elements && resp.rows[0].elements[0];
-              if (!el || el.status !== 'OK' || !el.distance) { setReason('element-' + (el && el.status)); dlog('Distance Matrix element status', el && el.status); fin(null); return; }
-              var km = el.distance.value / 1000; // metres -> km
-              dlog('Distance Matrix OK ->', km, 'km'); fin(km);
-            }
-          );
-        } catch (e) { clearTimeout(timer); setReason('exception'); dlog('Distance Matrix threw', e); fin(null); }
-      });
-    }).catch(function (e) { setReason('load-failed'); dlog('maps/routes load failed', e); return null; });
+    var ds = (dests || []).map(normDest).filter(Boolean);
+    if (!ds.length) { setReason('no-dest-coords'); return Promise.resolve(null); }
+    var key = apiKey();
+    if (!key) { setReason('no-key'); dlog('no Google API key for Routes'); return Promise.resolve(null); }
+    if (typeof window.fetch !== 'function') { setReason('no-fetch'); return Promise.resolve(null); }
+    var body = { origins: [waypoint(o)], destinations: ds.map(waypoint), travelMode: 'DRIVE' };
+    dlog('Routes computeRouteMatrix', o, '->', ds.length, 'dest(s)');
+    return window.fetch(ROUTE_MATRIX_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': key,
+        'X-Goog-FieldMask': 'originIndex,destinationIndex,distanceMeters,condition'
+      },
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      if (!r || !r.ok) { setReason('http-' + (r && r.status)); dlog('Routes HTTP', r && r.status); return null; }
+      return r.json();
+    }).then(function (rows) {
+      if (!rows || !rows.length) { setReason('routes-empty'); return null; }
+      var byDest = {};
+      for (var i = 0; i < rows.length; i++) {
+        var el = rows[i];
+        if (el && (el.condition === 'ROUTE_EXISTS' || el.condition == null) && typeof el.distanceMeters === 'number') {
+          byDest[el.destinationIndex] = el.distanceMeters / 1000; // metres -> km
+        }
+      }
+      var out = ds.map(function (_, idx) { return (byDest[idx] != null) ? byDest[idx] : null; });
+      if (!out.some(function (k) { return k != null; })) { setReason('routes-no-distance'); return null; }
+      dlog('Routes OK ->', out, 'km'); setReason('routes-ok');
+      return out;
+    }).catch(function (e) { setReason('routes-exception'); dlog('Routes failed', e); return null; });
+  }
+
+  // Single driving distance (full address / pincode centroid) via the Routes API.
+  function computeDrivingDistanceKm(dest) {
+    state.lastDest = dest;
+    return computeRouteMatrixKm([dest]).then(function (arr) { return (arr && arr[0] != null) ? arr[0] : null; });
   }
 
   // Compute distance for a selected full address (dest coords) and store it.
@@ -261,37 +283,10 @@
     return pts;
   }
 
-  // Batch driving distance: ONE Distance Matrix request, many destinations -> km[] (null
-  // per failed element). Keeps the API cost to a single call for the whole pincode area.
+  // Batch driving distance: ONE Routes API request, many destinations -> km[] (null per
+  // unreachable element). Keeps the API cost to a single call for the whole pincode area.
   function computeDrivingDistancesKm(dests) {
-    var o = origin();
-    if (!enabled()) { setReason('disabled'); return Promise.resolve(null); }
-    if (!o) { setReason('bad-origin'); return Promise.resolve(null); }
-    var ds = (dests || []).map(normDest).filter(Boolean);
-    if (!ds.length) { setReason('no-dest-coords'); return Promise.resolve(null); }
-    var places = window.GanguramPlaces;
-    if (!places || typeof places.loadMaps !== 'function') { setReason('no-loader'); return Promise.resolve(null); }
-    return places.loadMaps().then(routesLib).then(function (lib) {
-      var g = window.google && window.google.maps;
-      var Svc = (lib && lib.DistanceMatrixService) || (g && g.DistanceMatrixService);
-      if (typeof Svc !== 'function') { setReason('no-service'); return null; }
-      var unit = (g && g.UnitSystem) ? g.UnitSystem.METRIC : 0;
-      return new Promise(function (resolve) {
-        var done = false, fin = function (v) { if (!done) { done = true; resolve(v); } };
-        var timer = setTimeout(function () { setReason('timeout'); fin(null); }, 8000);
-        try {
-          new Svc().getDistanceMatrix(
-            { origins: [o], destinations: ds, travelMode: 'DRIVING', unitSystem: unit },
-            function (resp, status) {
-              clearTimeout(timer);
-              if (status !== 'OK' || !resp || !resp.rows || !resp.rows[0]) { setReason('status-' + status); fin(null); return; }
-              var els = resp.rows[0].elements || [];
-              fin(els.map(function (el) { return (el && el.status === 'OK' && el.distance) ? el.distance.value / 1000 : null; }));
-            }
-          );
-        } catch (e) { clearTimeout(timer); setReason('exception'); fin(null); }
-      });
-    }).catch(function (e) { setReason('load-failed'); dlog('area distances load failed', e); return null; });
+    return computeRouteMatrixKm(dests);
   }
 
   // Cached area range for a pincode (sync), or null.
