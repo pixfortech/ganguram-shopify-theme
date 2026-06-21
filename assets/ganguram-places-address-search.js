@@ -110,7 +110,7 @@
     }
     var place;
     try { place = pred.toPlace(); } catch (err) { setAddrStatus('Couldn’t read that address. Please enter your pincode below.', 'error'); focusManualInput(); return; }
-    place.fetchFields({ fields: ['addressComponents', 'location', 'formattedAddress', 'id'] })
+    place.fetchFields({ fields: ['addressComponents', 'location', 'formattedAddress', 'displayName', 'id'] })
       .then(function () {
         var comps = place.addressComponents || [];
         var countryC = compOf(comps, 'country');
@@ -151,22 +151,51 @@
     if (!c) { return ''; }
     return String((useShort ? c.shortText : c.longText) || c.longText || c.shortText || '');
   }
+  function placeName(place) {
+    var dn = place && place.displayName;
+    if (dn && typeof dn === 'object') { dn = dn.text || ''; }
+    return String(dn == null ? '' : dn).trim();
+  }
+  // Build CLEAN, geocodable shipping lines from the Google components (Phase 2.12C).
+  // address1 = ONE component — street_number+route, else premise, else the establishment
+  // name, else the first formatted segment. It is NEVER a concatenation of route + area +
+  // city (a messy address1 can make a checkout geocoder, e.g. ShipZip, resolve to the wrong
+  // / closer point and price the wrong distance slab). address2 = the secondary AREA only
+  // (premise + sublocality), de-duped, never the street or the city. Pure + testable.
+  function addressLines(comps, displayName, formatted) {
+    comps = comps || [];
+    var streetNo = compText(comps, 'street_number');
+    var route = compText(comps, 'route');
+    var premise = compText(comps, 'premise');
+    var estab = String(displayName == null ? '' : (typeof displayName === 'object' ? (displayName.text || '') : displayName)).trim();
+    var sub1 = compText(comps, 'sublocality') || compText(comps, 'sublocality_level_1') || compText(comps, 'neighborhood');
+    var sub2 = compText(comps, 'sublocality_level_2');
+    var city = compText(comps, 'locality') || compText(comps, 'postal_town') || compText(comps, 'administrative_area_level_2');
+
+    var address1 = (streetNo + ' ' + route).trim();
+    if (!address1) { address1 = premise; }
+    if (!address1) { address1 = estab; }
+    if (!address1 && formatted) { address1 = String(formatted).split(',')[0].trim(); }
+
+    var a2 = [];
+    [premise, sub1, sub2].forEach(function (part) {
+      if (part && part !== city && a2.indexOf(part) === -1 && address1.indexOf(part) === -1) { a2.push(part); }
+    });
+    return { address1: address1, address2: a2.join(', ') };
+  }
   function saveStructuredAddress(place, comps, pin) {
     var ga = window.GanguramAddress;
     if (!ga || typeof ga.setSelectedAddress !== 'function') { return; }
     try {
       var fa = (place && (place.formattedAddress || place.formatted_address)) || '';
-      var address1 = (compText(comps, 'street_number') + ' ' + compText(comps, 'route')).trim();
-      if (!address1 && fa) { address1 = String(fa).split(',')[0].trim(); }
-      var a2parts = [compText(comps, 'premise'), compText(comps, 'sublocality') || compText(comps, 'sublocality_level_1') || compText(comps, 'neighborhood')];
-      var address2 = a2parts.filter(Boolean).join(', ');
+      var lines = addressLines(comps, placeName(place), fa);
       var coords = locOf(place);
       ga.setSelectedAddress({
         pincode: pin,
         place_id: (place && (place.id || place.place_id)) || '',
         formatted_address: fa,
-        address1: address1,
-        address2: address2,
+        address1: lines.address1,
+        address2: lines.address2,
         city: compText(comps, 'locality') || compText(comps, 'postal_town') || compText(comps, 'administrative_area_level_2'),
         state: compText(comps, 'administrative_area_level_1'),
         country: compText(comps, 'country'),
@@ -425,6 +454,7 @@
   window.GanguramPlaces.lookupCityByPincode = lookupCityByPincode;
   window.GanguramPlaces.geocodePincode = geocodePincodeCoords;
   window.GanguramPlaces.geocodePincodeArea = geocodePincodeAreaCoords;
+  window.GanguramPlaces.addressLines = addressLines;   // clean shipping lines (2.12C) — testable
 
   function init() {
     if (!popup()) { return; }
