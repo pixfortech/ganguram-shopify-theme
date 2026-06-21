@@ -422,6 +422,14 @@ The mode comes from `GanguramAddress.getSelectedAddress()`, which is keyed to th
 
 **Date safety.** The prefill does nothing while checkout is blocked — by the MOV / not‑deliverable guard **or** a **required delivery date being missing** (`GanguramDeliveryDatePicker.isDateMissing`). So the redirect can **never** bypass the cart‑page date requirement; when a date is required it must be chosen first (the date guard blocks), and when present it is already saved to cart attributes and reaches the order.
 
+**Clean address1 (Phase 2.12C).** The prefilled `address1` is **one clean, geocodable component** — `street_number + route`, else `premise`, else the establishment name, else the first formatted segment — **never** a concatenation of route + area + city (a messy `address1` can make a checkout geocoder, e.g. ShipZip's distance lookup, resolve to the *wrong / closer point* and price the wrong slab). The area (sublocality/neighbourhood) goes to `address2`; `city`/`province`/`zip`/`country` map cleanly from the Google components (`addressLines` in `ganguram-places-address-search.js`).
+
+**Diagnostics (dev‑only).** In the console (incl. the theme preview):
+- `window.GanguramCheckoutPrefill.debugState()` → mode, the **exact** params being sent (`country`/`zip`/`address1`/`city`/`province`), the stored **lat/lng**, and the **theme's km + Standard rate** for the same address.
+- `window.GanguramAddress.debugState()` → the raw stored structured address.
+
+**If the theme says ₹70 but checkout says ₹50:** the theme distance/slab is correct (`debugState().themeEstimate` shows e.g. `km: 7, rate: ₹70`), so the discrepancy is **inside ShipZip** — check ShipZip's **origin coordinates, distance slabs, and how it geocodes the destination** (a POI/landmark `address1` can geocode differently from the precise selected place). The theme cannot and does not change the checkout rate.
+
 **Limitation — dynamic checkout buttons.** Shop Pay / "Buy with …" / dynamic checkout buttons bypass the cart form, so they **cannot** be prefilled this way; the theme leaves them untouched (normal behaviour). For prefill there, use a **Checkout UI Extension** (app) reading the cart attributes. **ShipZip remains the source of the final checkout shipping rates** regardless of prefill. If the address pincode differs from the manually entered one, the popup updates the delivery pincode to the address and notes it.
 
 ### 8a. Cart vs popup split (Phase 2.11F.1)

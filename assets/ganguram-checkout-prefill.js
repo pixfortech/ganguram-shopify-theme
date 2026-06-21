@@ -103,5 +103,50 @@
     try { window.location.assign(url); } catch (err) { window.location.href = url; }
   }
 
+  // DEV-ONLY diagnostics (Phase 2.12C) — never customer-facing, no console noise. In the
+  // console (incl. the theme preview): window.GanguramCheckoutPrefill.debugState() shows the
+  // mode, the EXACT params being sent, the stored lat/lng, and the THEME's km + Standard rate
+  // for the same address — so you can confirm the theme estimate (e.g. ₹70) and, if checkout
+  // (ShipZip) disagrees, narrow it to ShipZip's origin/slab/geocoding (admin), not the theme.
+  function paramsOf(url) {
+    var out = {}; if (!url) { return out; }
+    (url.split('?')[1] || '').split('&').forEach(function (kv) {
+      var m = decodeURIComponent(kv).match(/^checkout\[shipping_address\]\[([^\]]+)\]=(.*)$/);
+      if (m) { out[m[1]] = m[2]; }
+    });
+    return out;
+  }
+  function themeEstimate(pin) {
+    var d = window.GanguramDistance, se = window.GanguramShippingEstimate;
+    if (!d || !se || typeof d.getForPincode !== 'function' || typeof se.standardForKm !== 'function') { return null; }
+    var conf = d.getForPincode(pin);
+    if (!conf || conf.confirmed !== true || conf.distanceKm == null) {
+      var area = (typeof d.getAreaRangeForPincode === 'function') ? d.getAreaRangeForPincode(pin) : null;
+      return area ? { basis: 'pincode_area', km: area.minKm + '–' + area.maxKm, rate: se.formatRange(se.standardForRange(area.minKm, area.maxKm).minPrice, se.standardForRange(area.minKm, area.maxKm).maxPrice) }
+        : { basis: 'none', km: null, rate: null, note: 'no confirmed full-address distance yet — open the address in the popup' };
+    }
+    var slab = se.standardForKm(conf.distanceKm);
+    return { basis: 'full_address', km: Math.round(conf.distanceKm * 10) / 10, rate: slab ? se.money(slab.minPrice) : null };
+  }
+  function debugState() {
+    var addr = fullAddress();
+    var pin = activePincode() || (addr ? (addr.zip || addr.pincode) : '');
+    var mode = addr ? 'full_address' : (norm(pin) ? 'pincode_only' : 'none');
+    var url = (mode === 'full_address') ? buildUrl('full_address', addr, pin)
+      : (mode === 'pincode_only') ? buildUrl('pincode_only', null, pin) : null;
+    return {
+      mode: mode,
+      enabled: enabled(),
+      blocked: guardBlocked(),
+      selectedPincode: activePincode(),
+      selectedAddress: addr ? addr.formatted_address : null,
+      storedLatLng: addr ? { lat: addr.lat, lng: addr.lng } : null,
+      sending: paramsOf(url),
+      themeEstimate: themeEstimate(norm(pin))
+    };
+  }
+
+  window.GanguramCheckoutPrefill = { debugState: debugState };
+
   document.addEventListener('click', onClick, true);
 })();

@@ -76,11 +76,29 @@
 
   function onChange() { clearStore(); }
 
+  // DEV-ONLY diagnostics (Phase 2.12C) — never customer-facing. In the console:
+  // window.GanguramAddress.debugState() -> the stored structured address + active pincode.
+  function debugState() {
+    var rec = read();
+    return {
+      activePincode: currentPin(),
+      matchesActive: !!getSelectedAddress(),
+      stored: rec ? {
+        source: rec.source, pincode: rec.pincode, zip: rec.zip,
+        formatted_address: rec.formatted_address,
+        address1: rec.address1, address2: rec.address2,
+        city: rec.city, state: rec.state, country: rec.country,
+        lat: rec.lat, lng: rec.lng
+      } : null
+    };
+  }
+
   window.GanguramAddress = {
     setSelectedAddress: setSelectedAddress,
     getSelectedAddress: getSelectedAddress,
     hasSelectedAddress: hasSelectedAddress,
-    clear: clearStore
+    clear: clearStore,
+    debugState: debugState
   };
 
   window.addEventListener(EVENT_CHANGED, onChange);
