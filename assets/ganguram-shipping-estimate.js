@@ -108,6 +108,14 @@
     return (minPrice === maxPrice) ? money(minPrice) : (money(minPrice) + c.rangeSeparator + money(maxPrice));
   }
 
+  // Full slab SPAN (cheapest slab .. dearest slab) — the configured FALLBACK estimate shown
+  // for a known LOCAL pincode when the live distance can't be computed (Routes API failure).
+  function fallbackRange() {
+    var slabs = config().standardSlabs;
+    if (!slabs.length) { return null; }
+    return { minPrice: slabs[0].price, maxPrice: slabs[slabs.length - 1].price, isRange: slabs[0].price !== slabs[slabs.length - 1].price, beyond: false };
+  }
+
   // Cache key for an area-range computation: pincode + origin + config version (the
   // version bumps when slabs/sampling change). Used by the distance module's cache.
   function areaCacheKey(pincode, origin) {
@@ -122,6 +130,7 @@
     standardForKm: standardForKm,
     standardForRange: standardForRange,
     fourHourForRange: fourHourForRange,
+    fallbackRange: fallbackRange,
     money: money,
     formatRange: formatRange,
     areaCacheKey: areaCacheKey
