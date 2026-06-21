@@ -567,7 +567,7 @@
         "remove_bottom_margin": false,
         "color_background_main": "#ffffff",
         "section_background_gradient": "",
-        "color_text_main": "#49488D",
+        "color_text_main": "#49488d",
         "section_visibility": "always"
       }
     },
