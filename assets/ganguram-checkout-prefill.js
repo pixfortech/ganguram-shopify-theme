@@ -137,14 +137,23 @@
     var mode = addr ? 'full_address' : (norm(pin) ? 'pincode_only' : 'none');
     var url = (mode === 'full_address') ? buildUrl('full_address', addr, pin)
       : (mode === 'pincode_only') ? buildUrl('pincode_only', null, pin) : null;
+    // Why the redirect is/ isn't blocked — so "prefill not sending" can be told apart from a
+    // genuine MOV / required-delivery-date block (the redirect is skipped while blocked, by design).
+    var movBlocked = false, dateMissing = false;
+    try { var g = window.GanguramDeliveryProgress; movBlocked = !!(g && typeof g.isCheckoutBlocked === 'function' && g.isCheckoutBlocked() === true); } catch (e) {}
+    try { var d = window.GanguramDeliveryDatePicker; dateMissing = !!(d && typeof d.isDateMissing === 'function' && d.isDateMissing() === true); } catch (e) {}
+    var latlng = addr ? { lat: addr.lat, lng: addr.lng } : null;
     return {
       mode: mode,
       enabled: enabled(),
       blocked: guardBlocked(),
+      blockedReason: movBlocked ? 'mov' : (dateMissing ? 'delivery_date_missing' : null),
       selectedPincode: activePincode(),
       selectedAddress: addr ? addr.formatted_address : null,
-      storedLatLng: addr ? { lat: addr.lat, lng: addr.lng } : null,
+      addressLatLng: latlng,
+      storedLatLng: latlng,
       sending: paramsOf(url),
+      willRedirect: enabled() && !guardBlocked() && !!url,
       themeEstimate: themeEstimate(norm(pin))
     };
   }

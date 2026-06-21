@@ -82,6 +82,7 @@
     try { return z.getSelectedDeliveryLocation(); } catch (e) { return null; }
   }
   function lines() { return document.querySelectorAll('[data-ganguram-cart-line]'); }
+  function hasCartItems() { return lines().length > 0; }
   function cartAllQuickCommerce() {
     var l = lines(); if (!l.length) { return false; }
     for (var i = 0; i < l.length; i++) { if (String(l[i].getAttribute('data-ganguram-quick-commerce')) !== 'true') { return false; } }
@@ -116,7 +117,10 @@
   function labelFor(code) { return code ? (labels()[code] || '') : ''; }
 
   // ---- cart attribute write (merge; clears with '' — never clobbers other attrs) ----
-  var lastSig = null, timer = null;
+  // It only ever writes ITS OWN keys (method/label/Delivery Method + the date keys for 4HR/PAN).
+  // It NEVER writes ganguram_selected_pincode / the selected address / lat-lng — those are owned
+  // by other modules and are left untouched, so a method/date change can't drop the pincode/address.
+  var lastSig = null, timer = null, lastWriteAttrs = null;
   function postAttrs(attrs) {
     try {
       return fetch(updateUrl(), {
@@ -140,9 +144,14 @@
     var sig; try { sig = JSON.stringify(attrs); } catch (e) { sig = code || ''; }
     // Don't fire a redundant clear for a fresh visitor who never had a selection.
     if (!code && lastSig === null) { return; }
+    // HOTFIX (2.12J): only ever touch the cart when there is a cart to check out with. Never
+    // write on a no-cart surface (homepage / PDP / empty drawer), so a cart write can't be
+    // kicked off — and can't trigger a cart re-render — DURING the pincode/address auto-fetch
+    // + delivery popup flow on those pages. (It still never writes any pincode/address key.)
+    if (!hasCartItems()) { return; }
     if (sig === lastSig) { return; }
     if (timer) { clearTimeout(timer); }
-    timer = setTimeout(function () { timer = null; lastSig = sig; postAttrs(attrs); }, debounceMs());
+    timer = setTimeout(function () { timer = null; lastSig = sig; lastWriteAttrs = attrs; postAttrs(attrs); }, debounceMs());
   }
 
   // ---- "please review your method" notice (progressive enhancement) ----------
@@ -221,12 +230,19 @@
         .then(function (cart) {
           var a = (cart && cart.attributes) || {}, K = keys(), DK = dateKeys();
           return {
+            // method + date (this module + the date picker)
             ganguram_preferred_delivery_method: a[K.method] || '',
             ganguram_preferred_delivery_label: a[K.label] || '',
             'Delivery Method': a[K.orderMethod] || '',
             'Delivery-Date': a[DK.date] || '',
             'Delivery Date': a[DK.dateReadable] || '',
-            'Delivery-Time': a[DK.time] || ''
+            'Delivery-Time': a[DK.time] || '',
+            // pincode/address handoff (owned by other modules) — shown so you can confirm a
+            // method/date change did NOT drop them. If these are blank but a pincode is selected,
+            // the cart-attributes handoff is the place to look, not this module.
+            ganguram_selected_pincode: a.ganguram_selected_pincode || '',
+            ganguram_delivery_zone: a.ganguram_delivery_zone || '',
+            'Delivery Pincode': a['Delivery Pincode'] || ''
           };
         }).catch(function () { return null; });
     } catch (e) { return Promise.resolve(null); }
@@ -269,11 +285,13 @@
     for (var i = 0; i < forms.length; i++) { try { obs.observe(forms[i], { childList: true }); } catch (e) {} }
   }
   function init() {
-    render();
-    observeCartForms();
-    window.addEventListener('ganguram:delivery-location-changed', function () { apply('location'); });
-    window.addEventListener('ganguram:delivery-label-updated', function () { apply('location'); });
-    document.addEventListener('change', onCartControlChange, false);
+    // Fully guarded so a method-choice hiccup can NEVER break the pincode / address / popup /
+    // checkout-prefill scripts that init around it.
+    try { render(); } catch (e) {}
+    try { observeCartForms(); } catch (e) {}
+    window.addEventListener('ganguram:delivery-location-changed', function () { try { apply('location'); } catch (e) {} });
+    window.addEventListener('ganguram:delivery-label-updated', function () { try { apply('location'); } catch (e) {} });
+    document.addEventListener('change', function (e) { try { onCartControlChange(e); } catch (x) {} }, false);
   }
 
   window.GanguramDeliveryMethodChoice = {
@@ -284,15 +302,23 @@
     // DEV-ONLY diagnostics (never customer-facing).
     debugState: function () {
       var loc = currentLoc(), code = deriveCode();
+      var sent = desiredAttrs(code);
+      // Proof it never touches the pincode/address: list the keys it writes and flag any overlap.
+      var written = [], pincodeOrAddress = false;
+      for (var k in sent) { if (Object.prototype.hasOwnProperty.call(sent, k)) { written.push(k); if (/pincode|address|lat|lng|zone/i.test(k)) { pincodeOrAddress = true; } } }
       return {
         enabled: enabled(),
         zone: loc ? loc.zone : null,
         serviceable: !!(loc && loc.isServiceable === true),
+        hasCartItems: hasCartItems(),
         cartAllQuickCommerce: cartAllQuickCommerce(),
         datePickerType: datePickerType(),
         preferredMethod: code,
         preferredLabel: labelFor(code),
-        attributesSent: desiredAttrs(code),
+        attributesSent: sent,
+        attributeKeysWritten: written,
+        writesPincodeOrAddress: pincodeOrAddress,   // expected: false (never clears pincode/address)
+        lastWriteAttrs: lastWriteAttrs,              // the last set actually POSTed (null if none)
         stored: readStored()
       };
     }
