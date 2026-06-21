@@ -1,0 +1,18 @@
+/*
+ * Ganguram — "review your delivery method" notice (Phase 2.12H).
+ * Soft, non-blocking cart notice shown when the chosen delivery method changed because
+ * the pincode/cart changed. NO HARDCODED COLOURS — theme design-system variables only:
+ * --color-accent-main (accent border), --color-secondary-text-main (text), currentColor.
+ */
+.ganguram-delivery-method-choice__notice {
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--color-borders-main);
+  border-left: 3px solid var(--color-accent-main);
+  border-radius: 8px;
+  font-size: 0.85em;
+  line-height: 1.4;
+  color: var(--color-secondary-text-main);
+  background: transparent;
+}
+.ganguram-delivery-method-choice__notice[hidden] { display: none !important; }

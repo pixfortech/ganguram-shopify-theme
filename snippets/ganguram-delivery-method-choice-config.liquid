@@ -1,0 +1,39 @@
+{%- comment -%}
+  Ganguram — Persist cart delivery choice for checkout (Phase 2.12H).
+
+  Publishes window.GanguramDeliveryMethodChoiceConfig and loads the module that mirrors
+  the customer's chosen delivery method (derived from the EXISTING cart date-picker
+  Standard / 4 Hours toggle + the selected zone) into two cart attributes a Delivery
+  Customization (a Shipzy rule, or a Shopify Delivery Customization Function) can match on
+  to HIDE non-selected methods at checkout:
+
+    ganguram_preferred_delivery_method = STD | 4HR | PAN_INDIA
+    ganguram_preferred_delivery_label  = Standard Delivery | 4 hours delivery | PAN India Shipping
+
+  ESTIMATE / handoff only. It does NOT change ShipZip rate amounts, the 4HR/STD service
+  codes, the distance slabs, product eligibility, the pincode resolver, MOV, the
+  unavailable-items modal, the Custom Box Builder, or any date-picker attribute NAMES
+  (the date keys below are READ from the date-picker config, never renamed). Merge-only
+  cart writes; fail-open. See docs/cart-delivery-method-checkout-sync.md for the Shipzy
+  rule / Delivery Customization Function setup.
+{%- endcomment -%}
+<script>
+  window.GanguramDeliveryMethodChoiceConfig = {
+    enabled: true,
+    updateUrl: {{ routes.cart_url | append: '/update.js' | json }},
+    debounceMs: 400,
+    keys: {
+      method: {{ 'ganguram_preferred_delivery_method' | json }},
+      label: {{ 'ganguram_preferred_delivery_label' | json }}
+    },
+    // Readable labels saved alongside the code — set these to your EXACT ShipZip rate
+    // names so a Shipzy rule / the Delivery Customization Function can match on them.
+    labels: {
+      STD: {{ 'Standard Delivery' | json }},
+      '4HR': {{ '4 hours delivery' | json }},
+      PAN_INDIA: {{ 'PAN India Shipping' | json }}
+    }
+  };
+</script>
+{{ 'ganguram-delivery-method-choice.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'ganguram-delivery-method-choice.js' | asset_url }}" defer></script>
