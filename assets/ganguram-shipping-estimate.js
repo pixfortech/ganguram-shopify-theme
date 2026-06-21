@@ -34,7 +34,7 @@
         { maxKm: 15, price: 100 },
         { maxKm: 20, price: 150 }
       ],
-      fourHour: { maxDistanceKm: 10, flatPrice: 10 },
+      fourHour: { enabled: true, maxDistanceKm: 10, flatPrice: 10 },  // radius is ADMIN-CONFIGURABLE (e.g. 10 or 20 km)
       panIndia: { perWeightG: 500, pricePerUnit: 80 },   // ₹80 per 500 g (Part B)
       currencySymbol: '₹',
       rangeSeparator: '–',
@@ -56,8 +56,11 @@
     var fh = assign({}, d.fourHour, c.fourHour || {});
     return {
       standardSlabs: slabs,
-      fourHour: { maxDistanceKm: num(fh.maxDistanceKm) != null ? fh.maxDistanceKm : d.fourHour.maxDistanceKm,
-        flatPrice: num(fh.flatPrice) != null ? fh.flatPrice : d.fourHour.flatPrice },
+      fourHour: {
+        enabled: fh.enabled !== false,   // admin toggle (default on)
+        maxDistanceKm: num(fh.maxDistanceKm) != null ? fh.maxDistanceKm : d.fourHour.maxDistanceKm,
+        flatPrice: num(fh.flatPrice) != null ? fh.flatPrice : d.fourHour.flatPrice
+      },
       panIndia: (function () { var p = assign({}, d.panIndia, c.panIndia || {});
         return { perWeightG: num(p.perWeightG) != null && p.perWeightG > 0 ? p.perWeightG : d.panIndia.perWeightG,
           pricePerUnit: num(p.pricePerUnit) != null ? p.pricePerUnit : d.panIndia.pricePerUnit }; })(),
@@ -159,15 +162,18 @@
   //   fourHourEligibleCart, // all cart items Quick Commerce (default true: capability)
   //   panIndiaEligibleCart  // all cart items PAN India eligible (default true)
   // }
-  // -> { mode: 'local'|'pan_india'|'block'|'pending'|'prompt', basis, standard, fourHour,
-  //      panIndia, distanceKm, range, localRadiusKm, fourHourRadiusKm, isLocalWithin20,
-  //      isQuickWithin10, panIndiaEligible, crossesLocal, reasonPan, reasonFourHour }
+  // -> { mode, basis, standard, fourHour, panIndia, distanceKm, range,
+  //      localStandardMaxDistanceKm, fourHourMaxDistanceKm, fourHourEnabled,
+  //      isWithinLocalStandardRadius, isWithinFourHourRadius, allItemsQuickCommerce,
+  //      panIndiaEligible, crossesLocal, reasonPan, reasonFourHour }
+  // Both radii are ADMIN-CONFIGURABLE (standardSlabs' last maxKm; fourHour.maxDistanceKm).
   // ============================================================================
   function resolveDeliveryState(ctx) {
     ctx = ctx || {};
     var c = config();
-    var localR = localRadiusKm();
-    var fourR = c.fourHour.maxDistanceKm;
+    var localMax = localRadiusKm();                    // configured local-standard max (e.g. 20 km)
+    var fourMax = c.fourHour.maxDistanceKm;            // configured 4-hour max (admin: 10 or 20 km…)
+    var fourOn = c.fourHour.enabled !== false;         // admin toggle
     var qcCart = ctx.fourHourEligibleCart !== false;   // default true (empty cart -> show capability)
     var panCart = ctx.panIndiaEligibleCart !== false;  // default true
     var price4 = c.fourHour.flatPrice;
@@ -178,11 +184,15 @@
       distanceKm: hasDist ? ctx.distanceKm : null,
       range: ctx.areaRange || null,
       standard: null, fourHour: null, panIndia: null,
-      localRadiusKm: localR, fourHourRadiusKm: fourR,
-      isLocalWithin20: false, isQuickWithin10: false, panIndiaEligible: panCart, crossesLocal: false,
+      localStandardMaxDistanceKm: localMax, fourHourMaxDistanceKm: fourMax, fourHourEnabled: fourOn,
+      isWithinLocalStandardRadius: false, isWithinFourHourRadius: false,
+      allItemsQuickCommerce: qcCart, panIndiaEligible: panCart, crossesLocal: false,
       reasonPan: '', reasonFourHour: ''
     };
-    function four(state, reason) { s.fourHour = { state: state, price: price4 }; s.reasonFourHour = reason; }
+    // Within the configured 4-hour radius -> 'yes' (when QC) / 'no' (when not QC); the admin
+    // toggle (fourHour.enabled) can force it off entirely.
+    function four(state, reason) { if (!fourOn) { state = 'no'; reason = '4 Hours disabled in config'; } s.fourHour = { state: state, price: price4 }; s.reasonFourHour = reason; }
+    function withinFour() { s.isWithinFourHourRadius = true; four(qcCart ? 'yes' : 'no', qcCart ? ('within the configured ' + fourMax + 'km 4-hour radius and all items Quick Commerce') : ('within the configured ' + fourMax + 'km 4-hour radius but cart is not all Quick Commerce')); }
 
     // ---- full address, no distance yet -> PENDING (never flash a wrong PAN India mode) ----
     if (ctx.isAddress && !hasDist) {
@@ -194,15 +204,15 @@
     // ---- 1) FULL ADDRESS with a confirmed driving distance (highest priority) ----
     if (ctx.isAddress && hasDist) {
       var km = ctx.distanceKm; s.basis = 'address';
-      if (km <= localR) {
-        s.mode = 'local'; s.isLocalWithin20 = true; s.standard = standardForKm(km);
-        s.reasonPan = 'address ' + round1(km) + 'km is within the ' + localR + 'km local radius -> NOT PAN India';
-        if (km <= fourR) { s.isQuickWithin10 = true; four(qcCart ? 'yes' : 'no', qcCart ? ('within ' + fourR + 'km and cart is Quick-Commerce eligible') : ('within ' + fourR + 'km but cart is not all Quick Commerce')); }
-        else { four('no', 'distance ' + round1(km) + 'km > ' + fourR + 'km -> 4 Hours not available'); }
+      if (km <= localMax) {
+        s.mode = 'local'; s.isWithinLocalStandardRadius = true; s.standard = standardForKm(km);
+        s.reasonPan = 'address ' + round1(km) + 'km is within the configured ' + localMax + 'km local‑standard radius -> NOT PAN India';
+        if (km <= fourMax) { withinFour(); }
+        else { four('no', 'distance ' + round1(km) + 'km > the configured ' + fourMax + 'km 4-hour radius -> 4 Hours not available'); }
       } else {
-        four('no', 'distance ' + round1(km) + 'km > ' + localR + 'km -> no local delivery, no 4 Hours');
-        if (panCart) { s.mode = 'pan_india'; s.panIndia = panIndiaForWeight(ctx.cartWeightGrams); s.reasonPan = 'address ' + round1(km) + 'km > ' + localR + 'km and all items PAN India eligible'; }
-        else { s.mode = 'block'; s.reasonPan = 'address > ' + localR + 'km but some items are local-only -> not deliverable'; }
+        four('no', 'distance ' + round1(km) + 'km > the configured ' + localMax + 'km local radius -> no local delivery, no 4 Hours');
+        if (panCart) { s.mode = 'pan_india'; s.panIndia = panIndiaForWeight(ctx.cartWeightGrams); s.reasonPan = 'address ' + round1(km) + 'km > ' + localMax + 'km and all items PAN India eligible'; }
+        else { s.mode = 'block'; s.reasonPan = 'address > ' + localMax + 'km but some items are local-only -> not deliverable'; }
       }
       return s;
     }
@@ -210,17 +220,17 @@
     // ---- 2) PINCODE-ONLY with a sampled area range ----
     if (!ctx.isAddress && ctx.areaRange && typeof ctx.areaRange.minKm === 'number') {
       var lo = ctx.areaRange.minKm, hi = ctx.areaRange.maxKm; s.basis = 'area';
-      if (lo <= localR) {
-        s.mode = 'local'; s.isLocalWithin20 = true; s.crossesLocal = hi > localR;
-        s.standard = standardForRange(lo, Math.min(hi, localR));
-        s.reasonPan = 'pincode area (' + round1(lo) + '–' + round1(hi) + 'km) overlaps the ' + localR + 'km local radius -> local, NOT PAN India';
-        if (hi <= fourR) { s.isQuickWithin10 = true; four(qcCart ? 'yes' : 'no', qcCart ? ('whole area within ' + fourR + 'km + QC cart') : ('whole area within ' + fourR + 'km but cart not all-QC')); }
-        else if (lo <= fourR) { four('maybe', 'area straddles ' + fourR + 'km -> enter full address to confirm 4 Hours'); }
-        else { four('no', 'whole sampled area beyond ' + fourR + 'km'); }
+      if (lo <= localMax) {
+        s.mode = 'local'; s.isWithinLocalStandardRadius = true; s.crossesLocal = hi > localMax;
+        s.standard = standardForRange(lo, Math.min(hi, localMax));
+        s.reasonPan = 'pincode area (' + round1(lo) + '–' + round1(hi) + 'km) overlaps the configured ' + localMax + 'km local radius -> local, NOT PAN India';
+        if (hi <= fourMax) { withinFour(); }
+        else if (lo <= fourMax) { four('maybe', 'sampled area straddles the configured ' + fourMax + 'km 4-hour radius -> enter full address to confirm 4 Hours'); }
+        else { four('no', 'whole sampled area beyond the configured ' + fourMax + 'km 4-hour radius'); }
       } else {
-        four('no', 'pincode area beyond ' + localR + 'km -> no local, no 4 Hours');
-        if (panCart) { s.mode = 'pan_india'; s.panIndia = panIndiaForWeight(ctx.cartWeightGrams); s.reasonPan = 'pincode area > ' + localR + 'km and all items PAN India'; }
-        else { s.mode = 'block'; s.reasonPan = 'pincode area > ' + localR + 'km but some items local-only'; }
+        four('no', 'pincode area beyond the configured ' + localMax + 'km local radius -> no local, no 4 Hours');
+        if (panCart) { s.mode = 'pan_india'; s.panIndia = panIndiaForWeight(ctx.cartWeightGrams); s.reasonPan = 'pincode area > ' + localMax + 'km and all items PAN India'; }
+        else { s.mode = 'block'; s.reasonPan = 'pincode area > ' + localMax + 'km but some items local-only'; }
       }
       return s;
     }
@@ -228,7 +238,7 @@
     // ---- 3) NO distance -> zone fallback (degraded; refined once a distance is known) ----
     s.basis = 'zone';
     if (ctx.zone === 'kolkata' || ctx.zone === 'quick_commerce') {
-      s.mode = 'local'; s.isLocalWithin20 = true; s.standard = fallbackRange();
+      s.mode = 'local'; s.isWithinLocalStandardRadius = true; s.standard = fallbackRange();
       four((ctx.zone === 'quick_commerce' && qcCart) ? 'yes' : 'no', ctx.zone === 'quick_commerce' ? (qcCart ? 'quick-commerce zone + QC cart (no distance yet)' : 'quick-commerce zone but cart not all-QC') : 'local (non quick-commerce) zone, no distance yet');
       s.reasonPan = 'local zone (' + ctx.zone + '), no distance yet -> local fallback span';
     } else if (ctx.zone === 'pan_india') {

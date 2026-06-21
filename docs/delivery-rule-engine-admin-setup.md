@@ -571,22 +571,26 @@ No change to **ShipZip rate logic, the `4HR`/`STD` service codes, checkout‑rat
 
 **Fix — one DISTANCE‑FIRST decision (`GanguramShippingEstimate.resolveDeliveryState`).** The route distance decides the mode, NOT the zone and NOT a product's PAN India tag. The popup **and** the cart both render from this single state, so they can never disagree. It returns exactly ONE consistent mode set:
 
+**Both radii are admin‑configurable** (Phase 2.12E): `localStandardMaxDistanceKm` = the dearest standard slab's `maxKm` (currently **20**); `fourHourMaxDistanceKm` = `GanguramEstimateConfig.fourHour.maxDistanceKm` (currently **10**, change to e.g. **20**). 4 Hours is **not** hard‑coded to 10 km. There is also `fourHour.enabled` to turn 4 Hours off entirely.
+
 | Input | Mode |
 | --- | --- |
-| Full address, **distance ≤ 10 km** | Local **Standard** (slab) · **4 Hours ₹10** only if cart is QC‑eligible · no PAN India |
-| Full address, **10–20 km** | Local **Standard** (slab) · **no 4 Hours** · no PAN India |
-| Full address, **> 20 km** | **No** local / 4 Hours · **PAN India** (by weight) only if all items PAN India, else **blocked** |
-| Pincode area within/overlapping 20 km | Local Standard range · 4 Hours `yes`/`maybe`(*“enter full address to confirm”*)/`no` by the 10 km crossing · no PAN India |
-| Pincode area clearly > 20 km | PAN India (by weight) only if all items PAN India |
+| Full address, **≤ `fourHourMaxDistanceKm`** | Local **Standard** (slab) · **4 Hours `flatPrice`** only if cart is QC‑eligible · no PAN India |
+| Full address, **> `fourHourMaxDistanceKm` and ≤ `localStandardMaxDistanceKm`** | Local **Standard** (slab) · **no 4 Hours** · no PAN India |
+| Full address, **> `localStandardMaxDistanceKm`** | **No** local / 4 Hours · **PAN India** (by weight) only if all items PAN India, else **blocked** |
+| Pincode area within/overlapping `localStandardMaxDistanceKm` | Local Standard range · 4 Hours `yes`/`maybe`(*“enter full address to confirm”*)/`no` by the `fourHourMaxDistanceKm` crossing · no PAN India |
+| Pincode area clearly > `localStandardMaxDistanceKm` | PAN India (by weight) only if all items PAN India |
 | Full address selected, distance not computed yet | **pending** (no mode flash) |
 
-**Local slabs (exact route km):** 0–5 ₹50 · 5.01–10 ₹70 · 10.01–15 ₹100 · 15.01–20 ₹150. 4 Hours: max 10 km, flat ₹10. **Eco Park ≈ 15.2 km → Standard ₹150, no 4 Hours, no PAN India.**
+**Local slabs (exact route km):** 0–5 ₹50 · 5.01–10 ₹70 · 10.01–15 ₹100 · 15.01–20 ₹150. 4 Hours: flat ₹10 within the **configured** radius.
+- With `fourHourMaxDistanceKm = 10`: **Eco Park ≈ 15.2 km → Standard ₹150, no 4 Hours, no PAN India.**
+- With `fourHourMaxDistanceKm = 20`: **Eco Park ≈ 15.2 km → Standard ₹150, 4 Hours ₹10 if all items Quick Commerce, no PAN India** (ShipZip + time‑window rules still gate the real checkout offer).
 
 **Product tags vs zone (don't force PAN India).** A PAN India product to a **local** address still uses local Standard / 4 Hours by distance — the PAN India tag never forces PAN India mode. A local‑only product **outside** the local radius is blocked (no PAN India estimate). Eligibility (the unavailable‑items modal) is unchanged.
 
 **Stale state.** The mode is recomputed from live inputs every render (no mode/PAN cache); the distance module clears its confirmed/approx distance on every location change; a selected full address uses its driving distance, never a leftover pincode‑only PAN India cache. The area‑distance cache key is pincode + origin + config version.
 
-**Diagnostics.** `window.GanguramDeliveryEstimate.debugState()` → selected pincode, selected address + lat/lng, route distance km, standard slab, `isLocalWithin20`, `isQuickWithin10`, `panIndiaEligible`, **finalMode**, **reasonPanIndia**, **reasonFourHour**, and the cache key. No production console noise.
+**Diagnostics.** `window.GanguramDeliveryEstimate.debugState()` → selected pincode, selected address + lat/lng, **selectedDistanceKm**, standard slab, **`localStandardMaxDistanceKm`**, **`fourHourMaxDistanceKm`**, **`fourHourEnabled`**, **`isWithinLocalStandardRadius`**, **`isWithinFourHourRadius`**, **`allItemsQuickCommerce`**, `panIndiaEligible`, **finalMode**, **reasonPanIndia**, **reasonFourHour**, and the cache key. No production console noise.
 
 ### Confirmation — no rate/ShipZip/eligibility change (2.12D)
 This is a delivery‑state **calculation + rendering** correctness fix. No change to **ShipZip rates, the `4HR`/`STD` service codes, checkout‑rate logic, the date‑picker attributes, product visibility, MOV, or the unavailable‑items modal logic.** ShipZip remains the final checkout rate. Theme variables only. `settings_data.json` untouched.

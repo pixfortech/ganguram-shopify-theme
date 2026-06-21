@@ -21,8 +21,11 @@
       { maxKm: 15, price: 100 },
       { maxKm: 20, price: 150 }
     ],
-    // 4-hour (quick-commerce) flat price + serviceable driving radius (km).
-    fourHour: { maxDistanceKm: 10, flatPrice: 10 },
+    // 4-hour (quick-commerce) — admin-configurable. enabled toggles it; maxDistanceKm is the
+    // serviceable driving radius (change to e.g. 20 to allow 4-hour up to 20 km); flatPrice ₹.
+    // A full address within maxDistanceKm shows 4 Hours only when ALL cart items are Quick
+    // Commerce. ShipZip + time-window rules still gate the actual checkout offer.
+    fourHour: { enabled: true, maxDistanceKm: 10, flatPrice: 10 },
     // PAN India weight estimate: pricePerUnit per perWeightG grams (₹80 per 500 g).
     panIndia: { perWeightG: 500, pricePerUnit: 80 },
     currencySymbol: "₹",
