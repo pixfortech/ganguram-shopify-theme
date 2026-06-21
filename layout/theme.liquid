@@ -556,6 +556,9 @@
   {%- comment -%} Cart eligibility enforcement on pincode change (Phase 2.7A) — reuses the zone eligibility rule; removes ineligible cart lines via the Ajax cart API and shows a message. No checkout/MOV/date-slot/shipping-rate/payment/ShipZip/SBZ/zipLogic logic. {%- endcomment -%}
   {%- render 'ganguram-cart-eligibility-config' -%}
 
+  {%- comment -%} Custom Sweets Box cart grouping (Phase 2.12A) — brackets box lines (shared _ganguram_box_id) into one group card (header + slot badges + box total + remove-box) in the cart drawer/page. Display + safe grouped-remove only; Shopify owns prices. No ShipZip/resolver/MOV/date-picker change. {%- endcomment -%}
+  {%- render 'ganguram-box-cart-group-config' -%}
+
   {%- comment -%} Empty collection warning + homepage redirect (Phase 2.7C) — collection pages only; reuses the product-zone filter output + GanguramZone. Display only; no checkout/shipping/ShipZip logic. {%- endcomment -%}
   {%- render 'ganguram-empty-collection-warning-config' -%}
 

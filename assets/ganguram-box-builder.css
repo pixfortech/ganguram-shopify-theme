@@ -1,0 +1,104 @@
+/*
+ * Ganguram — Custom Sweets Box Builder + cart grouping (Phase 2.12A).
+ * Mobile-first. NO HARDCODED COLOURS — Krown Local theme design tokens only:
+ * --color-background-main, --color-text-main, --color-borders-main,
+ * --color-secondary-text-main, --color-accent-main, --color-foreground-accent-main.
+ */
+.ganguram-box-builder-section { margin: 0 0 1.5rem; }
+.ganguram-box-builder-section__heading { margin: 0 0 0.25rem; }
+.ganguram-box-builder-section__sub { margin: 0 0 1rem; color: var(--color-secondary-text-main); }
+
+.ganguram-box-builder {
+  border: 1px solid var(--color-borders-main);
+  border-radius: 12px;
+  padding: 1rem;
+  color: var(--color-text-main);
+}
+
+/* column selector */
+.ganguram-box__columns { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 0 0 1rem; }
+.ganguram-box__columns-label { width: 100%; font-weight: 600; margin-bottom: 0.1rem; }
+.ganguram-box__col-btn {
+  min-width: 3rem; padding: 0.45rem 0.9rem;
+  border: 1px solid var(--color-borders-main); border-radius: 999px;
+  background: var(--color-background-main); color: var(--color-text-main);
+  font: inherit; font-weight: 600; cursor: pointer;
+}
+.ganguram-box__col-btn.is-selected {
+  background: var(--color-accent-main); color: var(--color-foreground-accent-main); border-color: transparent;
+}
+
+/* slot cards */
+.ganguram-box__slots { display: flex; flex-direction: column; gap: 0.6rem; }
+.ganguram-box__slot {
+  display: grid; grid-template-columns: 1fr auto; grid-template-areas: "label price" "select select";
+  gap: 0.25rem 0.6rem; align-items: center;
+  border: 1px solid var(--color-borders-main); border-radius: 10px; padding: 0.6rem 0.7rem;
+}
+.ganguram-box__slot.is-filled { border-color: var(--color-accent-main); }
+.ganguram-box__slot-label { grid-area: label; font-weight: 600; }
+.ganguram-box__slot-price { grid-area: price; font-weight: 600; color: var(--color-secondary-text-main); }
+.ganguram-box__select {
+  grid-area: select; width: 100%;
+  padding: 0.45rem 1.7rem 0.45rem 0.6rem;
+  border: 1px solid var(--color-borders-main); border-radius: 8px;
+  background-color: var(--color-background-main); color: var(--color-text-main); font: inherit; line-height: 1.4;
+  appearance: none; -webkit-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 0.95rem) 55%, calc(100% - 0.62rem) 55%;
+  background-size: 0.34rem 0.34rem, 0.34rem 0.34rem; background-repeat: no-repeat;
+}
+.ganguram-box__select option { color: var(--color-text-main); background-color: var(--color-background-main); }
+
+/* fill remaining */
+.ganguram-box__fill { display: inline-flex; align-items: center; gap: 0.45rem; margin: 0.8rem 0 0; cursor: pointer; font-weight: 600; }
+.ganguram-box__fill[hidden] { display: none; }
+.ganguram-box__fill input { accent-color: var(--color-accent-main); margin: 0; }
+
+/* message */
+.ganguram-box__message { margin: 0.7rem 0 0; color: var(--color-secondary-text-main); font-weight: 600; }
+.ganguram-box__message[hidden] { display: none; }
+
+/* footer: total + add */
+.ganguram-box__footer {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem;
+  margin: 1rem 0 0; padding-top: 0.8rem; border-top: 1px solid var(--color-borders-main);
+}
+.ganguram-box__total { font-size: 1.05rem; }
+.ganguram-box__total-label { color: var(--color-secondary-text-main); margin-inline-end: 0.35rem; }
+.ganguram-box__total-value { font-weight: 700; }
+.ganguram-box__add { flex: 1 1 12rem; }
+.ganguram-box__add[disabled], .ganguram-box__add[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+
+@media (min-width: 600px) {
+  .ganguram-box__slot { grid-template-columns: auto 1fr auto; grid-template-areas: "label select price"; }
+}
+
+/* ---- cart grouping (drawer + page) ---- */
+.ganguram-box-group__header {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem;
+  margin: 0.6rem 0 0.2rem; padding: 0.4rem 0.1rem 0.2rem;
+  border-top: 1px solid var(--color-borders-main);
+}
+.ganguram-box-group__name { font-weight: 700; }
+.ganguram-box-group__cols { font-size: 0.85em; color: var(--color-secondary-text-main); }
+.ganguram-box-group__line { border-inline-start: 2px solid var(--color-borders-main); padding-inline-start: 0.5rem; }
+.ganguram-box-group__slot {
+  display: inline-block; margin: 0 0 0.15rem; padding: 0.02rem 0.45rem;
+  border: 1px solid var(--color-borders-main); border-radius: 999px;
+  font-size: 0.72em; font-weight: 600; color: var(--color-secondary-text-main);
+}
+.ganguram-box-group__footer {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem;
+  margin: 0.2rem 0 0.6rem; padding: 0.4rem 0.1rem 0.6rem;
+  border-bottom: 1px solid var(--color-borders-main);
+}
+.ganguram-box-group__total { font-weight: 700; }
+.ganguram-box-group__remove {
+  padding: 0.25rem 0.7rem; font: inherit; font-size: 0.85em; font-weight: 600;
+  background: transparent; color: var(--color-text-main);
+  border: 1px solid var(--color-borders-main); border-radius: 8px; cursor: pointer;
+}
+.ganguram-box-group__remove:hover { border-color: var(--color-accent-main); color: var(--color-accent-main); }
