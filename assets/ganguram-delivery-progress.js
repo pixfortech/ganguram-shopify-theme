@@ -61,6 +61,14 @@
       bdChargeLabel: 'Delivery charge:',
       fourHourIneligible: '4-hour delivery is not available because the following item(s) are not eligible for quick delivery: __ITEMS__',
       itemsNotDeliverable: 'Some items in your cart can’t be delivered to __LABEL__. Please remove them or change your delivery pincode to continue.',
+      // Phase 2.11J — compact cart-panel shipping estimate
+      estimateStandard: 'Standard shipping estimate: __RANGE__',
+      estimateFourHour: '4 Hours: __AMOUNT__',
+      estimatePan: 'PAN India shipping estimate: __AMOUNT__',
+      estimatePanFrom: 'PAN India shipping starts from __AMOUNT__ per __UNIT__',
+      weightLabel: 'Total weight:',
+      panRateLabel: 'Rate:',
+      panRateValue: '__AMOUNT__ per __UNIT__',
       cartValueLabel: 'Cart value:',
       addMore: 'Add __REMAINING__ more to continue',
       minReached: 'Minimum order reached',
@@ -173,6 +181,45 @@
       }
     }
     return names;
+  }
+
+  // Total Shopify cart weight in GRAMS (data-gdpr-cart-weight, from cart.total_weight).
+  function cartWeightGrams() {
+    var els = document.querySelectorAll('[data-gdpr-cart-weight]');
+    for (var i = 0; i < els.length; i++) { var v = parseInt(els[i].getAttribute('data-gdpr-cart-weight'), 10); if (isFinite(v) && v >= 0) { return v; } }
+    return null;
+  }
+  // Compact customer-facing ESTIMATE for the cart panel (Part C, 2.11J). Local -> Standard
+  // slab estimate (+ "4 Hours: ₹10" when eligible); PAN India -> ₹80-per-500g weight
+  // estimate. Reuses the shared, config-driven GanguramShippingEstimate + the cached
+  // pincode-area range (same numbers as the popup). Display/advisory only — ShipZip is final.
+  function computeCartEstimate(location, fourHourAvailable) {
+    var se = window.GanguramShippingEstimate;
+    if (!se || !location || location.isServiceable !== true) { return null; }
+    var isLocal = !!(location.isKolkata === true || location.zone === 'kolkata' || location.zone === 'quick_commerce');
+    var isPan = !!(location.isPanIndia === true || location.zone === 'pan_india');
+    if (isPan && typeof se.panIndiaForWeight === 'function') {
+      var grams = cartWeightGrams();
+      var pi = se.panIndiaForWeight(grams), unit = pi.perWeightG + 'g';
+      return { type: 'pan', panIndia: pi, weightGrams: grams,
+        text: pi.available ? tmpl(copy('estimatePan'), { amount: se.money(pi.price) })
+          : tmpl(copy('estimatePanFrom'), { amount: se.money(pi.fromPrice), unit: unit }) };
+    }
+    if (isLocal && typeof se.standardForRange === 'function') {
+      var gd = window.GanguramDistance;
+      var range = (gd && typeof gd.getAreaRangeForPincode === 'function') ? gd.getAreaRangeForPincode(location.pincode) : null;
+      var std, fallback = false;
+      if (range) { std = se.standardForRange(range.minKm, range.maxKm); }
+      else {
+        std = (typeof se.fallbackRange === 'function') ? se.fallbackRange() : null; fallback = true;
+        if (gd && typeof gd.computeAreaRangeForPincode === 'function') { try { gd.computeAreaRangeForPincode(location.pincode); } catch (e) {} }
+      }
+      if (!std) { return null; }
+      var txt = tmpl(copy('estimateStandard'), { range: se.formatRange(std.minPrice, std.maxPrice) + (std.beyond ? '+' : '') });
+      if (fourHourAvailable) { txt += ' · ' + tmpl(copy('estimateFourHour'), { amount: se.money(se.config().fourHour.flatPrice) }); }
+      return { type: 'local', standard: std, fallback: fallback, range: range, text: txt };
+    }
+    return null;
   }
 
   // ---- one shared computation (so panel + notice + guard never disagree) ----
@@ -307,7 +354,8 @@
       distanceKm: confirmed ? dist.distanceKm : null,
       fourHourAvailable: fourHourAvailable,
       fourHourBlockedItems: blockedItems,
-      fourHourReason: fourHourReason
+      fourHourReason: fourHourReason,
+      estimate: computeCartEstimate(location, fourHourAvailable)   // Part C (2.11J)
     };
     dbg('state', {
       pincode: location.pincode, confirmed: confirmed, distanceKmPassed: distOpts.distanceKm,
@@ -368,11 +416,23 @@
     var body = panel.querySelector('[data-gdpr-breakdown-body]');
     var titleEl = panel.querySelector('[data-gdpr-breakdown-title]');
     var opts = st.serviceOptions || [];
-    var hasData = (st.mov != null) || opts.length || (st.deliveryCharge != null);
+    var hasData = (st.mov != null) || opts.length || (st.deliveryCharge != null) || st.estimate;
     if (!body || !hasData) { hide(det); return; }
     if (titleEl) { setText(titleEl, copy('breakdownTitle')); }
     body.textContent = '';
     body.appendChild(bdRow(copy('cartValueLabel'), fmtMoney(st.subtotal)));
+    // Phase 2.11J — estimate detail: PAN India weight + ₹/unit, or the local slab range.
+    if (st.estimate && window.GanguramShippingEstimate) {
+      var se2 = window.GanguramShippingEstimate;
+      if (st.estimate.type === 'pan') {
+        if (st.estimate.weightGrams != null) { body.appendChild(bdRow(copy('weightLabel'), st.estimate.weightGrams + ' g')); }
+        var pi2 = st.estimate.panIndia;
+        body.appendChild(bdRow(copy('panRateLabel'), tmpl(copy('panRateValue'), { amount: se2.money(pi2.fromPrice), unit: pi2.perWeightG + 'g' })));
+      } else if (st.estimate.type === 'local' && st.estimate.standard) {
+        var std2 = st.estimate.standard;
+        body.appendChild(bdRow(copy('standardLabel'), se2.formatRange(std2.minPrice, std2.maxPrice) + (std2.beyond ? '+' : '')));
+      }
+    }
     if (st.displayLabel) {
       body.appendChild(bdRow(copy('bdZoneLabel'), st.displayLabel + (st.zoneFriendly ? ' (' + st.zoneFriendly + ')' : '')));
     }
@@ -413,10 +473,14 @@
     var chips = [];
     if (hasFour) { chips.push({ text: copy('chipFourHour'), accent: true }); }
     chips.push({ text: hasFour ? copy('chipStandardAlso') : copy('chipStandard'), accent: false });
-    var ch = st.deliveryCharge; // one concise charge chip, only if useful
-    if (st.freeDeliveryMet || ch === 0) { chips.push({ text: copy('chipFree'), accent: false }); }
-    else if (ch == null) { chips.push({ text: copy('chipChargeAtCheckout'), accent: false }); }
-    else { chips.push({ text: tmpl(copy('chipDelivery'), { amount: fmtMoney(ch) }), accent: false }); }
+    // One concise charge chip — ONLY when there is no estimate line (2.11J). When the
+    // estimate line carries the price, this generic chip would be redundant, so skip it.
+    if (!st.estimate) {
+      var ch = st.deliveryCharge;
+      if (st.freeDeliveryMet || ch === 0) { chips.push({ text: copy('chipFree'), accent: false }); }
+      else if (ch == null) { chips.push({ text: copy('chipChargeAtCheckout'), accent: false }); }
+      else { chips.push({ text: tmpl(copy('chipDelivery'), { amount: fmtMoney(ch) }), accent: false }); }
+    }
     if (!chips.length) { hide(modesEl); return; }
     for (i = 0; i < chips.length; i++) {
       var c = document.createElement('span');
@@ -432,6 +496,7 @@
     try {
       var promptEl = panel.querySelector('[data-gdpr-prompt]');
       var statusEl = panel.querySelector('[data-gdpr-status]');
+      var estEl = panel.querySelector('[data-gdpr-estimate]');
       var modesEl = panel.querySelector('[data-gdpr-modes]');
       var movSumEl = panel.querySelector('[data-gdpr-mov-summary]');
       var barEl = panel.querySelector('[data-gdpr-bar]');
@@ -442,7 +507,7 @@
 
       // ---- prompt state: no pincode / not serviceable (never blocks checkout) ----
       if (st.promptCode) {
-        hide(statusEl); hide(modesEl); hide(movSumEl); hide(barEl); hide(msgEl); hide(fhEl); if (detEl) { hide(detEl); }
+        hide(statusEl); hide(estEl); hide(modesEl); hide(movSumEl); hide(barEl); hide(msgEl); hide(fhEl); if (detEl) { hide(detEl); }
         var pText = msg(st.promptCode) || (st.promptCode === 'NOT_SERVICEABLE'
           ? 'Sorry, we currently do not deliver to this pincode.'
           : 'Please enter your delivery pincode to check delivery availability.');
@@ -456,7 +521,7 @@
       // ---- not-deliverable state: cart holds item(s) invalid for this zone (2.11H) ----
       // Show a clear message instead of any delivery-mode / charge info; checkout is blocked.
       if (st.hasInvalid) {
-        hide(statusEl); hide(modesEl); hide(movSumEl); hide(barEl); hide(msgEl); hide(fhEl); if (detEl) { hide(detEl); }
+        hide(statusEl); hide(estEl); hide(modesEl); hide(movSumEl); hide(barEl); hide(msgEl); hide(fhEl); if (detEl) { hide(detEl); }
         var iText = msg('ITEMS_NOT_DELIVERABLE', { label: st.displayLabel }) ||
           tmpl(copy('itemsNotDeliverable'), { label: st.displayLabel || 'the selected pincode' });
         if (promptEl) { setText(promptEl, iText); show(promptEl); }
@@ -469,6 +534,13 @@
 
       // ---- status (de-emphasised; the pincode/zone live in the accordion) ----
       if (statusEl) { setText(statusEl, copy('statusAvailable')); show(statusEl); }
+
+      // ---- compact shipping ESTIMATE line (Part C, 2.11J): Standard slab (+ 4 Hours)
+      //      for local, or the PAN India weight estimate. Charge detail in the accordion. ----
+      if (estEl) {
+        if (st.estimate && st.estimate.text) { setText(estEl, st.estimate.text); show(estEl); }
+        else { setText(estEl, ''); hide(estEl); }
+      }
 
       // ---- compact delivery-mode chips ----
       renderModes(panel, st);

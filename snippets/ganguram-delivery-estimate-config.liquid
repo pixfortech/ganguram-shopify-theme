@@ -49,7 +49,15 @@
       distanceRangeLabel: {{ 'Approx. distance:' | json }},
       slabRangeLabel: {{ 'Standard slab:' | json }},
       fourHourDetailLabel: {{ '4 Hours:' | json }},
-      finalAtCheckout: {{ 'Final charge confirmed at checkout.' | json }}
+      finalAtCheckout: {{ 'Final charge confirmed at checkout.' | json }},
+      {%- comment -%} Phase 2.11J — PAN India weight estimate (__PRICE__ / __UNIT__ replaced in JS). {%- endcomment -%}
+      panIndiaEstimateLabel: {{ 'PAN India shipping estimate:' | json }},
+      panIndiaFrom: {{ 'PAN India shipping starts from __PRICE__ per __UNIT__.' | json }},
+      panIndiaBasedOn: {{ 'Based on cart weight. Final charge confirmed at checkout.' | json }},
+      weightLabel: {{ 'Total weight:' | json }},
+      panIndiaRateLabel: {{ 'Rate:' | json }},
+      panIndiaRateValue: {{ '__PRICE__ per __UNIT__' | json }},
+      estimateTypePan: {{ 'PAN India weight' | json }}
     }
   };
 </script>

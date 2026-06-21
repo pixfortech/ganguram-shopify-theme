@@ -533,6 +533,24 @@ The pincode‑area distance range is cached in `localStorage` keyed by **pincode
 ### Confirmation — ShipZip stays the final rate
 No change to **ShipZip rate logic, the `4HR`/`STD` service codes, checkout‑rate logic, pincode‑eligibility, product visibility, MOV, or the date‑picker attribute names.** Theme variables only (no hardcoded colours). `settings_data.json` untouched.
 
+## 12. PAN India weight estimate + cart‑panel estimate (Phase 2.11J)
+
+### PAN India weight‑based estimate (Part B)
+For a **PAN India** pincode the popup + cart panel show a **weight‑based** estimate instead of "final at checkout":
+`estimate = ceil(total_cart_weight_grams / 500) × 80` → **₹80 per 500 g** (e.g. 400 g → ₹80, 501 g → ₹160, 1200 g → ₹240). It uses **only the Shopify cart weight** (`cart.total_weight`, exposed as `data-gdpr-cart-weight`) — it never parses weight from a product title. With **no usable weight** it shows *"PAN India shipping starts from ₹80 per 500 g."* Copy: *"PAN India shipping estimate: ₹X"* · *"Based on cart weight. Final charge confirmed at checkout."* Config: `GanguramEstimateConfig.panIndia = { perWeightG: 500, pricePerUnit: 80 }` (pure mapping `GanguramShippingEstimate.panIndiaForWeight`).
+
+### Cart delivery panel (Part C)
+The cart panel stays compact and shows ONE **estimate line** (`[data-gdpr-estimate]`): **local** → *"Standard shipping estimate: ₹X[–₹Y]"* (+ *" · 4 Hours: ₹10"* when the zone + cart make it eligible); **PAN India** → *"PAN India shipping estimate: ₹X"*. When the estimate line is shown the redundant generic charge chip is hidden (no double charge), the mode‑availability chips stay, and the **detail** (distance/slab for local; total weight + ₹/unit for PAN India) lives in the existing "Delivery details" accordion. The panel reuses the SAME `GanguramShippingEstimate` + cached pincode‑area range as the popup, so the two never disagree.
+
+### Local stabilisation (Part A)
+Distances use the **Routes API** (§11/2.11I.1); a Routes failure for a known local pincode shows the configured **fallback slab span** (e.g. *₹50–₹150*), never a bare "final at checkout". A **failed/null** area lookup is **not cached**, so a later render re‑tries and can still succeed; **successful** ranges are cached by **pincode + origin + config version** (TTL).
+
+### Diagnostics (Part D)
+Dev‑only, never customer‑facing, no production console noise (all traces are behind the `?ganguram_debug=1` / `localStorage['ganguram.debug']='1'` gate). Inspect in the console: `window.GanguramDeliveryEstimate.debugState()` → pincode, estimate type (pincode area / selected address / PAN India weight), min/max km, slab range, 4‑hour state, PAN India weight, cache hit, and the distance module's last Routes reason. `window.GanguramDistance.debugState()` remains for the raw distance state.
+
+### Confirmation — ShipZip stays the final rate (2.11J)
+No change to **ShipZip rate logic, the `4HR`/`STD` service codes, checkout‑rate logic, product‑eligibility, pincode‑visibility, MOV, the date‑picker attributes, or the unavailable‑items modal logic.** ShipZip remains the final checkout rate. Theme variables only (no hardcoded colours). `settings_data.json` untouched.
+
 ---
 
 ### Related docs
