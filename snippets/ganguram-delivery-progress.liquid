@@ -16,9 +16,10 @@
   Accepts: context = 'drawer' (compact) | 'page' (detailed).
 {%- endcomment -%}
 {%- assign gdpr_context = context | default: 'drawer' -%}
-<div class="ganguram-delivery-progress ganguram-delivery-progress--{{ gdpr_context }}" data-ganguram-delivery-progress data-gdpr-cart-total="{{ cart.total_price }}" data-gdpr-context="{{ gdpr_context }}" hidden>
+<div class="ganguram-delivery-progress ganguram-delivery-progress--{{ gdpr_context }}" data-ganguram-delivery-progress data-gdpr-cart-total="{{ cart.total_price }}" data-gdpr-cart-weight="{{ cart.total_weight }}" data-gdpr-context="{{ gdpr_context }}" hidden>
   <p class="ganguram-delivery-progress__prompt" data-gdpr-prompt role="status" hidden></p>
   <p class="ganguram-delivery-progress__status" data-gdpr-status hidden></p>
+  <p class="ganguram-delivery-progress__estimate" data-gdpr-estimate role="status" hidden></p>
   <div class="ganguram-delivery-progress__modes" data-gdpr-modes hidden></div>
   <p class="ganguram-delivery-progress__mov-summary" data-gdpr-mov-summary hidden></p>
   <div class="ganguram-delivery-progress__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" data-gdpr-bar hidden>

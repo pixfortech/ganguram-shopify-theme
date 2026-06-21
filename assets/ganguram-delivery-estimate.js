@@ -55,10 +55,18 @@
       estimateTypeLabel: 'Estimate type:',
       estimateTypeArea: 'Pincode area',
       estimateTypeAddress: 'Selected address',
+      estimateTypePan: 'PAN India weight',
       distanceRangeLabel: 'Approx. distance:',
       slabRangeLabel: 'Standard slab:',
       fourHourDetailLabel: '4 Hours:',
-      finalAtCheckout: 'Final charge confirmed at checkout.'
+      finalAtCheckout: 'Final charge confirmed at checkout.',
+      // Phase 2.11J — PAN India weight estimate
+      panIndiaEstimateLabel: 'PAN India shipping estimate:',
+      panIndiaFrom: 'PAN India shipping starts from __PRICE__ per __UNIT__.',
+      panIndiaBasedOn: 'Based on cart weight. Final charge confirmed at checkout.',
+      weightLabel: 'Total weight:',
+      panIndiaRateLabel: 'Rate:',
+      panIndiaRateValue: '__PRICE__ per __UNIT__'
     };
     return (c[key] != null) ? String(c[key]) : d[key];
   }
@@ -84,6 +92,13 @@
   function cartTotalPaise() {
     var els = document.querySelectorAll('[data-gdpr-cart-total]');
     for (var i = 0; i < els.length; i++) { var v = parseInt(els[i].getAttribute('data-gdpr-cart-total'), 10); if (isFinite(v) && v >= 0) { return v; } }
+    return null;
+  }
+  // Total Shopify cart weight in GRAMS (data-gdpr-cart-weight, from cart.total_weight).
+  // null when no cart surface is present (empty cart) -> PAN India "starts from" wording.
+  function cartWeightGrams() {
+    var els = document.querySelectorAll('[data-gdpr-cart-weight]');
+    for (var i = 0; i < els.length; i++) { var v = parseInt(els[i].getAttribute('data-gdpr-cart-weight'), 10); if (isFinite(v) && v >= 0) { return v; } }
     return null;
   }
   // Cart four-hour eligibility from the cart-line DOM; with NO cart we show the
@@ -149,6 +164,7 @@
     // mapping comes from GanguramShippingEstimate (config-driven). ESTIMATE / display only.
     var se = window.GanguramShippingEstimate;
     var isLocal = !!(loc.isKolkata === true || loc.zone === 'kolkata' || loc.zone === 'quick_commerce');
+    var isPanIndia = !!(loc.isPanIndia === true || loc.zone === 'pan_india');
     var estimate = null;
     if (se && isLocal) {
       if (isAddress && conf.confirmed) {
@@ -167,6 +183,10 @@
           if (d && typeof d.computeAreaRangeForPincode === 'function') { try { d.computeAreaRangeForPincode(loc.pincode); } catch (e) {} }
         }
       }
+    } else if (se && isPanIndia && typeof se.panIndiaForWeight === 'function') {
+      // PAN India (Part B): weight-based estimate from the Shopify cart weight (grams).
+      var grams = cartWeightGrams();
+      estimate = { basis: 'pan_weight', weightGrams: grams, panIndia: se.panIndiaForWeight(grams) };
     }
 
     return {
@@ -174,6 +194,7 @@
       pincode: loc.pincode,
       isAddress: isAddress,
       isLocal: isLocal,
+      isPanIndia: isPanIndia,
       estimate: estimate,
       distanceKm: distanceKm, approximate: distanceApprox,
       hasRule: hasRule,
@@ -209,19 +230,33 @@
     body.textContent = '';
     var se = window.GanguramShippingEstimate;
     var est = st.estimate, standardShown = false, fourShown = false;
+    var isPan = !!(est && est.basis === 'pan_weight');
 
     var status = document.createElement('p'); status.className = 'ganguram-delivery-estimate__status'; status.textContent = copy('statusAvailable'); body.appendChild(status);
     if (st.label) { body.appendChild(row(copy('locationLabel'), st.label)); }
 
+    // --- PAN India weight estimate (Part B) ---
+    if (isPan && se) {
+      var pi = est.panIndia, unit = pi.perWeightG + 'g';
+      if (pi.available) {
+        body.appendChild(strong(copy('panIndiaEstimateLabel') + ' ' + se.money(pi.price)));
+        body.appendChild(noteEl(copy('panIndiaBasedOn')));
+      } else {
+        body.appendChild(strong(tmpl(copy('panIndiaFrom'), { price: se.money(pi.fromPrice), unit: unit })));
+        body.appendChild(noteEl(copy('finalAtCheckout')));
+      }
+      standardShown = true;
+    }
+
     // --- prominent Standard estimate (local zone with a computed distance) ---
-    if (est && est.standard && se) {
+    if (!isPan && est && est.standard && se) {
       var rangeText = se.formatRange(est.standard.minPrice, est.standard.maxPrice) + (est.standard.beyond ? '+' : '');
       body.appendChild(strong(copy('standardEstimateLabel') + ' ' + rangeText));
       standardShown = true;
     }
 
     // --- 4-hour line (only when the zone + cart make it eligible) ---
-    if (st.fourHourAvailable) {
+    if (!isPan && st.fourHourAvailable) {
       if (est && est.four) {
         if (est.four.state === 'yes') { body.appendChild(strong(tmpl(copy('fourHourFlat'), { price: se.money(est.four.price) }))); fourShown = true; }
         else if (est.four.state === 'maybe') { body.appendChild(noteEl(copy('fourHourMaybe'))); fourShown = true; }
@@ -244,10 +279,12 @@
       if (st.fourHourAvailable && !st.hasFourOpt && !fourShown) { body.appendChild(row(copy('fourHourLabel'), copy('chargeAtCheckout'))); }
     }
 
-    // --- based-on note ---
-    if (est && est.basis === 'area') { body.appendChild(noteEl(tmpl(copy('basedOnArea'), { pincode: st.pincode }))); }
-    else if (est && est.basis === 'address') { body.appendChild(noteEl(copy('basedOnAddressEstimate'))); }
-    else { body.appendChild(noteEl(st.isAddress ? copy('basedOnAddress') : copy('basedOnPincode'))); }
+    // --- based-on note (local estimate bases; PAN India already noted its own line) ---
+    if (!isPan) {
+      if (est && est.basis === 'area') { body.appendChild(noteEl(tmpl(copy('basedOnArea'), { pincode: st.pincode }))); }
+      else if (est && est.basis === 'address') { body.appendChild(noteEl(copy('basedOnAddressEstimate'))); }
+      else { body.appendChild(noteEl(st.isAddress ? copy('basedOnAddress') : copy('basedOnPincode'))); }
+    }
 
     // --- "Delivery details" accordion (keeps the main card compact) ---
     if (est || st.mov != null || st.cartTotal != null) {
@@ -255,7 +292,12 @@
       var sum = document.createElement('summary'); sum.className = 'ganguram-delivery-estimate__details-summary'; sum.textContent = copy('detailsTitle'); det.appendChild(sum);
       var dbody = document.createElement('div'); dbody.className = 'ganguram-delivery-estimate__details-body'; det.appendChild(dbody);
       if (st.pincode) { dbody.appendChild(row(copy('pincodeLabel'), st.pincode)); }
-      if (est) {
+      if (isPan && se) {
+        var dpi = est.panIndia, dunit = dpi.perWeightG + 'g';
+        dbody.appendChild(row(copy('estimateTypeLabel'), copy('estimateTypePan')));
+        if (est.weightGrams != null) { dbody.appendChild(row(copy('weightLabel'), est.weightGrams + ' g')); }
+        dbody.appendChild(row(copy('panIndiaRateLabel'), tmpl(copy('panIndiaRateValue'), { price: se.money(dpi.fromPrice), unit: dunit })));
+      } else if (est) {
         dbody.appendChild(row(copy('estimateTypeLabel'), est.basis === 'address' ? copy('estimateTypeAddress') : copy('estimateTypeArea')));
         if (est.minKm != null) { dbody.appendChild(row(copy('distanceRangeLabel'), fmtKmRange(est.minKm, est.maxKm))); }
         if (est.standard) { dbody.appendChild(row(copy('slabRangeLabel'), se.formatRange(est.standard.minPrice, est.standard.maxPrice) + (est.standard.beyond ? '+' : ''))); }
@@ -273,7 +315,7 @@
       body.appendChild(det);
     }
 
-    card.setAttribute('data-gde-basis', st.isAddress ? 'address' : 'pincode');
+    card.setAttribute('data-gde-basis', isPan ? 'pan' : (st.isAddress ? 'address' : 'pincode'));
     show(card);
   }
 
@@ -290,7 +332,29 @@
     window.addEventListener('ganguram:delivery-label-updated', render);
   }
 
-  window.GanguramDeliveryEstimate = { render: render, compute: compute };
+  // DEV-ONLY diagnostics (Part D) — never rendered to customers, no console noise. Inspect
+  // in the console: window.GanguramDeliveryEstimate.debugState(). Reports the pincode,
+  // estimate type, min/max km, slab range, 4-hour state, PAN India weight, and the distance
+  // module's last Routes reason (success/failure) + whether the area range was a cache hit.
+  function debugState() {
+    var st = compute();
+    var gd = window.GanguramDistance;
+    var dd = (gd && typeof gd.debugState === 'function') ? gd.debugState() : {};
+    if (!st) { return { active: false, distance: dd }; }
+    var est = st.estimate || {};
+    return {
+      active: true, pincode: st.pincode,
+      estimateType: est.basis || (st.isPanIndia ? 'pan_weight' : (st.isLocal ? 'local' : 'none')),
+      minKm: (est.minKm != null) ? est.minKm : null, maxKm: (est.maxKm != null) ? est.maxKm : null,
+      standard: est.standard || null, fourHour: est.four || null,
+      panIndia: est.panIndia || null, weightGrams: (est.weightGrams != null) ? est.weightGrams : null,
+      fallback: !!est.fallback,
+      cacheHit: !!(est.basis === 'area' && !est.fallback),
+      routesReason: dd.lastReason || null
+    };
+  }
+
+  window.GanguramDeliveryEstimate = { render: render, compute: compute, debugState: debugState };
 
   if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); }
   else { init(); }

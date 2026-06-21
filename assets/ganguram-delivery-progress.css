@@ -36,6 +36,10 @@
 .ganguram-delivery-progress__status { margin: 0; font-weight: 600; }
 .ganguram-delivery-progress__status[hidden] { display: none; }
 
+/* compact shipping estimate line (2.11J) — prominent, theme text only */
+.ganguram-delivery-progress__estimate { margin: 0.3rem 0 0; font-weight: 700; color: currentColor; }
+.ganguram-delivery-progress__estimate[hidden] { display: none; }
+
 /* compact delivery-mode chips */
 .ganguram-delivery-progress__modes { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.35rem 0 0; }
 .ganguram-delivery-progress__modes[hidden] { display: none; }

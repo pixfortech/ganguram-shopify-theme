@@ -35,6 +35,7 @@
         { maxKm: 20, price: 150 }
       ],
       fourHour: { maxDistanceKm: 10, flatPrice: 10 },
+      panIndia: { perWeightG: 500, pricePerUnit: 80 },   // ₹80 per 500 g (Part B)
       currencySymbol: '₹',
       rangeSeparator: '–',
       cacheVersion: 1,
@@ -57,6 +58,9 @@
       standardSlabs: slabs,
       fourHour: { maxDistanceKm: num(fh.maxDistanceKm) != null ? fh.maxDistanceKm : d.fourHour.maxDistanceKm,
         flatPrice: num(fh.flatPrice) != null ? fh.flatPrice : d.fourHour.flatPrice },
+      panIndia: (function () { var p = assign({}, d.panIndia, c.panIndia || {});
+        return { perWeightG: num(p.perWeightG) != null && p.perWeightG > 0 ? p.perWeightG : d.panIndia.perWeightG,
+          pricePerUnit: num(p.pricePerUnit) != null ? p.pricePerUnit : d.panIndia.pricePerUnit }; })(),
       currencySymbol: c.currencySymbol != null ? String(c.currencySymbol) : d.currencySymbol,
       rangeSeparator: c.rangeSeparator != null ? String(c.rangeSeparator) : d.rangeSeparator,
       cacheVersion: c.cacheVersion != null ? c.cacheVersion : d.cacheVersion,
@@ -116,6 +120,18 @@
     return { minPrice: slabs[0].price, maxPrice: slabs[slabs.length - 1].price, isRange: slabs[0].price !== slabs[slabs.length - 1].price, beyond: false };
   }
 
+  // PAN India weight-based estimate (Part B): ceil(weightGrams / perWeightG) × pricePerUnit.
+  // Uses ONLY the Shopify cart/variant weight (grams) — never parses a product title.
+  // No usable weight -> { available:false }, and the UI shows "starts from ₹X per <unit>".
+  //   400 g -> ₹80 · 500 g -> ₹80 · 501 g -> ₹160 · 1000 g -> ₹160 · 1200 g -> ₹240
+  function panIndiaForWeight(grams) {
+    var p = config().panIndia;
+    grams = num(grams);
+    if (grams == null || grams <= 0) { return { available: false, price: null, fromPrice: p.pricePerUnit, perWeightG: p.perWeightG }; }
+    var units = Math.ceil(grams / p.perWeightG);
+    return { available: true, price: units * p.pricePerUnit, units: units, grams: grams, fromPrice: p.pricePerUnit, perWeightG: p.perWeightG };
+  }
+
   // Cache key for an area-range computation: pincode + origin + config version (the
   // version bumps when slabs/sampling change). Used by the distance module's cache.
   function areaCacheKey(pincode, origin) {
@@ -131,6 +147,7 @@
     standardForRange: standardForRange,
     fourHourForRange: fourHourForRange,
     fallbackRange: fallbackRange,
+    panIndiaForWeight: panIndiaForWeight,
     money: money,
     formatRange: formatRange,
     areaCacheKey: areaCacheKey
