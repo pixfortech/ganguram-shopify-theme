@@ -29,3 +29,17 @@
   font-weight: 600;
 }
 .ganguram-delivery-estimate__note { margin: 0.4rem 0 0; font-size: 0.9em; color: var(--color-secondary-text-main); }
+
+/* Phase 2.11I — prominent Standard / 4-hour estimate line + "Delivery details" accordion.
+   Theme tokens only (no hardcoded colours). */
+.ganguram-delivery-estimate__estimate { margin: 0.4rem 0 0; font-weight: 700; }
+.ganguram-delivery-estimate__details { margin: 0.5rem 0 0; }
+.ganguram-delivery-estimate__details-summary {
+  cursor: pointer;
+  font-size: 0.88em;
+  font-weight: 600;
+  color: var(--color-secondary-text-main);
+  list-style: revert;
+}
+.ganguram-delivery-estimate__details-body { margin: 0.35rem 0 0; }
+.ganguram-delivery-estimate__details-note { margin: 0.35rem 0 0; font-size: 0.85em; color: var(--color-secondary-text-main); }

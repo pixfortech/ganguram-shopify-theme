@@ -42,7 +42,23 @@
       freeDelivery: 'Free delivery',
       modesLabel: 'Available:',
       standardLabel: 'Standard',
-      fourHourLabel: '4 Hours'
+      fourHourLabel: '4 Hours',
+      // Phase 2.11I — distance-based estimate copy
+      standardEstimateLabel: 'Standard shipping estimate:',
+      basedOnArea: 'Based on the delivery area for __PINCODE__. Final charge confirmed at checkout.',
+      basedOnAddressEstimate: 'Based on your selected address. Final charge confirmed at checkout.',
+      fourHourFlat: '4 Hours: __PRICE__',
+      fourHourMaybe: '4 Hours may be available for some addresses in this pincode. Enter your full address to confirm.',
+      fourHourNotForDistance: 'Not available for this distance',
+      detailsTitle: 'Delivery details',
+      pincodeLabel: 'Pincode:',
+      estimateTypeLabel: 'Estimate type:',
+      estimateTypeArea: 'Pincode area',
+      estimateTypeAddress: 'Selected address',
+      distanceRangeLabel: 'Approx. distance:',
+      slabRangeLabel: 'Standard slab:',
+      fourHourDetailLabel: '4 Hours:',
+      finalAtCheckout: 'Final charge confirmed at checkout.'
     };
     return (c[key] != null) ? String(c[key]) : d[key];
   }
@@ -126,9 +142,34 @@
     for (var i = 0; i < serviceOptions.length; i++) { if (serviceOptions[i].serviceType === 'four_hour') { hasFourOpt = true; break; } }
     var fourHourAvailable = (eligibleCart && fourHourArea) || hasFourOpt;
 
+    // --- Phase 2.11I: distance-based Standard + 4-hour ESTIMATE -----------------
+    // Local zones only (Kolkata / quick-commerce) have the local km slabs; a PAN India
+    // pincode keeps the "final charge at checkout" wording. A selected full address uses
+    // its CONFIRMED single distance; a pincode uses the sampled area MIN/MAX range. Pure
+    // mapping comes from GanguramShippingEstimate (config-driven). ESTIMATE / display only.
+    var se = window.GanguramShippingEstimate;
+    var isLocal = !!(loc.isKolkata === true || loc.zone === 'kolkata' || loc.zone === 'quick_commerce');
+    var estimate = null;
+    if (se && isLocal) {
+      if (isAddress && conf.confirmed) {
+        var akm = conf.distanceKm;
+        estimate = { basis: 'address', minKm: akm, maxKm: akm, standard: se.standardForKm(akm), four: se.fourHourForRange(akm, akm, true) };
+      } else if (!isAddress) {
+        var range = (d && typeof d.getAreaRangeForPincode === 'function') ? d.getAreaRangeForPincode(loc.pincode) : null;
+        if (range) {
+          estimate = { basis: 'area', minKm: range.minKm, maxKm: range.maxKm, standard: se.standardForRange(range.minKm, range.maxKm), four: se.fourHourForRange(range.minKm, range.maxKm, false) };
+        } else if (d && typeof d.computeAreaRangeForPincode === 'function') {
+          try { d.computeAreaRangeForPincode(loc.pincode); } catch (e) {} // async -> fires event -> re-render
+        }
+      }
+    }
+
     return {
       label: displayLabel(loc),
+      pincode: loc.pincode,
       isAddress: isAddress,
+      isLocal: isLocal,
+      estimate: estimate,
       distanceKm: distanceKm, approximate: distanceApprox,
       hasRule: hasRule,
       fourHourAvailable: fourHourAvailable, hasFourOpt: hasFourOpt,
@@ -148,37 +189,84 @@
     r.appendChild(l); r.appendChild(v); return r;
   }
 
+  function fmtKmRange(minKm, maxKm) {
+    var lo = Math.round(minKm * 10) / 10, hi = Math.round(maxKm * 10) / 10;
+    return (lo === hi) ? (lo + ' km') : (lo + '–' + hi + ' km');
+  }
+  function strong(text) { var p = document.createElement('p'); p.className = 'ganguram-delivery-estimate__estimate'; p.textContent = text; return p; }
+  function noteEl(text) { var p = document.createElement('p'); p.className = 'ganguram-delivery-estimate__note'; p.textContent = text; return p; }
+
   function renderCard(card, st) {
     var body = card.querySelector('[data-gde-body]');
     var titleEl = card.querySelector('[data-gde-title]');
     if (!st || !body) { hide(card); return; }
     if (titleEl) { setText(titleEl, copy('title')); }
     body.textContent = '';
+    var se = window.GanguramShippingEstimate;
+    var est = st.estimate, standardShown = false, fourShown = false;
 
     var status = document.createElement('p'); status.className = 'ganguram-delivery-estimate__status'; status.textContent = copy('statusAvailable'); body.appendChild(status);
     if (st.label) { body.appendChild(row(copy('locationLabel'), st.label)); }
-    if (st.distanceKm != null) {
-      var km = Math.round(st.distanceKm * 10) / 10;
-      var dval = st.isAddress ? tmpl(copy('distanceFromDispatch'), { km: km }) : tmpl(copy('distanceApproxLine'), { km: km });
-      body.appendChild(row(copy('distanceLabel'), dval));
+
+    // --- prominent Standard estimate (local zone with a computed distance) ---
+    if (est && est.standard && se) {
+      var rangeText = se.formatRange(est.standard.minPrice, est.standard.maxPrice) + (est.standard.beyond ? '+' : '');
+      body.appendChild(strong(copy('standardEstimateLabel') + ' ' + rangeText));
+      standardShown = true;
     }
-    if (st.mov != null) { body.appendChild(row(copy('movLabel'), fmtMoney(st.mov))); }
-    if (st.cartTotal != null) { body.appendChild(row(copy('cartValueLabel'), fmtMoney(st.cartTotal))); }
-    if (st.mov != null && !st.movMet && st.cartTotal != null) { body.appendChild(row(copy('remainingLabel'), fmtMoney(st.movRemaining))); }
-    // per-mode delivery charge (show the rule charge when known; else final at checkout)
-    for (var i = 0; i < st.serviceOptions.length; i++) {
-      var o = st.serviceOptions[i];
-      var name = o.serviceLabel || (o.serviceType === 'four_hour' ? copy('fourHourLabel') : copy('standardLabel'));
-      var chg = (st.freeDeliveryMet && o.serviceType !== 'four_hour') ? copy('freeDelivery')
-        : (o.deliveryCharge == null) ? copy('chargeAtCheckout')
-        : (o.deliveryCharge === 0 ? copy('freeDelivery') : fmtMoney(o.deliveryCharge));
-      body.appendChild(row(name, chg));
+
+    // --- 4-hour line (only when the zone + cart make it eligible) ---
+    if (st.fourHourAvailable) {
+      if (est && est.four) {
+        if (est.four.state === 'yes') { body.appendChild(strong(tmpl(copy('fourHourFlat'), { price: se.money(est.four.price) }))); fourShown = true; }
+        else if (est.four.state === 'maybe') { body.appendChild(noteEl(copy('fourHourMaybe'))); fourShown = true; }
+        // 'no' -> hide (conservative; never over-promise 4-hour vs checkout)
+      } else if (se) {
+        body.appendChild(strong(tmpl(copy('fourHourFlat'), { price: se.money(se.config().fourHour.flatPrice) }))); fourShown = true;
+      }
     }
-    // 4-hour available from the zone but no metaobject rule -> show it, charge at checkout
-    if (st.fourHourAvailable && !st.hasFourOpt) { body.appendChild(row(copy('fourHourLabel'), copy('chargeAtCheckout'))); }
-    var note = document.createElement('p'); note.className = 'ganguram-delivery-estimate__note';
-    note.textContent = st.isAddress ? copy('basedOnAddress') : copy('basedOnPincode');
-    body.appendChild(note);
+
+    // --- fallback: no distance estimate -> existing per-mode rows ("final at checkout") ---
+    if (!standardShown) {
+      for (var i = 0; i < st.serviceOptions.length; i++) {
+        var o = st.serviceOptions[i];
+        var name = o.serviceLabel || (o.serviceType === 'four_hour' ? copy('fourHourLabel') : copy('standardLabel'));
+        var chg = (st.freeDeliveryMet && o.serviceType !== 'four_hour') ? copy('freeDelivery')
+          : (o.deliveryCharge == null) ? copy('chargeAtCheckout')
+          : (o.deliveryCharge === 0 ? copy('freeDelivery') : fmtMoney(o.deliveryCharge));
+        body.appendChild(row(name, chg));
+      }
+      if (st.fourHourAvailable && !st.hasFourOpt && !fourShown) { body.appendChild(row(copy('fourHourLabel'), copy('chargeAtCheckout'))); }
+    }
+
+    // --- based-on note ---
+    if (est && est.basis === 'area') { body.appendChild(noteEl(tmpl(copy('basedOnArea'), { pincode: st.pincode }))); }
+    else if (est && est.basis === 'address') { body.appendChild(noteEl(copy('basedOnAddressEstimate'))); }
+    else { body.appendChild(noteEl(st.isAddress ? copy('basedOnAddress') : copy('basedOnPincode'))); }
+
+    // --- "Delivery details" accordion (keeps the main card compact) ---
+    if (est || st.mov != null || st.cartTotal != null) {
+      var det = document.createElement('details'); det.className = 'ganguram-delivery-estimate__details';
+      var sum = document.createElement('summary'); sum.className = 'ganguram-delivery-estimate__details-summary'; sum.textContent = copy('detailsTitle'); det.appendChild(sum);
+      var dbody = document.createElement('div'); dbody.className = 'ganguram-delivery-estimate__details-body'; det.appendChild(dbody);
+      if (st.pincode) { dbody.appendChild(row(copy('pincodeLabel'), st.pincode)); }
+      if (est) {
+        dbody.appendChild(row(copy('estimateTypeLabel'), est.basis === 'address' ? copy('estimateTypeAddress') : copy('estimateTypeArea')));
+        dbody.appendChild(row(copy('distanceRangeLabel'), fmtKmRange(est.minKm, est.maxKm)));
+        if (est.standard) { dbody.appendChild(row(copy('slabRangeLabel'), se.formatRange(est.standard.minPrice, est.standard.maxPrice) + (est.standard.beyond ? '+' : ''))); }
+        if (st.fourHourAvailable && est.four) {
+          var fourTxt = est.four.state === 'yes' ? se.money(est.four.price)
+            : est.four.state === 'maybe' ? copy('fourHourMaybe')
+            : copy('fourHourNotForDistance');
+          dbody.appendChild(row(copy('fourHourDetailLabel'), fourTxt));
+        }
+      }
+      if (st.mov != null) { dbody.appendChild(row(copy('movLabel'), fmtMoney(st.mov))); }
+      if (st.cartTotal != null) { dbody.appendChild(row(copy('cartValueLabel'), fmtMoney(st.cartTotal))); }
+      if (st.mov != null && !st.movMet && st.cartTotal != null) { dbody.appendChild(row(copy('remainingLabel'), fmtMoney(st.movRemaining))); }
+      var fin = document.createElement('p'); fin.className = 'ganguram-delivery-estimate__details-note'; fin.textContent = copy('finalAtCheckout'); dbody.appendChild(fin);
+      body.appendChild(det);
+    }
 
     card.setAttribute('data-gde-basis', st.isAddress ? 'address' : 'pincode');
     show(card);

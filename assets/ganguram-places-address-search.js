@@ -369,12 +369,62 @@
       .catch(function () { return null; });
   }
 
+  // Geocode an Indian pincode to its CENTRE + area BOUNDS, for the pincode-AREA distance
+  // RANGE estimate (Phase 2.11I). Returns { center:{lat,lng}, bounds:{north,south,east,west} }
+  // (bounds null when Google returns no area box). Reuses the same loader/key/gate.
+  // Display estimate only — never the final business rule.
+  function boundsLiteral(geometry) {
+    var b = (geometry && (geometry.bounds || geometry.viewport)) || null;
+    if (!b) { return null; }
+    try {
+      var ne = (typeof b.getNorthEast === 'function') ? b.getNorthEast() : null;
+      var sw = (typeof b.getSouthWest === 'function') ? b.getSouthWest() : null;
+      if (!ne || !sw) { return null; }
+      var n = (typeof ne.lat === 'function') ? ne.lat() : ne.lat;
+      var e = (typeof ne.lng === 'function') ? ne.lng() : ne.lng;
+      var s = (typeof sw.lat === 'function') ? sw.lat() : sw.lat;
+      var w = (typeof sw.lng === 'function') ? sw.lng() : sw.lng;
+      n = parseFloat(n); e = parseFloat(e); s = parseFloat(s); w = parseFloat(w);
+      if (isFinite(n) && isFinite(e) && isFinite(s) && isFinite(w)) { return { north: n, south: s, east: e, west: w }; }
+    } catch (err) {}
+    return null;
+  }
+  function geocodePincodeAreaCoords(pincode) {
+    var pin = String(pincode || '').replace(/\D/g, '').slice(0, 6);
+    if (pin.length !== 6 || !enabled()) { return Promise.resolve(null); }
+    return loadGoogle()
+      .then(geocodingLib)
+      .then(function (lib) {
+        var Geocoder = (lib && lib.Geocoder) || (window.google && window.google.maps && window.google.maps.Geocoder);
+        if (typeof Geocoder !== 'function') { return null; }
+        return new Promise(function (resolve) {
+          var done = false, finish = function (v) { if (!done) { done = true; resolve(v); } };
+          var timer = setTimeout(function () { finish(null); }, 8000);
+          try {
+            new Geocoder().geocode(
+              { componentRestrictions: { country: country().toUpperCase(), postalCode: pin } },
+              function (results, status) {
+                clearTimeout(timer);
+                if (status !== 'OK' || !results || !results.length) { finish(null); return; }
+                var geom = results[0].geometry || {};
+                var center = locOf(geom);
+                if (!center) { finish(null); return; }
+                finish({ center: center, bounds: boundsLiteral(geom) });
+              }
+            );
+          } catch (e) { clearTimeout(timer); finish(null); }
+        });
+      })
+      .catch(function () { return null; });
+  }
+
   // Expose a tiny Google-owning surface for the enrichment module to reuse, so the
   // merchant key, the lazy loader and the enable gate stay in ONE place.
   window.GanguramPlaces = window.GanguramPlaces || {};
   window.GanguramPlaces.loadMaps = loadGoogle;
   window.GanguramPlaces.lookupCityByPincode = lookupCityByPincode;
   window.GanguramPlaces.geocodePincode = geocodePincodeCoords;
+  window.GanguramPlaces.geocodePincodeArea = geocodePincodeAreaCoords;
 
   function init() {
     if (!popup()) { return; }
