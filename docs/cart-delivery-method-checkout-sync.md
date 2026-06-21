@@ -144,4 +144,23 @@ The theme already writes the attribute the function reads, so no theme change is
 
 ## 7. Diagnostics
 
-`window.GanguramDeliveryMethodChoice.debugState()` (console, cart page) → the selected zone, `cartAllQuickCommerce`, the `datePickerType`, the derived `preferredMethod` + `preferredLabel`, and the exact `attributesSent`. `getPreferred()` returns `{ code, label }`.
+`window.GanguramDeliveryMethodChoice.debugState()` (console, cart page) → the selected zone, `hasCartItems`, `cartAllQuickCommerce`, the `datePickerType`, the derived `preferredMethod` + `preferredLabel`, the exact `attributesSent`, **`attributeKeysWritten`**, **`writesPincodeOrAddress`** (always `false`), and **`lastWriteAttrs`** (the last set actually POSTed). `getPreferred()` returns `{ code, label }`.
+
+## 8. Hotfix (2.12J) — method/date must not disturb pincode/address or prefill
+
+The method/date handoff **only writes its own keys** (`ganguram_preferred_delivery_method` / `_label`, `Delivery Method`, and — for 4HR/PAN — the date keys). It **never** writes `ganguram_selected_pincode`, the selected address, or lat/lng, so a method/date change can't drop the pincode/address. Hardening to keep it from interfering with the pincode/address auto‑fetch + delivery popup:
+
+- **No write on a no‑cart surface.** It only ever PATCHes the cart when the cart has line items, so it can't kick off a cart write (or a cart re‑render) during the pincode/address flow on the homepage / PDP / collection.
+- **Fully guarded init.** `init`, the location/label listeners, and the `change` handler are wrapped so a method‑choice hiccup can never break the pincode / address / popup / checkout‑prefill scripts that init around it.
+
+**Confirm the handoff before checkout (cart page console):**
+```js
+GanguramCheckoutPrefill.debugState();
+//  -> { mode, selectedPincode, selectedAddress, addressLatLng, sending (the exact prefill payload),
+//       willRedirect, blocked, blockedReason: 'mov' | 'delivery_date_missing' | null }
+GanguramDeliveryEstimate.debugState();      // selectedPincode, selectedAddress, addressLatLng, route distance
+await GanguramDeliveryMethodChoice.inspectCartAttributes();
+//  -> method/date attrs PLUS ganguram_selected_pincode / ganguram_delivery_zone / Delivery Pincode,
+//     so you can see the method/date and the pincode/address handoff coexisting on the live cart.
+```
+If `selectedPincode`/`selectedAddress` are present but the prefill `willRedirect` is `false`, check `blockedReason` — a missing **Standard** delivery date (or a below‑MOV cart) intentionally skips the prefill redirect; that is the date/MOV guard, not a prefill failure.
