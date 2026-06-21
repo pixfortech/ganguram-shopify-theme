@@ -28,6 +28,13 @@
     fourHour: { enabled: true, maxDistanceKm: 10, flatPrice: 10 },
     // PAN India weight estimate: pricePerUnit per perWeightG grams (₹80 per 500 g).
     panIndia: { perWeightG: 500, pricePerUnit: 80 },
+    // Slab-safety margin (km): a full-address driving distance is biased UP by this much BEFORE
+    // matching a Standard slab, so a ~15 km address the Routes API returns as 14.9 km is never
+    // under-quoted at the 10–15 km (₹100) tier instead of the 15–20 km (₹150) tier. DISPLAY
+    // ESTIMATE only — ShipZip remains the final checkout rate, so the bias only errs toward NOT
+    // under-quoting. Set to 0 for the exact route distance. Applies to a single full address,
+    // not the pincode-area range (the range already brackets uncertainty with its max end).
+    slabSafetyMarginKm: 0.3,
     currencySymbol: "₹",
     rangeSeparator: "–",      // en dash
     cacheVersion: 1,               // bump to invalidate cached pincode-area estimates

@@ -125,8 +125,11 @@
       return area ? { basis: 'pincode_area', km: area.minKm + '–' + area.maxKm, rate: se.formatRange(se.standardForRange(area.minKm, area.maxKm).minPrice, se.standardForRange(area.minKm, area.maxKm).maxPrice) }
         : { basis: 'none', km: null, rate: null, note: 'no confirmed full-address distance yet — open the address in the popup' };
     }
-    var slab = se.standardForKm(conf.distanceKm);
-    return { basis: 'full_address', km: Math.round(conf.distanceKm * 10) / 10, rate: slab ? se.money(slab.minPrice) : null };
+    // Use the SAME slab-safety padding the popup/cart use, so this diagnostic never disagrees
+    // with the shown estimate (km stays the RAW route distance; slabKm is what feeds the slab).
+    var slabKm = (typeof se.slabInputKm === 'function') ? se.slabInputKm(conf.distanceKm) : conf.distanceKm;
+    var slab = se.standardForKm(slabKm);
+    return { basis: 'full_address', km: Math.round(conf.distanceKm * 10) / 10, slabKm: Math.round(slabKm * 100) / 100, rate: slab ? se.money(slab.minPrice) : null };
   }
   function debugState() {
     var addr = fullAddress();
