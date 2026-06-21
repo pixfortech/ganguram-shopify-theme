@@ -422,8 +422,8 @@
             "hide_on_mobile": false,
             "column_mobile": "2",
             "row_mobile": "2",
-            "color_background_main": "#ebefeb",
-            "color_text_main": "#282d29",
+            "color_background_main": "#7D7CD0",
+            "color_text_main": "#FFFFFF",
             "color_hide_borders": true,
             "color_hide_shadow": false
           },
@@ -486,7 +486,7 @@
                   "type": "button",
                   "settings": {
                     "button_label": "F.A.Q.",
-                    "link": "",
+                    "link": "shopify://pages/faqs",
                     "open_in_new_window": false,
                     "button_size": "regular",
                     "button_style": "outline",
@@ -517,7 +517,7 @@
       "settings": {
         "heading": "",
         "subheading": "",
-        "section_heading_layout": "section-heading--left",
+        "section_heading_layout": "section-heading--center",
         "show_section_button": false,
         "button_label": "",
         "cta_url": "",
