@@ -580,6 +580,9 @@
   {%- comment -%} Local-delivery date picker (cart drawer + cart page) — theme-native date/time selector for local delivery (ShipZip's picker is cart-page-only and doesn't render in the drawer). Saves the selection as cart attributes and soft-blocks checkout until a required date is chosen. No ShipZip rate / service-code / MOV / pincode / product-visibility change. Display/handoff only; fail-open. {%- endcomment -%}
   {%- render 'ganguram-delivery-datepicker-config' -%}
 
+  {%- comment -%} Persist cart delivery choice for checkout (Phase 2.12H) — mirrors the chosen delivery method (derived from the date-picker Standard/4 Hours toggle + the zone) into ganguram_preferred_delivery_method (STD/4HR/PAN_INDIA) + ganguram_preferred_delivery_label cart attributes, so a Delivery Customization (Shipzy rule / Shopify Function) can hide non-selected methods at checkout. Clears stale Standard date attrs for 4HR/PAN. No ShipZip rate/service-code/slab/eligibility/MOV/modal/box-builder change; merge-only; fail-open. {%- endcomment -%}
+  {%- render 'ganguram-delivery-method-choice-config' -%}
+
   {%- comment -%} Product-card "Buy now" (Phase 2.11D.1) — adds an express Buy now next to Add to cart on single-variant product cards; reuses the theme AJAX add and proceeds to checkout ONLY if the cart-side MOV/checkout guard allows, else opens the cart drawer. Fail-open; NO checkout/shipping-charge/ShipZip/SBZ/zipLogic/resolver/settings_data change. {%- endcomment -%}
   {%- render 'ganguram-product-card-buy-config' -%}
 
