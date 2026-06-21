@@ -21,10 +21,14 @@
   window.GanguramDeliveryMethodChoiceConfig = {
     enabled: true,
     updateUrl: {{ routes.cart_url | append: '/update.js' | json }},
+    cartUrl: {{ routes.cart_url | append: '.js' | json }},
     debounceMs: 400,
     keys: {
       method: {{ 'ganguram_preferred_delivery_method' | json }},
-      label: {{ 'ganguram_preferred_delivery_label' | json }}
+      label: {{ 'ganguram_preferred_delivery_label' | json }},
+      // Readable order attribute (shown in Shopify order "Additional details"). Single owner —
+      // the date picker reads this to restore its toggle but no longer writes it.
+      orderMethod: {{ 'Delivery Method' | json }}
     },
     // Readable labels saved alongside the code — set these to your EXACT ShipZip rate
     // names so a Shipzy rule / the Delivery Customization Function can match on them.

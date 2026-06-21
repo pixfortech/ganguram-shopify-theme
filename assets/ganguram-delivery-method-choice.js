@@ -44,8 +44,13 @@
   function debounceMs() { var n = parseInt(cfg().debounceMs, 10); return (isFinite(n) && n >= 0) ? n : 400; }
   function keys() {
     var k = cfg().keys || {};
-    return { method: k.method || 'ganguram_preferred_delivery_method', label: k.label || 'ganguram_preferred_delivery_label' };
+    return {
+      method: k.method || 'ganguram_preferred_delivery_method',
+      label: k.label || 'ganguram_preferred_delivery_label',
+      orderMethod: k.orderMethod || 'Delivery Method'   // readable order attribute (single owner)
+    };
   }
+  function cartUrl() { return cfg().cartUrl || '/cart.js'; }
   function labels() {
     var l = cfg().labels || {};
     return { STD: l.STD || 'Standard Delivery', '4HR': l['4HR'] || '4 hours delivery', PAN_INDIA: l.PAN_INDIA || 'PAN India Shipping' };
@@ -53,11 +58,16 @@
   // Date-picker attribute keys — READ from its config so we clear (never rename) the right ones.
   function dateKeys() {
     var dk = (window.GanguramDeliveryDatePickerConfig && window.GanguramDeliveryDatePickerConfig.attributeKeys) || {};
-    return { date: dk.date || 'Delivery-Date', time: dk.time || 'Delivery-Time' };
+    return { date: dk.date || 'Delivery-Date', time: dk.time || 'Delivery-Time', dateReadable: dk.dateReadable || 'Delivery Date' };
   }
   function copy(key) {
     var c = cfg().copy || {};
-    var d = { notice: 'Your delivery options changed. Please review your delivery method below.' };
+    var d = {
+      notice: 'Your delivery options changed. Please review your delivery method below.',
+      methodSummary: 'Delivery Method:',
+      dateSummary: 'Preferred Date:',
+      datePrompt: 'Choose a delivery date'
+    };
     return (c[key] != null) ? String(c[key]) : d[key];
   }
 
@@ -119,9 +129,10 @@
     var K = keys(), DK = dateKeys(), out = {};
     out[K.method] = code || '';
     out[K.label] = labelFor(code);
+    out[K.orderMethod] = labelFor(code);   // readable "Delivery Method" order attribute (single owner)
     // 4 Hours / PAN India need no local date -> clear any stale Standard date/time so it can't
     // travel to the order. Standard leaves them to the date picker (which still requires one).
-    if (code === '4HR' || code === 'PAN_INDIA') { out[DK.date] = ''; out[DK.time] = ''; }
+    if (code === '4HR' || code === 'PAN_INDIA') { out[DK.date] = ''; out[DK.time] = ''; out[DK.dateReadable] = ''; }
     return out;
   }
   function persist(code) {
@@ -161,6 +172,66 @@
     }
   }
 
+  // ---- cart delivery summary (method + preferred date) -----------------------
+  // "Delivery Method: <label>" and, for Standard, "Preferred Date: <YYYY-MM-DD>". The
+  // estimate / "final charge confirmed at checkout" lines are rendered by the delivery
+  // panel; this only adds the chosen method + date. Created before the date picker if the
+  // page has no [data-ganguram-delivery-method-summary] of its own.
+  function summaries() { return document.querySelectorAll('[data-ganguram-delivery-method-summary]'); }
+  function ensureSummaries() {
+    if (summaries().length) { return; }
+    var pickers = document.querySelectorAll('[data-ganguram-delivery-datepicker]');
+    for (var i = 0; i < pickers.length; i++) {
+      var p = pickers[i], parent = p.parentNode; if (!parent) { continue; }
+      var s = document.createElement('div');
+      s.className = 'ganguram-delivery-method-choice__summary';
+      s.setAttribute('data-ganguram-delivery-method-summary', '');
+      s.setAttribute('hidden', 'hidden');
+      try { parent.insertBefore(s, p); } catch (e) { parent.appendChild(s); }
+    }
+  }
+  // The date the customer picked in the calendar (YYYY-MM-DD), live from the input.
+  function selectedDateYmd() {
+    var inp = document.querySelector('[data-gdd-date]');
+    return (inp && inp.value) ? String(inp.value) : '';
+  }
+  function summaryRow(text) { var p = document.createElement('p'); p.className = 'ganguram-delivery-method-choice__summary-row'; p.textContent = text; return p; }
+  function renderSummary(code) {
+    ensureSummaries();
+    var ss = summaries(); if (!ss.length) { return; }
+    for (var i = 0; i < ss.length; i++) {
+      var box = ss[i]; box.textContent = '';
+      if (!code) { box.setAttribute('hidden', 'hidden'); continue; }
+      box.appendChild(summaryRow(copy('methodSummary') + ' ' + labelFor(code)));
+      if (code === 'STD') {                                  // 4HR / PAN India need no date line
+        var d = selectedDateYmd();
+        box.appendChild(summaryRow(copy('dateSummary') + ' ' + (d || copy('datePrompt'))));
+      }
+      box.removeAttribute('hidden');
+    }
+  }
+
+  // ---- diagnostics: inspect the cart attributes that will reach the order -----
+  // window.GanguramDeliveryMethodChoice.inspectCartAttributes() -> Promise of the exact
+  // handoff attributes currently on the cart (so QA can confirm them BEFORE checkout).
+  function inspectCartAttributes() {
+    try {
+      return fetch(cartUrl(), { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(function (cart) {
+          var a = (cart && cart.attributes) || {}, K = keys(), DK = dateKeys();
+          return {
+            ganguram_preferred_delivery_method: a[K.method] || '',
+            ganguram_preferred_delivery_label: a[K.label] || '',
+            'Delivery Method': a[K.orderMethod] || '',
+            'Delivery-Date': a[DK.date] || '',
+            'Delivery Date': a[DK.dateReadable] || '',
+            'Delivery-Time': a[DK.time] || ''
+          };
+        }).catch(function () { return null; });
+    } catch (e) { return Promise.resolve(null); }
+  }
+
   // ---- apply: derive, persist, and (on context changes) flag a re-review ------
   var current = null;     // last derived code this session
   function apply(reason) {
@@ -170,19 +241,21 @@
     current = code;
     writeStored(code);
     persist(code);
+    renderSummary(code);
     // A context change (pincode/cart) that invalidates or switches the prior choice -> ask to review.
     var contextChange = (reason === 'location' || reason === 'cart');
     if (contextChange && prev && prev !== code) { showNotice(true); }
     else if (reason === 'user' || (code && prev === code)) { showNotice(false); }
     return code;
   }
-  function render() { ensureNotices(); apply('init'); }
+  function render() { ensureSummaries(); ensureNotices(); apply('init'); }
 
   // ---- wiring ----------------------------------------------------------------
-  function onDatePickerChange(e) {
-    var t = e.target;
-    if (t && t.closest && t.closest('[data-gdd-type]')) { apply('user'); return; }
-    if (t && t.getAttribute && t.getAttribute('data-gdd-type') != null) { apply('user'); }
+  function onCartControlChange(e) {
+    var t = e.target; if (!t) { return; }
+    var isType = (t.closest && t.closest('[data-gdd-type]')) || (t.getAttribute && t.getAttribute('data-gdd-type') != null);
+    if (isType) { apply('user'); return; }                                  // method toggle -> re-derive
+    if (t.getAttribute && t.getAttribute('data-gdd-date') != null) { renderSummary(deriveCode()); }  // calendar -> refresh summary
   }
   function observeCartForms() {
     if (!('MutationObserver' in window)) { return; }
@@ -200,12 +273,13 @@
     observeCartForms();
     window.addEventListener('ganguram:delivery-location-changed', function () { apply('location'); });
     window.addEventListener('ganguram:delivery-label-updated', function () { apply('location'); });
-    document.addEventListener('change', onDatePickerChange, false);
+    document.addEventListener('change', onCartControlChange, false);
   }
 
   window.GanguramDeliveryMethodChoice = {
     apply: apply,
     render: render,
+    inspectCartAttributes: inspectCartAttributes,
     getPreferred: function () { var code = deriveCode(); return { code: code, label: labelFor(code) }; },
     // DEV-ONLY diagnostics (never customer-facing).
     debugState: function () {
