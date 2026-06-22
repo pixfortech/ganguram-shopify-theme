@@ -152,11 +152,24 @@
       : (cartAddress() ? 'cart_attributes' : 'none');
     var zonePin = ''; try { var l = window.GanguramZone && window.GanguramZone.getSelectedDeliveryLocation(); zonePin = (l && l.isServiceable === true && l.pincode) ? String(l.pincode) : ''; } catch (e) {}
     var pincodeSource = zonePin ? 'zone' : (cartPincode() ? 'cart_attributes' : 'none');
+    // Clean-device proof: localStorage is only a SAME-SESSION cache (EMPTY on a fresh device /
+    // private mode). The prefill must work from the cart attribute + in-memory selection, NOT this.
+    var lsPin = ''; try { lsPin = norm((window.localStorage && window.localStorage.getItem('Zipcode')) || ''); } catch (e) {}
+    var cartPin = cartPincode();
+    var method = null; try { var mc = window.GanguramDeliveryMethodChoice; method = (mc && typeof mc.getPreferred === 'function') ? mc.getPreferred().code : null; } catch (e) {}
+    var panEligible = (function () {
+      var lines = document.querySelectorAll('[data-ganguram-cart-line]'); if (!lines.length) { return null; }
+      for (var i = 0; i < lines.length; i++) { if (String(lines[i].getAttribute('data-ganguram-pan-india')) !== 'true') { return false; } }
+      return true;
+    })();
     return {
       mode: mode,
       enabled: enabled(),
       blocked: guardBlocked(),
       blockedReason: movBlocked ? 'mov' : (dateMissing ? 'delivery_date_missing' : null),
+      // data-source view (clean-device): in-memory zone vs the cart attribute vs the localStorage cache
+      localStorageSelectedPincode: lsPin || null,
+      cartAttributePincode: cartPin || null,
       selectedPincode: activePincode(),
       pincodeSource: pincodeSource,
       selectedAddress: addr ? (addr.formatted_address || (addr.address1 + ', ' + addr.city)) : null,
@@ -164,9 +177,13 @@
       addressLatLng: latlng,
       storedLatLng: latlng,
       cartHydrated: !!cartCache,
+      cartAttributesHydrated: !!cartCache,
       cartShipAttributes: cartCache ? { pincode: cartPincode(), address: cartAddress() } : null,
+      panIndiaEligible: panEligible,
+      finalDeliveryMethod: method,
       sending: paramsOf(url),
       willRedirect: enabled() && !guardBlocked() && !!url,
+      reason: (mode === 'none') ? 'no serviceable pincode (in-memory) and none on the cart attributes — enter a pincode/address' : null,
       themeEstimate: themeEstimate(norm(pin))
     };
   }

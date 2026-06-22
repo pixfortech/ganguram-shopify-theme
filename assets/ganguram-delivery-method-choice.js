@@ -332,6 +332,8 @@
         serviceable: !!(loc && loc.isServiceable === true),
         hasCartItems: hasCartItems(),
         cartAllQuickCommerce: cartAllQuickCommerce(),
+        panIndiaEligible: (function () { var l = lines(); if (!l.length) { return null; } for (var i = 0; i < l.length; i++) { if (String(l[i].getAttribute('data-ganguram-pan-india')) !== 'true') { return false; } } return true; })(),
+        finalDeliveryMethod: code,
         datePickerType: datePickerType(),
         // Phase 2 — 4HR time-window gating (so you can see WHY the method is/ isn't 4HR)
         fourHourVisibleNow: fourHourAvailableNow(),

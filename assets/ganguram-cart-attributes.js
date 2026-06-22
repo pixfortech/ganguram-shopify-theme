@@ -211,7 +211,7 @@
   function signature(attrs) { try { return JSON.stringify(attrs); } catch (e) { return String(Math.random()); } }
 
   // ---- sync -----------------------------------------------------------------
-  var lastSig = null;
+  var lastSig = null, lastWriteStatus = 'idle', lastWriteAt = null, lastWriteError = null;
 
   function postAttributes(attrs, useKeepalive) {
     var opts = {
@@ -229,7 +229,8 @@
     if (!enabled()) { return; }
     var desired = desiredAttributes(detail);
     var desiredSig = signature(desired);
-    if (desiredSig === lastSig) { return; }
+    if (desiredSig === lastSig) { lastWriteStatus = 'in_sync'; return; }
+    lastWriteStatus = 'writing'; lastWriteError = null;
     fetch(cartUrl(), { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
       .then(function (r) { return r.json(); })
       .then(function (cart) {
@@ -239,10 +240,10 @@
           if (!Object.prototype.hasOwnProperty.call(desired, name)) { continue; }
           if (String(cur[name] == null ? '' : cur[name]) !== String(desired[name])) { same = false; break; }
         }
-        if (same) { lastSig = desiredSig; return null; }
-        return postAttributes(desired, false).then(function () { lastSig = desiredSig; });
+        if (same) { lastSig = desiredSig; lastWriteStatus = 'in_sync'; lastWriteAt = Date.now(); return null; }
+        return postAttributes(desired, false).then(function () { lastSig = desiredSig; lastWriteStatus = 'ok'; lastWriteAt = Date.now(); });
       })
-      .catch(function (err) { warn('cart attribute sync failed (non-blocking)', err); });
+      .catch(function (err) { lastWriteStatus = 'error'; lastWriteError = (err && err.message) || String(err); warn('cart attribute sync failed (non-blocking)', err); });
   }
 
   var timer = null;
@@ -354,6 +355,23 @@
     var loc = currentLoc();
     if (loc && loc.pincode && loc.isServiceable === true) { scheduleSync(null); }
   }
+
+  // DEV-ONLY diagnostics — whether the selection actually reached the cart attributes (the clean-
+  // device handoff). cartAttributesWriteStatus: 'idle' | 'writing' | 'ok' | 'in_sync' | 'error'.
+  window.GanguramCartAttributes = {
+    debugState: function () {
+      var loc = currentLoc();
+      return {
+        enabled: enabled(),
+        cartAttributesWriteStatus: lastWriteStatus,
+        lastWriteAt: lastWriteAt,
+        lastWriteError: lastWriteError,
+        selectedPincode: (loc && loc.pincode) || null,
+        serviceable: !!(loc && loc.isServiceable === true),
+        desiredAttributes: desiredAttributes(null)
+      };
+    }
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
