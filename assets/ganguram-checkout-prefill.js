@@ -226,6 +226,7 @@
     // private mode). The prefill must work from the cart attribute + in-memory selection, NOT this.
     var lsPin = ''; try { lsPin = norm((window.localStorage && window.localStorage.getItem('Zipcode')) || ''); } catch (e) {}
     var cartPin = cartPincode();
+    var cartAddr = cartAddress();
     var method = null; try { var mc = window.GanguramDeliveryMethodChoice; method = (mc && typeof mc.getPreferred === 'function') ? mc.getPreferred().code : null; } catch (e) {}
     var panEligible = (function () {
       var lines = document.querySelectorAll('[data-ganguram-cart-line]'); if (!lines.length) { return null; }
@@ -260,6 +261,20 @@
       cartAttributesVerifiedBeforeRedirect: lastHandoff.verified,
       handoffStatus: lastHandoff.status,
       sending: paramsOf(url),
+      // ---- checkout-field prefill audit (the exact URL/payload the theme sends to Shopify) ----
+      checkoutRedirectUrl: url,
+      checkoutPrefillPayload: paramsOf(url),
+      checkoutPrefillMode: mode,
+      cartAttributeAddress1: (cartAddr ? cartAddr.address1 : null),
+      cartAttributeCity: (cartAddr ? cartAddr.city : null),
+      cartAttributeProvince: (cartAddr ? cartAddr.state : null),
+      cartAttributeZip: (cartAddr ? cartAddr.zip : (cartPin || null)),
+      // FALSE by design: theme JS CANNOT visibly auto-fill Shopify's one-page checkout shipping
+      // address — the new checkout ignores checkout[shipping_address][...] URL params. The data is
+      // preserved in cart/order attributes (above + ShipZip reads the pincode). True field prefill
+      // needs a logged-in customer (Shopify auto-fills) or a Checkout UI Extension / Storefront Cart
+      // API buyerIdentity. See docs/phase2-checkout-prefill-limitation.md.
+      shopifyCheckoutFieldPrefillSupported: false,
       willRedirect: enabled() && !guardBlocked() && !!url,
       reason: (mode === 'none') ? 'no serviceable pincode (in-memory) and none on the cart attributes — enter a pincode/address' : null,
       themeEstimate: themeEstimate(norm(pin))
