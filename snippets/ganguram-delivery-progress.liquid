@@ -27,8 +27,7 @@
   </div>
   <p class="ganguram-delivery-progress__message" data-gdpr-message hidden></p>
   <p class="ganguram-delivery-progress__fourhour-notice" data-gdpr-fourhour-notice role="status" hidden></p>
-  <details class="ganguram-delivery-progress__breakdown" data-gdpr-breakdown hidden>
-    <summary class="ganguram-delivery-progress__breakdown-summary" data-gdpr-breakdown-title></summary>
-    <div class="ganguram-delivery-progress__breakdown-body" data-gdpr-breakdown-body></div>
-  </details>
+  {%- comment -%} Phase 1: the "Delivery details" disclosure is removed for a compact card —
+    the estimate line + mode chips + MOV bar are the whole summary. The JS that fills the
+    breakdown no-ops when the element is absent (renderBreakdown returns early). {%- endcomment -%}
 </div>

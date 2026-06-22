@@ -419,20 +419,22 @@
     if (target && target.focus) { try { target.focus(); } catch (e) {} }
   }
 
-  // Mobile-first action order (stacked): Change pincode (primary, recommended) ->
-  // Keep current pincode (secondary) -> Remove unavailable items (destructive, last).
-  // "Remove unavailable items" replaces the old, ambiguous "Continue with selected pincode".
+  // Mobile-first action order (stacked): the PRIMARY accepts the new pincode AND removes the
+  // unavailable items; the SECONDARY keeps the current pincode and leaves the cart unchanged.
+  // (Phase 1: the standalone "Remove unavailable items" button is gone — removal is bundled into
+  // "Change pin code to {new}". Labels carry the live new / current pincodes.)
   function showWarning(affected, pincode) {
     if (!modal) { modal = buildModal(); }
     modalMode = 'change';
+    var current = activePincode();
     modal._heading.textContent = 'Some items are unavailable for this pincode';
-    modal._sub.textContent = unavailableMessage(pincode);
+    modal._sub.textContent = 'These items can’t be delivered to ' + pincode + '. Changing your pin code to ' +
+      pincode + ' will remove them from your cart. Keep your current pin code ' + current + ' to leave the cart unchanged.';
     modal._sub.removeAttribute('hidden');
     fillList(affected, pincode);
     setActions([
-      { label: 'Change pincode', cls: BTN_PRIMARY, onClick: function () { onChangePincode(); } },
-      { label: 'Keep current pincode', cls: BTN_SECONDARY, onClick: function () { onKeepCurrent(); } },
-      { label: 'Remove unavailable items', cls: BTN_DANGER, note: REMOVE_HELPER, onClick: function () { onConfirm(); } }
+      { label: 'Change pin code to ' + pincode, cls: BTN_PRIMARY, onClick: function () { onConfirm(); } },
+      { label: 'Keep current ' + current, cls: BTN_SECONDARY, onClick: function () { onKeepCurrent(); } }
     ]);
     show();
   }
@@ -463,13 +465,13 @@
     modalMode = 'review';
     currentReviewSig = invalidSignature(affected, pincode);
     modal._heading.textContent = 'Some items are unavailable for this pincode';
-    modal._sub.textContent = unavailableMessage(pincode);
+    modal._sub.textContent = 'These items can’t be delivered to ' + pincode +
+      '. Change your pin code to one that can deliver them — that will remove the unavailable items — or keep ' + pincode + '.';
     modal._sub.removeAttribute('hidden');
     fillList(affected, pincode);
     setActions([
-      { label: 'Change pincode', cls: BTN_PRIMARY, onClick: function () { onReviewChangePincode(); } },
-      { label: 'Keep current pincode', cls: BTN_SECONDARY, onClick: function () { onReviewKeepCurrent(); } },
-      { label: 'Remove unavailable items', cls: BTN_DANGER, note: REMOVE_HELPER, onClick: function () { onRemoveUnavailable(); } }
+      { label: 'Change pin code', cls: BTN_PRIMARY, onClick: function () { onReviewChangePincode(); } },
+      { label: 'Keep current ' + pincode, cls: BTN_SECONDARY, onClick: function () { onReviewKeepCurrent(); } }
     ]);
     show();
   }

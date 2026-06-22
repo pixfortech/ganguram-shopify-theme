@@ -88,10 +88,10 @@
     setStatus('', '');
     setTitle('Choose delivery location');
     setCurrent();
-    // Close button only when a valid pincode already exists (dismissible);
-    // otherwise the popup is mandatory (no close button).
+    // Phase 1: NON-BLOCKING popup — the close (✕) button is ALWAYS available so a customer
+    // can dismiss it and browse without first entering a pincode.
     var closeBtn = q('[data-gdp-close]');
-    if (closeBtn) { closeBtn.hidden = !hasValidDeliveryLocation(); }
+    if (closeBtn) { closeBtn.hidden = false; }
     lastFocus = document.activeElement;
     r.classList.remove('is-closing');
     r.hidden = false;
@@ -112,9 +112,10 @@
 
   function closeDeliveryLocationPopup(force) {
     var r = root(); if (!r) { return; }
-    // Mandatory mode: don't close unless forced (Escape / programmatic) or a valid
-    // pincode already exists. The backdrop uses force=false, Escape uses force=true.
-    if (!force && !hasValidDeliveryLocation()) { return; }
+    // Phase 1: NON-BLOCKING — Escape, the ✕ and the backdrop ALWAYS close so the customer can
+    // browse without a pincode. Buying still requires one: the add-to-cart / buy-now guards
+    // re-open this popup, and the buttons are visually gated (see syncBuyGate). `force` is kept
+    // for call-site compatibility but no longer prevents closing.
     if (r.hidden) { return; }
     r.classList.remove('is-open');
     r.classList.add('is-closing'); // CSS plays the exit transition
@@ -153,11 +154,20 @@
   }
 
   function onZoneChange() {
+    syncBuyGate();                      // pincode just changed -> update the buy-button gate
     if (suppressAutoClose) { return; } // the popup's own apply is showing its success; its timer will close it
     if (isOpen() && hasValidDeliveryLocation()) {
       setStatus('', '');
       closeDeliveryLocationPopup(true);
     }
+  }
+
+  // Phase 1: visually gate the buy buttons when no valid pincode is selected. Toggles a root
+  // class; the CSS dims + disables Add to cart / Buy now on collection cards, product cards,
+  // the product page, quick-add and recommendation sections. The capture-phase guards still
+  // re-open this popup on a click, so a dimmed button is also the prompt to choose a pincode.
+  function syncBuyGate() {
+    try { document.documentElement.classList.toggle('ganguram-no-pincode', shouldGuard()); } catch (e) {}
   }
 
   // -------------------------------------------------------------------------
@@ -219,9 +229,12 @@
 
   function init() {
     wirePopup();
+    syncBuyGate();                  // gate the buy buttons from the first paint
     if (inDesignMode()) { return; } // no auto-open and no guards inside the theme editor
     document.addEventListener('submit', onSubmitCapture, true);
     document.addEventListener('click', onClickCapture, true);
+    // Phase 1: still PROMPT on first visit (helpful), but the popup is now dismissable so it
+    // never forces a pincode before browsing.
     if (zone() && !hasValidDeliveryLocation()) { openDeliveryLocationPopup(DEFAULT_MSG); }
   }
 
