@@ -43,12 +43,18 @@
 
   function go(url) { try { window.location.assign(url); } catch (e) { window.location.href = url; } }
 
-  // After the item is added: respect the MOV / checkout guard.
+  // After the item is added: hand off through the SHARED checkout pipeline so the pincode/address
+  // + delivery method are validated, SAVED and VERIFIED on /cart.js BEFORE any checkout redirect
+  // (no pincode -> opens the popup; STD date missing / below MOV -> opens the cart, no redirect).
   function proceed() {
+    var pf = window.GanguramCheckoutPrefill;
+    if (pf && typeof pf.prepareCheckout === 'function') {
+      try { pf.prepareCheckout({ buyNow: true }); return; } catch (e) {}
+    }
+    // Fallback (prefill not loaded): never auto-checkout past an unknown guard.
     var blocked = guardBlocked();
     if (blocked === true) { openDrawer(); return; }          // below MOV -> show cart, do NOT checkout
     if (blocked === false) { go(checkoutUrl()); return; }    // allowed -> express checkout
-    // guard unknown (not loaded) -> never auto-checkout past an unknown guard
     if (!openDrawer()) { go(cartUrl()); }
   }
 

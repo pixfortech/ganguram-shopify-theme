@@ -95,7 +95,11 @@
     obs = new MutationObserver(schedule);
     try { obs.observe(document.body, { childList: true, subtree: true }); } catch (e) {}
   }
+  function hideDynamicCheckout() { return cfg().hideDynamicCheckout === true; }
   function init() {
+    // Enforce the checkout handoff: hide the native product-page dynamic-checkout (Shop Pay) button
+    // so a direct express checkout can't bypass the pincode/address/method save. CSS-driven, reversible.
+    try { document.documentElement.classList.toggle('ganguram-hide-dynamic-checkout', hideDynamicCheckout()); } catch (e) {}
     sync();
     observe();
     window.addEventListener('ganguram:delivery-location-changed', sync);
@@ -120,6 +124,8 @@
         pincodeSelected: !!(loc && loc.pincode && loc.isServiceable === true),
         selectedPincode: (loc && loc.pincode) || null,
         gateActive: gateActive(),
+        dynamicCheckoutHidden: hideDynamicCheckout(),
+        dynamicCheckoutButtons: document.querySelectorAll('.shopify-payment-button').length,
         gatedButtons: document.querySelectorAll('[data-js-product-add-to-cart], [data-ganguram-buy-now], .shopify-payment-button').length,
         ctaButtons: document.querySelectorAll('.' + CTA_CLASS).length,
         mobileEntryPointsFound: entries.length,

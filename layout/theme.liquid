@@ -529,7 +529,12 @@
   <script src="{{ 'ganguram-delivery-popup.js' | asset_url }}" defer></script>
 
   {%- comment -%} Phase 1 storefront gate — no-pincode purchase gate only (HIDE Add to cart / Buy now and show an "Enter delivery pin code to shop" CTA). Out-of-stock hiding is done in Liquid (product.available) + CSS, NOT here. Loaded AFTER the resolver/popup. Display only; fail-open; no ShipZip/eligibility/MOV/prefill change. {%- endcomment -%}
-  <script>window.GanguramStorefrontGateConfig = { enabled: true, ctaText: {{ 'Enter delivery pin code to shop' | json }} };</script>
+  {%- comment -%} hideDynamicCheckout: hide the native product-page dynamic-checkout (Shop Pay etc.)
+    button so a direct Buy-with-ShopPay can't bypass the pincode/address/method handoff. Customers
+    use "Add to cart" / the custom "Buy now" (which run the GanguramCheckoutPrefill.prepareCheckout
+    pipeline). Set to false to re-enable Shop Pay express on the product page (accepting that it skips
+    the cart-side delivery handoff). {%- endcomment -%}
+  <script>window.GanguramStorefrontGateConfig = { enabled: true, hideDynamicCheckout: true, ctaText: {{ 'Enter delivery pin code to shop' | json }} };</script>
   <script src="{{ 'ganguram-storefront-gate.js' | asset_url }}" defer></script>
 
   {%- comment -%} Saved delivery locations shell (Phase 2.8A) — recent guest locations + logged-in saved addresses; selection only, all via GanguramZone. No Google Maps / checkout autofill / filtering logic. {%- endcomment -%}
