@@ -32,7 +32,11 @@
         <div class="grid grid--slider {{ section.settings.layout }} {{ section.settings.layout_mobile }} kill-grid-tiny">
           {%- liquid
             for recommendation in recommendations.products
-              render 'product-item', product: recommendation, section_blocks: section.blocks, layout: section.settings.layout, mobile_layout: section.settings.layout_mobile
+              # Phase 1: skip globally out-of-stock products (sold out + no backorder); backorder
+              # products are recommendation.available == true and stay visible/purchasable.
+              if recommendation.available
+                render 'product-item', product: recommendation, section_blocks: section.blocks, layout: section.settings.layout, mobile_layout: section.settings.layout_mobile
+              endif
             endfor
           -%}
         </div>

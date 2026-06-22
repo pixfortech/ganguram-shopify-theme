@@ -22,12 +22,19 @@ html.ganguram-no-pincode .product-form__buy-buttons .shopify-payment-button { di
 .ganguram-pincode-cta { display: none; cursor: pointer; }
 html.ganguram-no-pincode .ganguram-pincode-cta { display: inline-flex; align-items: center; justify-content: center; }
 
-/* ---- B. HIDE OUT-OF-STOCK product cards --------------------------------------------------
- * (1) globally sold-out: the theme's own product-item--sold-out class (also filtered in Liquid).
- * (2) out-of-stock at the store (the client-side pickup widget): GanguramStorefrontGate flags the
- *     card with data-ganguram-oos-hidden once the pickup-availability widget resolves unavailable. */
-.product-item--sold-out,
-[data-ganguram-oos-hidden] { display: none !important; }
+/* ---- B. OUT-OF-STOCK + pickup text ------------------------------------------------------
+ * (1) HIDE the pickup/location availability line ("Out of stock at <store>") on product cards —
+ *     it is per-LOCATION pickup status, NOT global availability, so it must never be shown and
+ *     must never decide whether a card is hidden.
+ * (2) HIDE globally out-of-stock cards: the theme's own product-item--sold-out class is added
+ *     only when product.available == false (i.e. sold out AND not continue-selling/backorder).
+ *     Backorder/continue-selling products are product.available == true, so they stay visible
+ *     and purchasable. (Best-Sellers also filters these in Liquid; see collection-panel.liquid.) */
+.product-item__local-availability,
+pickup-availability-compact,
+pickup-availability-widget { display: none !important; }
+
+.product-item--sold-out { display: none !important; }
 
 /* ---- C. STICKY HEADER (desktop + mobile) -------------------------------------------------
  * Higher specificity than the theme's .site-header rule (no !important). The hero-overlay variant
