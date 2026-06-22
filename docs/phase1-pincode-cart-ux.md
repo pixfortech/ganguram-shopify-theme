@@ -47,3 +47,10 @@ GanguramPincodePopup.debugState();     // (= GanguramDelivery) hasValidPincode, 
 GanguramDeliveryProgress.debugState(); // panelVisible, mov, movMet, movRemaining, ruleReason, movBarVisible — shows WHY the MOV bar does/doesn't render
 ```
 If `phase1CssLoaded` is `false`, the asset isn’t loading on the active theme (re‑import from GitHub / check `theme.liquid`). If `GanguramDeliveryProgress.debugState().mov` is `null` with `ruleReason: 'none'`, no metaobject delivery rule resolved for that pincode — that’s why the MOV bar is absent (the calculation is unchanged).
+
+---
+
+## Follow-up — card images + side-by-side buttons
+
+- **Product card images (blank placeholders).** Root cause: the storefront-gate's MutationObserver watched the whole `document.body` subtree and ran on *every* DOM mutation — including lazy-image loads and slider clones — thrashing layout while images loaded. Fixed: the observer now reacts **only** when a new buy button (`[data-js-product-add-to-cart]`) is actually added (facets / infinite scroll / sliders), and **disconnects during its own CTA insertion** so it can't self-trigger. No CSS touches the image figures; out-of-stock/no-pincode rules don't affect image visibility/opacity/lazy-loading. The theme's existing no-image fallback (`product.media.size == 0` → fallback image / `placeholder_svg_tag`) is unchanged.
+- **Side-by-side card buttons.** `ganguram-product-card-buy.css` was `flex-direction: column` (stacked). Now the Shopify `{% form %}` that wraps the buttons is a **flex row** (`Add to cart | Buy now`, equal width via `flex: 1 1 0`, compact `gap`, `flex-wrap` so it never overflows on mobile). The injected no-pincode CTA spans the **full row** (`flex: 1 1 100%`) so there's no awkward half-width/stacked button.

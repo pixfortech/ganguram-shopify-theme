@@ -1,12 +1,25 @@
 /*
- * Ganguram — Product-card "Add to cart" + "Buy now" layout (Phase 2.11D.1).
- * Stacks the two buttons on single-variant product cards. Display only; the
- * theme's button styles are reused. No layout change for multi-variant cards.
+ * Ganguram — Product-card "Add to cart" + "Buy now" layout (Phase 1).
+ * SIDE BY SIDE (Add to cart | Buy now), equal width, compact — matching the Local theme.
+ * The Shopify {% form %} wraps the two buttons (+ the hidden id input + the injected
+ * no-pincode CTA), so the FORM is the flex row. The "Enter delivery pin code to shop" CTA
+ * spans the full row so the card never shows awkward vertical button stacking. Theme button
+ * styles reused; NO HARDCODED COLOURS; mobile-safe (wraps rather than overflows).
  */
-.ganguram-card-buy__buttons {
+.ganguram-card-buy__buttons { display: block; }
+.ganguram-card-buy__buttons > form {
   display: flex;
-  flex-direction: column;
+  flex-flow: row wrap;
   gap: 0.4rem;
+  align-items: stretch;
 }
+.ganguram-card-buy__buttons > form > button {
+  flex: 1 1 0;
+  min-width: 0;          /* let the label shrink so two buttons never overflow a narrow card */
+  width: auto;
+  margin: 0;
+}
+/* no-pincode CTA: full row (single button, never half-width, never stacked) */
+.ganguram-card-buy__buttons > form > .ganguram-pincode-cta { flex: 1 1 100%; }
 .ganguram-card-buy__buttons .ganguram-buy-now { margin: 0; }
 .ganguram-card-buy__buttons [data-ganguram-buy-now].working { opacity: 0.7; pointer-events: none; }
