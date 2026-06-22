@@ -238,21 +238,46 @@
     if (zone() && !hasValidDeliveryLocation()) { openDeliveryLocationPopup(DEFAULT_MSG); }
   }
 
+  // ---- mobile diagnostics helpers ----
+  function gdpIsMobileViewport() {
+    try { if (window.matchMedia) { return window.matchMedia('(max-width: 1023px)').matches; } } catch (e) {}
+    return (window.innerWidth || 0) > 0 && window.innerWidth <= 1023;
+  }
+  function gdpIsVisible(el) {
+    if (!el || el.nodeType !== 1) { return false; }
+    try {
+      if (el.offsetParent !== null) { return true; }                 // not display:none and laid out
+      var r = el.getBoundingClientRect ? el.getBoundingClientRect() : null;
+      return !!(r && r.width > 0 && r.height > 0);
+    } catch (e) { return false; }
+  }
+
   // public API
   window.GanguramDelivery = {
     hasValidDeliveryLocation: hasValidDeliveryLocation,
     openDeliveryLocationPopup: openDeliveryLocationPopup,
     closeDeliveryLocationPopup: function () { closeDeliveryLocationPopup(true); },
-    // DEV-ONLY diagnostics (console): confirms the popup is non-blocking + the buy-gate state.
+    // DEV-ONLY diagnostics (console): confirms the popup is non-blocking + mobile entry points exist.
     debugState: function () {
       var r = root(), closeBtn = q('[data-gdp-close]'), loc = null;
       try { loc = zone() && zone().getSelectedDeliveryLocation(); } catch (e) {}
+      // Pincode openers a customer can tap to open the popup (the mobile bar + every
+      // [data-ganguram-open-pincode] trigger / gate CTA). "Visible" = actually rendered on the
+      // current viewport — on mobile at least one (the mobile bar) MUST be visible.
+      var entries = [].slice.call(document.querySelectorAll('[data-ganguram-mobile-pincode-bar], [data-ganguram-open-pincode]'));
+      var visible = entries.filter(gdpIsVisible);
       return {
+        isMobileViewport: gdpIsMobileViewport(),
         hasValidPincode: hasValidDeliveryLocation(),
+        pincodeSelected: !!(loc && loc.pincode),
         selectedPincode: (loc && loc.pincode) || null,
         popupExists: !!r,
+        popupMounted: !!r,
         popupOpen: !!(r && r.hidden === false),
         closeButtonVisible: !!(closeBtn && closeBtn.hidden === false),
+        mobileEntryPointsFound: entries.length,
+        mobileEntryPointsVisible: visible.length,
+        mobilePincodeBarPresent: document.querySelectorAll('[data-ganguram-mobile-pincode-bar]').length,
         nonBlocking: true,                 // ESC / backdrop / x always close (Phase 1)
         buyGateActive: shouldGuard()
       };

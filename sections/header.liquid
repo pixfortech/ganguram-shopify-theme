@@ -95,6 +95,14 @@
     data-sticky-header
   {% endif %}
 >
+  {%- comment -%} Phase 2 mobile fix — persistent mobile pincode entry point. The desktop delivery
+    widget lives in header__bottom (hidden on mobile), so mobile users had no way to set a delivery
+    pincode. This bar shows ONLY on mobile (≤1023px via ganguram-delivery-widget.css), reflects the
+    selected pincode, and opens the pincode popup on tap. UI only; reads/writes window.GanguramZone.
+    Uses a NEW class so the header__bottom/menu-slot mobile-hide rule never catches it. {%- endcomment -%}
+  <div class="ganguram-mobile-pincode-bar" data-ganguram-mobile-pincode-bar>
+    {%- render 'delivery-location-widget', class: 'ganguram-delivery-widget--mobilebar' -%}
+  </div>
   <div class="header-container header-container--top {% if section.settings.show_search %} hide-border-on-portable {% endif %}">
     <div class="header__top container--large">
       <!-- logo -->
