@@ -137,18 +137,19 @@
     return 0;
   }
   // MOV gate, "if applicable". Prefers the shared GanguramCartMov resolver so 4HR respects the SAME
-  // distance-based minimum the cart progress bar shows; fail-open to the rule engine, then to
-  // "not required". Never changes the MOV/rate formula.
+  // distance-based minimum the cart progress bar shows. We gate 4HR on the MOV only when that MOV
+  // actually BLOCKS (a rule MOV, or the theme MOV with "Block checkout below MOV" on) — a display-
+  // only MOV is guidance, so it never hides 4HR. Fail-open to the rule engine, then to "not required".
   function movState(l) {
     if (window.GanguramCartMov && typeof window.GanguramCartMov.resolve === 'function') {
-      try { var r = window.GanguramCartMov.resolve(l, readSubtotal()); return { required: r.mov != null, met: r.movMet }; } catch (e) {}
+      try { var r = window.GanguramCartMov.resolve(l, readSubtotal()); return { required: r.blocking === true, met: r.movMet }; } catch (e) {}
     }
     var dr = window.GanguramDeliveryRules;
     if (!dr || typeof dr.getProgressData !== 'function' || !l) { return { required: false, met: true }; }
     try {
       var data = dr.getProgressData(readSubtotal(), l, {});
       if (!data || data.mov == null) { return { required: false, met: true }; }
-      return { required: true, met: data.movMet === true };
+      return { required: true, met: data.movMet === true };   // a rule MOV always blocks
     } catch (e) { return { required: false, met: true }; }
   }
 
