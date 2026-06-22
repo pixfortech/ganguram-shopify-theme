@@ -209,6 +209,12 @@
     var mode = addr ? 'full_address' : (norm(pin) ? 'pincode_only' : 'none');
     var url = (mode === 'full_address') ? buildUrl('full_address', addr, pin)
       : (mode === 'pincode_only') ? buildUrl('pincode_only', null, pin) : null;
+    // The EXACT shipping_address params attached to the redirect URL, + per-field booleans, so the
+    // audit can prove the theme IS sending the full address (and Shopify, not the theme, drops it).
+    var pay = paramsOf(url);
+    var has = function (k) { return Object.prototype.hasOwnProperty.call(pay, k) && pay[k] !== ''; };
+    var paramsIncluded = { country: has('country'), zip: has('zip'), address1: has('address1'), address2: has('address2'), city: has('city'), province: has('province') };
+    var paramKeys = Object.keys(pay).map(function (k) { return 'checkout[shipping_address][' + k + ']'; });
     // Why the redirect is/ isn't blocked — so "prefill not sending" can be told apart from a
     // genuine MOV / required-delivery-date block (the redirect is skipped while blocked, by design).
     var movBlocked = false, dateMissing = false;
@@ -260,14 +266,19 @@
       checkoutRedirectAllowed: (lastHandoff.allowed === true),
       cartAttributesVerifiedBeforeRedirect: lastHandoff.verified,
       handoffStatus: lastHandoff.status,
-      sending: paramsOf(url),
-      // ---- checkout-field prefill audit (the exact URL/payload the theme sends to Shopify) ----
+      sending: pay,
+      // ---- checkout-field prefill audit (the EXACT URL/payload the theme sends to Shopify) ----
       checkoutRedirectUrl: url,
-      checkoutPrefillPayload: paramsOf(url),
+      checkoutPrefillPayload: pay,
       checkoutPrefillMode: mode,
+      checkoutParamsIncluded: paramsIncluded,      // which checkout[shipping_address][*] params are attached
+      checkoutParamKeys: paramKeys,                // the exact param keys on the URL
+      checkoutParamsIgnoredLikely: (paramKeys.length > 0), // present but the new one-page checkout drops them
       cartAttributeAddress1: (cartAddr ? cartAddr.address1 : null),
+      cartAttributeAddress2: (cartAddr ? cartAddr.address2 : null),
       cartAttributeCity: (cartAddr ? cartAddr.city : null),
       cartAttributeProvince: (cartAddr ? cartAddr.state : null),
+      cartAttributeCountry: (cartAddr ? cartAddr.country : null),
       cartAttributeZip: (cartAddr ? cartAddr.zip : (cartPin || null)),
       // FALSE by design: theme JS CANNOT visibly auto-fill Shopify's one-page checkout shipping
       // address — the new checkout ignores checkout[shipping_address][...] URL params. The data is
