@@ -1613,24 +1613,62 @@
 		"settings": [
 			{
 				"type": "header",
-				"content": "Minimum order value (cart progress bar)"
+				"content": "Minimum order value (distance-based)"
 			},
 			{
 				"type": "paragraph",
-				"content": "The cart shows a minimum-order progress bar when a delivery rule (metaobject) sets a Minimum order value. If your rules don't set one, enter a display amount here so the bar still appears after a pincode/address is entered. Display only by default — it does not block checkout or change shipping rates. Use GanguramDeliveryProgress.debugState() (movSource) to confirm the source."
+				"content": "Shows a minimum-order progress bar in the cart that scales with delivery distance, using the SAME route distance and slabs as the Standard shipping estimate. After a pincode/address is entered the matching slab MOV is shown. A delivery-rule (metaobject) MOV, if set, always wins. Display only unless you tick Block checkout below MOV. Confirm with GanguramDeliveryProgress.debugState() (movSource / matchedMovSlab)."
 			},
 			{
-				"type": "number",
-				"id": "ganguram_cart_mov_amount",
-				"label": "Display minimum order value (₹, 0 = off)",
-				"default": 0
+				"type": "checkbox",
+				"id": "ganguram_cart_mov_enabled",
+				"label": "Enable MOV bar",
+				"default": true
 			},
 			{
 				"type": "checkbox",
 				"id": "ganguram_cart_mov_blocks",
-				"label": "Also block checkout below this amount",
-				"info": "Off = the bar is display-only. On = soft-blocks checkout below the amount, like a real rule minimum.",
+				"label": "Block checkout below MOV",
+				"info": "Off = display-only guidance. On = soft-blocks checkout when the local MOV is not met. A delivery-rule MOV always blocks.",
 				"default": false
+			},
+			{
+				"type": "number",
+				"id": "ganguram_cart_mov_slab1",
+				"label": "MOV 0-5 km (₹)",
+				"default": 300
+			},
+			{
+				"type": "number",
+				"id": "ganguram_cart_mov_slab2",
+				"label": "MOV 5.01-10 km (₹)",
+				"default": 400
+			},
+			{
+				"type": "number",
+				"id": "ganguram_cart_mov_slab3",
+				"label": "MOV 10.01-15 km (₹)",
+				"default": 500
+			},
+			{
+				"type": "number",
+				"id": "ganguram_cart_mov_slab4",
+				"label": "MOV 15.01-20 km (₹)",
+				"default": 700
+			},
+			{
+				"type": "number",
+				"id": "ganguram_cart_mov_pan",
+				"label": "PAN India MOV (₹, 0 = hide bar for PAN India)",
+				"info": "Optional. PAN India never uses the local distance slabs.",
+				"default": 0
+			},
+			{
+				"type": "number",
+				"id": "ganguram_cart_mov_amount",
+				"label": "Fallback MOV (₹, 0 = off)",
+				"info": "Used only when no delivery distance is available yet.",
+				"default": 0
 			}
 		]
 	},

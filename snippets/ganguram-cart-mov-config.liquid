@@ -1,0 +1,26 @@
+{%- comment -%}
+  Ganguram — Cart MOV resolver config (distance-based slabs).
+
+  Publishes window.GanguramCartMovConfig from Theme settings → "Ganguram — Cart delivery & MOV bar"
+  and loads assets/ganguram-cart-mov.js (the shared MOV resolver consumed by the cart progress bar
+  and the 4-Hour evaluator). Amounts are entered in RUPEES and converted to PAISE here.
+
+  Display/advisory only — no ShipZip rate, Standard-slab, service-code, pincode, product-visibility,
+  Box Builder, or discount change. The distance + slab boundaries come from the SAME
+  GanguramShippingEstimate the Standard estimate uses. Must load after the shipping-estimate config.
+{%- endcomment -%}
+<script>
+  window.GanguramCartMovConfig = {
+    enabled: {% if settings.ganguram_cart_mov_enabled == false %}false{% else %}true{% endif %},
+    blocks: {% if settings.ganguram_cart_mov_blocks %}true{% else %}false{% endif %},
+    slabsPaise: [
+      {{ settings.ganguram_cart_mov_slab1 | default: 300 | times: 100 | json }},
+      {{ settings.ganguram_cart_mov_slab2 | default: 400 | times: 100 | json }},
+      {{ settings.ganguram_cart_mov_slab3 | default: 500 | times: 100 | json }},
+      {{ settings.ganguram_cart_mov_slab4 | default: 700 | times: 100 | json }}
+    ],
+    panIndiaPaise: {{ settings.ganguram_cart_mov_pan | default: 0 | times: 100 | json }},
+    fallbackPaise: {{ settings.ganguram_cart_mov_amount | default: 0 | times: 100 | json }}
+  };
+</script>
+<script src="{{ 'ganguram-cart-mov.js' | asset_url }}" defer></script>

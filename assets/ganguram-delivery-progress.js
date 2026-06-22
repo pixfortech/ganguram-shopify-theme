@@ -70,8 +70,8 @@
       panRateLabel: 'Rate:',
       panRateValue: '__AMOUNT__ per __UNIT__',
       cartValueLabel: 'Cart value:',
-      addMore: 'Add __REMAINING__ more to continue',
-      minReached: 'Minimum order reached',
+      addMore: 'Add __REMAINING__ more to reach the minimum order value for your delivery area.',
+      minReached: 'Minimum order value reached.',
       checkoutNotice: 'Minimum order value for your area is __MOV__. Please add __REMAINING__ more to continue.',
       freeDeliveryHint: 'add __AMOUNT__ for free delivery',
       freeDelivery: 'Free delivery',
@@ -321,29 +321,34 @@
 
     var data = dr.getProgressData(subtotal, location, distOpts);
     if (!data || data.reason === 'none' || !data.rule) { return null; } // no rule -> fail open (panel hidden)
-    var mov = data.mov;
-    var movMet = (mov == null) ? true : (data.movMet === true);
-    var movRemaining = data.movRemaining;
-    var movSource = (mov != null) ? 'rule' : 'none';
-    // The soft checkout guard is tied to the RULE's real MOV only (never the display fallback).
-    var ruleMovBlocks = (data.mov != null && data.movMet !== true);
-    // MOV-bar fix: optional DISPLAY-ONLY fallback so the progress bar still renders when the
-    // resolved metaobject rule omits a minimum order value. OFF by default (fallbackMov unset =
-    // no change). It NEVER blocks checkout and NEVER changes the MOV/rate formula — it only lets
-    // the bar + "x / y minimum order" summary appear. Set a real MOV on the rule to also guard.
-    if (mov == null) {
-      var fb = parseInt(cfg().fallbackMov, 10);
-      if (isFinite(fb) && fb > 0) {
-        mov = fb;
-        movMet = subtotal >= fb;
-        movRemaining = movMet ? 0 : (fb - subtotal);
-        movSource = 'fallback';
+
+    // ---- minimum order value (distance-based slabs) ----
+    // The shared GanguramCartMov resolver is the single source of truth: rule MOV > distance slab
+    // (the SAME distance + slab boundaries the Standard estimate uses) > flat fallback > none. The
+    // cart drawer, the cart page and the 4HR evaluator all read it, so they never disagree.
+    // Fail-open to the rule MOV + the legacy display fallback when the resolver isn't present.
+    var mov, movMet, movRemaining, movSource, movDisplayOnly, blocked, matchedMovSlab = null, routeDistanceKm = null;
+    if (window.GanguramCartMov && typeof window.GanguramCartMov.resolve === 'function') {
+      var mr = window.GanguramCartMov.resolve(location, subtotal, {
+        distanceKm: confirmed ? dist.distanceKm : null, confirmed: confirmed,
+        ruleMov: data.mov, ruleMovMet: data.movMet, ruleMovRemaining: data.movRemaining
+      });
+      mov = mr.mov; movMet = mr.movMet; movRemaining = mr.amountRemaining; movSource = mr.movSource;
+      matchedMovSlab = mr.matchedMovSlab; routeDistanceKm = mr.routeDistanceKm;
+      blocked = mr.checkoutBlockedByMov;
+      movDisplayOnly = (mov != null && movSource !== 'rule' && !blocked);
+    } else {
+      // legacy fallback (resolver absent): rule MOV + the display-only fallbackMov from #90.
+      mov = data.mov; movMet = (mov == null) ? true : (data.movMet === true); movRemaining = data.movRemaining;
+      movSource = (mov != null) ? 'rule' : 'none';
+      if (mov == null) {
+        var fb = parseInt(cfg().fallbackMov, 10);
+        if (isFinite(fb) && fb > 0) { mov = fb; movMet = subtotal >= fb; movRemaining = movMet ? 0 : (fb - subtotal); movSource = 'fallback'; }
       }
+      var fallbackBlocks = (movSource === 'fallback') && (cfg().fallbackMovBlocks === true);
+      movDisplayOnly = (movSource === 'fallback') && !fallbackBlocks;
+      blocked = (data.mov != null && data.movMet !== true) || (fallbackBlocks && !movMet);
     }
-    // The fallback is DISPLAY-ONLY unless the merchant ticks "Also block checkout below this amount".
-    var fallbackBlocks = (movSource === 'fallback') && (cfg().fallbackMovBlocks === true);
-    var movDisplayOnly = (movSource === 'fallback') && !fallbackBlocks;
-    var blocked = ruleMovBlocks || (fallbackBlocks && !movMet);
 
     var eligible = cartFourHourEligible();
     var svcOpts = { fourHourEligibleCart: eligible };
@@ -384,6 +389,7 @@
       location: location, pincode: location.pincode, subtotal: subtotal, data: data,
       displayLabel: displayLabelFor(location), zoneFriendly: zoneFriendly(location),
       mov: mov, movMet: movMet, movRemaining: movRemaining, movSource: movSource, movDisplayOnly: movDisplayOnly,
+      matchedMovSlab: matchedMovSlab, routeDistanceKm: routeDistanceKm,
       deliveryCharge: data.deliveryCharge,
       freeDeliveryThreshold: data.freeDeliveryThreshold,
       freeDeliveryMet: data.freeDeliveryMet,
@@ -601,9 +607,10 @@
           barEl.setAttribute('aria-valuenow', String(pct));
           show(barEl);
         }
-        // The blocking "add __REMAINING__ more to continue" line is for a REAL rule MOV only;
-        // a display-only fallback shows the bar + summary but no blocking call to action.
-        var action = (st.movMet || st.movDisplayOnly) ? '' : tmpl(copy('addMore'), { remaining: fmtMoney(st.movRemaining) });
+        // Below the MOV we always show the "add ₹X more for your delivery area" guidance (whether or
+        // not it blocks checkout — the block is a separate concern). When met, the summary line shows
+        // the success state and this line is cleared.
+        var action = st.movMet ? '' : tmpl(copy('addMore'), { remaining: fmtMoney(st.movRemaining) });
         if (msgEl) { setText(msgEl, action); if (action) { show(msgEl); } else { hide(msgEl); } }
       } else {
         if (movSumEl) { hide(movSumEl); }
@@ -731,20 +738,28 @@
     if (st.promptCode) { return { panelVisible: true, state: 'prompt', promptCode: st.promptCode, movBarVisible: false, panelsOnPage: panels2.length }; }
     if (st.hasInvalid) { return { panelVisible: true, state: 'invalid', invalidItems: st.invalidItems, movBarVisible: false, panelsOnPage: panels2.length }; }
     var fhEval = (window.GanguramFourHour && typeof window.GanguramFourHour.evaluate === 'function') ? window.GanguramFourHour.evaluate() : null;
+    var selAddr = null;
+    try { var ga = window.GanguramAddress; var a = (ga && typeof ga.getSelectedAddress === 'function') ? ga.getSelectedAddress() : null; selAddr = a ? (a.formatted || a.address1 || a.source || true) : null; } catch (e) {}
     return {
       panelVisible: true, state: st.blocked ? 'blocked' : 'ok',
       selectedPincode: st.pincode || null,
+      selectedAddress: selAddr,
       subtotal: st.subtotal,
+      cartSubtotal: st.subtotal,
+      routeDistanceKm: (st.routeDistanceKm != null) ? st.routeDistanceKm : (st.confirmed ? st.distanceKm : null),
       mov: (st.mov != null) ? st.mov : null,
       movMet: !!st.movMet,
       movRemaining: (st.movRemaining != null) ? st.movRemaining : null,
+      amountRemaining: (st.movRemaining != null) ? st.movRemaining : null,
       ruleReason: (st.data && st.data.reason) || 'none',
       // movSource explains WHY the bar is / isn't there: 'rule' = MOV from the metaobject rule;
-      // 'fallback' = the display-only fallbackMov; 'none' = no MOV anywhere -> bar hidden. If you
-      // expect a bar but see 'none', set a Minimum order value on the matching delivery rule (or
-      // set GanguramDeliveryProgressConfig.fallbackMov for a display-only bar).
+      // 'distance_slab' = the theme distance MOV slab; 'fallback' = the flat fallback; 'pan_india' =
+      // the PAN India MOV; 'none' = no MOV anywhere -> bar hidden. If you expect a bar but see 'none',
+      // set the slab amounts in Theme settings (Ganguram — Cart delivery & MOV bar) or a rule MOV.
       movSource: st.movSource || 'none',
+      matchedMovSlab: st.matchedMovSlab || null,
       movDisplayOnly: !!st.movDisplayOnly,
+      checkoutBlockedByMov: !!st.blocked,
       movBarVisible: st.mov != null,            // the bar renders whenever a MOV applies
       panelsOnPage: panels2.length,
       movBarElementsOnPage: barEls.length,
