@@ -45,8 +45,10 @@ With the defaults, the bar appears (display-only) for a local cart once a pincod
 - Checkout block: only when "Block checkout below MOV" is on (a rule MOV always blocks). Off = the
   bar is guidance only, checkout proceeds.
 - PAN India: no local slabs; a separate PAN India MOV if configured, else the bar is hidden.
-- 4HR respects the same local MOV (`GanguramFourHour` reads the same resolver), so an under-MOV cart
-  doesn't offer 4HR either.
+- 4HR respects the same local MOV (`GanguramFourHour` reads the same resolver). It is hidden below
+  the MOV **only when the MOV actually blocks** — a rule MOV (always), or the theme MOV with "Block
+  checkout below MOV" on. A **display-only** MOV (block off) is guidance and never hides 4HR.
+  (`GanguramCartMov.resolve().blocking` carries this flag.)
 
 ## Diagnostics
 ```js

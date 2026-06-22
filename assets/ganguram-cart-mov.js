@@ -108,9 +108,11 @@
       out.movMet = sub >= out.mov;
       out.amountRemaining = out.movMet ? 0 : (out.mov - sub);
       out.movBarVisible = true;
-      // The rule MOV always blocks (it is the merchant's enforced minimum). The theme MOV
-      // (distance / fallback / PAN) blocks ONLY when "Block checkout below MOV" is ticked.
-      out.checkoutBlockedByMov = !out.movMet && (isRule || blocksEnabled());
+      // `blocking` = this MOV enforces checkout (and gates 4HR) when unmet. The rule MOV always
+      // blocks (the merchant's enforced minimum). The theme MOV (distance / fallback / PAN) blocks
+      // ONLY when "Block checkout below MOV" is ticked — otherwise the bar is display-only guidance.
+      out.blocking = (isRule === true) || blocksEnabled();
+      out.checkoutBlockedByMov = !out.movMet && out.blocking;
     }
     return out;
   }
