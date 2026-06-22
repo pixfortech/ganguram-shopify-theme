@@ -71,6 +71,20 @@
     for (var i = 0; i < l.length; i++) { if (String(l[i].getAttribute('data-ganguram-local-delivery')) === 'true') { return true; } }
     return false;
   }
+  // A cart is locally deliverable (so Standard local delivery applies and needs a date) when ANY
+  // item carries a local tag — Local Delivery OR Quick Commerce OR Kolkata. The date picker must
+  // not depend on the 'Local Delivery' tag alone: a Quick-Commerce cart in a local zone resolves
+  // to Standard (₹ slab) when 4HR is unavailable, and Standard ALWAYS needs a date. (Task A.)
+  function cartLocallyDeliverable() {
+    var l = lines(); if (!l.length) { return false; }
+    for (var i = 0; i < l.length; i++) {
+      var el = l[i];
+      if (String(el.getAttribute('data-ganguram-local-delivery')) === 'true' ||
+          String(el.getAttribute('data-ganguram-quick-commerce')) === 'true' ||
+          String(el.getAttribute('data-ganguram-kolkata')) === 'true') { return true; }
+    }
+    return false;
+  }
   function cartAllQuickCommerce() {
     var l = lines(); if (!l.length) { return false; }
     for (var i = 0; i < l.length; i++) { if (String(l[i].getAttribute('data-ganguram-quick-commerce')) !== 'true') { return false; } }
@@ -79,7 +93,9 @@
   function computeState() {
     if (!enabled()) { return { show: false }; }
     var loc = localLocation();
-    if (!loc || !cartHasLocalDelivery()) { return { show: false }; }
+    // Show for any locally-deliverable cart (Task A) — not only 'Local Delivery'-tagged items —
+    // so a Quick-Commerce / Kolkata cart on Standard still gets the required date picker.
+    if (!loc || !cartLocallyDeliverable()) { return { show: false }; }
     var fourHour = cartAllQuickCommerce() && (loc.isQuickCommerce === true || loc.zone === 'quick_commerce');
     // Phase 2: defer to the shared 4HR evaluator (enabled + time window + radius + all-QC +
     // MOV) so the toggle, the persisted method and the panel never disagree. When 4HR is
@@ -322,7 +338,33 @@
     document.addEventListener('submit', onSubmit, true);
   }
 
-  window.GanguramDeliveryDatePicker = { render: renderAll, isDateMissing: isDateMissing };
+  // DEV-ONLY diagnostics (console) — WHY the date picker is / isn't visible and whether a date
+  // is required. Pair with GanguramDeliveryMethodChoice.debugState() (active/persisted method).
+  function debugState() {
+    var st = computeState();
+    var vps = visiblePickers();
+    var p = vps[0] || null;
+    var type = p ? selectedType(p) : null;
+    var preferred = null;
+    try { preferred = (window.GanguramDeliveryMethodChoice && window.GanguramDeliveryMethodChoice.getPreferred) ? window.GanguramDeliveryMethodChoice.getPreferred() : null; } catch (e) {}
+    return {
+      enabled: enabled(),
+      localServiceableLocation: !!localLocation(),
+      cartHasLocalDeliveryTag: cartHasLocalDelivery(),
+      cartLocallyDeliverable: cartLocallyDeliverable(),
+      cartAllQuickCommerce: cartAllQuickCommerce(),
+      pickerShouldShow: !!st.show,
+      datePickerVisible: vps.length > 0,
+      activeMethod: preferred ? preferred.code : null,
+      selectedType: type,
+      fourHourAvailable: !!st.fourHourAvailable,
+      fourHourHiddenByTime: !!st.fourHourHiddenByTime,
+      dateRequired: !!(st.show && requireDate() && type !== 'four_hour'),
+      selectedDate: p ? selectedDate(p) : '',
+      dateMissing: isDateMissing()
+    };
+  }
+  window.GanguramDeliveryDatePicker = { render: renderAll, isDateMissing: isDateMissing, debugState: debugState };
 
   if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); }
   else { init(); }
