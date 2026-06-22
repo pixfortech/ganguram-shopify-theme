@@ -19,6 +19,12 @@ html.ganguram-no-pincode [data-ganguram-buy-now],
 html.ganguram-no-pincode .shopify-payment-button,
 html.ganguram-no-pincode .product-form__buy-buttons .shopify-payment-button { display: none !important; }
 
+/* Enforce the checkout handoff: hide the native product-page dynamic-checkout (Shop Pay etc.) so a
+   direct express checkout can't bypass the pincode/address/delivery-method save. Toggled by
+   GanguramStorefrontGate (config hideDynamicCheckout). Customers use Add to cart / the custom Buy now. */
+html.ganguram-hide-dynamic-checkout .shopify-payment-button,
+html.ganguram-hide-dynamic-checkout .product-form__buy-buttons .shopify-payment-button { display: none !important; }
+
 .ganguram-pincode-cta { display: none; cursor: pointer; }
 html.ganguram-no-pincode .ganguram-pincode-cta { display: inline-flex; align-items: center; justify-content: center; }
 

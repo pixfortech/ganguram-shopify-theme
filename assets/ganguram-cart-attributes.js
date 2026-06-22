@@ -356,9 +356,26 @@
     if (loc && loc.pincode && loc.isServiceable === true) { scheduleSync(null); }
   }
 
+  // Immediate write (no debounce) that RESOLVES when the cart accepted it — used by the checkout
+  // handoff so the pincode/address are on the cart BEFORE a Buy Now / checkout redirect. Returns a
+  // Promise. Fail-open: any error resolves (the keepalive flushSync is the navigation-safe backup).
+  function flush() {
+    if (!enabled()) { return Promise.resolve({ written: false, reason: 'disabled' }); }
+    var loc = currentLoc();
+    if (!(loc && loc.pincode && loc.isServiceable === true)) { return Promise.resolve({ written: false, reason: 'no_pincode' }); }
+    var desired = desiredAttributes(null);
+    lastWriteStatus = 'writing'; lastWriteError = null;
+    try {
+      return Promise.resolve(postAttributes(desired, false))
+        .then(function () { lastSig = signature(desired); lastWriteStatus = 'ok'; lastWriteAt = Date.now(); return { written: true }; })
+        .catch(function (e) { lastWriteStatus = 'error'; lastWriteError = (e && e.message) || String(e); return { written: false, reason: 'error' }; });
+    } catch (e) { lastWriteStatus = 'error'; return Promise.resolve({ written: false, reason: 'error' }); }
+  }
+
   // DEV-ONLY diagnostics — whether the selection actually reached the cart attributes (the clean-
   // device handoff). cartAttributesWriteStatus: 'idle' | 'writing' | 'ok' | 'in_sync' | 'error'.
   window.GanguramCartAttributes = {
+    flush: flush,
     debugState: function () {
       var loc = currentLoc();
       return {

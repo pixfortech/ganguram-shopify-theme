@@ -93,16 +93,86 @@
     if (!t || !t.closest) { return; }
     if (t.closest('.shopify-payment-button, [data-shopify="payment-button"], .additional-checkout-buttons')) { return; }
     if (!t.closest('#CheckOut, [name="checkout"]')) { return; }
-    if (guardBlocked()) { return; }                  // MOV + date guards own the blocked case
+    if (guardBlocked()) { return; }                  // MOV + date guards own the blocked case (preventDefault + notice)
+    var url = currentCheckoutUrl();
+    if (!url) { return; }                             // no serviceable pincode -> normal checkout (fail-open, as before)
+    e.preventDefault();
+    // Force-save the method + attributes (fire-and-forget; cart-attributes' keepalive flushSync is
+    // the navigation-safe backup) and redirect SYNCHRONOUSLY to the prefill URL — same as before,
+    // so the click never stalls. (Buy Now uses the async verify path since it already awaits the add.)
+    try { forceSave(); } catch (e2) {}
+    lastHandoff = { status: 'redirecting', buyNow: false, reason: null, verified: null, allowed: true, at: Date.now() };
+    go(url);
+  }
+
+  // ---------------------------------------------------------------------------
+  // SHARED CHECKOUT HANDOFF — Buy Now and the cart checkout button use the SAME pipeline:
+  // validate pincode (popup if none) -> validate MOV + required Standard date -> force-save the
+  // cart attributes (pincode/address) + the delivery method -> VERIFY /cart.js -> redirect to the
+  // prefill URL. Fail-open: a slow /cart.js never traps the customer (verify is time-boxed; the
+  // keepalive flushSync in cart-attributes is the navigation-safe backup). PAN India needs no
+  // distance/latLng — it resolves to PAN_INDIA and prefills pincode-only.
+  // ---------------------------------------------------------------------------
+  var VERIFY_TIMEOUT_MS = 1500;
+  var lastHandoff = { status: 'idle', buyNow: false, reason: null, verified: null, allowed: null, at: null };
+  function cartJsUrl() { return cfg().cartUrl || '/cart.js'; }
+  function cartPageUrl() { return cfg().cartPageUrl || '/cart'; }
+  function hasAnyPincode() { return !!(activePincode() || cartPincode()); }
+  function dateBlocked() { try { var d = window.GanguramDeliveryDatePicker; return !!(d && typeof d.isDateMissing === 'function' && d.isDateMissing() === true); } catch (e) { return false; } }
+  function openPincodePopup() { try { var p = window.GanguramDelivery || window.GanguramPincodePopup; if (p && typeof p.openDeliveryLocationPopup === 'function') { p.openDeliveryLocationPopup(); return true; } } catch (e) {} return false; }
+  function openCart() { try { var d = document.getElementById('site-cart-sidebar'); if (d && typeof d.show === 'function') { d.show(); return true; } } catch (e) {} return false; }
+  function go(url) { try { window.location.assign(url); } catch (e) { window.location.href = url; } }
+  function currentCheckoutUrl() {
     var addr = fullAddress();
     var pin = activePincode() || (addr ? (addr.zip || addr.pincode) : '');
-    var url;
-    if (addr) { url = buildUrl('full_address', addr, pin); }
-    else if (norm(pin)) { url = buildUrl('pincode_only', null, pin); }
-    else { return; }                                  // no serviceable pincode -> normal checkout
-    if (!url) { return; }
-    e.preventDefault();
-    try { window.location.assign(url); } catch (err) { window.location.href = url; }
+    if (addr) { return buildUrl('full_address', addr, pin); }
+    if (norm(pin)) { return buildUrl('pincode_only', null, pin); }
+    return null;
+  }
+  function forceSave() {
+    var ps = [];
+    try { var ca = window.GanguramCartAttributes; if (ca && typeof ca.flush === 'function') { ps.push(Promise.resolve(ca.flush())); } } catch (e) {}
+    try { var mc = window.GanguramDeliveryMethodChoice; if (mc && typeof mc.flush === 'function') { ps.push(Promise.resolve(mc.flush())); } } catch (e) {}
+    return Promise.all(ps).catch(function () { return []; });
+  }
+  function verifyCart() {
+    try {
+      return fetch(cartJsUrl(), { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(function (cart) {
+          cartCache = (cart && cart.attributes) || {};
+          var pin = cartPincode();
+          var method = String(cartCache['ganguram_preferred_delivery_method'] || '');
+          return { ok: !!pin, pincode: !!pin, method: !!method, cartPincode: pin, cartMethod: method };
+        })
+        .catch(function () { return { ok: false, pincode: false, method: false }; });
+    } catch (e) { return Promise.resolve({ ok: false, pincode: false, method: false }); }
+  }
+  function timeoutP(ms, val) { return new Promise(function (res) { setTimeout(function () { res(val); }, ms); }); }
+  function deny(reason, buyNow) { lastHandoff = { status: 'blocked', buyNow: !!buyNow, reason: reason, verified: null, allowed: false, at: Date.now() }; return { ok: false, reason: reason, buyNow: !!buyNow, allowed: false }; }
+
+  // The one entry point. opts.buyNow=true when called by a Buy Now button (after the AJAX add).
+  function prepareCheckout(opts) {
+    opts = opts || {}; var buyNow = !!opts.buyNow;
+    if (!enabled()) { return Promise.resolve(deny('disabled', buyNow)); }
+    if (!hasAnyPincode()) { openPincodePopup(); return Promise.resolve(deny('no_pincode', buyNow)); }
+    if (guardBlocked()) { if (buyNow) { if (!openCart()) { go(cartPageUrl()); } } return Promise.resolve(deny(dateBlocked() ? 'date_required' : 'mov', buyNow)); }
+    lastHandoff = { status: 'saving', buyNow: buyNow, reason: null, verified: null, allowed: false, at: Date.now() };
+    return forceSave()
+      .then(function () { lastHandoff.status = 'verifying'; return Promise.race([verifyCart(), timeoutP(VERIFY_TIMEOUT_MS, { ok: false, timedOut: true })]); })
+      .then(function (v) {
+        lastHandoff.verified = !!(v && v.ok);
+        var url = currentCheckoutUrl();
+        if (!url) { return deny('no_url', buyNow); }
+        lastHandoff.status = 'redirecting'; lastHandoff.allowed = true; lastHandoff.reason = null;
+        go(url);
+        return { ok: true, reason: null, buyNow: buyNow, verified: lastHandoff.verified, url: url, allowed: true };
+      })
+      .catch(function () {
+        var url = currentCheckoutUrl();
+        if (url) { lastHandoff.status = 'redirecting'; lastHandoff.allowed = true; go(url); return { ok: true, reason: 'failopen', verified: false, url: url, buyNow: buyNow, allowed: true }; }
+        return deny('error', buyNow);
+      });
   }
 
   // DEV-ONLY diagnostics (Phase 2.12C) — never customer-facing, no console noise. In the
@@ -181,6 +251,14 @@
       cartShipAttributes: cartCache ? { pincode: cartPincode(), address: cartAddress() } : null,
       panIndiaEligible: panEligible,
       finalDeliveryMethod: method,
+      // Buy Now / checkout handoff state (the shared prepareCheckout pipeline)
+      isBuyNowFlow: !!lastHandoff.buyNow,
+      buyNowIntercepted: lastHandoff.status !== 'idle',
+      buyNowBlockedReason: (lastHandoff.allowed === false) ? lastHandoff.reason : null,
+      checkoutRedirectBlocked: (lastHandoff.status === 'blocked'),
+      checkoutRedirectAllowed: (lastHandoff.allowed === true),
+      cartAttributesVerifiedBeforeRedirect: lastHandoff.verified,
+      handoffStatus: lastHandoff.status,
       sending: paramsOf(url),
       willRedirect: enabled() && !guardBlocked() && !!url,
       reason: (mode === 'none') ? 'no serviceable pincode (in-memory) and none on the cart attributes — enter a pincode/address' : null,
@@ -314,7 +392,7 @@
     } catch (e) { hydrating = false; }
   }
 
-  window.GanguramCheckoutPrefill = { debugState: debugState, shipZipDiagnosis: shipZipDiagnosis, explainCheckoutRate: explainCheckoutRate, hydrate: hydrate };
+  window.GanguramCheckoutPrefill = { debugState: debugState, prepareCheckout: prepareCheckout, shipZipDiagnosis: shipZipDiagnosis, explainCheckoutRate: explainCheckoutRate, hydrate: hydrate };
 
   document.addEventListener('click', onClick, true);
   hydrate();                                                                   // load: cart is already populated from prior pages

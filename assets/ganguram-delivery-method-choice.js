@@ -313,9 +313,27 @@
     document.addEventListener('change', function (e) { try { onCartControlChange(e); } catch (x) {} }, false);
   }
 
+  // Immediate write (no debounce) of the derived method — used by the checkout handoff so
+  // ganguram_preferred_delivery_method is on the cart BEFORE a Buy Now / checkout redirect. Returns
+  // a Promise. Never writes pincode/address. Fail-open (any error resolves).
+  function flush() {
+    if (!enabled()) { return Promise.resolve({ written: false, reason: 'disabled' }); }
+    var code = deriveCode();
+    current = code; writeStored(code);
+    try { renderSummary(code); } catch (e) {}
+    if (!code || !hasCartItems()) { return Promise.resolve({ written: false, reason: code ? 'no_cart' : 'no_method', code: code }); }
+    var attrs = desiredAttrs(code);
+    if (timer) { try { clearTimeout(timer); } catch (e) {} timer = null; }
+    try { lastSig = JSON.stringify(attrs); } catch (e) { lastSig = code; }
+    lastWriteAttrs = attrs;
+    try { return Promise.resolve(postAttrs(attrs)).then(function () { return { written: true, code: code }; }).catch(function () { return { written: false, reason: 'error', code: code }; }); }
+    catch (e) { return Promise.resolve({ written: false, reason: 'error', code: code }); }
+  }
+
   window.GanguramDeliveryMethodChoice = {
     apply: apply,
     render: render,
+    flush: flush,
     inspectCartAttributes: inspectCartAttributes,
     getPreferred: function () { var code = deriveCode(); return { code: code, label: labelFor(code) }; },
     // DEV-ONLY diagnostics (never customer-facing).
