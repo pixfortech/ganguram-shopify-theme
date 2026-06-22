@@ -192,3 +192,35 @@ mobile-navigation .ganguram-delivery-widget-menu-slot .ganguram-delivery-widget_
     max-width: none;
   }
 }
+
+/* ----------------------------------------------------------------------------
+   Phase 2 mobile fix — persistent mobile pincode bar. The desktop widget lives in
+   header__bottom (hidden on mobile), so this bar is the mobile entry point. It is a
+   NEW class (.ganguram-mobile-pincode-bar) so the menu-slot mobile-hide rule above
+   never catches it. Hidden on desktop; full-width tap target on mobile; tapping the
+   trigger opens the popup (the inline dropdown panel is suppressed here). Theme
+   variables only — no hardcoded colours. Sits inside the (sticky) header, below the
+   cart drawer (1001) and the popup (9999), so it is never covered by the popup.
+---------------------------------------------------------------------------- */
+.ganguram-mobile-pincode-bar { display: none; }
+@media (max-width: 1023px) {
+  .ganguram-mobile-pincode-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem 0.75rem;
+    background: var(--color-background-main);
+    border-bottom: 1px solid var(--color-borders-main);
+    color: var(--color-text-main);
+  }
+  .ganguram-mobile-pincode-bar .ganguram-delivery-widget,
+  .ganguram-mobile-pincode-bar .ganguram-delivery-widget__trigger { width: 100%; }
+  .ganguram-mobile-pincode-bar .ganguram-delivery-widget__trigger {
+    justify-content: center;
+    padding: 0.45rem 0.5rem;
+    gap: 0.45rem;
+  }
+  .ganguram-mobile-pincode-bar .ganguram-delivery-widget__value { max-width: none; font-weight: 600; }
+  /* tap opens the premium popup; never the inline dropdown */
+  .ganguram-mobile-pincode-bar .ganguram-delivery-widget__panel { display: none !important; }
+}

@@ -44,7 +44,7 @@
       w.setAttribute('data-gdw-zone', loc.zone || '');
       if (clearBtn) { clearBtn.hidden = false; }
     } else {
-      valueEl.textContent = 'Select pincode';
+      valueEl.textContent = 'Enter delivery pin code';
       w.removeAttribute('data-gdw-zone');
       if (clearBtn) { clearBtn.hidden = true; }
     }

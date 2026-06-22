@@ -104,16 +104,27 @@
 
   window.GanguramStorefrontGate = {
     sync: sync,
-    // DEV-ONLY diagnostics (console). Confirms the CSS is loaded + the no-pincode gate state.
+    // DEV-ONLY diagnostics (console). Confirms the CSS is loaded + the no-pincode gate state +
+    // that a mobile pincode entry point is actually visible (the mobile-visibility bug).
     debugState: function () {
       var sentinel = '';
       try { sentinel = (window.getComputedStyle(document.documentElement).getPropertyValue('--ganguram-phase1-loaded') || '').trim(); } catch (e) {}
+      var loc = null; try { var z = zone(); loc = z && z.getSelectedDeliveryLocation && z.getSelectedDeliveryLocation(); } catch (e) {}
+      var isMobile = false; try { isMobile = window.matchMedia ? window.matchMedia('(max-width: 1023px)').matches : (window.innerWidth <= 1023); } catch (e) {}
+      var isVisible = function (el) { if (!el) { return false; } try { if (el.offsetParent !== null) { return true; } var r = el.getBoundingClientRect ? el.getBoundingClientRect() : null; return !!(r && r.width > 0 && r.height > 0); } catch (e) { return false; } };
+      var entries = [].slice.call(document.querySelectorAll('[data-ganguram-mobile-pincode-bar], [data-ganguram-open-pincode]'));
       return {
         phase1CssLoaded: sentinel === '1',
+        isMobileViewport: isMobile,
         hasValidPincode: hasValidPincode(),
+        pincodeSelected: !!(loc && loc.pincode && loc.isServiceable === true),
+        selectedPincode: (loc && loc.pincode) || null,
         gateActive: gateActive(),
         gatedButtons: document.querySelectorAll('[data-js-product-add-to-cart], [data-ganguram-buy-now], .shopify-payment-button').length,
         ctaButtons: document.querySelectorAll('.' + CTA_CLASS).length,
+        mobileEntryPointsFound: entries.length,
+        mobileEntryPointsVisible: entries.filter(isVisible).length,
+        mobilePincodeBarPresent: document.querySelectorAll('[data-ganguram-mobile-pincode-bar]').length,
         gatedSelectors: ['[data-js-product-add-to-cart]', '[data-ganguram-buy-now]', '.shopify-payment-button'],
         // out-of-stock is handled by Liquid (product.available) + CSS, NOT by this module.
         pickupTextElements: document.querySelectorAll('.product-item__local-availability, pickup-availability-compact').length,
