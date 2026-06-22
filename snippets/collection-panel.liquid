@@ -78,7 +78,11 @@
             else 
               assign preload = false
             endif
-            render 'product-item', product: product, product_collection: collections[collection], section_blocks: section.blocks, layout: grid_class_desktop, mobile_layout: section.settings.layout_mobile, preload: preload
+            # Phase 1: skip globally out-of-stock products in the grid (the location/pickup
+            # out-of-stock case is hidden client-side by ganguram-storefront-gate.js).
+            if product.available
+              render 'product-item', product: product, product_collection: collections[collection], section_blocks: section.blocks, layout: grid_class_desktop, mobile_layout: section.settings.layout_mobile, preload: preload
+            endif
           endfor
         else 
           for i in (1..section.settings.products_number)

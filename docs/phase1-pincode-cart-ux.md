@@ -28,3 +28,22 @@ The modal copy states that the unavailable items will be removed if the new pinc
 
 ## Tests (DOM-shim)
 `test-modal-ui` (33, the 2-button modal incl. accept-removes / keep-unchanged), `test-transactional` (32, the change-flow guard with dynamic labels), `test-dom` (26, panel + 2-button modal), `test-pincode-gate` (11, dismissable popup + buy-gate toggle + CSS presence). The battery’s pre-existing failures are unchanged.
+
+---
+
+## Hotfix (selectors + real DOM) — `ganguram-storefront-gate.js`
+
+The first pass relied on CSS that didn't match the live DOM. Fixed against the **actual** markup:
+
+- **No‑pincode gate now HIDES the buttons + shows a CTA** (not a dim). `assets/ganguram-storefront-gate.js` toggles `html.ganguram-no-pincode` and injects one **“Enter delivery pin code to shop”** button (carrying `data-ganguram-open-pincode`, so it opens the popup) into each buy group; the CSS hides `[data-js-product-add-to-cart]` / `[data-ganguram-buy-now]` / `.shopify-payment-button` and shows the CTA. A valid pincode reverses it. Re‑injects on dynamically added cards (MutationObserver).
+- **Out‑of‑stock — correct signal (`product.available`), not pickup.** “Out of stock at <store>” is per‑LOCATION pickup status and must NOT decide card visibility, so the pickup widgets are simply **hidden** (`pickup-availability-compact` / `pickup-availability-widget` / `.product-item__local-availability`). Cards are hidden only when **`product.available == false`** — i.e. sold out in Shopify **and** no backorder/continue‑selling — via the theme’s own `.product-item--sold-out` class (CSS) and a Liquid `if product.available` filter in the Best‑Sellers (`collection-panel.liquid`) and recommendations (`product-recommendations.liquid`) loops. **Backorder / continue‑selling products are `product.available == true`, so they stay visible and purchasable.** On the product page, the theme already disables the button as “Unavailable” for unsellable products and the pickup text is hidden.
+- **Date card** compacted (`ganguram-delivery-datepicker.css`): smaller padding/margins, thinner radius, lighter title.
+- **CSS‑loaded sentinel:** `ganguram-phase1-ux.css` sets `:root { --ganguram-phase1-loaded: 1 }` so diagnostics can confirm it actually applied in the browser.
+
+### Diagnostics (cart/any page console)
+```js
+GanguramStorefrontGate.debugState();   // phase1CssLoaded, hasValidPincode, gateActive, gatedButtons, ctaButtons, pickupTextElements, soldOutCardsHidden, gatedSelectors
+GanguramPincodePopup.debugState();     // (= GanguramDelivery) hasValidPincode, popupOpen, closeButtonVisible, nonBlocking, buyGateActive
+GanguramDeliveryProgress.debugState(); // panelVisible, mov, movMet, movRemaining, ruleReason, movBarVisible — shows WHY the MOV bar does/doesn't render
+```
+If `phase1CssLoaded` is `false`, the asset isn’t loading on the active theme (re‑import from GitHub / check `theme.liquid`). If `GanguramDeliveryProgress.debugState().mov` is `null` with `ruleReason: 'none'`, no metaobject delivery rule resolved for that pincode — that’s why the MOV bar is absent (the calculation is unchanged).
