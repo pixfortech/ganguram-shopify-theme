@@ -33,11 +33,12 @@
 }
 .ganguram-delivery-progress[data-gdpr-state="invalid"] .ganguram-delivery-progress__prompt { color: currentColor; }
 
-.ganguram-delivery-progress__status { margin: 0; font-weight: 600; }
+/* Phase 1: status de-emphasised (the estimate line is the headline) */
+.ganguram-delivery-progress__status { margin: 0; font-size: 0.92em; font-weight: 500; color: var(--color-secondary-text-main); }
 .ganguram-delivery-progress__status[hidden] { display: none; }
 
-/* compact shipping estimate line (2.11J) — prominent, theme text only */
-.ganguram-delivery-progress__estimate { margin: 0.3rem 0 0; font-weight: 700; color: currentColor; }
+/* compact shipping estimate line (2.11J) — the headline; theme weight, not over-bold */
+.ganguram-delivery-progress__estimate { margin: 0.2rem 0 0; font-weight: 600; color: currentColor; }
 .ganguram-delivery-progress__estimate[hidden] { display: none; }
 
 /* compact delivery-mode chips */
@@ -59,20 +60,26 @@
   border-color: transparent;
 }
 
-/* MOV summary + action */
-.ganguram-delivery-progress__mov-summary { margin: 0.5rem 0 0.3rem; font-weight: 600; }
+/* MOV summary + action (tightened) */
+.ganguram-delivery-progress__mov-summary { margin: 0.4rem 0 0.25rem; font-size: 0.92em; font-weight: 600; }
 .ganguram-delivery-progress__mov-summary[hidden] { display: none; }
-.ganguram-delivery-progress__message { margin: 0.3rem 0 0; color: var(--color-secondary-text-main); }
+.ganguram-delivery-progress__message { margin: 0.25rem 0 0; font-size: 0.92em; color: var(--color-secondary-text-main); }
 .ganguram-delivery-progress__message[hidden] { display: none; }
 .ganguram-delivery-progress[data-gdpr-state="blocked"] .ganguram-delivery-progress__message { font-weight: 600; color: currentColor; }
 
-/* theme-coloured MOV progress bar — rounded, premium, brand fill, subtle track */
+/* theme-coloured MOV progress bar — rounded, premium, brand fill, visible track.
+   Phase 1 (task 4): a visible bordered track + min height so the bar reliably reads as a
+   progress bar even on themes whose border colour is near-white. */
 .ganguram-delivery-progress__bar {
   height: 8px;
-  margin: 0.1rem 0 0;
+  min-height: 8px;
+  margin: 0.15rem 0 0.1rem;
   border-radius: 999px;
   background: var(--color-borders-main);
+  border: 1px solid var(--color-borders-main);
+  box-sizing: border-box;
   overflow: hidden;
+  display: block;
 }
 .ganguram-delivery-progress__bar[hidden] { display: none; }
 .ganguram-delivery-progress__bar-fill {

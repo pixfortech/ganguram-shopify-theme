@@ -1,0 +1,37 @@
+/*
+ * Ganguram — Phase 1 UX polish (pincode buy-gate · hide out-of-stock · sticky header).
+ * Display only. NO HARDCODED COLOURS — theme design-system variables + the theme's own
+ * classes only. No change to ShipZip rates, service codes, slabs, MOV, eligibility, the
+ * unavailable-items logic, the Box Builder, or discounts.
+ */
+
+/* ---- Task 2: gate the BUY buttons until a valid pincode is selected -----------------------
+ * window.GanguramDelivery (ganguram-delivery-popup.js) toggles html.ganguram-no-pincode when a
+ * zone resolver is present but no serviceable pincode is chosen. The buttons stay clickable so a
+ * tap re-opens the pincode popup (the capture-phase guard owns the actual block); the dim makes
+ * it clear a pincode is needed. Scoped to PRODUCT buy buttons — never the cart's own checkout. */
+html.ganguram-no-pincode [data-js-product-add-to-cart],
+html.ganguram-no-pincode [data-ganguram-buy-now] {
+  opacity: 0.45;
+  filter: grayscale(0.35);
+}
+html.ganguram-no-pincode [data-js-product-add-to-cart] { cursor: pointer; }
+
+/* ---- Task 5: hide OUT-OF-STOCK product cards from grids -----------------------------------
+ * Uses the theme's own product-item--sold-out class (added in snippets/product-item.liquid for
+ * any product where product.available == false), so it covers collection grids, the featured /
+ * Best Sellers section, and product recommendations. The product PAGE main product is NOT a
+ * product-item, so it is unaffected (a product opened directly still works). The cart
+ * recommendations already gate their own quick-add on product.available. */
+.product-item--sold-out { display: none; }
+
+/* ---- Task 6: header STICKY everywhere (desktop + mobile) ----------------------------------
+ * Higher specificity than the theme's `.site-header` rule, so no !important is needed. The
+ * hero-overlay variant (.site-header--absolute) is left untouched so the transparent-over-hero
+ * look on the homepage / collection heroes is preserved. z-index 999 (the theme's own header
+ * z-index) sits BELOW the cart drawer (1001) and the delivery popups (9999+), so the sticky
+ * header can never overlap them. Works on mobile (position: sticky is fully supported). */
+.site-header:not(.site-header--absolute) {
+  position: sticky;
+  top: 0;
+}

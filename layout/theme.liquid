@@ -46,6 +46,9 @@
   {%- comment -%} Pincode widget CSS in <head> (hotfix) so the location/caret icons never flash oversized before the late body CSS applies. {%- endcomment -%}
   {{ 'ganguram-delivery-widget.css' | asset_url | stylesheet_tag }}
 
+  {%- comment -%} Phase 1 UX polish (in <head> so the sticky header + buy-gate + out-of-stock rules apply before first paint): gate buy buttons until a valid pincode, hide out-of-stock product cards from grids, and make the header sticky on desktop + mobile. Display only; no rate/eligibility/MOV/checkout change. {%- endcomment -%}
+  {{ 'ganguram-phase1-ux.css' | asset_url | stylesheet_tag }}
+
 	{{ content_for_header }}
 
   <script>
