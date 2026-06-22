@@ -70,7 +70,18 @@
       allQuickCommerce: k.allQuickCommerce || 'ganguram_all_quick_commerce',
       deliveryModeCandidates: k.deliveryModeCandidates || 'ganguram_delivery_mode_candidates',
       selectedPincode: k.selectedPincode || 'ganguram_selected_pincode',
-      deliveryZone: k.deliveryZone || 'ganguram_delivery_zone'
+      deliveryZone: k.deliveryZone || 'ganguram_delivery_zone',
+      // Selected FULL address mirrored to the cart so the checkout prefill survives a CLEAN /
+      // private session (no localStorage). Underscore-prefixed -> present in /cart.js but hidden
+      // from the order "Additional details" (the prefilled shipping address is the order record).
+      shipAddress1: k.shipAddress1 || '_ganguram_ship_address1',
+      shipAddress2: k.shipAddress2 || '_ganguram_ship_address2',
+      shipCity: k.shipCity || '_ganguram_ship_city',
+      shipProvince: k.shipProvince || '_ganguram_ship_province',
+      shipCountry: k.shipCountry || '_ganguram_ship_country',
+      shipZip: k.shipZip || '_ganguram_ship_zip',
+      shipLat: k.shipLat || '_ganguram_ship_lat',
+      shipLng: k.shipLng || '_ganguram_ship_lng'
     };
   }
 
@@ -83,6 +94,14 @@
     var z = zone();
     if (!z || typeof z.getSelectedDeliveryLocation !== 'function') { return null; }
     try { return z.getSelectedDeliveryLocation(); } catch (e) { return null; }
+  }
+  function norm(p) { return String(p == null ? '' : p).replace(/\D/g, '').slice(0, 6); }
+  // The SELECTED full Google address (or null) — mirrored to the cart so the prefill survives
+  // a clean / private session. Read-only; GanguramAddress owns the store.
+  function selectedAddress() {
+    var a = window.GanguramAddress;
+    if (a && typeof a.getSelectedAddress === 'function') { try { return a.getSelectedAddress(); } catch (e) {} }
+    return null;
   }
 
   // ---- privacy-minimal enrichment (read-only) -------------------------------
@@ -144,6 +163,8 @@
     var out = {};
     out[K.pincode] = ''; out[K.zone] = ''; out[K.zoneLabel] = ''; out[K.source] = ''; out[K.addressSummary] = '';
     out[K.allQuickCommerce] = ''; out[K.deliveryModeCandidates] = ''; out[K.selectedPincode] = ''; out[K.deliveryZone] = '';
+    out[K.shipAddress1] = ''; out[K.shipAddress2] = ''; out[K.shipCity] = ''; out[K.shipProvince] = '';
+    out[K.shipCountry] = ''; out[K.shipZip] = ''; out[K.shipLat] = ''; out[K.shipLng] = '';
     var loc = currentLoc();
     if (loc && loc.pincode && loc.isServiceable === true) {
       var rec = recentFor(loc.pincode);
@@ -167,6 +188,21 @@
         var cand = ['standard'];
         if (qc.allQuickCommerce && fourHourArea(loc)) { cand.push('four_hour'); }
         out[K.deliveryModeCandidates] = cand.join(',');
+      }
+
+      // Mirror the SELECTED full address (if one is set for THIS pincode) to the cart so the
+      // checkout prefill survives a clean / private session with no localStorage. Pincode-only
+      // selections leave these blank, so a stale address can never ride along.
+      var addr = selectedAddress();
+      if (addr && norm(addr.zip || addr.pincode) === norm(loc.pincode) && addr.address1) {
+        out[K.shipAddress1] = String(addr.address1 || '');
+        out[K.shipAddress2] = String(addr.address2 || '');
+        out[K.shipCity] = String(addr.city || '');
+        out[K.shipProvince] = String(addr.state || '');
+        out[K.shipCountry] = String(addr.country || '');
+        out[K.shipZip] = norm(addr.zip || addr.pincode || loc.pincode);
+        if (typeof addr.lat === 'number' && isFinite(addr.lat)) { out[K.shipLat] = String(addr.lat); }
+        if (typeof addr.lng === 'number' && isFinite(addr.lng)) { out[K.shipLng] = String(addr.lng); }
       }
     }
     return out;
@@ -309,6 +345,9 @@
     // City enrichment completed later -> refresh the summary label and re-sync the
     // now city-aware address summary attribute (debounced, idempotent, fail-open).
     window.addEventListener('ganguram:delivery-label-updated', function () { renderSummary(); scheduleSync(null); });
+    // A SELECTED full address fires this AFTER the location-changed event (which cleared any
+    // prior address) — re-sync so the address fields reach the cart for the checkout prefill.
+    window.addEventListener('ganguram:delivery-address-updated', function () { scheduleSync(null); });
     document.addEventListener('click', onCheckoutIntent, true);
     document.addEventListener('submit', onSubmit, true);
     // Make sure an already-selected pincode is reflected on the cart before checkout.

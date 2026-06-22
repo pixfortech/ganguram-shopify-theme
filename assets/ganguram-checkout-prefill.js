@@ -57,12 +57,14 @@
   // city. Otherwise null -> pincode_only mode (we never reuse stale address fields).
   function fullAddress() {
     var a = selectedAddress();
-    return (a && a.source === 'selected_address' && a.address1 && a.city) ? a : null;
+    if (a && a.source === 'selected_address' && a.address1 && a.city) { return a; }
+    var c = cartAddress();                       // CLEAN-SESSION fallback: cart attributes are the source of truth
+    return (c && c.address1 && c.city) ? c : null;
   }
   function activePincode() {
     var z = window.GanguramZone;
-    try { var loc = z && z.getSelectedDeliveryLocation(); return (loc && loc.pincode && loc.isServiceable === true) ? String(loc.pincode) : ''; }
-    catch (e) { return ''; }
+    try { var loc = z && z.getSelectedDeliveryLocation(); if (loc && loc.pincode && loc.isServiceable === true) { return String(loc.pincode); } } catch (e) {}
+    return cartPincode();                         // CLEAN-SESSION fallback: pincode mirrored on the cart
   }
 
   function param(name, value) {
@@ -143,15 +145,26 @@
     try { var g = window.GanguramDeliveryProgress; movBlocked = !!(g && typeof g.isCheckoutBlocked === 'function' && g.isCheckoutBlocked() === true); } catch (e) {}
     try { var d = window.GanguramDeliveryDatePicker; dateMissing = !!(d && typeof d.isDateMissing === 'function' && d.isDateMissing() === true); } catch (e) {}
     var latlng = addr ? { lat: addr.lat, lng: addr.lng } : null;
+    // Where the address/pincode came from — proves the prefill no longer depends on stale
+    // localStorage: 'selected_address'/'zone' = same-session, 'cart_attributes' = hydrated from /cart.js.
+    var lsAddr = selectedAddress();
+    var addressSource = (lsAddr && lsAddr.source === 'selected_address' && lsAddr.address1 && lsAddr.city) ? 'selected_address'
+      : (cartAddress() ? 'cart_attributes' : 'none');
+    var zonePin = ''; try { var l = window.GanguramZone && window.GanguramZone.getSelectedDeliveryLocation(); zonePin = (l && l.isServiceable === true && l.pincode) ? String(l.pincode) : ''; } catch (e) {}
+    var pincodeSource = zonePin ? 'zone' : (cartPincode() ? 'cart_attributes' : 'none');
     return {
       mode: mode,
       enabled: enabled(),
       blocked: guardBlocked(),
       blockedReason: movBlocked ? 'mov' : (dateMissing ? 'delivery_date_missing' : null),
       selectedPincode: activePincode(),
-      selectedAddress: addr ? addr.formatted_address : null,
+      pincodeSource: pincodeSource,
+      selectedAddress: addr ? (addr.formatted_address || (addr.address1 + ', ' + addr.city)) : null,
+      addressSource: addressSource,
       addressLatLng: latlng,
       storedLatLng: latlng,
+      cartHydrated: !!cartCache,
+      cartShipAttributes: cartCache ? { pincode: cartPincode(), address: cartAddress() } : null,
       sending: paramsOf(url),
       willRedirect: enabled() && !guardBlocked() && !!url,
       themeEstimate: themeEstimate(norm(pin))
@@ -241,7 +254,53 @@
     };
   }
 
-  window.GanguramCheckoutPrefill = { debugState: debugState, shipZipDiagnosis: shipZipDiagnosis, explainCheckoutRate: explainCheckoutRate };
+  // ---- clean-session hydration (Phase 2.12L) — cart attributes are the SOURCE OF TRUTH -------
+  // localStorage (GanguramAddress / GanguramZone) is only a same-session cache; it is EMPTY on a
+  // clean / private session (or when localStorage is blocked, e.g. Safari private mode). So we
+  // read /cart.js on load (and after a selection) and use the cart's mirrored pincode/address as
+  // the fallback — so the checkout address handoff works for a REAL customer, not just a browser
+  // that happens to have saved state. Read-only; never writes; fail-open.
+  var cartCache = null, hydrating = false;
+  function cartUrl() { return cfg().cartUrl || '/cart.js'; }
+  function shipKeys() {
+    return {
+      pincode: 'ganguram_selected_pincode',
+      address1: '_ganguram_ship_address1', address2: '_ganguram_ship_address2',
+      city: '_ganguram_ship_city', province: '_ganguram_ship_province',
+      country: '_ganguram_ship_country', zip: '_ganguram_ship_zip',
+      lat: '_ganguram_ship_lat', lng: '_ganguram_ship_lng'
+    };
+  }
+  function cartPincode() { var a = cartCache, K = shipKeys(); return a ? norm(a[K.pincode] || a[K.zip] || '') : ''; }
+  function cartAddress() {
+    var a = cartCache, K = shipKeys();
+    if (!a) { return null; }
+    var a1 = a[K.address1], city = a[K.city];
+    if (!a1 || !city) { return null; }            // pincode-only on the cart -> no stale address reused
+    return {
+      source: 'cart_attributes',
+      address1: String(a1), address2: String(a[K.address2] || ''),
+      city: String(city), state: String(a[K.province] || ''), country: String(a[K.country] || ''),
+      zip: norm(a[K.zip] || a[K.pincode] || ''),
+      lat: a[K.lat] ? parseFloat(a[K.lat]) : null, lng: a[K.lng] ? parseFloat(a[K.lng]) : null
+    };
+  }
+  function hydrate() {
+    if (hydrating || typeof window.fetch !== 'function') { return; }
+    hydrating = true;
+    try {
+      window.fetch(cartUrl(), { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(function (cart) { cartCache = (cart && cart.attributes) || {}; })
+        .catch(function () {})
+        .then(function () { hydrating = false; });
+    } catch (e) { hydrating = false; }
+  }
+
+  window.GanguramCheckoutPrefill = { debugState: debugState, shipZipDiagnosis: shipZipDiagnosis, explainCheckoutRate: explainCheckoutRate, hydrate: hydrate };
 
   document.addEventListener('click', onClick, true);
+  hydrate();                                                                   // load: cart is already populated from prior pages
+  window.addEventListener('ganguram:delivery-location-changed', function () { setTimeout(hydrate, 700); }); // after the cart-attributes write lands
+  window.addEventListener('ganguram:delivery-address-updated', function () { setTimeout(hydrate, 700); });
 })();

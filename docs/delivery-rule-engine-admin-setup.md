@@ -652,6 +652,27 @@ Verify with `window.GanguramCheckoutPrefill.debugState()` → `sending` (the exa
 ### Part D — guardrails (2.12F / 2.12G)
 Estimate **calculation + read‑only diagnostics** only. No change to **ShipZip rates, the `4HR`/`STD` service codes, checkout‑rate logic, the date‑picker attributes, product eligibility/visibility, MOV, the unavailable‑items modal, metafields/metaobjects, or the Custom Box Builder.** ShipZip remains the final checkout rate; theme CSS variables only; `settings_data.json` untouched (the outlet origin is read from the existing `settings.ganguram_outlet_origin` setting, not modified).
 
+## 15. Clean‑session address/pincode checkout prefill (Phase 2.12L)
+
+**Symptom:** the prefill worked on the merchant's browser but failed for real customers / incognito / other devices — the flow depended on the merchant's **saved localStorage**, not a clean session.
+
+**Root cause:** `GanguramAddress` (selected address) and `GanguramZone` (pincode) persisted to **localStorage** only, and the **full address was never written to cart attributes** (the cart‑attributes handoff only wrote the pincode/zone, and didn't even listen to `delivery-address-updated`). So a clean session — or any browser where localStorage is blocked (Safari private mode, where `localStorage.setItem` throws) — had no address to prefill.
+
+**Fix — cart attributes are the source of truth, localStorage is only a same‑session cache:**
+1. **`GanguramAddress` in‑memory fallback** — keeps the selected address for the session even when localStorage is blocked, so the handoff can still mirror it.
+2. **`ganguram-cart-attributes` mirrors the selected full address to the cart** (`_ganguram_ship_address1/2`, `_ganguram_ship_city/province/country/zip`, `_ganguram_ship_lat/lng` — underscore‑prefixed so they're in `/cart.js` but hidden from the order's *Additional details*), and now re‑syncs on `delivery-address-updated`. Pincode‑only selections leave these blank, so **no stale address is reused**.
+3. **`ganguram-checkout-prefill` hydrates from `/cart.js`** on load (and after a selection) and uses the cart's pincode/address as the fallback when the in‑memory/localStorage selection is missing. So a real customer who selected on a previous page still gets the prefill.
+
+**Behaviour:** manual pincode → `country` + `zip`; full Google address → `address1/address2/city/province/zip/country`; method/date changes clear **only** `Delivery-Date`/`Delivery-Time`, never the address/pincode; **PAN India never requires a date** (the local date picker is hidden for non‑local zones, so `isDateMissing()` is `false`).
+
+**Confirm in a clean / incognito session (cart page console):**
+```js
+await fetch('/cart.js').then(r => r.json()).then(c => c.attributes);  // should contain ganguram_selected_pincode (+ _ganguram_ship_* for a full address)
+GanguramCheckoutPrefill.debugState();  // addressSource / pincodeSource = 'cart_attributes' when hydrated; cartHydrated:true; sending = the payload; willRedirect; blockedReason
+```
+
+**Guardrails:** no change to **ShipZip rates, the `4HR`/`STD` service codes, the distance slabs, product visibility, MOV, the unavailable‑items modal, the Custom Box Builder, or discounts.** The address cart attributes are the customer's own shipping address (the prefilled checkout address becomes the order record); `settings_data.json` untouched.
+
 ---
 
 ### Related docs
