@@ -528,6 +528,10 @@
   {{ 'ganguram-delivery-popup.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'ganguram-delivery-popup.js' | asset_url }}" defer></script>
 
+  {%- comment -%} Phase 1 storefront gate — no-pincode purchase gate (HIDE Add to cart / Buy now and show an "Enter delivery pin code to shop" CTA) + hide out-of-stock (pickup) product cards. Loaded AFTER the resolver/popup. Display only; fail-open; no ShipZip/eligibility/MOV/prefill change. {%- endcomment -%}
+  <script>window.GanguramStorefrontGateConfig = { enabled: true, hideOutOfStock: true, ctaText: {{ 'Enter delivery pin code to shop' | json }} };</script>
+  <script src="{{ 'ganguram-storefront-gate.js' | asset_url }}" defer></script>
+
   {%- comment -%} Saved delivery locations shell (Phase 2.8A) — recent guest locations + logged-in saved addresses; selection only, all via GanguramZone. No Google Maps / checkout autofill / filtering logic. {%- endcomment -%}
   <script src="{{ 'ganguram-saved-locations.js' | asset_url }}" defer></script>
 

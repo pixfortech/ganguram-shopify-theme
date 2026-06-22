@@ -1,36 +1,38 @@
 /*
- * Ganguram — Phase 1 UX polish (pincode buy-gate · hide out-of-stock · sticky header).
+ * Ganguram — Phase 1 UX (no-pincode buy-gate + CTA · hide out-of-stock · sticky header).
  * Display only. NO HARDCODED COLOURS — theme design-system variables + the theme's own
- * classes only. No change to ShipZip rates, service codes, slabs, MOV, eligibility, the
- * unavailable-items logic, the Box Builder, or discounts.
+ * classes only. No ShipZip rate / service-code / slab / eligibility / MOV / prefill change.
  */
 
-/* ---- Task 2: gate the BUY buttons until a valid pincode is selected -----------------------
- * window.GanguramDelivery (ganguram-delivery-popup.js) toggles html.ganguram-no-pincode when a
- * zone resolver is present but no serviceable pincode is chosen. The buttons stay clickable so a
- * tap re-opens the pincode popup (the capture-phase guard owns the actual block); the dim makes
- * it clear a pincode is needed. Scoped to PRODUCT buy buttons — never the cart's own checkout. */
+/* Sentinel so GanguramStorefrontGate.debugState().phase1CssLoaded can confirm this file
+ * actually loaded + applied in the browser (read via getComputedStyle on :root). */
+:root { --ganguram-phase1-loaded: 1; }
+
+/* ---- A. NO-PINCODE BUY GATE — HIDE the buy buttons, SHOW the CTA -------------------------
+ * GanguramStorefrontGate toggles html.ganguram-no-pincode when no serviceable pincode is set and
+ * injects a .ganguram-pincode-cta into each buy group. With no pincode: Add to cart / Buy now /
+ * dynamic-checkout are hidden and the CTA ("Enter delivery pin code to shop") shows in their place.
+ * A valid pincode reverses it. The CTA never appears inside the cart (the cart has no
+ * [data-js-product-add-to-cart]). */
 html.ganguram-no-pincode [data-js-product-add-to-cart],
-html.ganguram-no-pincode [data-ganguram-buy-now] {
-  opacity: 0.45;
-  filter: grayscale(0.35);
-}
-html.ganguram-no-pincode [data-js-product-add-to-cart] { cursor: pointer; }
+html.ganguram-no-pincode [data-ganguram-buy-now],
+html.ganguram-no-pincode .shopify-payment-button,
+html.ganguram-no-pincode .product-form__buy-buttons .shopify-payment-button { display: none !important; }
 
-/* ---- Task 5: hide OUT-OF-STOCK product cards from grids -----------------------------------
- * Uses the theme's own product-item--sold-out class (added in snippets/product-item.liquid for
- * any product where product.available == false), so it covers collection grids, the featured /
- * Best Sellers section, and product recommendations. The product PAGE main product is NOT a
- * product-item, so it is unaffected (a product opened directly still works). The cart
- * recommendations already gate their own quick-add on product.available. */
-.product-item--sold-out { display: none; }
+.ganguram-pincode-cta { display: none; cursor: pointer; }
+html.ganguram-no-pincode .ganguram-pincode-cta { display: inline-flex; align-items: center; justify-content: center; }
 
-/* ---- Task 6: header STICKY everywhere (desktop + mobile) ----------------------------------
- * Higher specificity than the theme's `.site-header` rule, so no !important is needed. The
- * hero-overlay variant (.site-header--absolute) is left untouched so the transparent-over-hero
- * look on the homepage / collection heroes is preserved. z-index 999 (the theme's own header
- * z-index) sits BELOW the cart drawer (1001) and the delivery popups (9999+), so the sticky
- * header can never overlap them. Works on mobile (position: sticky is fully supported). */
+/* ---- B. HIDE OUT-OF-STOCK product cards --------------------------------------------------
+ * (1) globally sold-out: the theme's own product-item--sold-out class (also filtered in Liquid).
+ * (2) out-of-stock at the store (the client-side pickup widget): GanguramStorefrontGate flags the
+ *     card with data-ganguram-oos-hidden once the pickup-availability widget resolves unavailable. */
+.product-item--sold-out,
+[data-ganguram-oos-hidden] { display: none !important; }
+
+/* ---- C. STICKY HEADER (desktop + mobile) -------------------------------------------------
+ * Higher specificity than the theme's .site-header rule (no !important). The hero-overlay variant
+ * (.site-header--absolute) is left untouched. z-index 999 (the theme's header z-index) sits BELOW
+ * the cart drawer (1001) and the delivery popups (9999+), so it never overlaps them. */
 .site-header:not(.site-header--absolute) {
   position: sticky;
   top: 0;

@@ -242,8 +242,24 @@
   window.GanguramDelivery = {
     hasValidDeliveryLocation: hasValidDeliveryLocation,
     openDeliveryLocationPopup: openDeliveryLocationPopup,
-    closeDeliveryLocationPopup: function () { closeDeliveryLocationPopup(true); }
+    closeDeliveryLocationPopup: function () { closeDeliveryLocationPopup(true); },
+    // DEV-ONLY diagnostics (console): confirms the popup is non-blocking + the buy-gate state.
+    debugState: function () {
+      var r = root(), closeBtn = q('[data-gdp-close]'), loc = null;
+      try { loc = zone() && zone().getSelectedDeliveryLocation(); } catch (e) {}
+      return {
+        hasValidPincode: hasValidDeliveryLocation(),
+        selectedPincode: (loc && loc.pincode) || null,
+        popupExists: !!r,
+        popupOpen: !!(r && r.hidden === false),
+        closeButtonVisible: !!(closeBtn && closeBtn.hidden === false),
+        nonBlocking: true,                 // ESC / backdrop / x always close (Phase 1)
+        buyGateActive: shouldGuard()
+      };
+    }
   };
+  // Alias for the documented diagnostics name.
+  window.GanguramPincodePopup = window.GanguramDelivery;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

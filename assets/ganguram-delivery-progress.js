@@ -683,7 +683,34 @@
   }
 
   function hasInvalidItems() { var st = computeState(); return !!(st && st.hasInvalid); }
-  window.GanguramDeliveryProgress = { render: renderAll, isCheckoutBlocked: isBlocked, hasInvalidItems: hasInvalidItems };
+  // DEV-ONLY diagnostics (console) — why the MOV bar / panel does or doesn't show. The MOV
+  // value itself comes from the metaobject delivery rule (unchanged); this only reports it.
+  function debugState() {
+    var loc = null; try { loc = zone() && zone().getSelectedDeliveryLocation(); } catch (e) {}
+    var panels2 = panels();
+    var barEls = document.querySelectorAll('[data-gdpr-bar]');
+    var st = computeState();
+    if (!st) {
+      return { panelVisible: false, reason: 'no metaobject delivery rule resolved / no serviceable pincode / empty cart',
+        selectedPincode: (loc && loc.pincode) || null, panelsOnPage: panels2.length, movBarElementsOnPage: barEls.length, movBarVisible: false };
+    }
+    if (st.promptCode) { return { panelVisible: true, state: 'prompt', promptCode: st.promptCode, movBarVisible: false, panelsOnPage: panels2.length }; }
+    if (st.hasInvalid) { return { panelVisible: true, state: 'invalid', invalidItems: st.invalidItems, movBarVisible: false, panelsOnPage: panels2.length }; }
+    return {
+      panelVisible: true, state: st.blocked ? 'blocked' : 'ok',
+      selectedPincode: st.pincode || null,
+      subtotal: st.subtotal,
+      mov: (st.mov != null) ? st.mov : null,
+      movMet: !!st.movMet,
+      movRemaining: (st.movRemaining != null) ? st.movRemaining : null,
+      ruleReason: (st.data && st.data.reason) || 'none',
+      movBarVisible: st.mov != null,            // the bar renders whenever a MOV applies
+      panelsOnPage: panels2.length,
+      movBarElementsOnPage: barEls.length,
+      estimate: st.estimate ? st.estimate.text : null
+    };
+  }
+  window.GanguramDeliveryProgress = { render: renderAll, isCheckoutBlocked: isBlocked, hasInvalidItems: hasInvalidItems, debugState: debugState };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
