@@ -19,7 +19,9 @@
     title: {{ settings.ganguram_4h_title | default: '4 Hours Delivery' | json }},
     handle: {{ gz_4h_handle | json }},
     days: {{ settings.ganguram_4h_days | default: 'Mon,Tue,Wed,Thu,Fri,Sat,Sun' | json }},
-    start: {{ settings.ganguram_4h_start | default: '11:00' | json }},
+    {%- comment -%} start/end = the 4HR window (a.k.a. fourHour.startTime / fourHour.endTime). The
+      cart 4HR option + the menu/collection visibility both read these. Defaults: 09:00–18:00 IST. {%- endcomment -%}
+    start: {{ settings.ganguram_4h_start | default: '09:00' | json }},
     end: {{ settings.ganguram_4h_end | default: '18:00' | json }},
     timezone: {{ settings.ganguram_4h_timezone | default: 'Asia/Kolkata' | json }},
     inactiveBehaviour: {{ settings.ganguram_4h_inactive_behaviour | default: 'disable' | json }},
@@ -27,9 +29,16 @@
     messages: {
       inactive: {{ settings.ganguram_4h_msg_inactive | default: '4 Hours Delivery is currently closed. Please choose normal delivery.' | json }},
       panIndia: {{ settings.ganguram_4h_msg_pan | default: '4 Hours Delivery is available only in selected Kolkata areas.' | json }},
-      quickOnly: {{ settings.ganguram_4h_msg_quick_only | default: 'Only Quick Commerce eligible items are available for 4 Hours Delivery.' | json }}
+      quickOnly: {{ settings.ganguram_4h_msg_quick_only | default: 'Only Quick Commerce eligible items are available for 4 Hours Delivery.' | json }},
+      {%- comment -%} Shown in the cart when 4HR is hidden ONLY because it is outside the window.
+        __START__ / __END__ are filled with the formatted window (e.g. 9:00 AM / 6:00 PM). {%- endcomment -%}
+      cartTimeWindow: {{ settings.ganguram_4h_msg_cart_window | default: '4 hours delivery is available between __START__ and __END__.' | json }}
     }
   };
 </script>
 {{ 'ganguram-4hour-delivery.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'ganguram-4hour-delivery.js' | asset_url }}" defer></script>
+{%- comment -%} Cart-side 4HR availability evaluator (time window + radius + QC + MOV). The cart
+  date picker, the persisted checkout method and the delivery panel all read window.GanguramFourHour
+  so they never disagree. Read-only; no rate/checkout/cart change. {%- endcomment -%}
+<script src="{{ 'ganguram-four-hour-window.js' | asset_url }}" defer></script>

@@ -225,7 +225,7 @@
       text = pi.available ? tmpl(copy('estimatePan'), { amount: se.money(pi.price) }) : tmpl(copy('estimatePanFrom'), { amount: se.money(pi.fromPrice), unit: pi.perWeightG + 'g' });
     } else if (del.mode === 'local' && del.standard) {
       text = tmpl(copy('estimateStandard'), { range: se.formatRange(del.standard.minPrice, del.standard.maxPrice) + (del.standard.beyond ? '+' : '') });
-      if (del.fourHour && del.fourHour.state === 'yes') { text += ' · ' + tmpl(copy('estimateFourHour'), { amount: se.money(del.fourHour.price) }); }
+      if (del.fourHour && del.fourHour.state === 'yes' && fourHourTimeOk()) { text += ' · ' + tmpl(copy('estimateFourHour'), { amount: se.money(del.fourHour.price) }); }
     } else {
       return null; // pending / block / prompt -> no estimate line (other panel states handle it)
     }
@@ -249,6 +249,15 @@
   // cart's "4 Hours available" never contradicts checkout (Phase 2.11F.3).
   function fourHourAreaEligible(loc) {
     return !!(loc && (loc.isQuickCommerce === true || loc.zone === 'quick_commerce'));
+  }
+  // Phase 2: the 4HR TIME-WINDOW gate (enabled + within window + radius + all-QC + MOV) from the
+  // shared evaluator, so the cart panel never advertises "4 Hours" outside the configured hours.
+  // Fail-open when the evaluator is absent (legacy behaviour). Display only — no rate/checkout change.
+  function fourHourTimeOk() {
+    if (window.GanguramFourHour && typeof window.GanguramFourHour.isAvailableNow === 'function') {
+      try { return window.GanguramFourHour.isAvailableNow(); } catch (e) { return true; }
+    }
+    return true;
   }
   // Customer-facing "city + pincode" label (never the internal zone names). Reuses
   // the shared display-label helper; falls back to a safe local rule.
@@ -314,6 +323,24 @@
     if (!data || data.reason === 'none' || !data.rule) { return null; } // no rule -> fail open (panel hidden)
     var mov = data.mov;
     var movMet = (mov == null) ? true : (data.movMet === true);
+    var movRemaining = data.movRemaining;
+    var movSource = (mov != null) ? 'rule' : 'none';
+    // The soft checkout guard is tied to the RULE's real MOV only (never the display fallback).
+    var ruleMovBlocks = (data.mov != null && data.movMet !== true);
+    // MOV-bar fix: optional DISPLAY-ONLY fallback so the progress bar still renders when the
+    // resolved metaobject rule omits a minimum order value. OFF by default (fallbackMov unset =
+    // no change). It NEVER blocks checkout and NEVER changes the MOV/rate formula — it only lets
+    // the bar + "x / y minimum order" summary appear. Set a real MOV on the rule to also guard.
+    if (mov == null) {
+      var fb = parseInt(cfg().fallbackMov, 10);
+      if (isFinite(fb) && fb > 0) {
+        mov = fb;
+        movMet = subtotal >= fb;
+        movRemaining = movMet ? 0 : (fb - subtotal);
+        movSource = 'fallback';
+      }
+    }
+    var movDisplayOnly = (movSource === 'fallback');
 
     var eligible = cartFourHourEligible();
     var svcOpts = { fourHourEligibleCart: eligible };
@@ -338,7 +365,7 @@
       for (var k = 0; k < po.length; k++) { if (po[k].serviceType === 'four_hour') { fourHourRuleApplies = true; break; } }
     }
     var fourHourPossible = fourHourArea || fourHourRuleApplies;
-    var fourHourAvailable = eligible && fourHourPossible; // -> "4 Hours available"
+    var fourHourAvailable = eligible && fourHourPossible && fourHourTimeOk(); // -> "4 Hours available" (Phase 2: + time window)
 
     // DEFINITE negative only: a MIXED cart where 4-hour WOULD apply (some items aren't
     // quick-commerce). NEVER assert "not available" just because a metaobject four_hour
@@ -353,12 +380,12 @@
     var result = {
       location: location, pincode: location.pincode, subtotal: subtotal, data: data,
       displayLabel: displayLabelFor(location), zoneFriendly: zoneFriendly(location),
-      mov: mov, movMet: movMet, movRemaining: data.movRemaining,
+      mov: mov, movMet: movMet, movRemaining: movRemaining, movSource: movSource, movDisplayOnly: movDisplayOnly,
       deliveryCharge: data.deliveryCharge,
       freeDeliveryThreshold: data.freeDeliveryThreshold,
       freeDeliveryMet: data.freeDeliveryMet,
       freeDeliveryRemaining: data.freeDeliveryRemaining,
-      blocked: (mov != null && !movMet),
+      blocked: ruleMovBlocks,   // display fallback never blocks checkout
       serviceOptions: serviceOptions,
       confirmed: confirmed,
       distanceKm: confirmed ? dist.distanceKm : null,
@@ -479,8 +506,9 @@
     var del = st.estimate && st.estimate.delivery;
     if (del && del.mode === 'local') {
       // Mode chips come from the RESOLVED state (2.12D): 4 Hours ONLY when within 10km + QC;
-      // Standard always for a local address. The estimate line carries the price.
-      var hasFour = !!(del.fourHour && del.fourHour.state === 'yes');
+      // Standard always for a local address. The estimate line carries the price. Phase 2 also
+      // gates 4 Hours on the time window, so the chip disappears outside the configured hours.
+      var hasFour = !!(del.fourHour && del.fourHour.state === 'yes') && fourHourTimeOk();
       if (hasFour) { chips.push({ text: copy('chipFourHour'), accent: true }); }
       chips.push({ text: hasFour ? copy('chipStandardAlso') : copy('chipStandard'), accent: false });
     } else if (del && del.mode === 'pan_india') {
@@ -570,7 +598,9 @@
           barEl.setAttribute('aria-valuenow', String(pct));
           show(barEl);
         }
-        var action = st.movMet ? '' : tmpl(copy('addMore'), { remaining: fmtMoney(st.movRemaining) });
+        // The blocking "add __REMAINING__ more to continue" line is for a REAL rule MOV only;
+        // a display-only fallback shows the bar + summary but no blocking call to action.
+        var action = (st.movMet || st.movDisplayOnly) ? '' : tmpl(copy('addMore'), { remaining: fmtMoney(st.movRemaining) });
         if (msgEl) { setText(msgEl, action); if (action) { show(msgEl); } else { hide(msgEl); } }
       } else {
         if (movSumEl) { hide(movSumEl); }
@@ -678,6 +708,7 @@
     window.addEventListener('ganguram:delivery-location-changed', renderAll);
     window.addEventListener('ganguram:delivery-label-updated', renderAll);
     window.addEventListener('ganguram:delivery-distance-updated', renderAll);
+    window.addEventListener('ganguram:four-hour-window-changed', renderAll);  // Phase 2: 4HR opens/closes
     document.addEventListener('click', onCheckoutClick, true);
     document.addEventListener('submit', onCartSubmit, true);
   }
@@ -696,6 +727,7 @@
     }
     if (st.promptCode) { return { panelVisible: true, state: 'prompt', promptCode: st.promptCode, movBarVisible: false, panelsOnPage: panels2.length }; }
     if (st.hasInvalid) { return { panelVisible: true, state: 'invalid', invalidItems: st.invalidItems, movBarVisible: false, panelsOnPage: panels2.length }; }
+    var fhEval = (window.GanguramFourHour && typeof window.GanguramFourHour.evaluate === 'function') ? window.GanguramFourHour.evaluate() : null;
     return {
       panelVisible: true, state: st.blocked ? 'blocked' : 'ok',
       selectedPincode: st.pincode || null,
@@ -704,10 +736,22 @@
       movMet: !!st.movMet,
       movRemaining: (st.movRemaining != null) ? st.movRemaining : null,
       ruleReason: (st.data && st.data.reason) || 'none',
+      // movSource explains WHY the bar is / isn't there: 'rule' = MOV from the metaobject rule;
+      // 'fallback' = the display-only fallbackMov; 'none' = no MOV anywhere -> bar hidden. If you
+      // expect a bar but see 'none', set a Minimum order value on the matching delivery rule (or
+      // set GanguramDeliveryProgressConfig.fallbackMov for a display-only bar).
+      movSource: st.movSource || 'none',
+      movDisplayOnly: !!st.movDisplayOnly,
       movBarVisible: st.mov != null,            // the bar renders whenever a MOV applies
       panelsOnPage: panels2.length,
       movBarElementsOnPage: barEls.length,
-      estimate: st.estimate ? st.estimate.text : null
+      estimate: st.estimate ? st.estimate.text : null,
+      // Phase 2 — 4HR time-window state (so the cart panel + the evaluator agree)
+      fourHourAvailable: !!st.fourHourAvailable,
+      fourHour: fhEval ? {
+        finalFourHourVisible: fhEval.visible, hiddenReason: fhEval.hiddenReason || '(visible)',
+        currentKolkataTime: fhEval.currentKolkataTime, isWithinFourHourTimeWindow: fhEval.withinTime
+      } : '(no evaluator)'
     };
   }
   window.GanguramDeliveryProgress = { render: renderAll, isCheckoutBlocked: isBlocked, hasInvalidItems: hasInvalidItems, debugState: debugState };
