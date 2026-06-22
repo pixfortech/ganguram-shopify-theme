@@ -69,6 +69,7 @@
 
   // ---- mount the autocomplete element (once) --------------------------------
   var mounted = false;
+  var lastLoadError = null;   // surfaced in debugState so a key-restriction / load failure is visible
   function unavailable() {
     mounted = false;
     var slot = q('[data-gdp-address-search]'); if (slot) { slot.textContent = ''; }
@@ -89,7 +90,7 @@
         slot.appendChild(el);
         el.addEventListener('gmp-select', onSelect);
       })
-      .catch(function () { unavailable(); });
+      .catch(function (e) { lastLoadError = (e && e.message) || 'load-failed'; unavailable(); });
   }
 
   function compOf(components, type) {
@@ -308,7 +309,7 @@
 
   // Invalid key / referrer block surfaces via Google's global auth-failure hook.
   if (typeof window.gm_authFailure !== 'function') {
-    window.gm_authFailure = function () { unavailable(); };
+    window.gm_authFailure = function () { lastLoadError = 'gm_authFailure — API key restricted/blocked (check HTTP-referrer restrictions + billing for this domain)'; unavailable(); };
   }
 
   // ---- pincode -> city lookup (reused by the enrichment module) -------------
@@ -461,6 +462,30 @@
     if (!enabled()) { return; }                    // no key / disabled -> manual pincode only; search stays hidden
     activate();
   }
+
+  // DEV-ONLY diagnostics — WHY address autocomplete is / isn't available on THIS device/browser.
+  // Critical for the "works on one device only" reports: a key restricted to certain referrers, or
+  // Places API (New) not enabled, fails silently on other domains/browsers — this surfaces it.
+  function googlePlacesLoaded() { return !!(window.google && window.google.maps && (window.google.maps.places || typeof window.google.maps.importLibrary === 'function')); }
+  function autocompleteReady() { return !!(mounted && q('[data-gdp-address-el]')); }
+  window.GanguramAddressSearch = {
+    mount: function () { try { mount(); } catch (e) {} },
+    debugState: function () {
+      return {
+        enabled: enabled(),
+        apiKeyConfigured: apiKey() !== '',
+        country: country(),
+        googlePlacesLoaded: googlePlacesLoaded(),
+        addressAutocompleteReady: autocompleteReady(),
+        mounted: mounted,
+        searchSlotPresent: !!q('[data-gdp-address-search]'),
+        loadError: lastLoadError,
+        note: !enabled() ? 'Address search disabled or no API key — manual pincode entry only (PAN India works on pincode alone).'
+          : (googlePlacesLoaded() ? '' : 'Google Maps/Places not loaded — check the API key HTTP-referrer restrictions + that Maps JavaScript API + Places API (New) are enabled for this domain.')
+      };
+    }
+  };
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

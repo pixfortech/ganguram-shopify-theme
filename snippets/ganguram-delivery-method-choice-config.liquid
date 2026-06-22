@@ -19,13 +19,14 @@
 {%- endcomment -%}
 <script>
   window.GanguramDeliveryMethodChoiceConfig = {
-    // HOTFIX (2.12K): DISABLED by default to fully isolate the checkout address/pincode prefill.
-    // While false the module is INERT — no cart writes, no DOM, no listeners — so it cannot
-    // affect the pincode/address auto-fetch, the delivery popup, or the prefill. The read-only
-    // diagnostics (GanguramDeliveryMethodChoice.debugState / inspectCartAttributes) still work.
-    // Re-enable (set to true) ONLY after the prefill is confirmed working; then the method/date
-    // -> checkout-hiding handoff resumes. The calendar date picker is a SEPARATE module and stays on.
-    enabled: false,
+    // 2.12L — RE-ENABLED. The prefill regression that caused 2.12K is resolved: the cart-attributes
+    // module (Phase 2 clean-session fix) is now the source of truth for the pincode/address, and this
+    // module (a) only writes its OWN keys (method/label/Delivery Method + the date keys for 4HR/PAN —
+    // never pincode/address/lat-lng) and (b) only writes when the cart has items (hasCartItems guard),
+    // so it can't touch the no-cart pincode/address auto-fetch. With it off, the chosen method
+    // (PAN_INDIA / STD / 4HR) was never persisted to the order on a clean device — checkout had the
+    // pincode but no method. Set to false again only if a prefill regression resurfaces.
+    enabled: true,
     updateUrl: {{ routes.cart_url | append: '/update.js' | json }},
     cartUrl: {{ routes.cart_url | append: '.js' | json }},
     debounceMs: 400,
