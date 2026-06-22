@@ -340,7 +340,10 @@
         movSource = 'fallback';
       }
     }
-    var movDisplayOnly = (movSource === 'fallback');
+    // The fallback is DISPLAY-ONLY unless the merchant ticks "Also block checkout below this amount".
+    var fallbackBlocks = (movSource === 'fallback') && (cfg().fallbackMovBlocks === true);
+    var movDisplayOnly = (movSource === 'fallback') && !fallbackBlocks;
+    var blocked = ruleMovBlocks || (fallbackBlocks && !movMet);
 
     var eligible = cartFourHourEligible();
     var svcOpts = { fourHourEligibleCart: eligible };
@@ -385,7 +388,7 @@
       freeDeliveryThreshold: data.freeDeliveryThreshold,
       freeDeliveryMet: data.freeDeliveryMet,
       freeDeliveryRemaining: data.freeDeliveryRemaining,
-      blocked: ruleMovBlocks,   // display fallback never blocks checkout
+      blocked: blocked,   // rule MOV always; the display fallback only if explicitly set to block
       serviceOptions: serviceOptions,
       confirmed: confirmed,
       distanceKm: confirmed ? dist.distanceKm : null,
