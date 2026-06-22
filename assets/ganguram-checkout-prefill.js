@@ -209,6 +209,12 @@
     var mode = addr ? 'full_address' : (norm(pin) ? 'pincode_only' : 'none');
     var url = (mode === 'full_address') ? buildUrl('full_address', addr, pin)
       : (mode === 'pincode_only') ? buildUrl('pincode_only', null, pin) : null;
+    // The EXACT shipping_address params attached to the redirect URL, + per-field booleans, so the
+    // audit can prove the theme IS sending the full address (and Shopify, not the theme, drops it).
+    var pay = paramsOf(url);
+    var has = function (k) { return Object.prototype.hasOwnProperty.call(pay, k) && pay[k] !== ''; };
+    var paramsIncluded = { country: has('country'), zip: has('zip'), address1: has('address1'), address2: has('address2'), city: has('city'), province: has('province') };
+    var paramKeys = Object.keys(pay).map(function (k) { return 'checkout[shipping_address][' + k + ']'; });
     // Why the redirect is/ isn't blocked — so "prefill not sending" can be told apart from a
     // genuine MOV / required-delivery-date block (the redirect is skipped while blocked, by design).
     var movBlocked = false, dateMissing = false;
@@ -226,6 +232,7 @@
     // private mode). The prefill must work from the cart attribute + in-memory selection, NOT this.
     var lsPin = ''; try { lsPin = norm((window.localStorage && window.localStorage.getItem('Zipcode')) || ''); } catch (e) {}
     var cartPin = cartPincode();
+    var cartAddr = cartAddress();
     var method = null; try { var mc = window.GanguramDeliveryMethodChoice; method = (mc && typeof mc.getPreferred === 'function') ? mc.getPreferred().code : null; } catch (e) {}
     var panEligible = (function () {
       var lines = document.querySelectorAll('[data-ganguram-cart-line]'); if (!lines.length) { return null; }
@@ -259,7 +266,26 @@
       checkoutRedirectAllowed: (lastHandoff.allowed === true),
       cartAttributesVerifiedBeforeRedirect: lastHandoff.verified,
       handoffStatus: lastHandoff.status,
-      sending: paramsOf(url),
+      sending: pay,
+      // ---- checkout-field prefill audit (the EXACT URL/payload the theme sends to Shopify) ----
+      checkoutRedirectUrl: url,
+      checkoutPrefillPayload: pay,
+      checkoutPrefillMode: mode,
+      checkoutParamsIncluded: paramsIncluded,      // which checkout[shipping_address][*] params are attached
+      checkoutParamKeys: paramKeys,                // the exact param keys on the URL
+      checkoutParamsIgnoredLikely: (paramKeys.length > 0), // present but the new one-page checkout drops them
+      cartAttributeAddress1: (cartAddr ? cartAddr.address1 : null),
+      cartAttributeAddress2: (cartAddr ? cartAddr.address2 : null),
+      cartAttributeCity: (cartAddr ? cartAddr.city : null),
+      cartAttributeProvince: (cartAddr ? cartAddr.state : null),
+      cartAttributeCountry: (cartAddr ? cartAddr.country : null),
+      cartAttributeZip: (cartAddr ? cartAddr.zip : (cartPin || null)),
+      // FALSE by design: theme JS CANNOT visibly auto-fill Shopify's one-page checkout shipping
+      // address — the new checkout ignores checkout[shipping_address][...] URL params. The data is
+      // preserved in cart/order attributes (above + ShipZip reads the pincode). True field prefill
+      // needs a logged-in customer (Shopify auto-fills) or a Checkout UI Extension / Storefront Cart
+      // API buyerIdentity. See docs/phase2-checkout-prefill-limitation.md.
+      shopifyCheckoutFieldPrefillSupported: false,
       willRedirect: enabled() && !guardBlocked() && !!url,
       reason: (mode === 'none') ? 'no serviceable pincode (in-memory) and none on the cart attributes — enter a pincode/address' : null,
       themeEstimate: themeEstimate(norm(pin))
