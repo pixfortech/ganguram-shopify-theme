@@ -66,13 +66,34 @@
   }
   function observe() {
     if (!('MutationObserver' in window)) { return; }
-    var pending = false;
-    var schedule = function () {
-      if (pending) { return; } pending = true;
-      var run = function () { pending = false; try { injectCtas(); } catch (e) {} };
+    var SEL = '[data-js-product-add-to-cart]';
+    var obs, pending = false;
+    var run = function () {
+      pending = false;
+      if (obs) { try { obs.disconnect(); } catch (e) {} }   // our own CTA insertion must not re-trigger us
+      try { injectCtas(); } catch (e) {}
+      if (obs) { try { obs.observe(document.body, { childList: true, subtree: true }); } catch (e) {} }
+    };
+    var addsBuyButton = function (records) {
+      for (var i = 0; i < records.length; i++) {
+        var added = records[i].addedNodes || [];
+        for (var j = 0; j < added.length; j++) {
+          var n = added[j];
+          if (n && n.nodeType === 1 && ((n.matches && n.matches(SEL)) || (n.querySelector && n.querySelector(SEL)))) { return true; }
+        }
+      }
+      return false;
+    };
+    var schedule = function (records) {
+      // React ONLY when a new buy button appears (facets / infinite scroll / sliders). We ignore
+      // the constant DOM churn from lazy-image loading + slider clones, so we never thrash layout
+      // (or interfere with the theme's lazy-image / slider observers) while images are loading.
+      if (pending || !addsBuyButton(records)) { return; }
+      pending = true;
       if (window.requestAnimationFrame) { window.requestAnimationFrame(run); } else { setTimeout(run, 0); }
     };
-    try { new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
+    obs = new MutationObserver(schedule);
+    try { obs.observe(document.body, { childList: true, subtree: true }); } catch (e) {}
   }
   function init() {
     sync();
