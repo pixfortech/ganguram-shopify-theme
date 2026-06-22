@@ -578,6 +578,9 @@
   {%- comment -%} Delivery rule engine foundation (Phase 2.11B) — reads admin-configured rules from the `ganguram_delivery_rule` metaobject and resolves the rule for the selected pincode/zone (window.GanguramDeliveryRules). Data/resolver only; fail-open; NO UI/progress bar, NO MOV enforcement, NO checkout/charge/SBZ/ShipZip/zipLogic/resolver change. {%- endcomment -%}
   {%- render 'ganguram-delivery-rules-config' -%}
 
+  {%- comment -%} Cart MOV resolver (distance-based slabs) — window.GanguramCartMov: the single MOV source of truth (rule MOV > distance slab > fallback) read by the cart progress bar AND the 4-Hour evaluator. Reuses GanguramShippingEstimate's distance + slab boundaries (loaded above). Display/advisory only; NO ShipZip rate / Standard-slab / service-code / eligibility / product-visibility / box-builder / discount change. {%- endcomment -%}
+  {%- render 'ganguram-cart-mov-config' -%}
+
   {%- comment -%} Delivery message catalog (Phase 2.11E) — one customer-facing source of truth for delivery/pincode/MOV/mode messages (window.GanguramDeliveryMessages). THEME-side codes are shown in the cart; APP-side codes are owned here so the merchant can mirror them in ShipZip / the date-slot app. Display only; no checkout/shipping/SBZ/ShipZip/zipLogic/resolver/settings_data change. {%- endcomment -%}
   {%- render 'ganguram-delivery-messages-config' -%}
 

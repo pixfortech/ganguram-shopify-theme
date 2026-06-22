@@ -136,9 +136,13 @@
     for (var i = 0; i < els.length; i++) { var v = parseInt(els[i].getAttribute('data-gdpr-cart-total'), 10); if (isFinite(v) && v >= 0) { return v; } }
     return 0;
   }
-  // MOV gate, "if applicable" — only when a delivery rule resolves an actual minimum.
-  // Reads the SAME rule engine the cart panel uses; never changes the MOV formula.
+  // MOV gate, "if applicable". Prefers the shared GanguramCartMov resolver so 4HR respects the SAME
+  // distance-based minimum the cart progress bar shows; fail-open to the rule engine, then to
+  // "not required". Never changes the MOV/rate formula.
   function movState(l) {
+    if (window.GanguramCartMov && typeof window.GanguramCartMov.resolve === 'function') {
+      try { var r = window.GanguramCartMov.resolve(l, readSubtotal()); return { required: r.mov != null, met: r.movMet }; } catch (e) {}
+    }
     var dr = window.GanguramDeliveryRules;
     if (!dr || typeof dr.getProgressData !== 'function' || !l) { return { required: false, met: true }; }
     try {
