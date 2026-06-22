@@ -81,7 +81,20 @@
     var loc = localLocation();
     if (!loc || !cartHasLocalDelivery()) { return { show: false }; }
     var fourHour = cartAllQuickCommerce() && (loc.isQuickCommerce === true || loc.zone === 'quick_commerce');
-    return { show: true, fourHourAvailable: fourHour };
+    // Phase 2: defer to the shared 4HR evaluator (enabled + time window + radius + all-QC +
+    // MOV) so the toggle, the persisted method and the panel never disagree. When 4HR is
+    // hidden ONLY because we're outside the time window, surface the "available between X and
+    // Y" note. Fail-open: with no evaluator, keep the legacy QC+zone behaviour (no time gate).
+    var fourHourHiddenByTime = false, fourHourWindowText = '';
+    if (window.GanguramFourHour && typeof window.GanguramFourHour.evaluate === 'function') {
+      try {
+        var ev = window.GanguramFourHour.evaluate();
+        fourHour = ev.visible;
+        fourHourHiddenByTime = (ev.hiddenReason === 'outside_time');
+        if (fourHourHiddenByTime) { fourHourWindowText = window.GanguramFourHour.message(); }
+      } catch (e) {}
+    }
+    return { show: true, fourHourAvailable: fourHour, fourHourHiddenByTime: fourHourHiddenByTime, fourHourWindowText: fourHourWindowText };
   }
 
   // ---- date / time options ---------------------------------------------------
@@ -202,6 +215,14 @@
       } else { hide(typesEl); }
     }
 
+    // Phase 2 — when 4 Hours is hidden ONLY because it's outside the configured window, show a
+    // small "available between 9:00 AM and 6:00 PM" note where the toggle would have been.
+    var windowEl = picker.querySelector('[data-gdd-fourhour-window]');
+    if (windowEl) {
+      if (st.fourHourHiddenByTime && st.fourHourWindowText) { setText(windowEl, st.fourHourWindowText); show(windowEl); }
+      else { setText(windowEl, ''); hide(windowEl); }
+    }
+
     // date = native CALENDAR input (restore saved YYYY-MM-DD; set the selectable window)
     var dateInput = picker.querySelector('[data-gdd-date]');
     if (dateInput) {
@@ -295,6 +316,7 @@
     renderAll();
     observeCartForms();
     window.addEventListener('ganguram:delivery-location-changed', renderAll);
+    window.addEventListener('ganguram:four-hour-window-changed', renderAll);  // Phase 2: 4HR opens/closes
     document.addEventListener('change', function (e) { var p = e.target && e.target.closest && e.target.closest('[data-ganguram-delivery-datepicker]'); if (p) { onPickerChange(p); } }, false);
     document.addEventListener('click', onCheckoutClick, true);
     document.addEventListener('submit', onSubmit, true);

@@ -104,13 +104,24 @@
   // ---- derive the ONE chosen method from the live cart state -----------------
   // Zone-based (matches ShipZip's rate zones + the date picker), so the persisted choice
   // lines up with the actual checkout rates. Returns 'STD' | '4HR' | 'PAN_INDIA' | null.
+  // Phase 2: the 4HR time-window evaluator is the single source of truth for whether 4HR is
+  // available right now (enabled + within the time window + radius + all-QC + MOV). When it
+  // says "no", we DON'T persist 4HR — so an outside-the-window cart auto-switches to STD even
+  // if the (now-hidden) toggle still read four_hour. Fail-open when the module is absent.
+  function fourHourAvailableNow() {
+    var base = cartAllQuickCommerce() && isQuickCommerceZone(currentLoc());
+    if (!base) { return false; }
+    if (window.GanguramFourHour && typeof window.GanguramFourHour.isAvailableNow === 'function') {
+      try { return window.GanguramFourHour.isAvailableNow(); } catch (e) { return base; }
+    }
+    return base;
+  }
   function deriveCode() {
     var loc = currentLoc();
     if (!loc || !loc.pincode || loc.isServiceable !== true) { return null; }
     if (isPanIndia(loc) && !isLocal(loc)) { return 'PAN_INDIA'; }
     if (isLocal(loc)) {
-      var fourHourAvailable = cartAllQuickCommerce() && isQuickCommerceZone(loc);
-      return (fourHourAvailable && datePickerType() === 'four_hour') ? '4HR' : 'STD';
+      return (fourHourAvailableNow() && datePickerType() === 'four_hour') ? '4HR' : 'STD';
     }
     return null;
   }
@@ -297,6 +308,8 @@
     try { observeCartForms(); } catch (e) {}
     window.addEventListener('ganguram:delivery-location-changed', function () { try { apply('location'); } catch (e) {} });
     window.addEventListener('ganguram:delivery-label-updated', function () { try { apply('location'); } catch (e) {} });
+    // Phase 2: when the 4HR window opens/closes, re-derive so a stale 4HR choice auto-switches to STD.
+    window.addEventListener('ganguram:four-hour-window-changed', function () { try { apply('location'); } catch (e) {} });
     document.addEventListener('change', function (e) { try { onCartControlChange(e); } catch (x) {} }, false);
   }
 
@@ -309,6 +322,7 @@
     debugState: function () {
       var loc = currentLoc(), code = deriveCode();
       var sent = desiredAttrs(code);
+      var fhEval = (window.GanguramFourHour && typeof window.GanguramFourHour.evaluate === 'function') ? window.GanguramFourHour.evaluate() : null;
       // Proof it never touches the pincode/address: list the keys it writes and flag any overlap.
       var written = [], pincodeOrAddress = false;
       for (var k in sent) { if (Object.prototype.hasOwnProperty.call(sent, k)) { written.push(k); if (/pincode|address|lat|lng|zone/i.test(k)) { pincodeOrAddress = true; } } }
@@ -319,6 +333,11 @@
         hasCartItems: hasCartItems(),
         cartAllQuickCommerce: cartAllQuickCommerce(),
         datePickerType: datePickerType(),
+        // Phase 2 — 4HR time-window gating (so you can see WHY the method is/ isn't 4HR)
+        fourHourVisibleNow: fourHourAvailableNow(),
+        fourHourHiddenReason: fhEval ? (fhEval.hiddenReason || '(visible)') : '(no evaluator)',
+        currentKolkataTime: fhEval ? fhEval.currentKolkataTime : null,
+        isWithinFourHourTimeWindow: fhEval ? fhEval.withinTime : null,
         preferredMethod: code,
         preferredLabel: labelFor(code),
         attributesSent: sent,

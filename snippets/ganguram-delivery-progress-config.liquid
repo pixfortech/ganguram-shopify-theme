@@ -19,6 +19,15 @@
 <script>
   window.GanguramDeliveryProgressConfig = {
     enabled: true,
+    {%- comment -%}
+      fallbackMov (PAISE, display-only): set this when you want the cart MINIMUM-ORDER progress
+      bar to show even though your matched `ganguram_delivery_rule` metaobject has no Minimum
+      order value. e.g. 20000 = ₹200. It only renders the bar + "x / y minimum order" summary —
+      it NEVER blocks checkout and NEVER changes the rate/MOV formula. Leave 0 (default) to keep
+      the bar purely rule-driven. The proper place for an enforced minimum is the metaobject rule.
+      Run GanguramDeliveryProgress.debugState() -> movSource to see which source is active.
+    {%- endcomment -%}
+    fallbackMov: {{ settings.ganguram_cart_mov_display_paise | default: 0 | json }},
     copy: {
       movLabel: {{ 'Minimum order:' | json }},
       statusAvailable: {{ 'Delivery available' | json }},

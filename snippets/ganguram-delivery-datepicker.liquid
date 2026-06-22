@@ -20,6 +20,8 @@
   hidden>
   <p class="ganguram-delivery-datepicker__title" data-gdd-title></p>
   <div class="ganguram-delivery-datepicker__types" data-gdd-types role="radiogroup" hidden></div>
+  {%- comment -%} Phase 2: shown when 4 Hours is hidden only because it's outside the time window. {%- endcomment -%}
+  <p class="ganguram-delivery-datepicker__window-note" data-gdd-fourhour-window role="status" hidden></p>
   <div class="ganguram-delivery-datepicker__field" data-gdd-date-field hidden>
     <label class="ganguram-delivery-datepicker__label" for="gdd-date-{{ gdd_context }}" data-gdd-date-label></label>
     <input type="date" class="ganguram-delivery-datepicker__select ganguram-delivery-datepicker__input" id="gdd-date-{{ gdd_context }}" data-gdd-date>{%- comment -%} calendar date picker (YYYY-MM-DD); replaces the old dropdown {%- endcomment -%}
