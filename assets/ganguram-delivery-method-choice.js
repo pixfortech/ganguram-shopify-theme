@@ -132,12 +132,11 @@
   // It NEVER writes ganguram_selected_pincode / the selected address / lat-lng — those are owned
   // by other modules and are left untouched, so a method/date change can't drop the pincode/address.
   var lastSig = null, timer = null, lastWriteAttrs = null;
-  function postAttrs(attrs) {
+  function postAttrs(attrs, keepalive) {
     try {
-      return fetch(updateUrl(), {
-        method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ attributes: attrs })
-      });
+      var opts = { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify({ attributes: attrs }) };
+      if (keepalive === true) { opts.keepalive = true; }   // survive a checkout navigation
+      return fetch(updateUrl(), opts);
     } catch (e) { return null; }
   }
   function desiredAttrs(code) {
@@ -316,7 +315,7 @@
   // Immediate write (no debounce) of the derived method — used by the checkout handoff so
   // ganguram_preferred_delivery_method is on the cart BEFORE a Buy Now / checkout redirect. Returns
   // a Promise. Never writes pincode/address. Fail-open (any error resolves).
-  function flush() {
+  function flush(keepalive) {
     if (!enabled()) { return Promise.resolve({ written: false, reason: 'disabled' }); }
     var code = deriveCode();
     current = code; writeStored(code);
@@ -326,7 +325,7 @@
     if (timer) { try { clearTimeout(timer); } catch (e) {} timer = null; }
     try { lastSig = JSON.stringify(attrs); } catch (e) { lastSig = code; }
     lastWriteAttrs = attrs;
-    try { return Promise.resolve(postAttrs(attrs)).then(function () { return { written: true, code: code }; }).catch(function () { return { written: false, reason: 'error', code: code }; }); }
+    try { return Promise.resolve(postAttrs(attrs, keepalive === true)).then(function () { return { written: true, code: code }; }).catch(function () { return { written: false, reason: 'error', code: code }; }); }
     catch (e) { return Promise.resolve({ written: false, reason: 'error', code: code }); }
   }
 

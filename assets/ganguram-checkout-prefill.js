@@ -95,13 +95,15 @@
     if (!t.closest('#CheckOut, [name="checkout"]')) { return; }
     if (guardBlocked()) { return; }                  // MOV + date guards own the blocked case (preventDefault + notice)
     var url = currentCheckoutUrl();
-    if (!url) { return; }                             // no serviceable pincode -> normal checkout (fail-open, as before)
+    if (!url) { return; }                             // no serviceable pincode -> normal checkout (fail-open)
     e.preventDefault();
-    // Force-save the method + attributes (fire-and-forget; cart-attributes' keepalive flushSync is
-    // the navigation-safe backup) and redirect SYNCHRONOUSLY to the prefill URL — same as before,
-    // so the click never stalls. (Buy Now uses the async verify path since it already awaits the add.)
-    try { forceSave(); } catch (e2) {}
-    lastHandoff = { status: 'redirecting', buyNow: false, reason: null, verified: null, allowed: true, at: Date.now() };
+    // Force-save the pincode/address + method with KEEPALIVE so the writes are GUARANTEED to reach
+    // the cart even as we navigate (keepalive survives the redirect — the robust standard; it never
+    // stalls the click). The cart attributes therefore land on the order before checkout. (Buy Now
+    // additionally awaits + verifies /cart.js, since it already awaits the AJAX add.)
+    var missingBefore = !(cartPincode() && cartAddress());
+    try { forceSave({ keepalive: true }); } catch (e2) {}
+    lastHandoff = { status: 'redirecting', buyNow: false, reason: null, verified: null, allowed: true, missingBefore: missingBefore, syncStatus: 'keepalive', at: Date.now() };
     go(url);
   }
 
@@ -129,11 +131,19 @@
     if (norm(pin)) { return buildUrl('pincode_only', null, pin); }
     return null;
   }
-  function forceSave() {
-    var ps = [];
-    try { var ca = window.GanguramCartAttributes; if (ca && typeof ca.flush === 'function') { ps.push(Promise.resolve(ca.flush())); } } catch (e) {}
-    try { var mc = window.GanguramDeliveryMethodChoice; if (mc && typeof mc.flush === 'function') { ps.push(Promise.resolve(mc.flush())); } } catch (e) {}
-    return Promise.all(ps).catch(function () { return []; });
+  function forceSave(opts) {
+    var ka = !!(opts && opts.keepalive);
+    var caP = Promise.resolve(null), mcP = Promise.resolve(null);
+    try { var ca = window.GanguramCartAttributes; if (ca && typeof ca.flush === 'function') { caP = Promise.resolve(ca.flush(ka)); } } catch (e) {}
+    try { var mc = window.GanguramDeliveryMethodChoice; if (mc && typeof mc.flush === 'function') { mcP = Promise.resolve(mc.flush(ka)); } } catch (e) {}
+    return Promise.all([caP, mcP]).then(function (r) { return { cartAttrs: r[0], method: r[1] }; }).catch(function () { return { cartAttrs: null, method: null }; });
+  }
+  function summarizeSync(s) {
+    if (!s) { return 'none'; }
+    var ca = s.cartAttrs;
+    if (ca && ca.written === true) { return 'ok'; }
+    if (ca && ca.reason) { return 'cart_attrs:' + ca.reason; }
+    return (window.GanguramCartAttributes && typeof window.GanguramCartAttributes.flush === 'function') ? 'unknown' : 'no_writer';
   }
   function verifyCart() {
     try {
@@ -157,9 +167,11 @@
     if (!enabled()) { return Promise.resolve(deny('disabled', buyNow)); }
     if (!hasAnyPincode()) { openPincodePopup(); return Promise.resolve(deny('no_pincode', buyNow)); }
     if (guardBlocked()) { if (buyNow) { if (!openCart()) { go(cartPageUrl()); } } return Promise.resolve(deny(dateBlocked() ? 'date_required' : 'mov', buyNow)); }
-    lastHandoff = { status: 'saving', buyNow: buyNow, reason: null, verified: null, allowed: false, at: Date.now() };
+    // Was the cart MISSING the pincode/address BEFORE we force-save? (the reliability bug being fixed)
+    var missingBefore = !(cartPincode() && cartAddress());
+    lastHandoff = { status: 'saving', buyNow: buyNow, reason: null, verified: null, allowed: false, missingBefore: missingBefore, syncStatus: null, at: Date.now() };
     return forceSave()
-      .then(function () { lastHandoff.status = 'verifying'; return Promise.race([verifyCart(), timeoutP(VERIFY_TIMEOUT_MS, { ok: false, timedOut: true })]); })
+      .then(function (statuses) { lastHandoff.syncStatus = summarizeSync(statuses); lastHandoff.status = 'verifying'; return Promise.race([verifyCart(), timeoutP(VERIFY_TIMEOUT_MS, { ok: false, timedOut: true })]); })
       .then(function (v) {
         lastHandoff.verified = !!(v && v.ok);
         var url = currentCheckoutUrl();
@@ -265,6 +277,8 @@
       checkoutRedirectBlocked: (lastHandoff.status === 'blocked'),
       checkoutRedirectAllowed: (lastHandoff.allowed === true),
       cartAttributesVerifiedBeforeRedirect: lastHandoff.verified,
+      cartAttributesMissingBeforeRedirect: (lastHandoff.missingBefore === undefined ? null : lastHandoff.missingBefore),
+      forcedCartAttributeSyncStatus: lastHandoff.syncStatus,
       handoffStatus: lastHandoff.status,
       sending: pay,
       // ---- checkout-field prefill audit (the EXACT URL/payload the theme sends to Shopify) ----
