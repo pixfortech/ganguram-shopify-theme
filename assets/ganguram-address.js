@@ -30,9 +30,17 @@
 
   function norm(p) { return String(p == null ? '' : p).replace(/\D/g, '').slice(0, 6); }
   function safeLS() { try { var t = '__ga__'; window.localStorage.setItem(t, t); window.localStorage.removeItem(t); return window.localStorage; } catch (e) { return null; } }
-  function read() { var s = safeLS(); if (!s) { return null; } try { var o = JSON.parse(s.getItem(KEY) || 'null'); return (o && typeof o === 'object') ? o : null; } catch (e) { return null; } }
-  function write(o) { var s = safeLS(); if (!s) { return; } try { s.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
-  function clearStore() { var s = safeLS(); if (!s) { return; } try { s.removeItem(KEY); } catch (e) {} }
+  // IN-MEMORY fallback so a CLEAN / private session (Safari private mode, localStorage blocked)
+  // still keeps the selected address for THIS session — the cart-attributes handoff then mirrors
+  // it to the cart so the checkout prefill works without relying on localStorage persistence.
+  var memRec = null;
+  function read() {
+    var s = safeLS();
+    if (s) { try { var o = JSON.parse(s.getItem(KEY) || 'null'); if (o && typeof o === 'object') { return o; } } catch (e) {} }
+    return memRec;
+  }
+  function write(o) { memRec = o; var s = safeLS(); if (!s) { return; } try { s.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
+  function clearStore() { memRec = null; var s = safeLS(); if (!s) { return; } try { s.removeItem(KEY); } catch (e) {} }
 
   function currentPin() {
     var z = window.GanguramZone;
