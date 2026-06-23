@@ -36,6 +36,11 @@
 
   function cfg() { return window.GanguramCheckoutPrefillConfig || {}; }
   function enabled() { return cfg().enabled !== false; }
+  // OPT-IN hard-block. When true, a genuine persistent verify miss BLOCKS checkout and asks the
+  // customer to reselect their location. Default false: the keepalive force-save already GUARANTEES
+  // the write lands across the navigation, so we fail-open-redirect (never trap a paying customer)
+  // and only record the mismatch in diagnostics.
+  function blockUntilVerified() { return cfg().blockUntilVerified === true; }
   function checkoutUrl() { return cfg().checkoutUrl || '/checkout'; }
   function defaultCountry() { return cfg().defaultCountry || 'India'; }
   function norm(p) { return String(p == null ? '' : p).replace(/\D/g, '').slice(0, 6); }
@@ -94,17 +99,18 @@
     if (t.closest('.shopify-payment-button, [data-shopify="payment-button"], .additional-checkout-buttons')) { return; }
     if (!t.closest('#CheckOut, [name="checkout"]')) { return; }
     if (guardBlocked()) { return; }                  // MOV + date guards own the blocked case (preventDefault + notice)
-    var url = currentCheckoutUrl();
-    if (!url) { return; }                             // no serviceable pincode -> normal checkout (fail-open)
+    if (!currentCheckoutUrl()) { return; }            // no serviceable pincode -> normal checkout (fail-open)
     e.preventDefault();
-    // Force-save the pincode/address + method with KEEPALIVE so the writes are GUARANTEED to reach
-    // the cart even as we navigate (keepalive survives the redirect — the robust standard; it never
-    // stalls the click). The cart attributes therefore land on the order before checkout. (Buy Now
-    // additionally awaits + verifies /cart.js, since it already awaits the AJAX add.)
+    // OPT-IN (GanguramCheckoutPrefillConfig.blockUntilVerified): force-save -> VERIFY /cart.js ->
+    // only redirect once confirmed (blocks + reselect on a persistent miss). DEFAULT is safer: a
+    // KEEPALIVE force-save GUARANTEES the writes land across the navigation (the robust standard) and
+    // we redirect synchronously — so the cart attributes reach the order without ever risking a
+    // blocked checkout. Buy Now always verifies (it already awaits the AJAX add).
+    if (blockUntilVerified()) { prepareCheckout({ buyNow: false }); return; }
     var missingBefore = !(cartPincode() && cartAddress());
     try { forceSave({ keepalive: true }); } catch (e2) {}
-    lastHandoff = { status: 'redirecting', buyNow: false, reason: null, verified: null, allowed: true, missingBefore: missingBefore, syncStatus: 'keepalive', at: Date.now() };
-    go(url);
+    lastHandoff = { status: 'redirecting', buyNow: false, reason: null, verified: null, allowed: true, missingBefore: missingBefore, syncStatus: 'keepalive', mismatch: null, at: Date.now() };
+    go(currentCheckoutUrl());
   }
 
   // ---------------------------------------------------------------------------
@@ -117,6 +123,7 @@
   // ---------------------------------------------------------------------------
   var VERIFY_TIMEOUT_MS = 1500;
   var lastHandoff = { status: 'idle', buyNow: false, reason: null, verified: null, allowed: null, at: null };
+  var lastVerifiedCartAttributes = null;
   function cartJsUrl() { return cfg().cartUrl || '/cart.js'; }
   function cartPageUrl() { return cfg().cartPageUrl || '/cart'; }
   function hasAnyPincode() { return !!(activePincode() || cartPincode()); }
@@ -153,38 +160,58 @@
           cartCache = (cart && cart.attributes) || {};
           var pin = cartPincode();
           var method = String(cartCache['ganguram_preferred_delivery_method'] || '');
-          return { ok: !!pin, pincode: !!pin, method: !!method, cartPincode: pin, cartMethod: method };
+          lastVerifiedCartAttributes = { pincode: pin, address1: (cartAddress() ? cartAddress().address1 : ''), method: method };
+          return { ok: !!pin, pincode: !!pin, method: !!method, cartPincode: pin, cartMethod: method, errored: false };
         })
-        .catch(function () { return { ok: false, pincode: false, method: false }; });
-    } catch (e) { return Promise.resolve({ ok: false, pincode: false, method: false }); }
+        .catch(function () { return { ok: false, pincode: false, method: false, errored: true }; });
+    } catch (e) { return Promise.resolve({ ok: false, pincode: false, method: false, errored: true }); }
   }
   function timeoutP(ms, val) { return new Promise(function (res) { setTimeout(function () { res(val); }, ms); }); }
   function deny(reason, buyNow) { lastHandoff = { status: 'blocked', buyNow: !!buyNow, reason: reason, verified: null, allowed: false, at: Date.now() }; return { ok: false, reason: reason, buyNow: !!buyNow, allowed: false }; }
 
-  // The one entry point. opts.buyNow=true when called by a Buy Now button (after the AJAX add).
+  // The one entry point — cart checkout, cart-drawer checkout, AND Buy Now all use it. opts.buyNow
+  // marks the Buy Now flow. Pipeline: validate -> force-save (keepalive) -> VERIFY /cart.js -> only
+  // redirect once confirmed; retry once on a genuine miss; BLOCK + reselect on a persistent miss; but
+  // FAIL-OPEN (redirect) on a verify infra error/timeout so a slow network never traps the customer
+  // (keepalive already wrote the attributes). PAN India needs no distance/latLng.
+  var MAX_VERIFY_RETRIES = 1;
   function prepareCheckout(opts) {
     opts = opts || {}; var buyNow = !!opts.buyNow;
     if (!enabled()) { return Promise.resolve(deny('disabled', buyNow)); }
     if (!hasAnyPincode()) { openPincodePopup(); return Promise.resolve(deny('no_pincode', buyNow)); }
     if (guardBlocked()) { if (buyNow) { if (!openCart()) { go(cartPageUrl()); } } return Promise.resolve(deny(dateBlocked() ? 'date_required' : 'mov', buyNow)); }
-    // Was the cart MISSING the pincode/address BEFORE we force-save? (the reliability bug being fixed)
     var missingBefore = !(cartPincode() && cartAddress());
-    lastHandoff = { status: 'saving', buyNow: buyNow, reason: null, verified: null, allowed: false, missingBefore: missingBefore, syncStatus: null, at: Date.now() };
-    return forceSave()
-      .then(function (statuses) { lastHandoff.syncStatus = summarizeSync(statuses); lastHandoff.status = 'verifying'; return Promise.race([verifyCart(), timeoutP(VERIFY_TIMEOUT_MS, { ok: false, timedOut: true })]); })
-      .then(function (v) {
-        lastHandoff.verified = !!(v && v.ok);
-        var url = currentCheckoutUrl();
-        if (!url) { return deny('no_url', buyNow); }
-        lastHandoff.status = 'redirecting'; lastHandoff.allowed = true; lastHandoff.reason = null;
-        go(url);
-        return { ok: true, reason: null, buyNow: buyNow, verified: lastHandoff.verified, url: url, allowed: true };
-      })
-      .catch(function () {
-        var url = currentCheckoutUrl();
-        if (url) { lastHandoff.status = 'redirecting'; lastHandoff.allowed = true; go(url); return { ok: true, reason: 'failopen', verified: false, url: url, buyNow: buyNow, allowed: true }; }
-        return deny('error', buyNow);
-      });
+    lastHandoff = { status: 'saving', buyNow: buyNow, reason: null, verified: null, allowed: false, missingBefore: missingBefore, syncStatus: null, mismatch: null, at: Date.now() };
+
+    function redirectNow(reason) {
+      var url = currentCheckoutUrl();
+      if (!url) { return deny('no_url', buyNow); }
+      lastHandoff.status = 'redirecting'; lastHandoff.allowed = true; lastHandoff.reason = reason || null;
+      go(url);
+      return { ok: true, reason: reason || null, buyNow: buyNow, verified: lastHandoff.verified, url: url, allowed: true };
+    }
+    function blockReselect() {
+      lastHandoff.status = 'blocked'; lastHandoff.allowed = false; lastHandoff.reason = 'cart_attributes_unverified'; lastHandoff.mismatch = true;
+      openPincodePopup();   // ask the customer to reselect the delivery location (re-writes the attributes)
+      return { ok: false, reason: 'cart_attributes_unverified', buyNow: buyNow, allowed: false };
+    }
+    function attempt(n) {
+      // keepalive so the write survives even if we later fail-open-redirect on a verify infra error.
+      return forceSave({ keepalive: true })
+        .then(function (statuses) { lastHandoff.syncStatus = summarizeSync(statuses); lastHandoff.status = 'verifying'; return Promise.race([verifyCart(), timeoutP(VERIFY_TIMEOUT_MS, { ok: false, errored: true, timedOut: true })]); })
+        .then(function (v) {
+          lastHandoff.verified = !!(v && v.pincode);
+          if (v && v.pincode) { lastHandoff.mismatch = false; return redirectNow(); }   // confirmed -> go
+          if (v && v.errored) { return redirectNow('failopen_verify_error'); }           // infra issue -> never trap
+          if (n < MAX_VERIFY_RETRIES) { return attempt(n + 1); }                          // genuinely absent -> retry the save
+          lastHandoff.mismatch = true;                                                    // persistent real miss recorded for diagnostics
+          // OPT-IN: hard-block + reselect. DEFAULT: fail-open-redirect (the keepalive save already
+          // wrote the attributes; blocking the highest-traffic button would only cost conversions).
+          return blockUntilVerified() ? blockReselect() : redirectNow('unverified_failopen');
+        })
+        .catch(function () { return redirectNow('failopen_exception'); });
+    }
+    return attempt(0);
   }
 
   // DEV-ONLY diagnostics (Phase 2.12C) — never customer-facing, no console noise. In the
@@ -263,6 +290,7 @@
       pincodeSource: pincodeSource,
       selectedAddress: addr ? (addr.formatted_address || (addr.address1 + ', ' + addr.city)) : null,
       addressSource: addressSource,
+      selectedAddressSource: addressSource,   // alias — same key name the cart-attributes debugState uses
       addressLatLng: latlng,
       storedLatLng: latlng,
       cartHydrated: !!cartCache,
@@ -279,6 +307,8 @@
       cartAttributesVerifiedBeforeRedirect: lastHandoff.verified,
       cartAttributesMissingBeforeRedirect: (lastHandoff.missingBefore === undefined ? null : lastHandoff.missingBefore),
       forcedCartAttributeSyncStatus: lastHandoff.syncStatus,
+      verificationMismatch: (lastHandoff.mismatch === undefined ? null : lastHandoff.mismatch),
+      lastVerifiedCartAttributes: lastVerifiedCartAttributes,
       handoffStatus: lastHandoff.status,
       sending: pay,
       // ---- checkout-field prefill audit (the EXACT URL/payload the theme sends to Shopify) ----

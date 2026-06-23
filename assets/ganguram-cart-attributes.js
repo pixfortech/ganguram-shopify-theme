@@ -399,10 +399,14 @@
     verify: verify,
     debugState: function () {
       var loc = currentLoc(); var addr = selectedAddress(); var v = lastVerify || {};
+      // mismatch = a serviceable selection exists but the last /cart.js verify found NO pincode.
+      var mismatch = (verifiedBeforeCheckout === false && !!(loc && loc.pincode && loc.isServiceable === true)) ? true
+        : (verifiedBeforeCheckout === true ? false : null);
       return {
         enabled: enabled(),
         selectedPincode: (loc && loc.pincode) || null,
         selectedAddress: (addr && (addr.formatted_address || (addr.address1 ? (addr.address1 + ', ' + (addr.city || '')) : null))) || null,
+        selectedAddressSource: (addr && addr.source) || null,
         serviceable: !!(loc && loc.isServiceable === true),
         cartAttributesWriteStatus: lastWriteStatus,
         lastWriteAt: lastWriteAt,
@@ -410,10 +414,14 @@
         lastWritePayload: lastWritePayload,
         // verify() reads /cart.js — call `await GanguramCartAttributes.verify()` then read these
         verifiedBeforeCheckout: verifiedBeforeCheckout,
+        verificationMismatch: mismatch,
+        lastVerifiedCartAttributes: lastVerify,
         cartAttributePincode: v.pincode || null,
         cartAttributeAddress1: v.address1 || null,
+        cartAttributeAddress2: v.address2 || null,
         cartAttributeCity: v.city || null,
         cartAttributeProvince: v.province || null,
+        cartAttributeCountry: v.country || null,
         cartAttributeZip: v.zip || null,
         desiredAttributes: desiredAttributes(null)
       };
