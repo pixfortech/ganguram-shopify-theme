@@ -211,7 +211,7 @@
   function signature(attrs) { try { return JSON.stringify(attrs); } catch (e) { return String(Math.random()); } }
 
   // ---- sync -----------------------------------------------------------------
-  var lastSig = null, lastWriteStatus = 'idle', lastWriteAt = null, lastWriteError = null;
+  var lastSig = null, lastWriteStatus = 'idle', lastWriteAt = null, lastWriteError = null, lastWritePayload = null, lastVerify = null, verifiedBeforeCheckout = null;
 
   function postAttributes(attrs, useKeepalive) {
     var opts = {
@@ -230,7 +230,7 @@
     var desired = desiredAttributes(detail);
     var desiredSig = signature(desired);
     if (desiredSig === lastSig) { lastWriteStatus = 'in_sync'; return; }
-    lastWriteStatus = 'writing'; lastWriteError = null;
+    lastWriteStatus = 'writing'; lastWriteError = null; lastWritePayload = desired;
     fetch(cartUrl(), { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
       .then(function (r) { return r.json(); })
       .then(function (cart) {
@@ -359,32 +359,70 @@
   // Immediate write (no debounce) that RESOLVES when the cart accepted it — used by the checkout
   // handoff so the pincode/address are on the cart BEFORE a Buy Now / checkout redirect. Returns a
   // Promise. Fail-open: any error resolves (the keepalive flushSync is the navigation-safe backup).
-  function flush() {
+  function flush(keepalive) {
     if (!enabled()) { return Promise.resolve({ written: false, reason: 'disabled' }); }
     var loc = currentLoc();
     if (!(loc && loc.pincode && loc.isServiceable === true)) { return Promise.resolve({ written: false, reason: 'no_pincode' }); }
     var desired = desiredAttributes(null);
-    lastWriteStatus = 'writing'; lastWriteError = null;
+    lastWriteStatus = 'writing'; lastWriteError = null; lastWritePayload = desired;
     try {
-      return Promise.resolve(postAttributes(desired, false))
+      return Promise.resolve(postAttributes(desired, keepalive === true))
         .then(function () { lastSig = signature(desired); lastWriteStatus = 'ok'; lastWriteAt = Date.now(); return { written: true }; })
         .catch(function (e) { lastWriteStatus = 'error'; lastWriteError = (e && e.message) || String(e); return { written: false, reason: 'error' }; });
     } catch (e) { lastWriteStatus = 'error'; return Promise.resolve({ written: false, reason: 'error' }); }
+  }
+  // Read /cart.js back and record whether the pincode/address actually landed (verifiedBeforeCheckout).
+  function verify() {
+    try {
+      return fetch(cartUrl(), { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(function (cart) {
+          var a = (cart && cart.attributes) || {};
+          lastVerify = {
+            pincode: a.ganguram_selected_pincode || a['Delivery Pincode'] || '',
+            address1: a._ganguram_ship_address1 || '', address2: a._ganguram_ship_address2 || '',
+            city: a._ganguram_ship_city || '', province: a._ganguram_ship_province || '',
+            country: a._ganguram_ship_country || '', zip: a._ganguram_ship_zip || '',
+            method: a.ganguram_preferred_delivery_method || ''
+          };
+          verifiedBeforeCheckout = !!lastVerify.pincode;
+          return lastVerify;
+        })
+        .catch(function () { verifiedBeforeCheckout = false; return null; });
+    } catch (e) { verifiedBeforeCheckout = false; return Promise.resolve(null); }
   }
 
   // DEV-ONLY diagnostics — whether the selection actually reached the cart attributes (the clean-
   // device handoff). cartAttributesWriteStatus: 'idle' | 'writing' | 'ok' | 'in_sync' | 'error'.
   window.GanguramCartAttributes = {
     flush: flush,
+    verify: verify,
     debugState: function () {
-      var loc = currentLoc();
+      var loc = currentLoc(); var addr = selectedAddress(); var v = lastVerify || {};
+      // mismatch = a serviceable selection exists but the last /cart.js verify found NO pincode.
+      var mismatch = (verifiedBeforeCheckout === false && !!(loc && loc.pincode && loc.isServiceable === true)) ? true
+        : (verifiedBeforeCheckout === true ? false : null);
       return {
         enabled: enabled(),
+        selectedPincode: (loc && loc.pincode) || null,
+        selectedAddress: (addr && (addr.formatted_address || (addr.address1 ? (addr.address1 + ', ' + (addr.city || '')) : null))) || null,
+        selectedAddressSource: (addr && addr.source) || null,
+        serviceable: !!(loc && loc.isServiceable === true),
         cartAttributesWriteStatus: lastWriteStatus,
         lastWriteAt: lastWriteAt,
         lastWriteError: lastWriteError,
-        selectedPincode: (loc && loc.pincode) || null,
-        serviceable: !!(loc && loc.isServiceable === true),
+        lastWritePayload: lastWritePayload,
+        // verify() reads /cart.js — call `await GanguramCartAttributes.verify()` then read these
+        verifiedBeforeCheckout: verifiedBeforeCheckout,
+        verificationMismatch: mismatch,
+        lastVerifiedCartAttributes: lastVerify,
+        cartAttributePincode: v.pincode || null,
+        cartAttributeAddress1: v.address1 || null,
+        cartAttributeAddress2: v.address2 || null,
+        cartAttributeCity: v.city || null,
+        cartAttributeProvince: v.province || null,
+        cartAttributeCountry: v.country || null,
+        cartAttributeZip: v.zip || null,
         desiredAttributes: desiredAttributes(null)
       };
     }

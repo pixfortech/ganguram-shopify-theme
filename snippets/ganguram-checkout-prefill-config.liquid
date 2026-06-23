@@ -20,7 +20,14 @@
     // (GanguramDeliveryDatePicker.isDateMissing), so the redirect can't bypass the date step.
     enabled: true,
     checkoutUrl: "/checkout",
-    defaultCountry: "India"
+    defaultCountry: "India",
+    cartUrl: "/cart.js",
+    // Force-sync handoff: before checkout we force-save the selected pincode/address + delivery
+    // method to the cart attributes with KEEPALIVE (guaranteed to land across the redirect) and
+    // verify /cart.js. blockUntilVerified:false (default) = fail-open redirect on a verify miss
+    // (the keepalive write already landed; never trap a paying customer). Set true to HARD-BLOCK
+    // checkout on a genuine persistent miss and ask the customer to reselect their location.
+    blockUntilVerified: false
   };
 </script>
 <script src="{{ 'ganguram-checkout-prefill.js' | asset_url }}" defer></script>
