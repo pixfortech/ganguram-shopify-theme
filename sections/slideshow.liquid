@@ -150,13 +150,13 @@
 
                 if block.settings.mobile_image
 
-                  render 'lazy-image', image: block.settings.mobile_image, type: image_type, alt: block.settings.title, image_alignment: image_alignment, sizes: sizes, class: 'element--hide-on-desk', preload: preload
+                  render 'lazy-image', image: block.settings.mobile_image, type: image_type, alt: block.settings.mobile_image.alt | default: block.settings.title, image_alignment: image_alignment, sizes: sizes, class: 'element--hide-on-desk', preload: preload
 
                   assign image_class = 'element--hide-on-small'
 
                 endif
                 
-                render 'lazy-image', image: block.settings.image, type: image_type, alt: block.settings.title, image_alignment: image_alignment, sizes: sizes, class: image_class, preload: preload
+                render 'lazy-image', image: block.settings.image, type: image_type, alt: block.settings.image.alt | default: block.settings.title, image_alignment: image_alignment, sizes: sizes, class: image_class, preload: preload
 
                 assign image_class = ''
 

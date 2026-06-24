@@ -86,17 +86,17 @@
                         endif
                       -%}
 
-                      <a href="//www.facebook.com/sharer.php?u={{ share_link }}" target="_blank">
+                      <a href="//www.facebook.com/sharer.php?u={{ share_link }}" target="_blank" rel="nofollow noopener noreferrer" aria-label="Share this article on Facebook">
                         <span class="visually-hidden">{{ 'general.sharing.facebook' | t }}</span>
                         <span class="icon" aria-hidden="true">{%- render 'theme-symbols', icon: 'facebook' -%}</span>
                       </a>
 
-                      <a href="twitter.com/intent/tweet?text={{ share_title }}&amp;url={{ share_link }}" target="_blank">
+                      <a href="twitter.com/intent/tweet?text={{ share_title }}&amp;url={{ share_link }}" target="_blank" rel="nofollow noopener noreferrer" aria-label="Share this article on X (Twitter)">
                         <span class="visually-hidden">{{ 'general.sharing.twitter' | t }}</span>
                         <span class="icon" aria-hidden="true">{%- render 'theme-symbols', icon: 'twitter' -%}</span
                       ></a>
 
-                      <a href="//pinterest.com/pin/create/button/?url={{ share_link }}&amp;media={{ share_image }}&amp;description={{ share_title }}" target="_blank">
+                      <a href="//pinterest.com/pin/create/button/?url={{ share_link }}&amp;media={{ share_image }}&amp;description={{ share_title }}" target="_blank" rel="nofollow noopener noreferrer" aria-label="Share this article on Pinterest">
                         <span class="visually-hidden">{{ 'general.sharing.pinterest' | t }}</span>
                         <span class="icon" aria-hidden="true">{%- render 'theme-symbols', icon: 'pinterest' -%}</span>
                       </a>
