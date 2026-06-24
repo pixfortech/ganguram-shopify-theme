@@ -316,7 +316,7 @@
              <div class="wrp_code">
               {%- if block.settings.zipcode_image != blank -%}
               <div class="header-info-block__image">                     
-                <img src="{{ block.settings.zipcode_image | img_url:'master' }}" alt="{{ block.settings.zipcode_icon.alt | escape }}">                                                      
+                <img src="{{ block.settings.zipcode_image | img_url:'master' }}" alt="{{ block.settings.zipcode_image.alt | default: 'Ganguram store locations' | escape }}">                                                      
               </div>
               {%- endif -%}
               <div class="wrp_content">
