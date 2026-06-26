@@ -422,8 +422,8 @@
             "hide_on_mobile": false,
             "column_mobile": "2",
             "row_mobile": "2",
-            "color_background_main": "#7D7CD0",
-            "color_text_main": "#FFFFFF",
+            "color_background_main": "#7d7cd0",
+            "color_text_main": "#ffffff",
             "color_hide_borders": true,
             "color_hide_shadow": false
           },
@@ -810,6 +810,7 @@
         "grid_text_jKMQdc",
         "grid_text_xxXiUU"
       ],
+      "disabled": true,
       "settings": {
         "heading": "We promise!",
         "subheading": "",
@@ -859,6 +860,7 @@
         "1655130414988486bd-0",
         "1655130414988486bd-2"
       ],
+      "disabled": true,
       "settings": {
         "height": "regular",
         "image_position": "top",

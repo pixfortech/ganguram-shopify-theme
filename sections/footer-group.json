@@ -27,6 +27,7 @@
         },
         "97af5be7-f228-4009-8f3e-12d1e44573b9": {
           "type": "menu",
+          "disabled": true,
           "settings": {
             "title": "Popular categories",
             "menu": "",
