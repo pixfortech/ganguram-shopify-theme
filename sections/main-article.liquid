@@ -83,6 +83,8 @@
                         <a
                           href="//www.facebook.com/sharer.php?u={{ share_link }}"
                           target="_blank"
+                          rel="nofollow noopener noreferrer"
+                          aria-label="Share this article on Facebook"
                           title="{{ 'general.accessibility_labels.share.facebook' | t }}"
                         >
                           <span aria-hidden="true" class="icon">{% render 'theme-symbols', icon: 'facebook' %}</span>
@@ -94,6 +96,8 @@
                         <a
                           href="//twitter.com/intent/tweet?text={{ share_title }}&amp;url={{ share_link }}"
                           target="_blank"
+                          rel="nofollow noopener noreferrer"
+                          aria-label="Share this article on X (Twitter)"
                           title="{{ 'general.accessibility_labels.share.twitter' | t }}"
                         >
                           <span aria-hidden="true" class="icon">{% render 'theme-symbols', icon: 'twitter' %}</span>
@@ -105,6 +109,8 @@
                         <a
                           href="//pinterest.com/pin/create/button/?url={{ share_link }}&amp;media={{ share_image }}&amp;description={{ share_title }}"
                           target="_blank"
+                          rel="nofollow noopener noreferrer"
+                          aria-label="Share this article on Pinterest"
                           title="{{ 'general.accessibility_labels.share.pinterest' | t }}"
                         >
                           <span aria-hidden="true" class="icon">{% render 'theme-symbols', icon: 'pinterest' %}</span>
