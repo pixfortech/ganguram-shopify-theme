@@ -6,7 +6,7 @@
 **Audit date:** 26 June 2026
 **Language:** British English
 
-> **Live-fetch limitation (applies throughout) — and how to clear it:** All five live URLs returned **HTTP 403** in this environment. The 403 is **not** from Shopify and **not** bot-protection — it is this sandbox's **network egress allow-list**: both the page fetcher and a browser-user-agent `curl` came back with `Host not in allowlist: ganguram.com`. So these files are **LIVE_UNVERIFIED**, *not* "missing". To get live verification, either **(a)** add `ganguram.com` to the environment's network egress settings and re-run this audit, or **(b)** open each URL in a browser and paste the contents back (see **§2A — manual browser checks**). Every statement about live response bodies is **UNVERIFIED** and reasoned from theme source (Glob), Shopify platform knowledge and WebSearch (June 2026).
+> **Live-fetch limitation (applies throughout) — and how to clear it:** All five live URLs returned **HTTP 403** in this environment. The 403 is **not** from Shopify and **not** bot-protection — it is the **Claude environment's network egress allow-list**: both the page fetcher and a browser-user-agent `curl` came back with `Host not in allowlist: ganguram.com`. So all five files are classified **LIVE_UNVERIFIED — blocked by Claude environment network egress, not proven missing or broken**. To get live verification, either **(a)** add `ganguram.com` to the environment's network egress settings and re-run this audit, or **(b)** open each URL in a browser and paste the contents back (see **§2A — manual browser checks**). Every statement about live response bodies is **UNVERIFIED** and reasoned from theme source (Glob), Shopify platform knowledge and WebSearch (June 2026).
 >
 > **On the 2026 Shopify platform facts:** the agentic-commerce capabilities cited below (native `/llms.txt`, `/agents.md`, `/.well-known/ucp`, `agents.md.liquid` theme override, UCP/Shopify Catalog) are **WebSearch-corroborated for June 2026** (including shopify.dev and the Shopify developer changelog) but postdate this assistant's training cut-off — **confirm against Shopify's live documentation before relying on them.** The recommendation that depends on them (`agents.md.liquid`) is a **proposal**, not an applied change.
 
@@ -59,7 +59,7 @@ Ganguram's theme is in **good fundamental health** for both traditional SEO and 
 
 ## 2A. Manual browser checks (do these to clear the LIVE_UNVERIFIED items)
 
-Because this environment cannot reach `ganguram.com` (egress allow-list), run these in a normal browser (logged out / incognito; if the storefront is password-protected, log in first), then paste anything back to me — or add `ganguram.com` to the egress list and I will fetch them.
+Because this environment cannot reach `ganguram.com` (Claude environment egress allow-list), run these in a normal browser (logged out / incognito; if the storefront is password-protected, log in first), then paste anything back to me — or add `ganguram.com` to the egress list and I will fetch them. **A paste-ready worksheet is in `MANUAL_VERIFICATION_LIVE_URLS.md`.**
 
 | URL to open | Confirm |
 |---|---|

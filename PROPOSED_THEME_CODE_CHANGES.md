@@ -8,6 +8,26 @@ Recommended sequence: **A (clear bug) → B, C, E (low-risk, high-value) → D (
 
 ---
 
+## Impact disclosure — does each change touch a protected system?
+
+| # | Change | ShipZip | Pincode logic | PAN-India **gating** | Checkout gating | Tapita | Judge.me | Schema (JSON-LD) | Product availability |
+|---|---|---|---|---|---|---|---|---|---|
+| A | Article breadcrumb fix | No | No | No | No | No | No | **Yes** — fixes BreadcrumbList | No |
+| B | Offer `priceValidUntil` | No | No | No | No | No | No | **Yes** — adds an Offer field | No |
+| C | PDP gallery `alt` fallback | No | No | No | No | No | No | No — `img` alt, not JSON-LD | No |
+| D | `templates/agents.md.liquid` | No | No | No¹ | No | No | No | No — agent text file, not JSON-LD | No |
+| E | Homepage meta-description fallback | No | No | No | No | No | No | No — meta tag | No |
+| F | PDP delivery-area line | No | No | No² | No | No | No | Optional³ | No |
+| G | Org enrich / `additionalProperty` / og:image | No | No | No | No | No | No | **Yes** — additive, guarded | No |
+
+¹ **D** describes the PAN-India-vs-Kolkata delivery reality in agent-facing **text**; it does **not** read or change the gating logic.
+² **F** **reads/echoes** the existing `PAN India` / `Kolkata` product **tags** as a visible line; it does **not** change the gating, pincode, ShipZip or checkout logic, and **never** marks a Kolkata-only product PAN-India.
+³ **F** optionally adds a tag-guarded `areaServed` to Product JSON-LD.
+
+**Summary:** **none** of the proposed changes modify ShipZip, pincode logic, PAN-India delivery **gating**, checkout gating, Tapita app behaviour, Judge.me/review behaviour, or product availability/inventory. The only system intentionally touched is **structured data (JSON-LD)** by the schema items (A, B, G; optional F) — which is the purpose of those fixes and is fully guarded by `!= blank`.
+
+---
+
 ## A. Fix article BreadcrumbList position-3 title bug — **risk: very low** — *recommend apply*
 - **File:** `snippets/microdata-schema.liquid` (~line 162)
 - **Change:** position 3 of the article breadcrumb currently uses `{{ blog.title | json }}`; change it to `{{ article.title | json }}`.
