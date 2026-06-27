@@ -6,7 +6,7 @@
 **Audit date:** 26 June 2026
 **Language:** British English
 
-> **Live-fetch limitation (applies throughout) — and how to clear it:** All five live URLs returned **HTTP 403** in this environment. The 403 is **not** from Shopify and **not** bot-protection — it is the **Claude environment's network egress allow-list**: both the page fetcher and a browser-user-agent `curl` came back with `Host not in allowlist: ganguram.com`. So all five files are classified **LIVE_UNVERIFIED — blocked by Claude environment network egress, not proven missing or broken**. To get live verification, either **(a)** add `ganguram.com` to the environment's network egress settings and re-run this audit, or **(b)** open each URL in a browser and paste the contents back (see **§2A — manual browser checks**). Every statement about live response bodies is **UNVERIFIED** and reasoned from theme source (Glob), Shopify platform knowledge and WebSearch (June 2026).
+> **Live-fetch limitation (applies throughout) — and how to clear it:** All five live URLs returned **HTTP 403** in this environment. The 403 is **not** from Shopify and **not** bot-protection — it is the **Claude environment's network egress allow-list**: both the page fetcher and a browser-user-agent `curl` came back with `Host not in allowlist: ganguram.com`. So all five files are classified **LIVE_UNVERIFIED — blocked by Claude environment network egress, not proven missing or broken**. **Update (2026-06-27): the merchant has since manually provided all five files from a browser (the audit environment itself remains egress-blocked); they are summarised in "Live verification update" below and they corroborate this audit.** To get live verification, either **(a)** add `ganguram.com` to the environment's network egress settings and re-run this audit, or **(b)** open each URL in a browser and paste the contents back (see **§2A — manual browser checks**). Every statement about live response bodies is **UNVERIFIED** and reasoned from theme source (Glob), Shopify platform knowledge and WebSearch (June 2026).
 >
 > **On the 2026 Shopify platform facts:** the agentic-commerce capabilities cited below (native `/llms.txt`, `/agents.md`, `/.well-known/ucp`, `agents.md.liquid` theme override, UCP/Shopify Catalog) are **WebSearch-corroborated for June 2026** (including shopify.dev and the Shopify developer changelog) but postdate this assistant's training cut-off — **confirm against Shopify's live documentation before relying on them.** The recommendation that depends on them (`agents.md.liquid`) is a **proposal**, not an applied change.
 
@@ -53,7 +53,21 @@ Ganguram's theme is in **good fundamental health** for both traditional SEO and 
 | `https://ganguram.com/llms-full.txt` | **403 — UNVERIFIED** | No `templates/llms-full.txt.liquid` and no `agents.md.liquid` (Glob confirmed) | **Auto-generated (May 2026)**; by default **mirrors `/agents.md`**. Covered by the same `agents.md.liquid` override; a dedicated file is only needed for an expanded full-catalogue variant (not required now). | THEME_CODE |
 | `https://ganguram.com/sitemap.xml` | **403 — UNVERIFIED** | Not theme-editable (no Liquid override exists) | **Shopify-auto-generated** from products/collections/pages/blogs and referenced by the default `robots.txt`; AI-discoverable. The new **`/sitemap_agentic_discovery.xml`** (auto-shipped May 2026) is likewise platform-generated. **No theme action.** | SHOPIFY_ADMIN |
 
-**Additional platform endpoint (not in the five, but relevant):** `https://ganguram.com/.well-known/ucp` — the **UCP JSON manifest** that agents read first. **Shopify-generated, no theme override.** Its correctness depends on Admin / Agentic-Storefront settings (currency INR, India market, shipping zones), not theme code. **UNVERIFIED** live (403).
+**Additional platform endpoint (not in the five, but relevant):** `https://ganguram.com/.well-known/ucp` — the **UCP JSON manifest** that agents read first. **Shopify-generated, no theme override.** Its correctness depends on Admin / Agentic-Storefront settings (currency INR, India market, shipping zones), not theme code. **UNVERIFIED** live (403) — the merchant captures below reference it but did not include the manifest body.
+
+### Live verification update — merchant-provided (2026-06-27)
+
+The merchant manually fetched the five URLs in a browser (the audit environment remains egress-blocked). The captured content **corroborates this audit** — nothing changes the recommendations; two items move from UNVERIFIED to **VERIFIED**:
+
+| URL | Status | Verified finding |
+|---|---|---|
+| `/robots.txt` | 200 | Shopify-default, **AI-open** (`User-agent: *` → `Allow: /`); **no AI crawler blocked**; `Sitemap: https://ganguram.com/sitemap.xml` present; references `/agents.md`, `/.well-known/ucp`, `/api/ucp/mcp`; disallows limited to non-content paths. **No legacy "block all AI" rule exists → the "remove a legacy `robots.txt.liquid`" contingency is moot.** Confirms **NO_ACTION**. |
+| `/sitemap.xml` | 200 | Valid sitemap **index**; lists **`/sitemap_agentic_discovery.xml`** (confirms the 2026 agentic sitemap), plus products/pages/collections/blogs, **and a full `/bn/` (Bengali) locale set** → the store is **bilingual (en + bn)**, Shopify-managed. Confirms **NO_ACTION**. |
+| `/agents.md` | 200 | Live, but the **generic Shopify-default** agent template (UCP discovery, MCP endpoint, Shop skill, checkout-needs-human-approval, policy links). It does **not** mention Ganguram's products, collections, heritage, or the **PAN-India-vs-Kolkata-only** delivery distinction. **Confirms the #1 opportunity:** add `agents.md.liquid` to author a brand narrative. |
+| `/llms.txt` | 200 | **Mirrors `/agents.md`** (identical content). Same finding. |
+| `/llms-full.txt` | 200 | **Mirrors `/agents.md`** (one line differs). Same finding. |
+
+**UCP/MCP agentic commerce is confirmed LIVE on this store** (`/.well-known/ucp` discovery + `/api/ucp/mcp` MCP endpoint, UCP versions `2026-04-08` / `2026-01-23`). **Implication for proposal D (`agents.md.liquid`):** the live default already carries valuable agent guidance (UCP/MCP endpoints, Shop skill, the human-approval-before-payment rule, policy links). A custom `agents.md.liquid` **replaces** this, so it must **preserve all of it** and merely **add** the Ganguram brand/collection/delivery narrative — never drop the UCP/MCP/checkout-approval lines.
 
 ---
 
@@ -95,9 +109,9 @@ Also **view-source** on the homepage, one product and one collection and confirm
 
 ### 3.3 No hreflang in theme (expected — Shopify-managed) — **severity: no_action** — owner: **SHOPIFY_ADMIN**
 
-**Evidence:** Grep across the theme found zero `hreflang` / `rel=alternate` tags. The store appears single-locale (`request.locale` logic exists only for RTL direction). Shopify auto-injects hreflang via `content_for_header` when Markets / multiple published locales exist; the theme correctly does not hand-roll it.
+**Evidence:** Grep across the theme found zero `hreflang` / `rel=alternate` tags. **Verified 2026-06-27:** the store actually publishes **two locales — English + Bengali (`bn`)** (confirmed by the `/bn/` sub-sitemaps in the live `sitemap.xml`), so it is **bilingual**, not single-locale. Shopify auto-injects hreflang via `content_for_header` for published locales; the theme correctly does not hand-roll it.
 
-**Recommendation:** No action for a single-locale store. If the brand later adds languages/markets, hreflang is handled automatically by Shopify Markets (SHOPIFY_ADMIN) — do **not** add manual hreflang tags, which would conflict.
+**Recommendation:** No theme action — Shopify Markets manages hreflang for the en/bn locales automatically. If the brand later adds languages/markets, hreflang is handled automatically by Shopify Markets (SHOPIFY_ADMIN) — do **not** add manual hreflang tags, which would conflict.
 
 ---
 
@@ -111,7 +125,7 @@ This is the **highest-impact discovery surface of 2026** and is mostly an **Admi
 
 **Evidence:** Shopify auto-generates `/agents.md` for every store as of May 2026, and it is the **primary agent-interaction document** (the 28 May 2026 changelog enabled theme customisation). Visiting a store's `/llms.txt` now effectively resolves to the `agents.md` content. The theme has no `agents.md.liquid`, so Ganguram serves Shopify's generic default rather than a curated brand narrative. The `agents.md.liquid` template exposes a new `agents` Liquid object with auto-populated UCP/agent-interaction metadata that can be combined with standard objects.
 
-**Recommendation:** Add `templates/agents.md.liquid` (sample in §4.5). This is the single best low-risk agentic-discovery improvement available in the theme repo. It authors the brand story, lists priority collections (rasgulla, sandesh, gift boxes, seasonal/festival ranges), states **accurate delivery rules** (PAN-India **only** for tagged products; Kolkata-only/pickup for fresh items — never imply nationwide delivery of Kolkata-only SKUs), and provides contact/returns. Keep it factual — **no fabricated awards, ratings or claims**. Because it also feeds `/llms.txt` and `/llms-full.txt`, **one file covers all three**.
+**Recommendation:** Add `templates/agents.md.liquid` (sample in §4.5). This is the single best low-risk agentic-discovery improvement available in the theme repo. It authors the brand story, lists priority collections (rasgulla, sandesh, gift boxes, seasonal/festival ranges), states **accurate delivery rules** (PAN-India **only** for tagged products; Kolkata-only/pickup for fresh items — never imply nationwide delivery of Kolkata-only SKUs), and provides contact/returns. Keep it factual — **no fabricated awards, ratings or claims**. Because it also feeds `/llms.txt` and `/llms-full.txt`, **one file covers all three**. **Verified 2026-06-27:** the live `/agents.md` is the **generic Shopify default** (see "Live verification update"), so this opportunity is confirmed — and a custom template must **preserve** the default's UCP discovery, MCP endpoint, Shop-skill and human-approval-before-payment lines while adding the brand narrative.
 
 ### 4.2 `/llms.txt` is auto-generated (mirrors `agents.md`) and uncustomised — **severity: medium** — owner: **THEME_CODE**
 

@@ -13,6 +13,22 @@
 
 ---
 
+## ✅ Verification results — completed by merchant (2026-06-27)
+
+The merchant fetched all five URLs in a browser and provided the bodies. **All returned HTTP 200 and corroborate the audit:**
+
+| URL | Status | Result |
+|---|---|---|
+| `/robots.txt` | 200 | **PASS** — Shopify-default, AI-open (`User-agent: *` → `Allow: /`), **no AI bot blocked**, `Sitemap:` present, references `/agents.md` + UCP/MCP. No legacy AI-block. |
+| `/agents.md` | 200 | **PASS (but generic)** — live, yet the generic Shopify default (UCP/MCP/Shop-skill/policies); no Ganguram brand/collection/delivery content → confirms the `agents.md.liquid` opportunity. |
+| `/llms.txt` | 200 | **PASS** — mirrors `/agents.md`. |
+| `/llms-full.txt` | 200 | **PASS** — mirrors `/agents.md`. |
+| `/sitemap.xml` | 200 | **PASS** — valid index incl. `/sitemap_agentic_discovery.xml` + `/bn/` (Bengali) locale → bilingual, Shopify-managed. |
+
+These results are folded into `AI_DISCOVERY_AND_AGENTIC_STOREFRONT_AUDIT.md` → "Live verification update (merchant-provided, 2026-06-27)". The blank worksheet below is retained for future re-verification.
+
+---
+
 ## 1) https://ganguram.com/robots.txt
 - **HTTP status:** `[ ___ ]`
 - **Check:** loads as plain text; has a `Sitemap:` line; **no** `Disallow: /` under `User-agent: GPTBot` / `OAI-SearchBot` / `ChatGPT-User` / `ClaudeBot` / `PerplexityBot` / `Google-Extended` (i.e. no AI bot blocked). A stale "block all AI" section = a legacy `robots.txt.liquid` to remove.
