@@ -123,6 +123,11 @@
   <main id="main" class="main-content 
     {% if settings.product_card_align_buy %} main-content--align-product-items {% endif %}
   ">
+    {%- comment -%} SEO (Tapita): exactly one accessible H1 for the homepage. Visually hidden so the
+         homepage design is unchanged; reuses the theme's existing .visually-hidden helper. {%- endcomment -%}
+    {%- if request.page_type == 'index' -%}
+      <h1 class="visually-hidden">Ganguram Sweets — Authentic Bengali Sweets from Kolkata</h1>
+    {%- endif -%}
     {%- render 'breadcrumb' -%}
     {{ content_for_layout }}
   </main>

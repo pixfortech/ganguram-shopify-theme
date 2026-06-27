@@ -1614,21 +1614,21 @@
   
               <div class="site-sharing">  
                 {%- if block.settings.share_on_facebook -%}
-                  <a href="//www.facebook.com/sharer.php?u={{ share_link }}" target="_blank" title="{{ 'general.accessibility_labels.share.facebook' | t }}" class="text-with-icon text-with-icon--small">
+                  <a href="//www.facebook.com/sharer.php?u={{ share_link }}" target="_blank" rel="nofollow noopener noreferrer" aria-label="Share this product on Facebook" title="{{ 'general.accessibility_labels.share.facebook' | t }}" class="text-with-icon text-with-icon--small">
                     <span aria-hidden="true" class="text-with-icon__icon">{% render 'theme-symbols', icon: 'facebook' %}</span>
                     <span class="text-animation--underline-thin">{{ 'general.sharing.facebook' | t }}</span>
                   </a>
                 {%- endif %}
                 
                 {%- if block.settings.share_on_x -%}
-                  <a href="//twitter.com/intent/tweet?text={{ share_title }}&amp;url={{ share_link }}" target="_blank" title="{{ 'general.accessibility_labels.share.twitter' | t }}" class="text-with-icon text-with-icon--small">
+                  <a href="//twitter.com/intent/tweet?text={{ share_title }}&amp;url={{ share_link }}" target="_blank" rel="nofollow noopener noreferrer" aria-label="Share this product on X (Twitter)" title="{{ 'general.accessibility_labels.share.twitter' | t }}" class="text-with-icon text-with-icon--small">
                     <span aria-hidden="true" class="text-with-icon__icon">{% render 'theme-symbols', icon: 'twitter' %}</span>
                     <span class="text-animation--underline-thin">{{ 'general.sharing.twitter' | t }}</span>
                   </a>
                 {%- endif -%}
                 
                 {%- if block.settings.share_on_pinterest -%}
-                  <a href="//pinterest.com/pin/create/button/?url={{ share_link }}&amp;media={{ share_image }}&amp;description={{ share_title }}" target="_blank" title="{{ 'general.accessibility_labels.share.pinterest' | t }}" class="text-with-icon text-with-icon--small">
+                  <a href="//pinterest.com/pin/create/button/?url={{ share_link }}&amp;media={{ share_image }}&amp;description={{ share_title }}" target="_blank" rel="nofollow noopener noreferrer" aria-label="Share this product on Pinterest" title="{{ 'general.accessibility_labels.share.pinterest' | t }}" class="text-with-icon text-with-icon--small">
                     <span aria-hidden="true" class="text-with-icon__icon">{% render 'theme-symbols', icon: 'pinterest' %}</span>
                     <span class="text-animation--underline-thin">{{ 'general.sharing.pinterest' | t }}</span>
                   </a> 
