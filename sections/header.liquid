@@ -80,7 +80,7 @@
         <a 
           class="button button--solid button--icon no-js-hidden"
           {% if settings.cart_action == 'overlay' and template != 'cart' %} 
-            data-js-sidebar-handle aria-expanded="false" aria-controls="site-cart-sidebar" role="button"
+            href="{{ routes.cart_url }}" data-js-sidebar-handle aria-expanded="false" aria-controls="site-cart-sidebar" role="button"
           {% else %}
             href="{{ routes.cart_url }}"
           {% endif %} 
@@ -113,7 +113,7 @@
 
       <a 
         {% if settings.cart_action == 'overlay' and template != 'cart' %} 
-          data-js-sidebar-handle aria-expanded="false" aria-controls="site-cart-sidebar" role="button"
+          href="{{ routes.cart_url }}" data-js-sidebar-handle aria-expanded="false" aria-controls="site-cart-sidebar" role="button"
         {% else %}
           href="{{ routes.cart_url }}"
         {% endif %} 
