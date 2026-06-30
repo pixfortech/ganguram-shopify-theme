@@ -159,5 +159,53 @@
 {%- endif -%}
 {%- comment -%} End of Tapita Meta Data {%- endcomment -%}
 {%- comment -%} Start of assets preloading {%- endcomment -%}
-
+{%- liquid
+    assign template_assets = ''
+    assign current_template = template.name
+    assign preload_assets = ''
+  assign all_assets = 'theme.css,ganguram-delivery-widget.css,ganguram-phase1-ux.css,theme-noscript.css,section-header.css,component-slider.css,component-video.css,component-product-form.js,component-modal.js,component-modal.css,component-popup.css,component-predictive-search.js,component-quick-buy.js,component-pickup-availability.js,component-slider.js,theme-editor.js,component-cart-recommendations.js,component-terms-checkbox.js,component-cart.css,component-quantity-selector.js,component-cart.js,component-sidebar.css,section-header.js,section-announcement-bar.js,component-toggle.js,section-main-product.js,component-video.js,component-store-selector.js,component-interactive-map.js,component-image-hotspots.js,component-localization-form.js,component-shipping-calculator.js,component-scrolling-text.js,component-before-after.js,component-collection-tabs.js,component-countdown-clock.js,component-share-link.js,section-main-product.css,instantpage.js,ganguram-display-label.js,ganguram-delivery-widget.js,ganguram-delivery-popup.css,ganguram-delivery-popup.js,ganguram-storefront-gate.js,ganguram-saved-locations.js,ganguram-address.js,ganguram-pincode-enrich.js,ganguram-product-zone-filter.css,ganguram-product-zone-filter.js'
+  if current_template == 'article'
+                assign template_assets = 'section-main-article-comments.css,component-blog-item.css,section-main-article.css,component-share-link.js'
+            endif
+                  if current_template == 'collection'
+                assign template_assets = 'component-product-item.css,section-main-collection-product-grid.css,component-facets.css,component-facets.js'
+            endif
+                  if current_template == 'index'
+                assign template_assets = 'component-product-item.css,component-collection-tabs.js,section-marquee.css,component-scrolling-text.js,section-rich-text.css'
+            endif
+                  if current_template == 'product'
+                assign template_assets = 'section-main-product.css,component-product-model.js,component-toggle.css,component-progress.css,component-product-item.css,component-share-link.js,component-toggle.js,component-product-image-zoom.js,section-main-product.js,component-video.js,component-nutritional-info.js'
+            endif
+                  assign preload_assets = ''
+  if all_assets != blank
+    assign preload_assets = all_assets
+  endif
+  
+  if template_assets != blank
+    if preload_assets != blank
+      assign preload_assets = preload_assets | append: ',' | append: template_assets
+    else
+      assign preload_assets = template_assets
+    endif
+  endif
+-%}
+{%- if preload_assets != blank -%}
+  {%- assign assets_array = preload_assets | split: ',' -%}
+  {%- for asset in assets_array -%}
+    {%- liquid
+      assign asset_trimmed = asset | strip
+      assign asset_ext = asset_trimmed | split: '.' | last | downcase
+      assign asset_url = asset_trimmed | asset_url
+      
+      case asset_ext
+        when 'css', 'scss', 'sass', 'less'
+          echo '<link rel="preload" href="' | append: asset_url | append: '" as="style" crossorigin="anonymous" >'
+        when 'js'
+          echo '<link rel="preload" href="' | append: asset_url | append: '" as="script" crossorigin="anonymous" >'
+        when 'woff', 'woff2', 'ttf', 'eot'
+          echo '<link rel="preload" href="' | append: asset_url | append: '" as="font" type="font/' | append: asset_ext | append: '" crossorigin="anonymous">'
+      endcase
+    -%}
+  {%- endfor -%}
+{%- endif -%}
 {%- comment -%} End of of assets preloading {%- endcomment -%}
