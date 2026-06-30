@@ -171,6 +171,25 @@
         "settings": {
           "hide_price": false
         }
+      },
+      "14578213307157327268": {
+        "type": "shopify://apps/velocity-insights/blocks/velocity-app-embed/eb76ac2e-4f36-413e-b08f-4ccc7da0a12f",
+        "disabled": false,
+        "settings": {
+          "enable_checkout_button": true,
+          "checkout_button_bg_color_v2": "#00a882",
+          "checkout_button_border_radius_v2": 8,
+          "enable_delivery_checker": false,
+          "delivery_title": "Check Delivery Date",
+          "delivery_button_text": "Check Delivery Date",
+          "delivery_button_color": "#008060",
+          "delivery_button_text_color": "#FFFFFF"
+        }
+      },
+      "6174324309569838175": {
+        "type": "shopify://apps/smile-io/blocks/smile-shopify-app/2fae4e25-1841-4ea2-bc02-bd548478c4f6",
+        "disabled": false,
+        "settings": {}
       }
     }
   },
