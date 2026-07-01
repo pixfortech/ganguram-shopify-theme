@@ -20,8 +20,16 @@ This document describes how AI agents can interact with {{ agents.store_name }}'
 
 ## Shop these collections
 
-{% assign agent_cols = 'sandesh,rosher-mishti,doi,gur-mishti,dry-fruits-mishti,packed-mishti,sweets-tray,gift-boxes,tattya' | split: ',' %}{% for h in agent_cols %}{% assign c = collections[h] %}{% if c != empty and c.products_count > 0 %}- [{{ c.title }}]({{ agents.store_url }}{{ c.url }})
-{% endif %}{% endfor %}- Browse the full catalogue: {{ agents.store_url }}/collections/all
+- [Sandesh](https://ganguram.com/collections/sandesh)
+- [Rosher Mishti](https://ganguram.com/collections/rosher-mishti)
+- [Doi](https://ganguram.com/collections/doi)
+- [Nolen Gur / Gur Mishti](https://ganguram.com/collections/gur-mishti)
+- [Dry Fruits Mishti](https://ganguram.com/collections/dry-fruits-mishti)
+- [Packed Mishti](https://ganguram.com/collections/packed-mishti)
+- [Sweets Tray](https://ganguram.com/collections/sweets-tray)
+- [Gift Boxes](https://ganguram.com/collections/gift-boxes)
+- [Tattya](https://ganguram.com/collections/tattya)
+- [Browse the full catalogue](https://ganguram.com/collections/all)
 
 ## Delivery — read carefully
 
@@ -86,8 +94,11 @@ For agents that only need to read store data without transacting:
 
 ## Store Policies
 
-{% for policy in shop.policies %}{% if policy.url != blank %}- **{{ policy.title }}**: {{ agents.store_url }}{{ policy.url }}
-{% endif %}{% endfor %}
+- [Privacy policy](https://ganguram.com/policies/privacy-policy)
+- [Terms of service](https://ganguram.com/policies/terms-of-service)
+- [Refund policy](https://ganguram.com/policies/refund-policy)
+- [Shipping policy](https://ganguram.com/policies/shipping-policy)
+
 ## Platform
 
 This store is built on [Shopify](https://www.shopify.com), the commerce platform powering millions of stores worldwide. Shopify stores support UCP natively, enabling seamless agent-driven commerce. The Shop skill at [https://shop.app/SKILL.md](https://shop.app/SKILL.md) works across every Shopify store — install it once and your agent can transact everywhere.
