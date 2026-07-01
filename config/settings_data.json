@@ -199,9 +199,20 @@
           "enable_preview": false
         }
       },
+      "6159598353363395418": {
+        "type": "shopify://apps/google-youtube/blocks/store_widget/14ec7bd0-ac77-49a9-9417-90752398bdff",
+        "disabled": false,
+        "settings": {
+          "widget_position": "LEFT_BOTTOM",
+          "side_margin": 36,
+          "bottom_margin": 36,
+          "mobile_side_margin": 16,
+          "mobile_bottom_margin": 46
+        }
+      },
       "15233472713130465569": {
         "type": "shopify://apps/google-tag-manager-ga4/blocks/consent-embed/01995b81-4e6b-7b12-9195-febd92a96a6a",
-        "disabled": false,
+        "disabled": true,
         "settings": {
           "scheme": "0",
           "content": "We use cookies to personalise content and ads, to provide social media features and to analyse our traffic. We also share information about your use of our site with our social media, advertising and analytics partners who may combine it with other information that you’ve provided to them or that they’ve collected from your use of their services.",
@@ -218,22 +229,11 @@
           "contentTextCustomizeColor": "#ffffff",
           "contentCustomizeBackgroundColor": "#000000",
           "contentAcceptColor": "#ffffff",
-          "contentAcceptBackgroundColor": "#5BC300",
+          "contentAcceptBackgroundColor": "#5bc300",
           "contentCheckboxColor": "#ffffff",
           "contentBorderRadius": 4,
           "contentButtonRadius": 4,
           "learn_more_link": "https://commission.europa.eu/law/law-topic/data-protection/legal-framework-eu-data-protection_en"
-        }
-      },
-      "6159598353363395418": {
-        "type": "shopify://apps/google-youtube/blocks/store_widget/14ec7bd0-ac77-49a9-9417-90752398bdff",
-        "disabled": false,
-        "settings": {
-          "widget_position": "LEFT_BOTTOM",
-          "side_margin": 36,
-          "bottom_margin": 36,
-          "mobile_side_margin": 16,
-          "mobile_bottom_margin": 46
         }
       }
     }
