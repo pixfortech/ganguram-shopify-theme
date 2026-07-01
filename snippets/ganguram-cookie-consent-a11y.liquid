@@ -1,0 +1,148 @@
+{%- comment -%}
+  Ganguram — cookie-consent banner accessibility / SEO shim (non-destructive).
+
+  WHY
+  A third-party cookie-consent app injects its banner at runtime using href-less <a>
+  controls (classes: consent-cookie-directive-note-toggle, action accept,
+  action accept-all, action customize, action decline, action close — with
+  data-confirm / data-show / data-hide behaviour attributes). NONE of these classes
+  exist anywhere in this theme (verified by grep), so the markup cannot be edited in a
+  theme file. Tapita's SEO audit flags those href-less anchors as "un-crawlable links
+  lacking descriptive text".
+
+  WHAT
+  ENHANCES those six controls IN PLACE. It never replaces, re-tags, moves or removes
+  them and never inserts a child node, so the app keeps finding its own a.action /
+  a.consent-cookie-* elements and its CSS and JavaScript continue to display and behave
+  EXACTLY as before. For each control it only ADDS attributes:
+    - role="button" → announced/audited as a control, not a broken link
+    - href="#"      → so the anchor is no longer "un-crawlable" (Tapita's flag). A
+                      capture-phase click handler calls preventDefault WITHOUT
+                      stopPropagation, so the "#" never navigates or scrolls and the app's
+                      own click handler still fires. Added only to controls the app left
+                      href-less, atomically with its guard (no window where "#" could
+                      navigate). Visually safe here: the theme resets every <a> via bare
+                      `a {}` rules (text-decoration:none; color:var(--color-text-main))
+                      and has no a:link / a[href] rules, so an href changes nothing.
+    - tabindex="0"  → explicit focusability
+    - keyboard      → a native <a href> already activates on Enter; we add Space only
+                      (with preventDefault to suppress page scroll) to match button
+                      semantics without double-firing Enter.
+    - aria-label    → only where a control has no visible text (the close "X"), set to the
+                      fixed readable name "Close cookie banner" (never the data-show
+                      behaviour token). No child node is inserted, so any :empty /
+                      ::before close-icon styling stays intact.
+
+  It never changes the tag or the app's classes / data-* attributes, and never overrides
+  an href a control already has. Scoped strictly to the six cookie-control class
+  combinations (proven absent from this theme), so no navigation, menu, product, cart,
+  delivery or checkout link is ever touched. Touches no ShipZip / pincode / cart /
+  checkout / delivery gating / product schema / Judge.me / Tapita settings / inventory /
+  availability / app-collection logic.
+
+  ROLLBACK
+  Delete this snippet and its render 'ganguram-cookie-consent-a11y' line in
+  layout/theme.liquid. (No other file depends on it.)
+{%- endcomment -%}
+
+<script>
+  (function () {
+    'use strict';
+
+    // selector -> accessible name applied ONLY when a control has no visible text
+    // (i.e. the empty close "X"). The five text controls keep their own visible text.
+    var CONTROLS = [
+      ['a.consent-cookie-directive-note-toggle', 'Learn more about cookies'],
+      ['a.action.accept',     'Allow selected cookies'],
+      ['a.action.accept-all', 'Allow all cookies'],
+      ['a.action.customize',  'Customize cookie preferences'],
+      ['a.action.decline',    'Decline cookies'],
+      ['a.action.close',      'Close cookie banner']
+    ];
+
+    // Cancel the "#" navigation/scroll WITHOUT stopping propagation, so the app's own
+    // click handler still runs. Capture phase → runs before any bubble-phase handler.
+    function preventNav(e) { e.preventDefault(); }
+
+    // A native <a href> already activates on Enter; add Space (button semantics) and
+    // suppress the page scroll it would otherwise cause. We do NOT handle Enter here, so
+    // Enter fires exactly once (natively) — no double-activation.
+    function onKeydown(e) {
+      if (e.key === ' ' || e.key === 'Spacebar') {
+        e.preventDefault();
+        if (e.currentTarget && typeof e.currentTarget.click === 'function') {
+          e.currentTarget.click();
+        }
+      }
+    }
+
+    function enhance(a, fallbackLabel) {
+      try {
+        if (!a || a.tagName !== 'A') { return; }                       // app anchors only
+        if (a.getAttribute('data-ganguram-cookie-a11y') === '1') { return; } // once only
+
+        // Announce as a control. The tag, classes and data-* attributes are left EXACTLY
+        // as the app rendered them, so the app's own selectors keep matching and the
+        // banner keeps its app-controlled display and behaviour.
+        if (!a.getAttribute('role')) { a.setAttribute('role', 'button'); }
+        if (a.getAttribute('tabindex') === null) { a.setAttribute('tabindex', '0'); }
+
+        // Make the href-less control crawlable WITHOUT letting it navigate/scroll. The
+        // href and its capture-phase guard are added together, so there is never a moment
+        // where "#" could navigate. Only touch controls the app itself left href-less.
+        if (a.getAttribute('href') === null) {
+          a.setAttribute('href', '#');
+          a.addEventListener('click', preventNav, true);
+        }
+
+        a.addEventListener('keydown', onKeydown);
+
+        // Descriptive accessible name for a control with no visible text (the close "X").
+        // No child node is inserted (so a :empty/::before icon is preserved), and the
+        // name is the fixed label — never the data-show/-hide/-confirm behaviour token.
+        var text = (a.textContent || '').replace(/\s+/g, ' ').trim();
+        if (!text && !a.getAttribute('aria-label')) {
+          a.setAttribute('aria-label', fallbackLabel);
+        }
+        // Controls that already show text (Learn more / Allow selected / Allow all /
+        // Customize / Decline) keep that visible text as their accessible name.
+
+        a.setAttribute('data-ganguram-cookie-a11y', '1'); // idempotency marker
+      } catch (e) { /* never let one control break the others or the page */ }
+    }
+
+    function run() {
+      for (var i = 0; i < CONTROLS.length; i++) {
+        var nodes = document.querySelectorAll(CONTROLS[i][0]);
+        for (var j = 0; j < nodes.length; j++) { enhance(nodes[j], CONTROLS[i][1]); }
+      }
+    }
+
+    // The banner injects asynchronously and can re-render on interaction, so run on load
+    // and then re-run on DOM changes (debounced; six scoped selectors; enhancing is
+    // idempotent via the marker). The observer watches childList only, this script makes
+    // no DOM insertions, and attribute writes do not retrigger it — so there is no loop.
+    var pending = false;
+    function schedule() {
+      if (pending) { return; }
+      pending = true;
+      setTimeout(function () { pending = false; run(); }, 100);
+    }
+
+    function start() {
+      run();
+      if (typeof MutationObserver === 'function') {
+        new MutationObserver(schedule).observe(document.documentElement, {
+          childList: true,
+          subtree: true
+        });
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start);
+    } else {
+      start();
+    }
+  })();
+</script>

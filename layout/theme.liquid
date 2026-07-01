@@ -617,5 +617,8 @@
   {%- comment -%} Checkout shipping-address prefill (Phase 2.11F.2) — when a full Google address was selected in the popup, appends checkout[shipping_address][...] params to the STANDARD checkout URL so Shopify prefills the shipping address. Standard button only (not Shop Pay/dynamic); respects the MOV guard; preserves cart/attributes/discounts/payment; fail-open. No checkout/shipping-rate/ShipZip/SBZ/zipLogic/resolver/settings_data change. {%- endcomment -%}
   {%- render 'ganguram-checkout-prefill-config' -%}
 
+  {%- comment -%} Cookie-consent banner accessibility/SEO shim (Tapita) — enhances the third-party consent app's href-less <a> controls (.consent-cookie-directive-note-toggle / .action.accept|accept-all|customize|decline|close) IN PLACE (role=button, href=# with a capture-phase preventDefault so it never navigates, keyboard support, accessible names) while keeping the <a> tags unchanged so the app's own selectors/CSS/JS are unaffected; scoped strictly to those classes. Display/a11y only; no ShipZip/pincode/cart/checkout/delivery/product/Judge.me change. {%- endcomment -%}
+  {%- render 'ganguram-cookie-consent-a11y' -%}
+
 </body>
 </html>
