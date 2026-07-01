@@ -620,5 +620,8 @@
   {%- comment -%} Cookie-consent banner accessibility/SEO shim (Tapita) — enhances the third-party consent app's href-less <a> controls (.consent-cookie-directive-note-toggle / .action.accept|accept-all|customize|decline|close) IN PLACE (role=button, href=# with a capture-phase preventDefault so it never navigates, keyboard support, accessible names) while keeping the <a> tags unchanged so the app's own selectors/CSS/JS are unaffected; scoped strictly to those classes. Display/a11y only; no ShipZip/pincode/cart/checkout/delivery/product/Judge.me change. {%- endcomment -%}
   {%- render 'ganguram-cookie-consent-a11y' -%}
 
+  {%- comment -%} Cookie-consent banner brand styling (presentation only) — scoped brand CSS for the injected cookie banner card and its six controls (Primary #49488D / Accent #EA5454 / White). Pure CSS; no behaviour change; no global button/anchor change; no protected-system change. {%- endcomment -%}
+  {%- render 'ganguram-cookie-consent-brand' -%}
+
 </body>
 </html>

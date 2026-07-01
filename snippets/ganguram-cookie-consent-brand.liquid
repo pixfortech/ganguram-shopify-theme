@@ -1,0 +1,146 @@
+{%- comment -%}
+  Ganguram — cookie-consent banner brand styling (PRESENTATION ONLY).
+
+  WHY
+  The cookie banner is injected by a third-party consent app (its controls use
+  consent-cookie-directive-note-toggle / action accept|accept-all|customize|decline|close).
+  This snippet gives that banner the Ganguram brand look. It is PURE CSS — no JavaScript,
+  no DOM changes — so it cannot alter behaviour and does not touch the PR #104 accessibility
+  snippet (role / href="#" / preventDefault), any global button or anchor style, or any
+  other element.
+
+  SCOPE (safe by construction)
+  Every selector is gated to the cookie app's own namespace: the card is
+  [class*="consent-cookie"] / [id*="consent-cookie"] that :has() the accept controls, and
+  the buttons are the six known a.action.* / a.consent-cookie-* anchors. Both "consent-cookie"
+  and "action accept" appear in NO theme file (verified by grep), so these rules can only
+  ever match the injected cookie banner — never navigation, product, cart, checkout, delivery
+  or any normal link. Touches no ShipZip / pincode / cart / checkout / delivery gating /
+  product schema / Judge.me / Tapita settings / inventory / availability / product /
+  collection / app-collection logic.
+
+  Brand palette — Primary #49488D, Accent #EA5454, White #FFFFFF.
+
+  ROLLBACK: delete this snippet and its render 'ganguram-cookie-consent-brand' line in
+  layout/theme.liquid. (No other file depends on it.)
+{%- endcomment -%}
+
+<style>
+  /* ---- Card / banner container ------------------------------------------------ */
+  /* Only the consent-namespaced element that actually contains the accept controls (the
+     card), never a full-screen backdrop. Skin only (bg / border / radius / shadow) — no
+     layout/position changes, so the app keeps controlling placement. */
+  [class*="consent-cookie"]:has(a.action.accept),
+  [class*="consent-cookie"]:has(a.action.accept-all),
+  [id*="consent-cookie"]:has(a.action.accept-all) {
+    background-color: #ffffff !important;
+    color: #2b2b3a !important;
+    border: 1px solid rgba(73, 72, 141, 0.14) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 12px 34px rgba(43, 43, 58, 0.18) !important;
+  }
+
+  /* ---- Shared look for the six cookie controls -------------------------------- */
+  a.consent-cookie-directive-note-toggle,
+  a.action.accept,
+  a.action.accept-all,
+  a.action.customize,
+  a.action.decline,
+  a.action.close {
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    transition: background-color .15s ease, color .15s ease, border-color .15s ease !important;
+  }
+
+  /* Comfortable, tap-friendly buttons (the four action buttons only — not the text
+     "Learn more" toggle or the icon-only close). Padding gives ~44px tap height without
+     changing display/position, so the app's row layout is preserved. */
+  a.action.accept,
+  a.action.accept-all,
+  a.action.customize,
+  a.action.decline {
+    padding: 11px 20px !important;
+  }
+
+  /* Primary — "Allow all": solid brand fill (the main call to action) */
+  a.action.accept-all {
+    background-color: #49488D !important;
+    color: #ffffff !important;
+    border: 2px solid #49488D !important;
+  }
+  a.action.accept-all:hover,
+  a.action.accept-all:focus {
+    background-color: #3b3a76 !important;
+    border-color: #3b3a76 !important;
+    color: #ffffff !important;
+  }
+
+  /* Primary — "Allow selected": brand outline (secondary emphasis) */
+  a.action.accept {
+    background-color: #ffffff !important;
+    color: #49488D !important;
+    border: 2px solid #49488D !important;
+  }
+  a.action.accept:hover,
+  a.action.accept:focus {
+    background-color: rgba(73, 72, 141, 0.08) !important;
+    color: #49488D !important;
+  }
+
+  /* Neutral — "Customize": quiet secondary */
+  a.action.customize {
+    background-color: transparent !important;
+    color: #49488D !important;
+    border: 1px solid rgba(73, 72, 141, 0.35) !important;
+  }
+  a.action.customize:hover,
+  a.action.customize:focus {
+    background-color: rgba(73, 72, 141, 0.06) !important;
+    border-color: #49488D !important;
+    color: #49488D !important;
+  }
+
+  /* Accent — "Decline": accent outline */
+  a.action.decline {
+    background-color: transparent !important;
+    color: #EA5454 !important;
+    border: 2px solid #EA5454 !important;
+  }
+  a.action.decline:hover,
+  a.action.decline:focus {
+    background-color: rgba(234, 84, 84, 0.10) !important;
+    color: #EA5454 !important;
+  }
+
+  /* "Learn more" note toggle: brand text link */
+  a.consent-cookie-directive-note-toggle {
+    color: #49488D !important;
+    text-decoration: underline !important;
+    text-underline-offset: 2px !important;
+  }
+  a.consent-cookie-directive-note-toggle:hover,
+  a.consent-cookie-directive-note-toggle:focus {
+    color: #3b3a76 !important;
+  }
+
+  /* Close "X": accent tint (colour only — leaves any ::before / background icon glyph) */
+  a.action.close {
+    color: #EA5454 !important;
+  }
+  a.action.close:hover,
+  a.action.close:focus {
+    color: #d13f3f !important;
+  }
+
+  /* Visible keyboard focus (accessibility) */
+  a.consent-cookie-directive-note-toggle:focus-visible,
+  a.action.accept:focus-visible,
+  a.action.accept-all:focus-visible,
+  a.action.customize:focus-visible,
+  a.action.decline:focus-visible,
+  a.action.close:focus-visible {
+    outline: 2px solid #49488D !important;
+    outline-offset: 2px !important;
+  }
+</style>
