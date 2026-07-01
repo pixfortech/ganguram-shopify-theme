@@ -190,6 +190,14 @@
           "delivery_button_color": "#008060",
           "delivery_button_text_color": "#ffffff"
         }
+      },
+      "14326192065026276651": {
+        "type": "shopify://apps/google-tag-manager-ga4/blocks/gtm-embed/01995b81-4e6b-7b12-9195-febd92a96a6a",
+        "disabled": false,
+        "settings": {
+          "disable_snippet": false,
+          "enable_preview": false
+        }
       }
     }
   },
