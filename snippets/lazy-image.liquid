@@ -113,7 +113,7 @@
 	  height="{{ image.height }}"
 		data-ratio="{{ ratio }}"
 	  {{ sizes }}
-	  {% unless preload %} loading="lazy" {% endunless %}
+	  {% if preload %} fetchpriority="high" {% else %} loading="lazy" {% endif %}
 		{% if image_alignment %} style="object-position: {{ image.presentation.focal_point }}" {% endif %}
 		{% if id %} id="responsive-background-{{ id }}" {% endif %}
 		onload="this.parentNode.classList.add('lazyloaded')"
