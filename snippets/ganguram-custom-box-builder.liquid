@@ -1,0 +1,124 @@
+{%- comment -%}
+  Ganguram — Custom Sweets Box builder shell (Phase B1, READ-ONLY preview).
+
+  Rendered ONLY from sections/main-product.liquid inside
+  {% if product.metafields.custom_box.enabled %}, so normal products never reach
+  this snippet and never load its JS/CSS.
+
+  Fully backend-driven: box types, row items and row counts come from the product's
+  custom_box.* metafields + the referenced metaobjects. NOTHING is hardcoded — no
+  product title/handle/ID/collection or item list in code.
+
+  Delivery eligibility labels derive from each linked product's REAL tags (the source
+  of truth); delivery_scope is surfaced only as an admin helper + mismatch flag.
+
+  Pricing shown = the linked variant's REAL price (source of truth). fixed_row_price /
+  surcharge are admin/validation values applied in B2 — not used for B1's preview maths.
+
+  B1 = preview only: Add-to-Cart is disabled ("Preview mode"). No cart, delivery,
+  checkout, schema or app change. Rollback: delete this snippet + its two assets and
+  revert the one conditional in sections/main-product.liquid.
+{%- endcomment -%}
+
+{%- liquid
+  assign cb = product.metafields.custom_box
+  assign box_types = cb.allowed_box_types.value
+  assign row_items = cb.allowed_row_items.value
+  assign row_counts = cb.supported_row_counts.value
+  assign default_rows = cb.default_row_count.value
+  assign has_config = true
+  if box_types == blank or row_items == blank
+    assign has_config = false
+  endif
+-%}
+
+{{ 'ganguram-custom-box.css' | asset_url | stylesheet_tag }}
+
+<div class="gcb" data-ganguram-custom-box>
+  {%- if cb.builder_title.value != blank -%}
+    <h2 class="gcb__title">{{ cb.builder_title.value | escape }}</h2>
+  {%- endif -%}
+  {%- if cb.builder_intro.value != blank -%}
+    <div class="gcb__intro rte">{{ cb.builder_intro.value }}</div>
+  {%- endif -%}
+
+  {%- unless has_config -%}
+    <div class="gcb__notice" role="status">
+      <strong>Custom box builder isn’t configured yet.</strong>
+      <span>Add at least one <em>Box Type</em> and one <em>Box Item</em> in Shopify Admin → Settings → Custom data, then select them on this product’s <code>custom_box.allowed_box_types</code> and <code>custom_box.allowed_row_items</code> metafields.</span>
+    </div>
+  {%- else -%}
+    <div class="gcb__mount" data-gcb-mount>
+      <noscript><p class="gcb__notice">Please enable JavaScript to build your custom box.</p></noscript>
+    </div>
+  {%- endunless -%}
+</div>
+
+{%- if has_config -%}
+  <script>
+    window.GanguramCustomBoxConfig = {
+      enabled: true,
+      currency: {{ shop.currency | json }},
+      defaultRows: {{ default_rows | default: 2 | json }},
+      rowCounts: [
+        {%- for n in row_counts -%}{{ n | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}
+      ],
+      boxTypes: [
+        {%- assign bt_i = 0 -%}
+        {%- for bt in box_types -%}
+          {%- if bt.active.value == false -%}{%- continue -%}{%- endif -%}
+          {%- if bt_i > 0 -%},{%- endif -%}
+          {
+            "id": {{ bt_i }},
+            "name": {{ bt.name.value | default: 'Box' | json }},
+            "image": {% if bt.image.value %}{{ bt.image.value | image_url: width: 640 | json }}{% else %}null{% endif %},
+            "sort": {{ bt.sort_order.value | default: bt_i | json }}
+          }
+          {%- assign bt_i = bt_i | plus: 1 -%}
+        {%- endfor -%}
+      ],
+      items: [
+        {%- assign it_i = 0 -%}
+        {%- for it in row_items -%}
+          {%- if it.active.value == false -%}{%- continue -%}{%- endif -%}
+          {%- assign v = it.linked_variant.value -%}
+          {%- assign prod = v.product -%}
+          {%- liquid
+            assign t_kol = false
+            assign t_pan = false
+            assign t_qc = false
+            assign t_ld = false
+            if prod.tags contains 'Kolkata'
+              assign t_kol = true
+            endif
+            if prod.tags contains 'PAN India'
+              assign t_pan = true
+            endif
+            if prod.tags contains 'Quick Commerce'
+              assign t_qc = true
+            endif
+            if prod.tags contains 'Local Delivery'
+              assign t_ld = true
+            endif
+          -%}
+          {%- if it_i > 0 -%},{%- endif -%}
+          {
+            "id": {{ it_i }},
+            "title": {{ it.display_title.value | default: prod.title | default: 'Item' | json }},
+            "pieces": {{ it.fixed_piece_count.value | default: 0 | json }},
+            "price": {% if v %}{{ v.price | json }}{% else %}null{% endif %},
+            "available": {% if it.availability_status.value == 'unavailable' %}false{% elsif v and v.available == false %}false{% else %}true{% endif %},
+            "image": {% if v and v.image %}{{ v.image | image_url: width: 400 | json }}{% elsif it.image.value %}{{ it.image.value | image_url: width: 400 | json }}{% elsif prod.featured_image %}{{ prod.featured_image | image_url: width: 400 | json }}{% else %}null{% endif %},
+            "allergen": {{ it.allergen_note.value | default: '' | json }},
+            "deliveryScope": {{ it.delivery_scope.value | default: '' | json }},
+            "tags": { "kolkata": {{ t_kol }}, "panIndia": {{ t_pan }}, "quickCommerce": {{ t_qc }}, "localDelivery": {{ t_ld }} },
+            "hasVariant": {% if v %}true{% else %}false{% endif %},
+            "sort": {{ it.sort_order.value | default: it_i | json }}
+          }
+          {%- assign it_i = it_i | plus: 1 -%}
+        {%- endfor -%}
+      ]
+    };
+  </script>
+  <script src="{{ 'ganguram-custom-box.js' | asset_url }}" defer></script>
+{%- endif -%}
