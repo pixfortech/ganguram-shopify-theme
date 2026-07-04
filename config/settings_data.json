@@ -247,6 +247,11 @@
           "mobile_side_margin": 16,
           "mobile_bottom_margin": 46
         }
+      },
+      "6460986421370555689": {
+        "type": "shopify://apps/apippa-custom-price-calc/blocks/cpc-app-embed/c499fa68-8478-4285-a3f7-27654dd66c3e",
+        "disabled": false,
+        "settings": {}
       }
     }
   },
