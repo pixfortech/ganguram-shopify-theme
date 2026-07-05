@@ -27,7 +27,7 @@
   assign row_counts = cb.supported_row_counts.value
   assign default_rows = cb.default_row_count.value
   assign has_config = true
-  if box_types == blank or row_items == blank
+  if box_types == blank or box_types.size == 0 or row_items == blank or row_items.size == 0
     assign has_config = false
   endif
 -%}
@@ -42,16 +42,17 @@
     <div class="gcb__intro rte">{{ cb.builder_intro.value }}</div>
   {%- endif -%}
 
-  {%- unless has_config -%}
+  {%- if has_config -%}
+    <div class="gcb__mount" data-gcb-mount>
+      <noscript><p class="gcb__notice">Please enable JavaScript to build your custom box.</p></noscript>
+    </div>
+  {%- elsif request.design_mode -%}
+    {%- comment -%} Admin-only hint, shown ONLY in the theme editor — never to customers. {%- endcomment -%}
     <div class="gcb__notice" role="status">
       <strong>Custom box builder isn’t configured yet.</strong>
       <span>Add at least one <em>Box Type</em> and one <em>Box Item</em> in Shopify Admin → Settings → Custom data, then select them on this product’s <code>custom_box.allowed_box_types</code> and <code>custom_box.allowed_row_items</code> metafields.</span>
     </div>
-  {%- else -%}
-    <div class="gcb__mount" data-gcb-mount>
-      <noscript><p class="gcb__notice">Please enable JavaScript to build your custom box.</p></noscript>
-    </div>
-  {%- endunless -%}
+  {%- endif -%}
 </div>
 
 {%- if has_config -%}
