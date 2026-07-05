@@ -76,7 +76,7 @@
 .gcb__card-thumb { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; flex: 0 0 auto; }
 .gcb__card-body { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; flex: 1 1 auto; }
 .gcb__card-title { font-weight: 600; line-height: 1.25; overflow-wrap: anywhere; }
-.gcb__card-meta { font-size: 0.85rem; color: var(--color-secondary-text-main); overflow-wrap: anywhere; }
+.gcb__card-meta { font-size: 0.85rem; color: var(--color-secondary-text-main); }
 .gcb__card-tick { flex: 0 0 auto; color: var(--color-accent-main); font-weight: 700; }
 
 /* locked row: a clean card — NEVER a disabled <select> (no tiled chevron) */
@@ -130,6 +130,7 @@
    nothing can cover the content, and no horizontal overflow. */
 @media screen and (max-width: 749px) {
   .gcb__grid { gap: 0.9rem; }
-  .gcb__cards { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  /* full-width, one-per-row cards on mobile: bigger tap target, no cramped wrapping */
+  .gcb__cards { grid-template-columns: 1fr; }
   .gcb__preview-image img { max-height: 42vh; }
 }
