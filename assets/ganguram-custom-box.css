@@ -12,11 +12,11 @@
   display: grid; gap: 0.35rem;
   font-size: 0.95rem;
 }
-.gcb__notice code { font-size: 0.85em; }
 
-/* layout: mobile-first (single column) */
-.gcb__grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+/* layout: mobile-first (single column). minmax(0,…) everywhere prevents overflow. */
+.gcb__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
 .gcb__panel {
+  min-width: 0;
   border: 1px solid var(--color-borders-main);
   border-radius: var(--border-radius-cards, 12px);
   padding: 1.1rem;
@@ -38,19 +38,41 @@
 .gcb__chip.is-selected {
   background: var(--color-accent-main); color: var(--color-foreground-accent-main); border-color: transparent;
 }
+/* large tappable row-count buttons (esp. on mobile) */
+.gcb__chip--count { min-width: 3.25rem; padding: 0.7rem 1.15rem; font-size: 1.05rem; }
 
 .gcb__rows { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.25rem; }
 .gcb__row { display: grid; gap: 0.35rem; }
 .gcb__row-label { font-weight: 600; }
-.gcb__row.is-locked { opacity: 0.55; }
+
+/* enabled row selector: force a SINGLE clean chevron, overriding the theme's
+   `#main select` rule which otherwise tiles its own arrow on our control. */
 .gcb__select {
-  width: 100%; padding: 0.75rem 0.85rem; min-height: 46px;
+  width: 100%; padding: 0.75rem 2.5rem 0.75rem 0.85rem; min-height: 46px;
   border: 1px solid var(--color-borders-forms-primary, var(--color-borders-main));
   border-radius: var(--border-radius-forms, 8px);
   background-color: var(--color-background-main); color: var(--color-text-main);
   font: inherit; cursor: pointer;
+  -webkit-appearance: none; -moz-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%23888888' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.9rem center !important;
+  background-size: 12px 8px !important;
 }
-.gcb__select:disabled { cursor: not-allowed; background: var(--color-secondary-background-main); }
+
+/* locked row: a clean card — NEVER a disabled <select> (avoids the tiled chevron bug) */
+.gcb__row--locked { opacity: 1; }
+.gcb__locked-card {
+  display: flex; align-items: center; gap: 0.55rem;
+  width: 100%; min-height: 46px; padding: 0.75rem 0.85rem;
+  border: 1px dashed var(--color-borders-main);
+  border-radius: var(--border-radius-forms, 8px);
+  background: var(--color-secondary-background-main);
+  color: var(--color-secondary-text-main);
+  font-size: 0.95rem;
+}
+.gcb__locked-icon { font-size: 0.95rem; line-height: 1; opacity: 0.7; }
+.gcb__locked-text { font-weight: 500; }
 
 /* preview */
 .gcb__preview-image { margin: 0 0 0.9rem; }
@@ -66,20 +88,9 @@
 .gcb__summary-row:last-child { border-bottom: 0; padding-bottom: 0; }
 .gcb__summary-row.is-empty { color: var(--color-secondary-text-main); font-style: italic; }
 .gcb__summary-thumb { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; flex: 0 0 auto; }
-.gcb__summary-body { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.5rem; }
+.gcb__summary-body { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.5rem; min-width: 0; }
 .gcb__summary-name { font-weight: 600; }
 .gcb__summary-meta { color: var(--color-secondary-text-main); }
-
-.gcb__pill {
-  display: inline-block; padding: 0.12rem 0.6rem; border-radius: 999px;
-  font-size: 0.78rem; font-weight: 600; line-height: 1.5;
-  background: var(--color-secondary-background-main); color: var(--color-text-main);
-}
-.gcb__pill.is-pan { background: rgba(45, 140, 60, 0.14); color: #1f7a2e; }
-.gcb__pill.is-kol, .gcb__pill.is-local, .gcb__pill.is-qc { background: rgba(200, 130, 0, 0.14); color: #9a6400; }
-.gcb__pill.is-unknown { background: var(--color-secondary-background-main); color: var(--color-secondary-text-main); }
-.gcb__pill.is-warn { background: rgba(220, 60, 60, 0.14); color: #b02a2a; }
-.gcb__box-elig { display: block; margin: 0 0 0.9rem; }
 
 .gcb__totals { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
 .gcb__totals-label { color: var(--color-secondary-text-main); }
@@ -89,20 +100,16 @@
 .gcb__add { margin-top: 0.2rem; }
 .gcb__add[disabled], .gcb__add[aria-disabled="true"] { opacity: 0.6; cursor: not-allowed; }
 
-/* desktop: two columns, preview sticks alongside the config */
+/* desktop: two columns — selectors left, a comfortably wide preview right that
+   sticks alongside the config while scrolling. minmax(0,…) keeps it from overflowing. */
 @media screen and (min-width: 750px) {
-  .gcb__grid { grid-template-columns: 1.05fr 0.95fr; align-items: start; gap: 1.25rem; }
+  .gcb__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); align-items: start; gap: 1.5rem; }
   .gcb__preview { position: sticky; top: 1rem; }
 }
 
-/* mobile: keep the running subtotal + preview add-to-cart within reach */
+/* mobile: everything stacks; preview sits BELOW the selectors. No sticky overlay so
+   nothing can cover the content, and no horizontal overflow. */
 @media screen and (max-width: 749px) {
   .gcb__grid { gap: 0.9rem; }
-  .gcb__preview {
-    position: sticky; bottom: 0; z-index: 2;
-    background: var(--color-background-main);
-    box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.06);
-  }
-  /* on small screens the big box image is optional chrome — keep it compact */
   .gcb__preview-image img { max-height: 42vh; }
 }

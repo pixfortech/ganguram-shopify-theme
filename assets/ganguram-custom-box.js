@@ -1,18 +1,25 @@
 /*
  * Ganguram — Custom Sweets Box builder (Phase B1, READ-ONLY preview).
- * Backend-driven builder + live preview from window.GanguramCustomBoxConfig.
- * NO cart calls, NO delivery/checkout logic — Add-to-Cart is a disabled "Preview mode"
- * placeholder. Loaded only on products with custom_box.enabled (see the snippet).
  *
- * B1 polish: sequential row unlocking (Row N enabled only after Row N-1 is chosen;
- * clearing an earlier row resets/disables later rows). No layered overlays yet (B1.5).
+ * Backend-driven builder + live preview. Config is read from an INERT JSON island
+ * (<script type="application/json" id="ganguram-custom-box-config">) via JSON.parse —
+ * there is NO window global and nothing is ever printed to the page as text.
+ *
+ * NO cart calls, NO delivery/checkout logic and NO customer-facing delivery badges.
+ * Add-to-Cart is a disabled "Preview mode" placeholder. Loaded only on products with
+ * custom_box.enabled (see snippets/ganguram-custom-box-builder.liquid).
+ *
+ * B1 polish: sequential row unlocking (Row N unlocks only after Row N-1 is chosen;
+ * clearing an earlier row resets later rows). Locked rows render as a clean card,
+ * NOT a disabled <select>. No layered overlays yet (B1.5).
  */
 (function () {
   'use strict';
 
   var mount = document.querySelector('[data-gcb-mount]');
-  var cfg = window.GanguramCustomBoxConfig;
   if (!mount) { return; }
+
+  var cfg = readConfig();
   if (!cfg || !cfg.items || !cfg.items.length) { return; }
 
   try {
@@ -20,6 +27,18 @@
   } catch (e) {
     mount.innerHTML = '<p class="gcb__notice">The custom box builder couldn’t load — please refresh the page.</p>';
     if (window.console && console.error) { console.error('[custom-box]', e); }
+  }
+
+  // Parse the inert JSON data island. Never touches the DOM as visible text.
+  function readConfig() {
+    var node = document.getElementById('ganguram-custom-box-config');
+    if (!node) { return null; }
+    try {
+      return JSON.parse(node.textContent);
+    } catch (e) {
+      if (window.console && console.error) { console.error('[custom-box] bad config', e); }
+      return null;
+    }
   }
 
   function build(cfg, mount) {
@@ -37,44 +56,6 @@
         return '₹' + amount.toFixed(2);
       };
     })();
-
-    function tagScope(item) {
-      var t = item.tags || {};
-      if (t.panIndia) { return 'pan_india'; }
-      if (t.kolkata) { return 'kolkata_only'; }
-      if (t.localDelivery) { return 'local_only'; }
-      if (t.quickCommerce) { return 'quick_commerce_only'; }
-      return '';
-    }
-    function itemLabel(item) {
-      switch (tagScope(item)) {
-        case 'pan_india': return { text: 'PAN India eligible', cls: 'is-pan' };
-        case 'kolkata_only': return { text: 'Kolkata / serviceable-pincode only', cls: 'is-kol' };
-        case 'local_only': return { text: 'Local delivery only', cls: 'is-local' };
-        case 'quick_commerce_only': return { text: 'Quick Commerce / local', cls: 'is-qc' };
-        default: return { text: 'Check delivery for your area', cls: 'is-unknown' };
-      }
-    }
-    function scopeMismatch(item) {
-      var declared = (item.deliveryScope || '').trim();
-      if (!declared) { return false; }
-      var derived = tagScope(item);
-      return derived && declared !== derived;
-    }
-    function boxEligibility(items) {
-      var anyLocal = false, allPan = true, has = false;
-      items.forEach(function (it) {
-        if (!it) { return; }
-        has = true;
-        var s = tagScope(it);
-        if (s !== 'pan_india') { allPan = false; }
-        if (s === 'kolkata_only' || s === 'local_only' || s === 'quick_commerce_only') { anyLocal = true; }
-      });
-      if (!has) { return null; }
-      if (anyLocal) { return { text: 'This box: Kolkata / serviceable-pincode only', cls: 'is-kol' }; }
-      if (allPan) { return { text: 'This box: PAN India eligible', cls: 'is-pan' }; }
-      return { text: 'This box: check delivery for your area', cls: 'is-unknown' };
-    }
 
     // ---- data -------------------------------------------------------------
     var items = cfg.items.slice().sort(bySort);
@@ -121,12 +102,12 @@
       btWrap.appendChild(btRow); config.appendChild(btWrap);
     }
 
-    // row-count selector
+    // row-count selector — large tappable buttons
     var rcWrap = el('div', 'gcb__field');
     var rcLabel = el('span', 'gcb__field-label'); rcLabel.textContent = 'Number of rows'; rcWrap.appendChild(rcLabel);
-    var rcRow = el('div', 'gcb__chips');
+    var rcRow = el('div', 'gcb__chips gcb__chips--count');
     rowCounts.forEach(function (n) {
-      var b = el('button', 'gcb__chip'); b.type = 'button'; b.textContent = String(n);
+      var b = el('button', 'gcb__chip gcb__chip--count'); b.type = 'button'; b.textContent = String(n);
       var on = n === state.rowCount;
       if (on) { b.classList.add('is-selected'); }
       b.setAttribute('aria-pressed', on ? 'true' : 'false');
@@ -160,13 +141,24 @@
       for (var i = 0; i < state.rowCount; i++) {
         (function (idx) {
           var enabled = rowEnabled(idx);
-          var row = el('div', 'gcb__row' + (enabled ? '' : ' is-locked'));
+          if (!enabled) {
+            // LOCKED ROW: a clean card, never a disabled <select> (no tiled chevrons).
+            var locked = el('div', 'gcb__row gcb__row--locked');
+            var llab = el('span', 'gcb__row-label'); llab.textContent = 'Row ' + (idx + 1);
+            var card = el('div', 'gcb__locked-card');
+            var lock = el('span', 'gcb__locked-icon'); lock.setAttribute('aria-hidden', 'true'); lock.textContent = '🔒';
+            var msg = el('span', 'gcb__locked-text'); msg.textContent = 'Select Row ' + idx + ' first';
+            card.appendChild(lock); card.appendChild(msg);
+            locked.appendChild(llab); locked.appendChild(card);
+            rowsWrap.appendChild(locked);
+            return;
+          }
+
+          var row = el('div', 'gcb__row');
           var selId = 'gcb-row-' + idx;
           var lab = el('label', 'gcb__row-label'); lab.textContent = 'Row ' + (idx + 1); lab.setAttribute('for', selId);
-          var sel = el('select', 'gcb__select'); sel.id = selId; sel.disabled = !enabled;
-          if (!enabled) { sel.setAttribute('aria-disabled', 'true'); }
-          var ph = el('option'); ph.value = '';
-          ph.textContent = enabled ? 'Choose an item…' : 'Select Row ' + idx + ' first';
+          var sel = el('select', 'gcb__select'); sel.id = selId;
+          var ph = el('option'); ph.value = ''; ph.textContent = 'Choose an item…';
           sel.appendChild(ph);
           items.forEach(function (it) {
             var o = el('option'); o.value = String(it.id); o.textContent = optionLabel(it);
@@ -179,7 +171,7 @@
             state.rows[idx] = val;
             // clearing / emptying an earlier row resets every later row
             if (val == null) { for (var k = idx + 1; k < state.rowCount; k++) { state.rows[k] = null; } }
-            renderRows();   // refresh enabled/disabled states + later-row values
+            renderRows();   // refresh locked/unlocked states + later-row values
             renderPreview();
           });
           row.appendChild(lab); row.appendChild(sel);
@@ -208,10 +200,9 @@
       preview.appendChild(head);
 
       var list = el('ul', 'gcb__summary');
-      var chosen = [], subtotal = 0;
+      var subtotal = 0;
       for (var i = 0; i < state.rowCount; i++) {
         var it = state.rows[i] != null ? itemById[state.rows[i]] : null;
-        chosen.push(it);
         var li = el('li', 'gcb__summary-row');
         if (!it) {
           li.classList.add('is-empty');
@@ -221,17 +212,12 @@
           var body = el('div', 'gcb__summary-body');
           var name = el('span', 'gcb__summary-name'); name.textContent = 'Row ' + (i + 1) + ': ' + it.title; body.appendChild(name);
           var meta = el('span', 'gcb__summary-meta'); meta.textContent = (it.pieces ? it.pieces + ' pcs · ' : '') + money(it.price); body.appendChild(meta);
-          var lab = itemLabel(it); var tag = el('span', 'gcb__pill ' + lab.cls); tag.textContent = lab.text; body.appendChild(tag);
-          if (scopeMismatch(it)) { var w = el('span', 'gcb__pill is-warn'); w.textContent = '⚠ delivery_scope ≠ product tags'; body.appendChild(w); }
           li.appendChild(body);
           if (it.price != null) { subtotal += it.price; }
         }
         list.appendChild(li);
       }
       preview.appendChild(list);
-
-      var elig = boxEligibility(chosen);
-      if (elig) { var e = el('div', 'gcb__box-elig gcb__pill ' + elig.cls); e.textContent = elig.text; preview.appendChild(e); }
 
       var totals = el('div', 'gcb__totals');
       var tl = el('span', 'gcb__totals-label'); tl.textContent = 'Box subtotal';
