@@ -8,8 +8,15 @@
   Fully backend-driven: box types, row items and row counts come from the product's
   custom_box.* metafields + the referenced metaobjects. NOTHING is hardcoded.
 
-  Config is emitted as an INERT JSON island (<script type="application/json">), read
-  by the JS via textContent + JSON.parse — never as an executable/visible global.
+  Config carrier: ONE inert data island. The JSON is built into a single Liquid
+  variable (config_json) and printed exactly once, inside
+  <script type="application/json" id="ganguram-custom-box-config">…</script>.
+  It is never printed anywhere else, and the </script> sequence is guarded so the
+  tag can never close early. The JS reads it via getElementById(...).textContent +
+  JSON.parse — there is no window global and nothing renders as visible text.
+
+  Row selection uses clickable item CARDS (rendered by the JS), never a <select>,
+  so there is no chevron pattern and long item names wrap instead of truncating.
 
   B1 shows NO customer-facing delivery badges. Eligibility tags/scope are kept in the
   config as internal data only (for later phases); nothing is displayed. Add-to-Cart is
@@ -54,67 +61,15 @@
 </div>
 
 {%- if has_config -%}
-  <script type="application/json" id="ganguram-custom-box-config">
-    {
-      "currency": {{ shop.currency | json }},
-      "defaultRows": {{ default_rows | default: 2 | json }},
-      "rowCounts": [
-        {%- for n in row_counts -%}{{ n | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}
-      ],
-      "boxTypes": [
-        {%- assign bt_i = 0 -%}
-        {%- for bt in box_types -%}
-          {%- if bt.active.value == false -%}{%- continue -%}{%- endif -%}
-          {%- if bt_i > 0 -%},{%- endif -%}
-          {
-            "id": {{ bt_i }},
-            "name": {{ bt.name.value | default: 'Box' | json }},
-            "image": {% if bt.image.value %}{{ bt.image.value | image_url: width: 640 | json }}{% else %}null{% endif %},
-            "sort": {{ bt.sort_order.value | default: bt_i | json }}
-          }
-          {%- assign bt_i = bt_i | plus: 1 -%}
-        {%- endfor -%}
-      ],
-      "items": [
-        {%- assign it_i = 0 -%}
-        {%- for it in row_items -%}
-          {%- if it.active.value == false -%}{%- continue -%}{%- endif -%}
-          {%- assign v = it.linked_variant.value -%}
-          {%- assign prod = v.product -%}
-          {%- liquid
-            assign t_kol = false
-            assign t_pan = false
-            assign t_qc = false
-            assign t_ld = false
-            if prod.tags contains 'Kolkata'
-              assign t_kol = true
-            endif
-            if prod.tags contains 'PAN India'
-              assign t_pan = true
-            endif
-            if prod.tags contains 'Quick Commerce'
-              assign t_qc = true
-            endif
-            if prod.tags contains 'Local Delivery'
-              assign t_ld = true
-            endif
-          -%}
-          {%- if it_i > 0 -%},{%- endif -%}
-          {
-            "id": {{ it_i }},
-            "title": {{ it.display_title.value | default: prod.title | default: 'Item' | json }},
-            "pieces": {{ it.fixed_piece_count.value | default: 0 | json }},
-            "price": {% if v %}{{ v.price | json }}{% else %}null{% endif %},
-            "available": {% if it.availability_status.value == 'unavailable' %}false{% elsif v and v.available == false %}false{% else %}true{% endif %},
-            "image": {% if v and v.image %}{{ v.image | image_url: width: 400 | json }}{% elsif it.image.value %}{{ it.image.value | image_url: width: 400 | json }}{% elsif prod.featured_image %}{{ prod.featured_image | image_url: width: 400 | json }}{% else %}null{% endif %},
-            "tags": { "kolkata": {{ t_kol }}, "panIndia": {{ t_pan }}, "quickCommerce": {{ t_qc }}, "localDelivery": {{ t_ld }} },
-            "deliveryScope": {{ it.delivery_scope.value | default: '' | json }},
-            "sort": {{ it.sort_order.value | default: it_i | json }}
-          }
-          {%- assign it_i = it_i | plus: 1 -%}
-        {%- endfor -%}
-      ]
-    }
-  </script>
+  {%- comment -%}
+    Build the entire config as ONE compact JSON string in `config_json`, then print it
+    exactly once inside the data island below. Nothing here writes to the page directly —
+    every value lands between the <script> tags. `| strip` removes the capture's leading/
+    trailing whitespace; the `</script>` guard stops the tag from closing early.
+  {%- endcomment -%}
+  {%- capture config_json -%}
+{"currency":{{ shop.currency | json }},"defaultRows":{{ default_rows | default: 2 | json }},"rowCounts":[{%- for n in row_counts -%}{{ n | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],"boxTypes":[{%- assign bt_i = 0 -%}{%- for bt in box_types -%}{%- if bt.active.value == false -%}{%- continue -%}{%- endif -%}{%- if bt_i > 0 -%},{%- endif -%}{"id":{{ bt_i }},"name":{{ bt.name.value | default: 'Box' | json }},"image":{% if bt.image.value %}{{ bt.image.value | image_url: width: 640 | json }}{% else %}null{% endif %},"sort":{{ bt.sort_order.value | default: bt_i | json }}}{%- assign bt_i = bt_i | plus: 1 -%}{%- endfor -%}],"items":[{%- assign it_i = 0 -%}{%- for it in row_items -%}{%- if it.active.value == false -%}{%- continue -%}{%- endif -%}{%- assign v = it.linked_variant.value -%}{%- assign prod = v.product -%}{%- if it_i > 0 -%},{%- endif -%}{"id":{{ it_i }},"title":{{ it.display_title.value | default: prod.title | default: 'Item' | json }},"pieces":{{ it.fixed_piece_count.value | default: 0 | json }},"price":{% if v %}{{ v.price | json }}{% else %}null{% endif %},"available":{% if it.availability_status.value == 'unavailable' %}false{% elsif v and v.available == false %}false{% else %}true{% endif %},"image":{% if v and v.image %}{{ v.image | image_url: width: 400 | json }}{% elsif it.image.value %}{{ it.image.value | image_url: width: 400 | json }}{% elsif prod.featured_image %}{{ prod.featured_image | image_url: width: 400 | json }}{% else %}null{% endif %},"tags":{"kolkata":{% if prod.tags contains 'Kolkata' %}true{% else %}false{% endif %},"panIndia":{% if prod.tags contains 'PAN India' %}true{% else %}false{% endif %},"quickCommerce":{% if prod.tags contains 'Quick Commerce' %}true{% else %}false{% endif %},"localDelivery":{% if prod.tags contains 'Local Delivery' %}true{% else %}false{% endif %}},"deliveryScope":{{ it.delivery_scope.value | default: '' | json }},"sort":{{ it.sort_order.value | default: it_i | json }}}{%- assign it_i = it_i | plus: 1 -%}{%- endfor -%}]}
+  {%- endcapture -%}
+  <script type="application/json" id="ganguram-custom-box-config">{{ config_json | strip | replace: '</script>', '<\/script>' }}</script>
   <script src="{{ 'ganguram-custom-box.js' | asset_url }}" defer></script>
 {%- endif -%}

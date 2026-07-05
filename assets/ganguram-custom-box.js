@@ -1,17 +1,21 @@
 /*
  * Ganguram — Custom Sweets Box builder (Phase B1, READ-ONLY preview).
  *
- * Backend-driven builder + live preview. Config is read from an INERT JSON island
- * (<script type="application/json" id="ganguram-custom-box-config">) via JSON.parse —
- * there is NO window global and nothing is ever printed to the page as text.
+ * Config is read from an INERT JSON island
+ * (<script type="application/json" id="ganguram-custom-box-config">) via
+ * JSON.parse(node.textContent). There is NO window global and nothing is printed
+ * to the page as text.
  *
- * NO cart calls, NO delivery/checkout logic and NO customer-facing delivery badges.
+ * Row selection uses clickable item CARDS (radio semantics), NOT a native <select> —
+ * so there is no dropdown chevron and long item names wrap onto two lines instead of
+ * being cut off. Locked rows render as a clean "Select Row N first" card.
+ *
+ * NO cart calls, NO delivery/checkout logic, NO customer-facing delivery badges.
  * Add-to-Cart is a disabled "Preview mode" placeholder. Loaded only on products with
  * custom_box.enabled (see snippets/ganguram-custom-box-builder.liquid).
  *
- * B1 polish: sequential row unlocking (Row N unlocks only after Row N-1 is chosen;
- * clearing an earlier row resets later rows). Locked rows render as a clean card,
- * NOT a disabled <select>. No layered overlays yet (B1.5).
+ * Sequential unlocking: Row N unlocks only after Row N-1 is chosen; clearing a row
+ * resets every later row. No layered overlays yet (B1.5).
  */
 (function () {
   'use strict';
@@ -29,7 +33,7 @@
     if (window.console && console.error) { console.error('[custom-box]', e); }
   }
 
-  // Parse the inert JSON data island. Never touches the DOM as visible text.
+  // Parse the inert JSON data island. Never writes to the DOM as visible text.
   function readConfig() {
     var node = document.getElementById('ganguram-custom-box-config');
     if (!node) { return null; }
@@ -125,56 +129,85 @@
     // rows
     var rowsWrap = el('div', 'gcb__rows'); config.appendChild(rowsWrap);
 
-    function optionLabel(it) {
-      var bits = [it.title];
-      if (it.pieces) { bits.push(it.pieces + ' pcs'); }
-      if (it.price != null) { bits.push(money(it.price)); }
-      if (!it.available) { bits.push('— unavailable'); }
-      return bits.join(' · ');
-    }
-
     // SEQUENTIAL UNLOCKING: row idx is enabled only when the previous row is chosen.
     function rowEnabled(idx) { return idx === 0 || state.rows[idx - 1] != null; }
+
+    // Pick an item for a row. Selecting keeps later rows; use clear() to reset the chain.
+    function pickRow(idx, itemId) { state.rows[idx] = itemId; renderRows(); renderPreview(); }
+    // Clearing a row also clears every later row (they would otherwise be orphaned/locked).
+    function clearRow(idx) {
+      for (var k = idx; k < state.rowCount; k++) { state.rows[k] = null; }
+      renderRows(); renderPreview();
+    }
+
+    // Build one item card (radio button). Wraps text; no truncation; no delivery badge.
+    function itemCard(idx, it) {
+      var card = el('button', 'gcb__card');
+      card.type = 'button';
+      card.setAttribute('role', 'radio');
+      var selected = state.rows[idx] === it.id;
+      card.setAttribute('aria-checked', selected ? 'true' : 'false');
+      if (selected) { card.classList.add('is-selected'); }
+      if (!it.available) { card.classList.add('is-unavailable'); card.disabled = true; }
+
+      if (it.image) {
+        var th = el('img', 'gcb__card-thumb');
+        th.src = it.image; th.alt = ''; th.loading = 'lazy'; th.width = 56; th.height = 56;
+        card.appendChild(th);
+      }
+      var body = el('span', 'gcb__card-body');
+      var title = el('span', 'gcb__card-title'); title.textContent = it.title; body.appendChild(title);
+      var metaBits = [];
+      if (it.pieces) { metaBits.push(it.pieces + ' pcs'); }
+      if (it.price != null) { metaBits.push(money(it.price)); }
+      if (!it.available) { metaBits.push('Unavailable'); }
+      var meta = el('span', 'gcb__card-meta'); meta.textContent = metaBits.join(' · '); body.appendChild(meta);
+      card.appendChild(body);
+
+      if (selected) {
+        var tick = el('span', 'gcb__card-tick'); tick.setAttribute('aria-hidden', 'true'); tick.textContent = '✓';
+        card.appendChild(tick);
+      }
+      if (it.available) {
+        card.addEventListener('click', function () { pickRow(idx, it.id); });
+      }
+      return card;
+    }
 
     function renderRows() {
       rowsWrap.innerHTML = '';
       for (var i = 0; i < state.rowCount; i++) {
         (function (idx) {
-          var enabled = rowEnabled(idx);
-          if (!enabled) {
-            // LOCKED ROW: a clean card, never a disabled <select> (no tiled chevrons).
-            var locked = el('div', 'gcb__row gcb__row--locked');
-            var llab = el('span', 'gcb__row-label'); llab.textContent = 'Row ' + (idx + 1);
-            var card = el('div', 'gcb__locked-card');
+          var row = el('div', 'gcb__row');
+
+          if (!rowEnabled(idx)) {
+            // LOCKED ROW: a clean card — never a disabled <select>, so no tiled chevron.
+            row.classList.add('gcb__row--locked');
+            var llab = el('span', 'gcb__row-label'); llab.textContent = 'Row ' + (idx + 1); row.appendChild(llab);
+            var lc = el('div', 'gcb__locked-card');
             var lock = el('span', 'gcb__locked-icon'); lock.setAttribute('aria-hidden', 'true'); lock.textContent = '🔒';
-            var msg = el('span', 'gcb__locked-text'); msg.textContent = 'Select Row ' + idx + ' first';
-            card.appendChild(lock); card.appendChild(msg);
-            locked.appendChild(llab); locked.appendChild(card);
-            rowsWrap.appendChild(locked);
+            var lt = el('span', 'gcb__locked-text'); lt.textContent = 'Select Row ' + idx + ' first';
+            lc.appendChild(lock); lc.appendChild(lt); row.appendChild(lc);
+            rowsWrap.appendChild(row);
             return;
           }
 
-          var row = el('div', 'gcb__row');
-          var selId = 'gcb-row-' + idx;
-          var lab = el('label', 'gcb__row-label'); lab.textContent = 'Row ' + (idx + 1); lab.setAttribute('for', selId);
-          var sel = el('select', 'gcb__select'); sel.id = selId;
-          var ph = el('option'); ph.value = ''; ph.textContent = 'Choose an item…';
-          sel.appendChild(ph);
-          items.forEach(function (it) {
-            var o = el('option'); o.value = String(it.id); o.textContent = optionLabel(it);
-            if (!it.available) { o.disabled = true; }
-            if (state.rows[idx] === it.id) { o.selected = true; }
-            sel.appendChild(o);
-          });
-          sel.addEventListener('change', function () {
-            var val = sel.value === '' ? null : Number(sel.value);
-            state.rows[idx] = val;
-            // clearing / emptying an earlier row resets every later row
-            if (val == null) { for (var k = idx + 1; k < state.rowCount; k++) { state.rows[k] = null; } }
-            renderRows();   // refresh locked/unlocked states + later-row values
-            renderPreview();
-          });
-          row.appendChild(lab); row.appendChild(sel);
+          // header: label + (clear, once a pick exists)
+          var head = el('div', 'gcb__row-head');
+          var lab = el('span', 'gcb__row-label'); lab.textContent = 'Row ' + (idx + 1); head.appendChild(lab);
+          if (state.rows[idx] != null) {
+            var clr = el('button', 'gcb__row-clear'); clr.type = 'button'; clr.textContent = 'Clear';
+            clr.addEventListener('click', function () { clearRow(idx); });
+            head.appendChild(clr);
+          }
+          row.appendChild(head);
+
+          // item cards
+          var cards = el('div', 'gcb__cards');
+          cards.setAttribute('role', 'radiogroup');
+          cards.setAttribute('aria-label', 'Choose an item for row ' + (idx + 1));
+          items.forEach(function (it) { cards.appendChild(itemCard(idx, it)); });
+          row.appendChild(cards);
           rowsWrap.appendChild(row);
         })(i);
       }
@@ -208,7 +241,7 @@
           li.classList.add('is-empty');
           li.textContent = 'Row ' + (i + 1) + ' — ' + (rowEnabled(i) ? 'not chosen yet' : 'locked');
         } else {
-          if (it.image) { var th = el('img', 'gcb__summary-thumb'); th.src = it.image; th.alt = it.title; th.loading = 'lazy'; th.width = 48; th.height = 48; li.appendChild(th); }
+          if (it.image) { var th = el('img', 'gcb__summary-thumb'); th.src = it.image; th.alt = ''; th.loading = 'lazy'; th.width = 48; th.height = 48; li.appendChild(th); }
           var body = el('div', 'gcb__summary-body');
           var name = el('span', 'gcb__summary-name'); name.textContent = 'Row ' + (i + 1) + ': ' + it.title; body.appendChild(name);
           var meta = el('span', 'gcb__summary-meta'); meta.textContent = (it.pieces ? it.pieces + ' pcs · ' : '') + money(it.price); body.appendChild(meta);
