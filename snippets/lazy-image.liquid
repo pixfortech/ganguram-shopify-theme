@@ -94,19 +94,7 @@
 	{%- endcapture -%}
 {%- endif -%}
 
-{%- comment -%}
-	Optional media-scoped high-priority preload (LCP). When preload_media is passed, emit a
-	<link rel="preload" as="image"> that matches this exact <img> (same srcset + sizes) and is
-	scoped with a media condition, so the browser high-priority-fetches ONLY the image that
-	will actually render at the current viewport — never both a desktop and a mobile variant.
-{%- endcomment -%}
-{%- if preload_media != blank -%}
-	{%- assign preload_srcset = srcset | replace: 'srcset=', '' | replace: '"', '' -%}
-	{%- assign preload_sizes = sizes | replace: 'sizes=', '' | replace: '"', '' | strip_newlines -%}
-	<link rel="preload" as="image" href="{{ image | image_url: width: 1080 }}" imagesrcset="{{ preload_srcset }}" imagesizes="{{ preload_sizes }}" media="{{ preload_media }}" fetchpriority="high">
-{%- endif -%}
-
-<figure
+<figure 
 	class="lazy-image {{ class }}
 		{% if type == 'background' %}lazy-image--background{% endif %}  
 		{% if fit %} lazy-image--fit {% endif %}
@@ -125,7 +113,7 @@
 	  height="{{ image.height }}"
 		data-ratio="{{ ratio }}"
 	  {{ sizes }}
-	  {% if preload_media != blank %}{% comment %} priority handled by the media-scoped preload link above; keep this img eager {% endcomment %}{% elsif preload %} fetchpriority="high" {% else %} loading="lazy" {% endif %}
+	  {% if preload %} fetchpriority="high" {% else %} loading="lazy" {% endif %}
 		{% if image_alignment %} style="object-position: {{ image.presentation.focal_point }}" {% endif %}
 		{% if id %} id="responsive-background-{{ id }}" {% endif %}
 		onload="this.parentNode.classList.add('lazyloaded')"

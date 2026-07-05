@@ -75,24 +75,13 @@
         -%}
 
         {%- liquid
-          # LCP: when this hero slide has a SEPARATE mobile image, high-priority-preload only the
-          # image that will actually display per device (media-scoped), instead of making BOTH the
-          # desktop and mobile hero images fetchpriority="high" — which downloaded the hidden one at
-          # high priority and delayed LCP. Non-hero slides and single-image heroes are unchanged.
-          assign mobile_preload_media = ''
-          assign desktop_preload_media = ''
-          if preload and block.settings.mobile_image
-            assign mobile_preload_media = '(max-width: 1023px)'
-            assign desktop_preload_media = '(min-width: 1024px)'
-          endif
-
           if block.settings.mobile_image
-            render 'lazy-image', image: block.settings.mobile_image, type: image_type, alt: block.settings.mobile_image.alt, image_alignment: image_alignment, sizes: sizes, class: 'element--hide-on-desk', preload: preload, preload_media: mobile_preload_media
+            render 'lazy-image', image: block.settings.mobile_image, type: image_type, alt: block.settings.mobile_image.alt, image_alignment: image_alignment, sizes: sizes, class: 'element--hide-on-desk', preload: preload
 
             assign image_class = 'element--hide-on-small'
           endif
 
-          render 'lazy-image', image: block.settings.image, type: image_type, alt: block.settings.image.alt, image_alignment: image_alignment, sizes: sizes, class: image_class, preload: preload, preload_media: desktop_preload_media
+          render 'lazy-image', image: block.settings.image, type: image_type, alt: block.settings.image.alt, image_alignment: image_alignment, sizes: sizes, class: image_class, preload: preload
 
           assign image_class = ''
         -%}
