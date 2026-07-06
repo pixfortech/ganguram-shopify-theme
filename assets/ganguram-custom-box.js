@@ -28,17 +28,22 @@
 
   try {
     build(cfg, mount);
+    if (window.console && console.info) { console.info('[ganguram-custom-box] build 4 ready (cards, inert config)'); }
   } catch (e) {
     mount.innerHTML = '<p class="gcb__notice">The custom box builder couldn’t load — please refresh the page.</p>';
     if (window.console && console.error) { console.error('[custom-box]', e); }
   }
 
-  // Parse the inert JSON data island. Never writes to the DOM as visible text.
+  // Parse the inert JSON data island, then REMOVE it from the DOM so nothing that
+  // later clones, re-serializes or strips this region (theme scripts, app embeds,
+  // page optimizers) can ever surface the config as visible text.
   function readConfig() {
     var node = document.getElementById('ganguram-custom-box-config');
     if (!node) { return null; }
     try {
-      return JSON.parse(node.textContent);
+      var parsed = JSON.parse(node.textContent);
+      if (node.parentNode) { node.parentNode.removeChild(node); }
+      return parsed;
     } catch (e) {
       if (window.console && console.error) { console.error('[custom-box] bad config', e); }
       return null;

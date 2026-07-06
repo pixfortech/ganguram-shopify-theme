@@ -8,21 +8,26 @@
   Fully backend-driven: box types, row items and row counts come from the product's
   custom_box.* metafields + the referenced metaobjects. NOTHING is hardcoded.
 
-  Config carrier: ONE inert data island. The JSON is built into a single Liquid
-  variable (config_json) and printed exactly once, inside
-  <script type="application/json" id="ganguram-custom-box-config">…</script>.
-  It is never printed anywhere else, and the </script> sequence is guarded so the
-  tag can never close early. The JS reads it via getElementById(...).textContent +
-  JSON.parse — there is no window global and nothing renders as visible text.
+  Config carrier — ONE inert data island, defended in depth:
+  • The whole config is captured into `config_json` and printed exactly once, inside
+    <script type="application/json" id="ganguram-custom-box-config">…</script>.
+  • Every "<" in the payload is emitted as the JSON escape <, so the island can
+    never be terminated early by a closing-script sequence, an HTML comment or any
+    tag-like content, and the payload contains no markup at all even if something
+    re-serializes the page.
+  • The JS reads it via getElementById(...).textContent + JSON.parse, then REMOVES the
+    node from the DOM — so late-running scripts/apps that clone or strip this region
+    can never surface the config as text. No window global, no CSS hiding.
 
-  Row selection uses clickable item CARDS (rendered by the JS), never a <select>,
-  so there is no chevron pattern and long item names wrap instead of truncating.
+  Title/intro are printed via metafield_text + escape so no metafield type or stray
+  "<" in admin copy can inject markup or raw rich-text JSON ahead of the island.
 
-  B1 shows NO customer-facing delivery badges. Eligibility tags/scope are kept in the
-  config as internal data only (for later phases); nothing is displayed. Add-to-Cart is
-  a disabled "Preview mode" placeholder. No cart, delivery, checkout, schema or app
-  change. Rollback: delete this snippet + its two assets and revert the one conditional
-  in sections/main-product.liquid.
+  Row selection is clickable item CARDS (rendered by the JS) — never a <select>.
+
+  B1 shows NO customer-facing delivery badges (eligibility tags/scope stay internal
+  in the config for later phases). Add-to-Cart is a disabled "Preview mode"
+  placeholder. No cart, delivery, checkout, schema or app change. Rollback: delete
+  this snippet + its two assets and revert the one conditional in main-product.liquid.
 {%- endcomment -%}
 
 {%- liquid
@@ -39,18 +44,23 @@
 
 {{ 'ganguram-custom-box.css' | asset_url | stylesheet_tag }}
 
-<div class="gcb" data-ganguram-custom-box>
+<div class="gcb" data-ganguram-custom-box data-gcb-version="4">
   {%- if cb.builder_title.value != blank -%}
-    <h2 class="gcb__title">{{ cb.builder_title.value | escape }}</h2>
+    <h2 class="gcb__title">{{ cb.builder_title | metafield_text | escape }}</h2>
   {%- endif -%}
   {%- if cb.builder_intro.value != blank -%}
-    <div class="gcb__intro rte">{{ cb.builder_intro.value }}</div>
+    <div class="gcb__intro">{{ cb.builder_intro | metafield_text | escape | newline_to_br }}</div>
   {%- endif -%}
 
   {%- if has_config -%}
     <div class="gcb__mount" data-gcb-mount>
       <noscript><p class="gcb__notice">Please enable JavaScript to build your custom box.</p></noscript>
     </div>
+    {%- capture config_json -%}
+{"currency":{{ shop.currency | json }},"defaultRows":{{ default_rows | default: 2 | json }},"rowCounts":[{%- for n in row_counts -%}{{ n | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],"boxTypes":[{%- assign bt_i = 0 -%}{%- for bt in box_types -%}{%- if bt.active.value == false -%}{%- continue -%}{%- endif -%}{%- if bt_i > 0 -%},{%- endif -%}{"id":{{ bt_i }},"name":{{ bt.name.value | default: 'Box' | json }},"image":{% if bt.image.value %}{{ bt.image.value | image_url: width: 640 | json }}{% else %}null{% endif %},"sort":{{ bt.sort_order.value | default: bt_i | json }}}{%- assign bt_i = bt_i | plus: 1 -%}{%- endfor -%}],"items":[{%- assign it_i = 0 -%}{%- for it in row_items -%}{%- if it.active.value == false -%}{%- continue -%}{%- endif -%}{%- assign v = it.linked_variant.value -%}{%- assign prod = v.product -%}{%- if it_i > 0 -%},{%- endif -%}{"id":{{ it_i }},"title":{{ it.display_title.value | default: prod.title | default: 'Item' | json }},"pieces":{{ it.fixed_piece_count.value | default: 0 | json }},"price":{% if v %}{{ v.price | json }}{% else %}null{% endif %},"available":{% if it.availability_status.value == 'unavailable' %}false{% elsif v and v.available == false %}false{% else %}true{% endif %},"image":{% if v and v.image %}{{ v.image | image_url: width: 400 | json }}{% elsif it.image.value %}{{ it.image.value | image_url: width: 400 | json }}{% elsif prod.featured_image %}{{ prod.featured_image | image_url: width: 400 | json }}{% else %}null{% endif %},"tags":{"kolkata":{% if prod.tags contains 'Kolkata' %}true{% else %}false{% endif %},"panIndia":{% if prod.tags contains 'PAN India' %}true{% else %}false{% endif %},"quickCommerce":{% if prod.tags contains 'Quick Commerce' %}true{% else %}false{% endif %},"localDelivery":{% if prod.tags contains 'Local Delivery' %}true{% else %}false{% endif %}},"deliveryScope":{{ it.delivery_scope.value | default: '' | json }},"sort":{{ it.sort_order.value | default: it_i | json }}}{%- assign it_i = it_i | plus: 1 -%}{%- endfor -%}]}
+    {%- endcapture -%}
+    <script type="application/json" id="ganguram-custom-box-config">{{ config_json | strip | replace: '<', '\u003c' }}</script>
+    <script src="{{ 'ganguram-custom-box.js' | asset_url }}" defer></script>
   {%- elsif request.design_mode -%}
     {%- comment -%} Admin-only hint, shown ONLY in the theme editor — never to customers. {%- endcomment -%}
     <div class="gcb__notice" role="status">
@@ -59,17 +69,3 @@
     </div>
   {%- endif -%}
 </div>
-
-{%- if has_config -%}
-  {%- comment -%}
-    Build the entire config as ONE compact JSON string in `config_json`, then print it
-    exactly once inside the data island below. Nothing here writes to the page directly —
-    every value lands between the <script> tags. `| strip` removes the capture's leading/
-    trailing whitespace; the `</script>` guard stops the tag from closing early.
-  {%- endcomment -%}
-  {%- capture config_json -%}
-{"currency":{{ shop.currency | json }},"defaultRows":{{ default_rows | default: 2 | json }},"rowCounts":[{%- for n in row_counts -%}{{ n | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],"boxTypes":[{%- assign bt_i = 0 -%}{%- for bt in box_types -%}{%- if bt.active.value == false -%}{%- continue -%}{%- endif -%}{%- if bt_i > 0 -%},{%- endif -%}{"id":{{ bt_i }},"name":{{ bt.name.value | default: 'Box' | json }},"image":{% if bt.image.value %}{{ bt.image.value | image_url: width: 640 | json }}{% else %}null{% endif %},"sort":{{ bt.sort_order.value | default: bt_i | json }}}{%- assign bt_i = bt_i | plus: 1 -%}{%- endfor -%}],"items":[{%- assign it_i = 0 -%}{%- for it in row_items -%}{%- if it.active.value == false -%}{%- continue -%}{%- endif -%}{%- assign v = it.linked_variant.value -%}{%- assign prod = v.product -%}{%- if it_i > 0 -%},{%- endif -%}{"id":{{ it_i }},"title":{{ it.display_title.value | default: prod.title | default: 'Item' | json }},"pieces":{{ it.fixed_piece_count.value | default: 0 | json }},"price":{% if v %}{{ v.price | json }}{% else %}null{% endif %},"available":{% if it.availability_status.value == 'unavailable' %}false{% elsif v and v.available == false %}false{% else %}true{% endif %},"image":{% if v and v.image %}{{ v.image | image_url: width: 400 | json }}{% elsif it.image.value %}{{ it.image.value | image_url: width: 400 | json }}{% elsif prod.featured_image %}{{ prod.featured_image | image_url: width: 400 | json }}{% else %}null{% endif %},"tags":{"kolkata":{% if prod.tags contains 'Kolkata' %}true{% else %}false{% endif %},"panIndia":{% if prod.tags contains 'PAN India' %}true{% else %}false{% endif %},"quickCommerce":{% if prod.tags contains 'Quick Commerce' %}true{% else %}false{% endif %},"localDelivery":{% if prod.tags contains 'Local Delivery' %}true{% else %}false{% endif %}},"deliveryScope":{{ it.delivery_scope.value | default: '' | json }},"sort":{{ it.sort_order.value | default: it_i | json }}}{%- assign it_i = it_i | plus: 1 -%}{%- endfor -%}]}
-  {%- endcapture -%}
-  <script type="application/json" id="ganguram-custom-box-config">{{ config_json | strip | replace: '</script>', '<\/script>' }}</script>
-  <script src="{{ 'ganguram-custom-box.js' | asset_url }}" defer></script>
-{%- endif -%}
