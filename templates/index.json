@@ -20,10 +20,75 @@
             "mobile_image": "shopify://shop_images/banner_2_jpg.jpg",
             "link": "",
             "open_in_new_window": false,
-            "color_background_main": "rgba(0,0,0,0)",
-            "color_text_main": "rgba(0,0,0,0)"
+            "color_background_main": "rgba(0,0,0,0.28)",
+            "color_text_main": "#ffffff"
           },
-          "blocks": {}
+          "blocks": {
+            "hero_heading_v1": {
+              "type": "heading",
+              "settings": {
+                "heading": "Heritage Bengali sweets from Kolkata since 1885",
+                "title_size": "h1",
+                "line_height": "default",
+                "text_color": "rgba(0,0,0,0)",
+                "seo_h_tag": "h1"
+              },
+              "blocks": {}
+            },
+            "hero_caption_v1": {
+              "type": "caption",
+              "settings": {
+                "caption": "Fresh mishti delivered across serviceable Kolkata pincodes, with selected packed and tinned sweets shipped across India.",
+                "text_size": "regular",
+                "text_background_color": "rgba(0,0,0,0)",
+                "text_color": "rgba(0,0,0,0)"
+              },
+              "blocks": {}
+            },
+            "hero_ctas_v1": {
+              "type": "content-group",
+              "settings": {
+                "spacing": "small"
+              },
+              "blocks": {
+                "hero_cta1_v1": {
+                  "type": "button",
+                  "settings": {
+                    "button_label": "Order Fresh in Kolkata",
+                    "link": "/collections/kolkata-fresh-sweets",
+                    "open_in_new_window": false,
+                    "button_size": "large",
+                    "button_style": "solid",
+                    "color_text_buttons": "rgba(0,0,0,0)",
+                    "color_accent_buttons": "rgba(0,0,0,0)"
+                  },
+                  "blocks": {}
+                },
+                "hero_cta2_v1": {
+                  "type": "button",
+                  "settings": {
+                    "button_label": "Shop PAN India Sweets",
+                    "link": "/collections/packed-mishti",
+                    "open_in_new_window": false,
+                    "button_size": "large",
+                    "button_style": "outline",
+                    "color_text_buttons": "rgba(0,0,0,0)",
+                    "color_accent_buttons": "rgba(0,0,0,0)"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "hero_cta1_v1",
+                "hero_cta2_v1"
+              ]
+            }
+          },
+          "block_order": [
+            "hero_heading_v1",
+            "hero_caption_v1",
+            "hero_ctas_v1"
+          ]
         }
       },
       "block_order": [
@@ -32,8 +97,8 @@
       "settings": {
         "desktop_height": "80vh",
         "mobile_height": "80vh",
-        "is_auto_height": true,
-        "autorotate_enable": true,
+        "is_auto_height": false,
+        "autorotate_enable": false,
         "autorotate_interval": 6,
         "alignment": "horizontal-left align-content--vertical-middle",
         "width": "70",
@@ -259,33 +324,13 @@
           "type": "card",
           "settings": {
             "image": "shopify://shop_images/nolen-gur-pata-sandesh.jpg",
-            "caption": "Since 1885",
-            "title": "Heritage Bengali Mithai",
+            "caption": "Delivered by Kolkata pincode",
+            "title": "Fresh Mishti in Kolkata",
             "subtitle": "",
-            "link": "/collections/sandesh",
+            "link": "/collections/kolkata-fresh-sweets",
             "open_in_new_window": false,
-            "button_label": "Show more",
+            "button_label": "Order Fresh",
             "color_background_main": "#ebe0c9",
-            "color_text_main": "rgba(0,0,0,0)",
-            "color_accent_main": "rgba(0,0,0,0)",
-            "color_borders_main": "#e1e1e1",
-            "color_shadow_main": "rgba(0,0,0,0)",
-            "color_hide_borders": true,
-            "color_hide_shadow": false,
-            "seo_h_tag": "h3"
-          }
-        },
-        "16540673826052f668-1": {
-          "type": "card",
-          "settings": {
-            "image": "shopify://shop_images/kaju-barfi.jpg",
-            "caption": "Premium gifting",
-            "title": "Dry-Fruit Mithai",
-            "subtitle": "",
-            "link": "/collections/dry-fruits-mishti",
-            "open_in_new_window": false,
-            "button_label": "Show more",
-            "color_background_main": "#cfded3",
             "color_text_main": "rgba(0,0,0,0)",
             "color_accent_main": "rgba(0,0,0,0)",
             "color_borders_main": "#e1e1e1",
@@ -299,12 +344,12 @@
           "type": "card",
           "settings": {
             "image": "shopify://shop_images/mishti-maharashtrian-fusion.jpg",
-            "caption": "Delivered across India",
-            "title": "Packed Sweets & Snacks",
+            "caption": "Shipped across India",
+            "title": "Packed Sweets & Tinned Mishti",
             "subtitle": "",
             "link": "/collections/packed-mishti",
             "open_in_new_window": false,
-            "button_label": "Show more",
+            "button_label": "Shop PAN India",
             "color_background_main": "#cddce4",
             "color_text_main": "rgba(0,0,0,0)",
             "color_accent_main": "rgba(0,0,0,0)",
@@ -318,7 +363,6 @@
       },
       "block_order": [
         "16540673826052f668-0",
-        "16540673826052f668-1",
         "16540673826052f668-2"
       ],
       "settings": {
@@ -329,7 +373,7 @@
         "button_label": "",
         "cta_url": "",
         "open_in_new_window": false,
-        "layout": "grid-3 grid-lap-1",
+        "layout": "grid-2 grid-lap-1",
         "image_aspect_ratio": "1",
         "text_alignment": "text-align--center",
         "caption_size": "regular",
@@ -473,7 +517,7 @@
                   "type": "button",
                   "settings": {
                     "button_label": "ABOUT US",
-                    "link": "",
+                    "link": "/pages/heritage",
                     "open_in_new_window": false,
                     "button_size": "regular",
                     "button_style": "solid",
@@ -559,7 +603,7 @@
       ],
       "settings": {
         "scroll_direction": "left",
-        "speed": 200,
+        "speed": 40,
         "pause_on_hover": false,
         "horizontal_space": "0.7",
         "text_size": "200",
@@ -624,7 +668,7 @@
               "type": "button",
               "settings": {
                 "button_label": "View products",
-                "link": "",
+                "link": "/collections/kolkata-fresh-sweets",
                 "open_in_new_window": false,
                 "button_size": "large",
                 "button_style": "solid",
@@ -849,18 +893,25 @@
           "type": "button",
           "settings": {
             "button_label": "Our Heritage",
-            "link": "",
+            "link": "/pages/heritage",
             "open_in_new_window": false,
             "button_size": "large",
             "button_style": "outline"
+          }
+        },
+        "gcbx_story_text_v1": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Since 1885, Ganguram has crafted Bengal's best-loved mishti in the heart of Kolkata — from nolen gur sandesh to kaju barfi. Four generations on, we still make our sweets the traditional way, bringing them fresh to serviceable Kolkata pincodes, with our packed and tinned range shipped across India.</p>",
+            "text_size": "regular"
           }
         }
       },
       "block_order": [
         "1655130414988486bd-0",
+        "gcbx_story_text_v1",
         "1655130414988486bd-2"
       ],
-      "disabled": true,
       "settings": {
         "height": "regular",
         "image_position": "top",
@@ -922,7 +973,7 @@
           "settings": {
             "title": "Bulk & Gifting Orders",
             "caption": "Bulk, wedding and corporate orders available",
-            "link": "",
+            "link": "/pages/corporate-gifting",
             "open_in_new_window": false,
             "seo_h_tag": "h3"
           }
