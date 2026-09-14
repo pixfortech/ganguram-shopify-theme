@@ -103,7 +103,7 @@
                           <input type="email" class="newsletter__input" value="{% if customer %}{{ customer.email }}{% endif %}" placeholder="{{ 'general.newsletter.email_label' | t }}" name="contact[email]" id="Email-{{ form_id }}" aria-label="{{ 'general.newsletter.email_label' | t }}" autocorrect="off" autocapitalize="off" required> 
                           <button type="submit" id="Subscribe-{{ form_id }}" aria-label="{{ 'general.newsletter.submit_label' | t }}">
                               <span class="visually-hidden">{{ 'general.newsletter.submit_label' | t }}</span>
-                              <span aria-hidden="true" role="img">{%- render 'theme-symbols': icon: 'send' -%}
+                              <span aria-hidden="true" role="img">{%- render 'theme-symbols', icon: 'send' -%}
                           </button>
                         </div>
                         
@@ -647,4 +647,13 @@
       ]
     }
   }
-{% endschema %}
+{% endschema %}{%- comment -%}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{%- render 'theme-symbols': icon: 'send' -%}"
+  to: "{%- render 'theme-symbols', icon: 'send' -%}"
+  position: 4874..4918
+{%- endcomment -%}
