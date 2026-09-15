@@ -1089,6 +1089,10 @@
           </div>
 
         {%- when 'buy_buttons' -%}
+          {%- comment -%} Custom Sweets Box builder (B1): on products with custom_box.enabled == true this replaces the buy buttons with the metafield-gated read-only builder shell; every other product falls through to the standard product form below, unchanged. No cart/delivery/checkout change. {%- endcomment -%}
+          {%- if product.metafields.custom_box.enabled -%}
+            {%- render 'ganguram-custom-box-builder', product: product -%}
+          {%- else -%}
           <div class="product-actions" {{ block.shopify_attributes }}>
             {%- if block.settings.show_price -%}
               <div data-update-block="price-extended" class="product-actions__price show-block-if-variant-selected">
@@ -1223,6 +1227,7 @@
               {%- endform -%}
             </product-form>
           </div>
+          {%- endif -%}
 
         {%- when 'collapsible_tab' -%}
           {%- liquid
