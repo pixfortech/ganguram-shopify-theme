@@ -16,8 +16,8 @@
           "type": "_slide-image",
           "name": "t:sections.local-extra-words.sections.slideshow.block.name",
           "settings": {
-            "image": "shopify://shop_images/banner_1_jpg.jpg",
-            "mobile_image": "shopify://shop_images/banner_2_jpg.jpg",
+            "image": "shopify://shop_images/ganguram-desktop-1920x1080.webp",
+            "mobile_image": "shopify://shop_images/ganguram-mobile-1440x1800.webp",
             "link": "",
             "open_in_new_window": false,
             "color_background_main": "rgba(0,0,0,0)",
