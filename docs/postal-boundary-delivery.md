@@ -82,6 +82,11 @@ Saved ShipZip rules in India zone 13013:
   preserve weight-based prices and West Bengal state restriction.
 - National Shipping 46382 already requires ALL products tagged PAN India and
   applies outside West Bengal; unchanged.
+- Delivery-date locations Beadon Street 38735 (enabled), Core Kolkata 79353,
+  South Kolkata 79354 and Suburbs 79355 (disabled) now include the same generated
+  table. Their schedules, conditions and enabled states were preserved. Inactive
+  Ganguram 38736 had no PIN list and remains unchanged. Shipping/Order Date has
+  no enabled postcode condition.
 
 An active hourly Codex follow-up checks origin and boundary data changes, following
 `postal-boundary-refresh.md`. This is a scheduled check, not an instantaneous
@@ -100,5 +105,6 @@ the listed assets/snippets and `sections/main-product.liquid`; it must not repla
 
 Deployed to live theme 152900763839 on 2026-10-28. All 10 automated tests passed.
 Theme Check on the full live-derived theme reports the same pre-existing 1 error
-and 48 warnings as the backup; no additions. Preview UI verified Rosogolla hidden
-for 110001 and purchasable for intersecting PIN 700145. No real order was placed.
+and 48 warnings as the backup; no additions. Preview and live UI verified Rosogolla hidden
+for 110001 and purchasable for intersecting PIN 700145. All 15 deployed files were
+read back and matched the tested files byte-for-byte. No real order was placed.

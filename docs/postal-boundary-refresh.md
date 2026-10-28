@@ -17,7 +17,7 @@ Unchanged runs remain quiet; failures and meaningful changes are reported.
    A metadata change alone is not proof of a new polygon dataset. Never use
    geocoder centroids, bounding boxes or road distance as postal boundaries.
 3. If unchanged, stop. If changed, preserve the previous data, calculated export,
-   affected live theme files and all three affected ShipZip form configurations.
+   affected live theme files and all affected ShipZip rate/date configurations.
 4. Run from the repository root:
 
    `node scripts/build-postal-boundaries.cjs <national-geojson> <fresh-settings-json>`
@@ -34,6 +34,10 @@ Unchanged runs remain quiet; failures and meaningful changes are reported.
    Shipping 46383 Exclude. Preserve all other rate settings documented in
    `postal-boundary-delivery.md`. Reopen and verify each saved value byte-for-byte
    after trimming whitespace. Do not send private checkout/customer data to a new service.
+   Also synchronize the Include PIN lists in Delivery/Pickup Date locations:
+   Beadon Street 38735, Core Kolkata 79353, South Kolkata 79354, Suburbs 79355.
+   Preserve their enabled states and schedules; 38735 is enabled, the others are
+   disabled at installation. Leave empty inactive Ganguram 38736 unchanged.
 7. Upload only `assets/ganguram-postal-boundaries.js` to the current live theme
    using Shopify CLI with `--only`, `--allow-live`, `--nodelete`. Verify its hash
    and origin, and representative included/excluded PINs. The storefront rejects
@@ -44,5 +48,5 @@ Unchanged runs remain quiet; failures and meaningful changes are reported.
 
 The app has no polygon-based rate condition, so its PIN table is a generated
 integration artifact, not a manually maintained delivery policy. Updating a live
-origin and three external app rules is not transactional: keep the update window
+origin and external app rules is not transactional: keep the update window
 short and verify the complete set before reporting success.
