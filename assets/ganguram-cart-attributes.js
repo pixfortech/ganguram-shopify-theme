@@ -343,6 +343,7 @@
     renderSummary();
     observeCartForms();
     window.addEventListener(EVENT, onChange);
+    window.addEventListener('ganguram:delivery-distance-updated', function () { scheduleSync(null); });
     // City enrichment completed later -> refresh the summary label and re-sync the
     // now city-aware address summary attribute (debounced, idempotent, fail-open).
     window.addEventListener('ganguram:delivery-label-updated', function () { renderSummary(); scheduleSync(null); });

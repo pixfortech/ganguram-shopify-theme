@@ -306,6 +306,7 @@
     try { render(); } catch (e) {}
     try { observeCartForms(); } catch (e) {}
     window.addEventListener('ganguram:delivery-location-changed', function () { try { apply('location'); } catch (e) {} });
+    window.addEventListener('ganguram:delivery-distance-updated', function () { try { apply('location'); } catch (e) {} });
     window.addEventListener('ganguram:delivery-label-updated', function () { try { apply('location'); } catch (e) {} });
     // Phase 2: when the 4HR window opens/closes, re-derive so a stale 4HR choice auto-switches to STD.
     window.addEventListener('ganguram:four-hour-window-changed', function () { try { apply('location'); } catch (e) {} });

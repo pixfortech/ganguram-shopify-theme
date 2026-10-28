@@ -6,7 +6,7 @@
 body.ganguram-product-unavailable [data-js-product-add-to-cart],
 body.ganguram-product-unavailable .add-to-cart,
 body.ganguram-product-unavailable .shopify-payment-button {
-  opacity: 0.5 !important;
+  display: none !important;
   pointer-events: none !important;
   cursor: not-allowed !important;
 }

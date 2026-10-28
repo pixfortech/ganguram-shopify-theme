@@ -332,6 +332,7 @@
     renderAll();
     observeCartForms();
     window.addEventListener('ganguram:delivery-location-changed', renderAll);
+    window.addEventListener('ganguram:delivery-distance-updated', renderAll);
     window.addEventListener('ganguram:four-hour-window-changed', renderAll);  // Phase 2: 4HR opens/closes
     document.addEventListener('change', function (e) { var p = e.target && e.target.closest && e.target.closest('[data-ganguram-delivery-datepicker]'); if (p) { onPickerChange(p); } }, false);
     document.addEventListener('click', onCheckoutClick, true);
