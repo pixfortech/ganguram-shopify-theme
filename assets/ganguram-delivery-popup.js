@@ -136,7 +136,11 @@
     if (!z) { setStatus('Delivery lookup is unavailable. Please reload and try again.', 'error'); return; }
     var test = z.classifyPincode(raw);
     if (!test || test.zone === 'unknown' || test.isServiceable !== true) {
-      setStatus('Please enter a valid serviceable pincode.', 'error');
+        setStatus(test && test.reason === 'pin_not_in_postal_data'
+          ? 'We cannot verify the delivery boundary for this pincode yet. Please contact the store for delivery assistance.'
+          : test && test.reason === 'boundary_data_unavailable'
+            ? 'Delivery lookup is temporarily unavailable. Please reload or contact the store.'
+            : 'Please enter a valid serviceable pincode.', 'error');
       if (input) { try { input.focus(); input.select(); } catch (e) {} } // keep focus in the input
       return; // invalid -> NOT stored
     }

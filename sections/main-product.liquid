@@ -10,6 +10,10 @@
   assign gz_k = false
   assign gz_p = false
   assign gz_q = false
+  assign gz_ld = false
+  if product.tags contains 'Local Delivery'
+    assign gz_ld = true
+  endif
   if product.tags contains 'Kolkata'
     assign gz_k = true
   endif
@@ -35,6 +39,7 @@
   data-ganguram-kolkata="{{ gz_k }}"
   data-ganguram-pan-india="{{ gz_p }}"
   data-ganguram-quick-commerce="{{ gz_q }}"
+  data-ganguram-local-delivery="{{ gz_ld }}"
   data-js-product-component
 >
   {%- assign current_variant = product.selected_or_first_available_variant -%}

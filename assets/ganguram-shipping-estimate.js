@@ -217,60 +217,25 @@
     function four(state, reason) { if (!fourOn) { state = 'no'; reason = '4 Hours disabled in config'; } s.fourHour = { state: state, price: price4 }; s.reasonFourHour = reason; }
     function withinFour() { s.isWithinFourHourRadius = true; four(qcCart ? 'yes' : 'no', qcCart ? ('within the configured ' + fourMax + 'km 4-hour radius and all items Quick Commerce') : ('within the configured ' + fourMax + 'km 4-hour radius but cart is not all Quick Commerce')); }
 
-    // ---- full address, no distance yet -> PENDING (never flash a wrong PAN India mode) ----
-    if (ctx.isAddress && !hasDist) {
-      s.basis = 'address'; s.mode = 'pending';
-      s.reasonPan = 'full address selected — computing driving distance, no mode shown yet';
-      return s;
-    }
-
-    // ---- 1) FULL ADDRESS with a confirmed driving distance (highest priority) ----
-    if (ctx.isAddress && hasDist) {
-      var km = ctx.distanceKm; s.basis = 'address';
-      if (km <= localMax) {
-        // RADIUS decisions (local vs PAN, 4-hour) use the RAW distance; only the PRICE slab is
-        // padded by the safety margin, so a near-boundary distance never under-quotes Standard.
-        s.mode = 'local'; s.isWithinLocalStandardRadius = true;
-        s.slabDistanceKm = slabInputKm(km); s.standard = standardForKm(s.slabDistanceKm);
-        s.reasonPan = 'address ' + round1(km) + 'km is within the configured ' + localMax + 'km local‑standard radius -> NOT PAN India';
-        if (km <= fourMax) { withinFour(); }
-        else { four('no', 'distance ' + round1(km) + 'km > the configured ' + fourMax + 'km 4-hour radius -> 4 Hours not available'); }
+    s.basis = ctx.isAddress ? 'address' : (ctx.areaRange ? 'area' : 'zone');
+    if (ctx.zone === 'kolkata') {
+      s.mode = 'local'; s.isWithinLocalStandardRadius = true;
+      s.reasonPan = 'Entire postal polygon belongs to the Kolkata delivery boundary';
+      if (ctx.isAddress && hasDist) {
+        s.slabDistanceKm = slabInputKm(ctx.distanceKm);
+        s.standard = standardForKm(s.slabDistanceKm);
+        if (ctx.distanceKm <= fourMax) withinFour();
+        else four('no', 'Address exceeds the configured express distance');
       } else {
-        four('no', 'distance ' + round1(km) + 'km > the configured ' + localMax + 'km local radius -> no local delivery, no 4 Hours');
-        if (panCart) { s.mode = 'pan_india'; s.panIndia = panIndiaForWeight(ctx.cartWeightGrams); s.reasonPan = 'address ' + round1(km) + 'km > ' + localMax + 'km and all items PAN India eligible'; }
-        else { s.mode = 'block'; s.reasonPan = 'address > ' + localMax + 'km but some items are local-only -> not deliverable'; }
+        s.standard = ctx.areaRange ? standardForRange(ctx.areaRange.minKm, ctx.areaRange.maxKm) : fallbackRange();
+        four('maybe', 'Enter a full address to confirm express availability');
       }
-      return s;
-    }
-
-    // ---- 2) PINCODE-ONLY with a sampled area range ----
-    if (!ctx.isAddress && ctx.areaRange && typeof ctx.areaRange.minKm === 'number') {
-      var lo = ctx.areaRange.minKm, hi = ctx.areaRange.maxKm; s.basis = 'area';
-      if (lo <= localMax) {
-        s.mode = 'local'; s.isWithinLocalStandardRadius = true; s.crossesLocal = hi > localMax;
-        s.standard = standardForRange(lo, Math.min(hi, localMax));
-        s.reasonPan = 'pincode area (' + round1(lo) + '–' + round1(hi) + 'km) overlaps the configured ' + localMax + 'km local radius -> local, NOT PAN India';
-        if (hi <= fourMax) { withinFour(); }
-        else if (lo <= fourMax) { four('maybe', 'sampled area straddles the configured ' + fourMax + 'km 4-hour radius -> enter full address to confirm 4 Hours'); }
-        else { four('no', 'whole sampled area beyond the configured ' + fourMax + 'km 4-hour radius'); }
-      } else {
-        four('no', 'pincode area beyond the configured ' + localMax + 'km local radius -> no local, no 4 Hours');
-        if (panCart) { s.mode = 'pan_india'; s.panIndia = panIndiaForWeight(ctx.cartWeightGrams); s.reasonPan = 'pincode area > ' + localMax + 'km and all items PAN India'; }
-        else { s.mode = 'block'; s.reasonPan = 'pincode area > ' + localMax + 'km but some items local-only'; }
-      }
-      return s;
-    }
-
-    // ---- 3) NO distance -> zone fallback (degraded; refined once a distance is known) ----
-    s.basis = 'zone';
-    if (ctx.zone === 'kolkata' || ctx.zone === 'quick_commerce') {
-      s.mode = 'local'; s.isWithinLocalStandardRadius = true; s.standard = fallbackRange();
-      four((ctx.zone === 'quick_commerce' && qcCart) ? 'yes' : 'no', ctx.zone === 'quick_commerce' ? (qcCart ? 'quick-commerce zone + QC cart (no distance yet)' : 'quick-commerce zone but cart not all-QC') : 'local (non quick-commerce) zone, no distance yet');
-      s.reasonPan = 'local zone (' + ctx.zone + '), no distance yet -> local fallback span';
+      // Beyond 20 km, keep the highest configured local tier (approved ₹150).
+      // Postal eligibility remains Kolkata even when the driving route is longer.
     } else if (ctx.zone === 'pan_india') {
-      four('no', 'PAN India zone -> no 4 Hours');
-      if (panCart) { s.mode = 'pan_india'; s.panIndia = panIndiaForWeight(ctx.cartWeightGrams); s.reasonPan = 'PAN India zone (no distance) and all items PAN India'; }
-      else { s.mode = 'block'; s.reasonPan = 'PAN India zone but some items local-only'; }
+      four('no', 'Outside the Kolkata postal boundary');
+      if (panCart) { s.mode = 'pan_india'; s.panIndia = panIndiaForWeight(ctx.cartWeightGrams); }
+      else { s.mode = 'block'; s.reasonPan = 'Some products are unavailable for this pincode'; }
     }
     return s;
   }

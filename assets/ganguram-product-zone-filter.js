@@ -78,6 +78,7 @@
       //                                                  Local Delivery / Kolkata / Quick Commerce do
       //                                                  NOT make a product PAN-India-deliverable.
     }
+    if (zone !== 'kolkata' && zone !== 'quick_commerce') return false;
     // kolkata or quick_commerce pincode (QC ⊆ Kolkata serviceable area):
     if (context === 'quick') { return q; }            // 4 Hours Delivery grid -> only Quick Commerce
     return k || ld;                                    // normal grids -> Kolkata OR Local Delivery
@@ -97,7 +98,7 @@
   function isProductDeliverableToZone(tags, zone) {
     if (!zone) { return true; }                                  // no pincode -> never block
     if (isProductVisibleForContext(tags, zone, 'normal')) { return true; }
-    if (zone === 'quick_commerce' && isProductVisibleForContext(tags, zone, 'quick')) { return true; }
+    if ((zone === 'kolkata' || zone === 'quick_commerce') && isProductVisibleForContext(tags, zone, 'quick')) { return true; }
     return false;
   }
 
@@ -117,6 +118,8 @@
     };
     return isProductVisibleForContext(tags, zoneName, contextOf(card));
   }
+
+  window.GanguramZoneRules.cardAllowed = cardAllowed;
 
   function debounce(fn, wait) {
     var t;

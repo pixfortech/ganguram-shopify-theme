@@ -1,64 +1,10 @@
-/*
- * Ganguram — Delivery rule engine (read + resolve)  (Phase 2.11B, extended 2.11B.1)
- * ---------------------------------------------------------------------------
- * Reads the admin-configured delivery rules published by
- * snippets/ganguram-delivery-rules-config.liquid (from the `ganguram_delivery_rule`
- * metaobject) and resolves the single rule that applies to the currently selected
- * delivery location. Defines window.GanguramDeliveryRules.
- *
- * FOUNDATION ONLY — a pure data/resolver layer. It renders NO UI, builds NO
- * progress bar, enforces NO MOV, sets NO delivery charge, and changes NO
- * checkout / cart / ShipZip / SBZ / zipLogic / Google / resolver behaviour. It is
- * INERT on load (only defines the global) and fully FAIL-OPEN: with no config /
- * no rules / no selection it returns a safe null/default and never throws.
- *
- * MODEL (2.11B.1): supports state-level MOV and distance-radius local delivery.
- * Resolution priority (most-specific-wins):
- *   1. exact_pincode — always highest (explicit per-pincode admin override).
- *   2/3. "DISTANCE MODE" — when a distanceKm is supplied AND at least one rule
- *        defines a band/radius (i.e. a Google address with coordinates):
- *          a. distance band  (distance_min_km..distance_max_km)         -> 'distance'
- *          b. local radius   (distanceKm <= local_radius_km = local)    -> 'local_radius'
- *        A FAR address (beyond every band/radius) matches NEITHER, so it is treated
- *        as REMOTE: pincode-prefix local rules are SKIPPED and it falls through to
- *        state / PAN India even if its pincode is in West Bengal (requirement #6).
- *      OTHERWISE (manual pincode entry, or no band/radius rules configured):
- *          prefix — rule.pincode_prefix matches, longest prefix wins  -> 'prefix'
- *   4. state      — state_key / state_name / state matches the location's state
- *   4b. zone      — ZONE FALLBACK (until Distance Matrix): a rule whose only
- *                   criterion is zone_key = the selected LOCAL zone (kolkata /
- *                   quick_commerce), with no pincode/prefix/state/radius/band.
- *                   Non-distance-mode only, so far addresses still fall to
- *                   state / PAN India; distance rules keep priority once a
- *                   distanceKm is supplied.
- *   5. pan_india  — the PAN India default rule (zone_key = 'pan_india')
- *   6. default    — the global catch-all (a rule with no match criteria)
- *   -> none       — nothing matched and no default exists
- *
- * Manual pincode-only entries supply no distance, so they use exact -> prefix ->
- * state -> PAN India (requirement #7); exact distance needs address coordinates.
- *
- * Units: money values are PAISE (integer minor units, matching cart.total_price);
- * distances are KILOMETRES. `location` defaults to
- * GanguramZone.getSelectedDeliveryLocation(); the location's STATE (for tier 4) is
- * taken from location.state, else options.state, else the read-only enrichment
- * caches (ganguram.pincodeCityCache / ganguram.recentLocations).
- *
- * SERVICE OPTIONS (2.11B.2): the same slab can offer multiple delivery SERVICES
- * (e.g. "standard" + "four_hour"). getServiceOptions() returns the best rule PER
- * service type for the location, carrying each service's date-picker / offset /
- * 4-hour-eligibility requirements and customer messages. A four-hour option is
- * dropped when the cart is known ineligible (req #5) and kept with eligible:null
- * when eligibility is unknown so Phase 2.11C can filter it safely (req #6).
- *
- * Public API:
- *   getRules()
- *   resolve(location, options)               options: { distanceKm, state }
- *   getServiceOptions(location, options)     options: { distanceKm, state, fourHourEligibleCart }
- *   getProgressData(cartSubtotal, location, options)   (DATA ONLY — no UI)
- *   formatMoney(paise)
- * No jQuery / Bootstrap / FontAwesome.
- * ---------------------------------------------------------------------------
+/* Ganguram delivery rules, scoped to the computed postal zone.
+ * Manual PIN, prefix and state overrides cannot change delivery eligibility.
+ * Distance bands select tariffs within a zone; a long road route never turns
+ * an included Kolkata postal area into PAN India. Beyond 20 km, Standard
+ * Delivery uses the highest configured local tier (currently INR 150).
+ * This module returns rule data; ShipZip enforces checkout rates separately.
+ * Currency values are paise. Distances are kilometres.
  */
 (function () {
   'use strict';
@@ -196,76 +142,40 @@
     var pin = ctx.pin, zone = ctx.zone, state = ctx.state, distanceKm = ctx.distanceKm, distanceMode = ctx.distanceMode;
     if (!rules.length) { return { rule: null, reason: 'none' }; }
 
-    // 1) exact pincode — always highest
-    if (pin) {
-      var exact = rules.filter(function (r) { return r.pincodes.indexOf(pin) !== -1; }).sort(byPriorityDesc);
-      if (exact.length) { return { rule: exact[0], reason: 'exact_pincode' }; }
-    }
-
+    // A PIN's polygon decides its zone. Neither a manually entered PIN/prefix,
+    // a descriptive state field nor a long road route may override that decision.
+    if (zone !== 'kolkata' && zone !== 'pan_india') return {rule:null, reason:'unknown_zone'};
+    rules = rules.filter(function (r) {
+      return r.pincodes.length === 0 && r.prefixes.length === 0 &&
+        (r.zone === zone || isGlobalDefault(r));
+    });
     if (distanceMode) {
-      // 3a) distance band
       var band = rules.filter(function (r) {
-        var hasBand = r.distanceMinKm != null || r.distanceMaxKm != null;
-        var aboveMin = r.distanceMinKm == null || distanceKm >= r.distanceMinKm;
-        var belowMax = r.distanceMaxKm == null || distanceKm <= r.distanceMaxKm;
-        return hasBand && aboveMin && belowMax;
+        return (r.distanceMinKm != null || r.distanceMaxKm != null) &&
+          (r.distanceMinKm == null || distanceKm >= r.distanceMinKm) &&
+          (r.distanceMaxKm == null || distanceKm <= r.distanceMaxKm);
       }).sort(byPriorityDesc);
-      if (band.length) { return { rule: band[0], reason: 'distance' }; }
-
-      // 3b) local radius (smallest radius that still contains the distance wins).
-      //     Beyond every radius -> no match; prefix is skipped (requirement #6).
-      var rad = rules
-        .filter(function (r) { return r.localRadiusKm != null && distanceKm <= r.localRadiusKm; })
-        .sort(function (a, b) { return (a.localRadiusKm - b.localRadiusKm) || byPriorityDesc(a, b); });
-      if (rad.length) { return { rule: rad[0], reason: 'local_radius' }; }
-    } else if (pin) {
-      // 2) pincode prefix (manual / no distance) — longest prefix wins
-      var pref = rules
-        .map(function (r) {
-          var best = 0;
-          for (var i = 0; i < r.prefixes.length; i++) {
-            var p = r.prefixes[i];
-            if (p && pin.indexOf(p) === 0 && p.length > best) { best = p.length; }
-          }
-          return { r: r, plen: best };
-        })
-        .filter(function (x) { return x.plen > 0; })
-        .sort(function (a, b) { return (b.plen - a.plen) || byPriorityDesc(a.r, b.r); });
-      if (pref.length) { return { rule: pref[0].r, reason: 'prefix' }; }
+      if (band.length) return {rule:band[0], reason:'distance'};
     }
-
-    // 4) state
-    if (state) {
-      var st = rules.filter(function (r) {
-        return r.stateNames.indexOf(state) !== -1 || r.stateKeys.indexOf(state) !== -1;
-      }).sort(byPriorityDesc);
-      if (st.length) { return { rule: st[0], reason: 'state' }; }
+    // Zone defaults apply to the entire expanded postal boundary. Radius-only
+    // records no longer determine membership; their prices are retained locally.
+    var defaults = rules.filter(function (r) {
+      return r.zone === zone && r.distanceMinKm == null && r.distanceMaxKm == null;
+    }).sort(byPriorityDesc);
+    if (defaults.length) {
+      var fallback = defaults[0];
+      // Newly included postal areas can have road routes beyond the old 20 km
+      // slab. Match the approved highest local tier instead of the legacy default.
+      if (zone === 'kolkata' && distanceKm > 20 && normService(fallback) === 'standard' && window.GanguramShippingEstimate) {
+        fallback = Object.assign({}, fallback, {
+          deliveryCharge: window.GanguramShippingEstimate.standardForKm(distanceKm).maxPrice * 100,
+          freeDeliveryThreshold: null
+        });
+      }
+      return {rule:fallback, reason:'postal_zone'};
     }
-
-    // 4b) zone-level fallback (local zones only) — used until a Distance Matrix
-    //     integration supplies distanceKm. Matches a rule whose ONLY criterion is
-    //     zone_key = the selected local zone (kolkata / quick_commerce), with no
-    //     pincode / prefix / state / radius / band. Distance rules are untouched
-    //     and still take priority once distanceKm exists; this is SKIPPED in
-    //     distance mode so a far address never becomes "local" (requirement #6).
-    if (!distanceMode && isLocalZone(zone)) {
-      var zf = rules.filter(function (r) {
-        return isLocalZone(r.zone) && r.zone === zone &&
-          r.pincodes.length === 0 && r.prefixes.length === 0 &&
-          r.stateKeys.length === 0 && r.stateNames.length === 0 &&
-          r.localRadiusKm == null && r.distanceMinKm == null && r.distanceMaxKm == null;
-      }).sort(byPriorityDesc);
-      if (zf.length) { return { rule: zf[0], reason: 'zone' }; }
-    }
-
-    // 5) PAN India default
-    var pi = rules.filter(isPanIndiaDefault).sort(byPriorityDesc);
-    if (pi.length) { return { rule: pi[0], reason: 'pan_india' }; }
-
-    // 6) global default
-    var def = rules.filter(isGlobalDefault).sort(byPriorityDesc);
-    if (def.length) { return { rule: def[0], reason: 'default' }; }
-
+    var global = rules.filter(isGlobalDefault).sort(byPriorityDesc);
+    if (global.length) return {rule:global[0], reason:'default'};
     return { rule: null, reason: 'none' };
   }
 
