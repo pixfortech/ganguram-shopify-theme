@@ -177,20 +177,6 @@
         "disabled": false,
         "settings": {}
       },
-      "14578213307157327268": {
-        "type": "shopify://apps/velocity-insights/blocks/velocity-app-embed/eb76ac2e-4f36-413e-b08f-4ccc7da0a12f",
-        "disabled": true,
-        "settings": {
-          "enable_checkout_button": true,
-          "checkout_button_bg_color_v2": "#00a882",
-          "checkout_button_border_radius_v2": 8,
-          "enable_delivery_checker": false,
-          "delivery_title": "Check Delivery Date",
-          "delivery_button_text": "Check Delivery Date",
-          "delivery_button_color": "#008060",
-          "delivery_button_text_color": "#ffffff"
-        }
-      },
       "14326192065026276651": {
         "type": "shopify://apps/google-tag-manager-ga4/blocks/gtm-embed/01995b81-4e6b-7b12-9195-febd92a96a6a",
         "disabled": false,
@@ -248,8 +234,8 @@
           "mobile_bottom_margin": 46
         }
       },
-      "6460986421370555689": {
-        "type": "shopify://apps/apippa-custom-price-calc/blocks/cpc-app-embed/c499fa68-8478-4285-a3f7-27654dd66c3e",
+      "1513253815146976218": {
+        "type": "shopify://apps/omnisend-email-marketing-sms/blocks/app-embed/44704aa2-794f-4c5d-8c8e-039c841158e9",
         "disabled": false,
         "settings": {}
       }
