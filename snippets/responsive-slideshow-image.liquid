@@ -38,7 +38,7 @@
   }
 </style>
 <figure id="responsive-slide-{{ id }}"
-  class="lazy-image {% if type == 'background' %}lazy-image--background{% endif %}"
+  class="lazy-image {% if preload %}lazyloaded{% endif %} {% if type == 'background' %}lazy-image--background{% endif %}"
   data-ratio="{{ image.aspect_ratio }}" data-crop="true">
   <picture>
     <source media="(max-width: 767px)" srcset="{{ mobile_srcset }}" {{ sizes }}
