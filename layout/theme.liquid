@@ -48,10 +48,10 @@
   {{ 'theme.css' | asset_url | stylesheet_tag }}
 
   {%- comment -%} Pincode widget CSS in <head> (hotfix) so the location/caret icons never flash oversized before the late body CSS applies. {%- endcomment -%}
-  {{ 'ganguram-delivery-widget.css' | asset_url | stylesheet_tag }}
+  <style data-ganguram-inline="ganguram-delivery-widget.css">{{ 'ganguram-delivery-widget.css' | inline_asset_content }}</style>
 
   {%- comment -%} Phase 1 UX polish (in <head> so the sticky header + buy-gate + out-of-stock rules apply before first paint): gate buy buttons until a valid pincode, hide out-of-stock product cards from grids, and make the header sticky on desktop + mobile. Display only; no rate/eligibility/MOV/checkout change. {%- endcomment -%}
-  {{ 'ganguram-phase1-ux.css' | asset_url | stylesheet_tag }}
+  <style data-ganguram-inline="ganguram-phase1-ux.css">{{ 'ganguram-phase1-ux.css' | inline_asset_content }}</style>
 
 	{{ content_for_header }}
 
@@ -534,7 +534,7 @@
 
   {%- comment -%} Mandatory pincode popup + add-to-cart/buy-now guard (Phase 2.1d) — UI/guard only via window.GanguramZone; no checkout/MOV/availability logic. {%- endcomment -%}
   {%- render 'delivery-location-popup' -%}
-  {{ 'ganguram-delivery-popup.css' | asset_url | stylesheet_tag }}
+  <style data-ganguram-inline="ganguram-delivery-popup.css">{{ 'ganguram-delivery-popup.css' | inline_asset_content }}</style>
   <script src="{{ 'ganguram-delivery-popup.js' | asset_url }}" defer></script>
 
   {%- comment -%} Phase 1 storefront gate — no-pincode purchase gate only (HIDE Add to cart / Buy now and show an "Enter delivery pin code to shop" CTA). Out-of-stock hiding is done in Liquid (product.available) + CSS, NOT here. Loaded AFTER the resolver/popup. Display only; fail-open; no ShipZip/eligibility/MOV/prefill change. {%- endcomment -%}
@@ -565,7 +565,7 @@
   <script src="{{ 'ganguram-pincode-enrich.js' | asset_url }}" defer></script>
 
   {%- comment -%} Product visibility filtering by delivery zone (Phase 2.2) — display only; reads window.GanguramZone. No cart/checkout/menu/search/banner logic. {%- endcomment -%}
-  {{ 'ganguram-product-zone-filter.css' | asset_url | stylesheet_tag }}
+  <style data-ganguram-inline="ganguram-product-zone-filter.css">{{ 'ganguram-product-zone-filter.css' | inline_asset_content }}</style>
   <script src="{{ 'ganguram-product-zone-filter.js' | asset_url }}" defer></script>
 
   {%- comment -%} Menu visibility by delivery zone (Phase 2.5) — display only; data-driven Kolkata-only collection map. No cart/checkout/ShipZip logic. {%- endcomment -%}

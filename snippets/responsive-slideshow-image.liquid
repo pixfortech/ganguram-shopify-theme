@@ -1,0 +1,52 @@
+{%- comment -%}
+  Art-directed slideshow image. Match the existing 767/768px visibility breakpoint
+  with a picture source so a phone never downloads the hidden desktop image.
+  Keep both original assets, focal points, sizes, and reserved aspect ratios.
+{%- endcomment -%}
+{%- liquid
+  assign widths = '240,360,420,480,640,840,1080,1280,1540,1860,2100,2460,2820,3360,3820' | split: ','
+  assign image_alt = image.alt | default: mobile_image.alt
+-%}
+{%- capture desktop_srcset -%}
+  {%- for item in widths -%}
+    {%- assign width = item | plus: 0 -%}
+    {%- if image.width > width -%}
+      {{ image | image_url: width: width }} {{ width }}w,
+    {%- endif -%}
+  {%- endfor -%}
+  {{ image | image_url: width: image.width }} {{ image.width }}w
+{%- endcapture -%}
+{%- capture mobile_srcset -%}
+  {%- for item in widths -%}
+    {%- assign width = item | plus: 0 -%}
+    {%- if mobile_image.width > width -%}
+      {{ mobile_image | image_url: width: width }} {{ width }}w,
+    {%- endif -%}
+  {%- endfor -%}
+  {{ mobile_image | image_url: width: mobile_image.width }} {{ mobile_image.width }}w
+{%- endcapture -%}
+<style>
+  #responsive-slide-{{ id }} { padding-top: {{ 100 | divided_by: image.aspect_ratio }}%; }
+  {% if image_alignment %}
+    #responsive-slide-{{ id }} img { object-position: {{ image.presentation.focal_point }}; }
+  {% endif %}
+  @media screen and (max-width: 767px) {
+    #responsive-slide-{{ id }} { padding-top: {{ 100 | divided_by: mobile_image.aspect_ratio }}%; }
+    {% if image_alignment %}
+      #responsive-slide-{{ id }} img { object-position: {{ mobile_image.presentation.focal_point }}; }
+    {% endif %}
+  }
+</style>
+<figure id="responsive-slide-{{ id }}"
+  class="lazy-image {% if type == 'background' %}lazy-image--background{% endif %}"
+  data-ratio="{{ image.aspect_ratio }}" data-crop="true">
+  <picture>
+    <source media="(max-width: 767px)" srcset="{{ mobile_srcset }}" {{ sizes }}
+      width="{{ mobile_image.width }}" height="{{ mobile_image.height }}">
+    <img src="{{ image | image_url: width: 480 }}" srcset="{{ desktop_srcset }}" {{ sizes }}
+      alt="{{ image_alt | strip_html | escape }}" class="img"
+      width="{{ image.width }}" height="{{ image.height }}"
+      {% if preload %}fetchpriority="high" loading="eager"{% else %}loading="lazy"{% endif %}
+      onload="this.closest('figure').classList.add('lazyloaded')">
+  </picture>
+</figure>
