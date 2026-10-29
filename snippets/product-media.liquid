@@ -82,7 +82,7 @@
 
     {%- liquid
 
-      if section.index == 1 and index == 0 
+      if index == 0 and section.id contains '__main' 
         assign preload = true
       endif
       

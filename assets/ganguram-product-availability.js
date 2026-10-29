@@ -3,8 +3,7 @@
  * ---------------------------------------------------------------------------
  * On a PRODUCT page, if the product is not eligible for the selected delivery
  * pincode/zone, disable Add to Cart + Buy Now, show a clear message and a
- * "Change Pincode" action. Optionally (admin, default OFF) redirect to the
- * homepage after a countdown.
+ * single shared delivery location control in the header.
  *
  * REUSES the shared eligibility rule (window.GanguramZoneRules
  * .isProductVisibleForContext) and the pincode state (GanguramZone +
@@ -27,17 +26,12 @@
   var UNAVAIL = 'ganguram-pa-unavailable';      // per-product flag (guard reads this)
   var BODY_UNAVAIL = 'ganguram-product-unavailable'; // body flag (CSS disables buttons)
   var MSG_ATTR = 'data-ganguram-pa-msg';
-  var redirectTimer = null, redirecting = false;
 
   function cfg() { return window.GanguramProductAvailabilityConfig || {}; }
   function msgText(pincode) {
     var t = cfg().message || 'This product is not available for delivery to the selected pincode: {pincode}.';
     return t.replace('{pincode}', pincode);
   }
-  function redirectEnabled() { return cfg().redirectEnabled === true; } // default OFF
-  function redirectSeconds() { var n = parseInt(cfg().redirectSeconds, 10); return (n && n > 0) ? n : 8; }
-  function redirectTarget() { return cfg().redirectTarget || '/'; }
-
   function isProductPage() { return !!(document.body && document.body.classList.contains('template-product')); }
   function activeLoc() {
     var z = window.GanguramZone;
@@ -65,15 +59,6 @@
       localDelivery: root.getAttribute('data-ganguram-local-delivery') === 'true'
     };
   }
-  function openPincode() {
-    if (window.GanguramDelivery && typeof window.GanguramDelivery.openDeliveryLocationPopup === 'function') {
-      window.GanguramDelivery.openDeliveryLocationPopup('Enter a delivery pincode to continue.');
-      return;
-    }
-    var t = document.querySelector('[data-gdw-trigger]');
-    if (t) { t.click(); }
-  }
-
   function el(tag, cls) { var e = document.createElement(tag); if (cls) { e.className = cls; } return e; }
   function formEl(root) { return root.querySelector('form'); }
   function anchorEl(root) { return root.querySelector('product-form') || root.querySelector('[data-js-product-form]') || formEl(root); }
@@ -95,11 +80,7 @@
     box.setAttribute('role', 'alert');
     var p = el('p', 'ganguram-pa__text');
     p.textContent = msgText(pincode);
-    var btn = el('button', 'ganguram-pa__btn');
-    btn.type = 'button';
-    btn.textContent = 'Change Pincode';
-    btn.addEventListener('click', openPincode);
-    box.appendChild(p); box.appendChild(btn);
+    box.appendChild(p);
     box._text = p;
     anchor.parentNode.insertBefore(box, anchor); // just above the buy buttons
   }
@@ -108,17 +89,8 @@
     if (e && e.parentNode) { e.parentNode.removeChild(e); }
   }
 
-  function scheduleRedirect() {
-    if (!redirectEnabled() || redirectTimer || redirecting) { return; }
-    redirectTimer = setTimeout(function () {
-      redirecting = true;
-      try { window.location.assign(redirectTarget()); } catch (e) { window.location.href = redirectTarget(); }
-    }, redirectSeconds() * 1000);
-  }
-  function cancelRedirect() { if (redirectTimer) { clearTimeout(redirectTimer); redirectTimer = null; } }
-
   function apply() {
-    if (redirecting || !isProductPage()) { return; }
+    if (!isProductPage()) { return; }
     var fn = rule(); if (!fn) { return; }
     var loc = activeLoc();
     var ctx = deliveryContext();
@@ -138,9 +110,7 @@
       }
     }
     if (document.body) { document.body.classList.toggle(BODY_UNAVAIL, anyUnavail); }
-    // Keep the direct product URL open with its delivery message and change-PIN
-    // action. An automatic homepage redirect would hide the requested explanation.
-    cancelRedirect();
+    // Keep the product and eligibility explanation visible. Location changes live in the header.
   }
 
   function init() {

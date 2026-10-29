@@ -6,6 +6,8 @@
   'use strict';
   var SBZ_KEY = 'Zipcode', NS_KEY = 'ganguram.deliveryLocation';
   var EVENT = 'ganguram:delivery-location-changed';
+  var memoryPin = '';
+  var lastSnapshot = null;
   var classificationCache = Object.create(null), nationalSet = null, nationalData = null;
   function normalizePincode(value) { return value == null ? '' : String(value).trim(); }
   function resolveConfig(override) { return override || window.GanguramZoneConfig || {}; }
@@ -71,7 +73,7 @@
 
   function getSelectedPincode() {
     var ls = safeLS();
-    if (!ls) { return ''; }
+    if (!ls) { return memoryPin; }
     var snap = readSnapshot(ls);
     if (snap && snap.pincode) { return normalizePincode(snap.pincode); }
     return normalizePincode(ls.getItem(SBZ_KEY) || ''); // fall back to legacy key
@@ -85,6 +87,7 @@
 
   function setSelectedPincode(pincode) {
     var result = classifyPincode(pincode);
+    memoryPin = result.pincode;
     var ls = safeLS();
     if (ls) {
       // SBZ compatibility: keep the raw pincode under the exact legacy key.
@@ -98,11 +101,14 @@
         v: 2
       }));
     }
+    lastSnapshot = ls ? ls.getItem(NS_KEY) : null;
     dispatchChange(result);
     return result;
   }
 
   function clearSelectedDeliveryLocation() {
+    memoryPin = '';
+    lastSnapshot = null;
     var ls = safeLS();
     if (ls) {
       ls.removeItem(SBZ_KEY);
@@ -123,6 +129,28 @@
     }
     window.dispatchEvent(evt);
   }
+
+  // localStorage notifications are delivered only to OTHER documents. Read the
+  // final snapshot, not the event payload, so queued events cannot restore old data.
+  function reconcileSelection() {
+    var ls = safeLS();
+    if (!ls) { return; }
+    var snapshot = ls.getItem(NS_KEY);
+    if (snapshot === lastSnapshot) { return; }
+    lastSnapshot = snapshot;
+    memoryPin = getSelectedPincode();
+    var result = classifyPincode(memoryPin);
+    result.external = true;
+    dispatchChange(result);
+  }
+  try { lastSnapshot = window.localStorage.getItem(NS_KEY); } catch (e) {}
+  window.addEventListener('storage', function (e) {
+    if (e.key === NS_KEY || e.key === null) { reconcileSelection(); }
+  });
+  window.addEventListener('pageshow', reconcileSelection);
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') { reconcileSelection(); }
+  });
 
   // ===========================================================================
   // public API

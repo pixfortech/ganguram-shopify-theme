@@ -53,8 +53,6 @@
   function updateUrl() { return cfg().updateUrl || '/cart/update.js'; }
   function cartUrl() { return cfg().cartUrl || '/cart.js'; }
   function debounceMs() { var n = parseInt(cfg().debounceMs, 10); return (isFinite(n) && n >= 0) ? n : 600; }
-  function summaryEnabled() { return cfg().summaryEnabled !== false; }
-  function summaryLabel() { return cfg().summaryLabel || 'Delivering to:'; }
   function keys() {
     var k = cfg().keys || {};
     return {
@@ -268,38 +266,6 @@
   }
 
   // ---- optional read-only "Delivering to:" summary --------------------------
-  // Customer-facing label (city/name + pincode; never the internal zone label).
-  // Uses the shared helper; falls back to a safe local rule if it isn't loaded.
-  // DISPLAY ONLY: the stored "Delivery Zone" / "Delivery Zone Label" cart
-  // attributes still use the internal zone + label (see desiredAttributes()).
-  function displayLabel(loc) {
-    if (window.GanguramDisplayLabel && typeof window.GanguramDisplayLabel.get === 'function') {
-      return window.GanguramDisplayLabel.get(loc);
-    }
-    if (!loc || !loc.pincode) { return ''; }
-    if (loc.city) { return loc.city + ' ' + loc.pincode; }
-    if (loc.isKolkata || loc.zone === 'kolkata' || loc.zone === 'quick_commerce') { return 'Kolkata ' + loc.pincode; }
-    return String(loc.pincode);
-  }
-  function renderSummary() {
-    if (!summaryEnabled()) { return; }
-    var els = document.querySelectorAll('[data-ganguram-cart-delivery-summary]');
-    if (!els.length) { return; }
-    var loc = currentLoc();
-    var show = !!(loc && loc.pincode && loc.isServiceable === true);
-    var value = show ? displayLabel(loc) : '';
-    for (var i = 0; i < els.length; i++) {
-      var el = els[i];
-      try {
-        var labelEl = el.querySelector('[data-gcd-label]');
-        var valueEl = el.querySelector('[data-gcd-value]');
-        if (labelEl) { labelEl.textContent = summaryLabel(); }
-        if (valueEl) { valueEl.textContent = value; }
-        if (show) { el.removeAttribute('hidden'); } else { el.setAttribute('hidden', 'hidden'); }
-      } catch (e) {}
-    }
-  }
-
   // The cart re-renders via several paths (component-cart qty change, refreshCart);
   // each replaces the cart-form's HTML, dropping our painted text. Observe the
   // cart-form(s) and re-paint after any re-render. childList covers innerHTML swaps.
@@ -314,7 +280,7 @@
       // Re-paint the summary AND re-sync attributes: cart contents may have changed
       // (add/remove), which changes the Quick-Commerce eligibility signal. doSync is
       // debounced + idempotent (diffs against /cart.js), so this is cheap.
-      var run = function () { pending = false; renderSummary(); scheduleSync(null); };
+      var run = function () { pending = false; scheduleSync(null); };
       if (window.requestAnimationFrame) { window.requestAnimationFrame(run); } else { setTimeout(run, 0); }
     };
     var obs = new MutationObserver(schedule);
@@ -326,7 +292,6 @@
   // ---- wiring ---------------------------------------------------------------
   function onChange(e) {
     var detail = (e && e.detail) ? e.detail : null;
-    renderSummary();
     scheduleSync(detail);
   }
   function onCheckoutIntent(e) {
@@ -340,13 +305,12 @@
   }
 
   function init() {
-    renderSummary();
     observeCartForms();
     window.addEventListener(EVENT, onChange);
     window.addEventListener('ganguram:delivery-distance-updated', function () { scheduleSync(null); });
     // City enrichment completed later -> refresh the summary label and re-sync the
     // now city-aware address summary attribute (debounced, idempotent, fail-open).
-    window.addEventListener('ganguram:delivery-label-updated', function () { renderSummary(); scheduleSync(null); });
+    window.addEventListener('ganguram:delivery-label-updated', function () { scheduleSync(null); });
     // A SELECTED full address fires this AFTER the location-changed event (which cleared any
     // prior address) — re-sync so the address fields reach the cart for the checkout prefill.
     window.addEventListener('ganguram:delivery-address-updated', function () { scheduleSync(null); });

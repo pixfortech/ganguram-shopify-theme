@@ -1,3 +1,4 @@
+{%- if request.page_type == 'collection' or request.design_mode -%}
 {%- comment -%}
   Ganguram — Empty collection warning config (Phase 2.7C).
 
@@ -24,3 +25,5 @@
 </script>
 {{ 'ganguram-empty-collection-warning.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'ganguram-empty-collection-warning.js' | asset_url }}" defer></script>
+
+{%- endif -%}

@@ -36,7 +36,7 @@
   var memRec = null;
   function read() {
     var s = safeLS();
-    if (s) { try { var o = JSON.parse(s.getItem(KEY) || 'null'); if (o && typeof o === 'object') { return o; } } catch (e) {} }
+    if (s) { try { var o = JSON.parse(s.getItem(KEY) || 'null'); return o && typeof o === 'object' ? o : null; } catch (e) { return null; } }
     return memRec;
   }
   function write(o) { memRec = o; var s = safeLS(); if (!s) { return; } try { s.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
@@ -82,7 +82,17 @@
   }
   function hasSelectedAddress() { return !!getSelectedAddress(); }
 
-  function onChange() { clearStore(); }
+  function onChange(e) {
+    // A different tab has already committed the new address. Never delete it.
+    if (e && e.detail && e.detail.external) { memRec = null; return; }
+    clearStore();
+  }
+  window.addEventListener('storage', function (e) {
+    if (e.key !== KEY && e.key !== null) { return; }
+    memRec = null;
+    var rec = getSelectedAddress();
+    fire(EVENT_ADDRESS, { pincode: currentPin(), source: rec ? rec.source : 'pincode_only', external: true });
+  });
 
   // DEV-ONLY diagnostics (Phase 2.12C) — never customer-facing. In the console:
   // window.GanguramAddress.debugState() -> the stored structured address + active pincode.

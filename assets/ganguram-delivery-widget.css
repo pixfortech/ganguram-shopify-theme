@@ -224,3 +224,17 @@ mobile-navigation .ganguram-delivery-widget-menu-slot .ganguram-delivery-widget_
   /* tap opens the premium popup; never the inline dropdown */
   .ganguram-mobile-pincode-bar .ganguram-delivery-widget__panel { display: none !important; }
 }
+
+/* Shared delivery utility: one quiet line in the header, with a visible focus ring. */
+.ganguram-delivery-widget__trigger { min-height: 44px; gap: 7px; }
+.ganguram-delivery-widget__text { flex-direction: row; align-items: center; gap: 6px; }
+.ganguram-delivery-widget__label { font-size: 12px; opacity: .75; }
+.ganguram-delivery-widget__value { font-size: 12px; font-weight: 500; }
+.ganguram-delivery-widget__pin { color: #49488d; width: 15px; height: 15px; }
+.ganguram-delivery-widget__trigger:focus-visible { outline: 2px solid #49488d; outline-offset: 3px; border-radius: 3px; }
+@media (max-width: 1023px) {
+ .ganguram-mobile-pincode-bar { padding: 0 16px; justify-content: flex-end; }
+ .ganguram-mobile-pincode-bar .ganguram-delivery-widget { width: auto; max-width: 100%; }
+ .ganguram-mobile-pincode-bar .ganguram-delivery-widget__trigger { width: auto; padding: 0; min-height: 44px; }
+ .ganguram-mobile-pincode-bar .ganguram-delivery-widget__value { max-width: 25ch; font-weight: 500; }
+}

@@ -37,8 +37,8 @@
   function cfg() { return window.GanguramCheckoutPrefillConfig || {}; }
   function enabled() { return cfg().enabled !== false; }
   // OPT-IN hard-block. When true, a genuine persistent verify miss BLOCKS checkout and asks the
-  // customer to reselect their location. Default false: the keepalive force-save already GUARANTEES
-  // the write lands across the navigation, so we fail-open-redirect (never trap a paying customer)
+  // customer to reselect their location. Default false: keepalive requests help writes survive
+  // navigation but do not guarantee delivery, so we fail-open-redirect (never trap a paying customer)
   // and only record the mismatch in diagnostics.
   function blockUntilVerified() { return cfg().blockUntilVerified === true; }
   function checkoutUrl() { return cfg().checkoutUrl || '/checkout'; }
@@ -60,16 +60,22 @@
   }
   // A FULL address only when one was actually SELECTED (source) AND it carries the street +
   // city. Otherwise null -> pincode_only mode (we never reuse stale address fields).
+  var selectionChanged = false;
   function fullAddress() {
     var a = selectedAddress();
     if (a && a.source === 'selected_address' && a.address1 && a.city) { return a; }
-    var c = cartAddress();                       // CLEAN-SESSION fallback: cart attributes are the source of truth
-    return (c && c.address1 && c.city) ? c : null;
+    // Once a customer makes a selection, the address store is authoritative,
+    // including its deliberate empty value after a manual PIN entry.
+    if (selectionChanged) { return null; }
+    var c = cartAddress();
+    return (c && c.address1 && c.city && norm(c.zip) === norm(activePincode())) ? c : null;
   }
   function activePincode() {
     var z = window.GanguramZone;
-    try { var loc = z && z.getSelectedDeliveryLocation(); if (loc && loc.pincode && loc.isServiceable === true) { return String(loc.pincode); } } catch (e) {}
-    return cartPincode();                         // CLEAN-SESSION fallback: pincode mirrored on the cart
+    try { var loc = z && z.getSelectedDeliveryLocation();
+      if (loc && loc.pincode) { return loc.isServiceable === true ? String(loc.pincode) : ''; }
+    } catch (e) {}
+    return selectionChanged ? '' : cartPincode();                         // CLEAN-SESSION fallback: pincode mirrored on the cart
   }
 
   function param(name, value) {
@@ -101,16 +107,7 @@
     if (guardBlocked()) { return; }                  // MOV + date guards own the blocked case (preventDefault + notice)
     if (!currentCheckoutUrl()) { return; }            // no serviceable pincode -> normal checkout (fail-open)
     e.preventDefault();
-    // OPT-IN (GanguramCheckoutPrefillConfig.blockUntilVerified): force-save -> VERIFY /cart.js ->
-    // only redirect once confirmed (blocks + reselect on a persistent miss). DEFAULT is safer: a
-    // KEEPALIVE force-save GUARANTEES the writes land across the navigation (the robust standard) and
-    // we redirect synchronously — so the cart attributes reach the order without ever risking a
-    // blocked checkout. Buy Now always verifies (it already awaits the AJAX add).
-    if (blockUntilVerified()) { prepareCheckout({ buyNow: false }); return; }
-    var missingBefore = !(cartPincode() && cartAddress());
-    try { forceSave({ keepalive: true }); } catch (e2) {}
-    lastHandoff = { status: 'redirecting', buyNow: false, reason: null, verified: null, allowed: true, missingBefore: missingBefore, syncStatus: 'keepalive', mismatch: null, at: Date.now() };
-    go(currentCheckoutUrl());
+    prepareCheckout({ buyNow: false });
   }
 
   // ---------------------------------------------------------------------------
@@ -126,7 +123,7 @@
   var lastVerifiedCartAttributes = null;
   function cartJsUrl() { return cfg().cartUrl || '/cart.js'; }
   function cartPageUrl() { return cfg().cartPageUrl || '/cart'; }
-  function hasAnyPincode() { return !!(activePincode() || cartPincode()); }
+  function hasAnyPincode() { return !!activePincode(); }
   function dateBlocked() { try { var d = window.GanguramDeliveryDatePicker; return !!(d && typeof d.isDateMissing === 'function' && d.isDateMissing() === true); } catch (e) { return false; } }
   function openPincodePopup() { try { var p = window.GanguramDelivery || window.GanguramPincodePopup; if (p && typeof p.openDeliveryLocationPopup === 'function') { p.openDeliveryLocationPopup(); return true; } } catch (e) {} return false; }
   function openCart() { try { var d = document.getElementById('site-cart-sidebar'); if (d && typeof d.show === 'function') { d.show(); return true; } } catch (e) {} return false; }
@@ -159,9 +156,10 @@
         .then(function (cart) {
           cartCache = (cart && cart.attributes) || {};
           var pin = cartPincode();
+          var matches = !!pin && pin === norm(activePincode());
           var method = String(cartCache['ganguram_preferred_delivery_method'] || '');
           lastVerifiedCartAttributes = { pincode: pin, address1: (cartAddress() ? cartAddress().address1 : ''), method: method };
-          return { ok: !!pin, pincode: !!pin, method: !!method, cartPincode: pin, cartMethod: method, errored: false };
+          return { ok: matches, pincode: matches, method: !!method, cartPincode: pin, cartMethod: method, errored: false };
         })
         .catch(function () { return { ok: false, pincode: false, method: false, errored: true }; });
     } catch (e) { return Promise.resolve({ ok: false, pincode: false, method: false, errored: true }); }
@@ -181,9 +179,11 @@
     if (!hasAnyPincode()) { openPincodePopup(); return Promise.resolve(deny('no_pincode', buyNow)); }
     if (guardBlocked()) { if (buyNow) { if (!openCart()) { go(cartPageUrl()); } } return Promise.resolve(deny(dateBlocked() ? 'date_required' : 'mov', buyNow)); }
     var missingBefore = !(cartPincode() && cartAddress());
+    var handoffPin = activePincode();
     lastHandoff = { status: 'saving', buyNow: buyNow, reason: null, verified: null, allowed: false, missingBefore: missingBefore, syncStatus: null, mismatch: null, at: Date.now() };
 
     function redirectNow(reason) {
+      if (activePincode() !== handoffPin || guardBlocked()) { return deny('selection_changed', buyNow); }
       var url = currentCheckoutUrl();
       if (!url) { return deny('no_url', buyNow); }
       lastHandoff.status = 'redirecting'; lastHandoff.allowed = true; lastHandoff.reason = reason || null;
@@ -197,7 +197,7 @@
     }
     function attempt(n) {
       // keepalive so the write survives even if we later fail-open-redirect on a verify infra error.
-      return forceSave({ keepalive: true })
+      return Promise.race([forceSave({ keepalive: true }), timeoutP(VERIFY_TIMEOUT_MS, null)])
         .then(function (statuses) { lastHandoff.syncStatus = summarizeSync(statuses); lastHandoff.status = 'verifying'; return Promise.race([verifyCart(), timeoutP(VERIFY_TIMEOUT_MS, { ok: false, errored: true, timedOut: true })]); })
         .then(function (v) {
           lastHandoff.verified = !!(v && v.pincode);
@@ -336,89 +336,6 @@
     };
   }
 
-  // ---- ShipZip rate diagnosis (Phase 2.12G) — READ-ONLY console helper ----------------------
-  // The CHECKOUT shipping rate is produced by ShipZip, which the theme cannot read or set. These
-  // helpers surface the THEME-side truth (outlet origin, destination, driving distance, the slab
-  // the theme expects) and map an OBSERVED checkout rupee value back to a likely ShipZip cause,
-  // using the theme's OWN slab table (which mirrors the ShipZip distance tiers). Console-only; no
-  // rate / service-code / eligibility / MOV / estimate-logic change. Run it on the CART page
-  // (theme JS does not run on Shopify's hosted checkout) and compare with the rate at checkout.
-  function themeOrigin() {
-    try { var d = window.GanguramDistance; var s = (d && typeof d.debugState === 'function') ? d.debugState() : null; return s ? s.origin : null; } catch (e) { return null; }
-  }
-  function slabTable() {
-    try { var se = window.GanguramShippingEstimate; return (se && typeof se.config === 'function') ? (se.config().standardSlabs || []) : []; } catch (e) { return []; }
-  }
-  // Distance band [fromKm, toKm] for a slab index in the cumulative table.
-  function bandFor(slabs, i) { return { fromKm: i === 0 ? 0 : slabs[i - 1].maxKm, toKm: slabs[i].maxKm }; }
-  // The slab the THEME expects for the current confirmed full-address distance (or null).
-  function themeExpected() {
-    var d = window.GanguramDistance, se = window.GanguramShippingEstimate;
-    var addr = fullAddress();
-    var pin = activePincode() || (addr ? (addr.zip || addr.pincode) : '');
-    if (!d || !se || !pin || typeof d.getForPincode !== 'function') { return null; }
-    var conf = d.getForPincode(norm(pin));
-    if (!conf || conf.confirmed !== true || conf.distanceKm == null) { return null; }
-    var slabKm = (typeof se.slabInputKm === 'function') ? se.slabInputKm(conf.distanceKm) : conf.distanceKm;
-    var slab = (typeof se.slabForKm === 'function') ? se.slabForKm(slabKm) : null;
-    if (!slab) { return null; }
-    return { distanceKm: Math.round(conf.distanceKm * 10) / 10, distanceMeters: Math.round(conf.distanceKm * 1000),
-      slabMaxKm: slab.maxKm, rupees: slab.price, formatted: (typeof se.money === 'function') ? se.money(slab.price) : ('₹' + slab.price) };
-  }
-  // Map an OBSERVED checkout rupee value to a likely ShipZip cause + the exact setting to change.
-  function explainCheckoutRate(observed) {
-    observed = Number(observed);
-    var slabs = slabTable(), theme = themeExpected(), origin = themeOrigin();
-    var out = { observedRupees: isFinite(observed) ? observed : null, themeExpected: theme };
-    var hit = -1, i;
-    for (i = 0; i < slabs.length; i++) { if (slabs[i].price === observed) { hit = i; break; } }
-    if (hit >= 0) {
-      var b = bandFor(slabs, hit);
-      out.shipZipTier = '₹' + observed + ' = the ' + b.fromKm + '–' + b.toKm + ' km tier';
-      out.shipZipImpliedDistanceKm = b;
-      if (theme && observed === theme.rupees) {
-        out.conclusion = 'MATCH — ShipZip applied the same tier the theme expects (' + theme.formatted + '). No discrepancy.';
-        out.exactSetting = 'None.';
-      } else {
-        out.conclusion = 'ShipZip applied its ' + b.fromKm + '–' + b.toKm + ' km tier, so ShipZip computed a distance of ~' + b.fromKm + '–' + b.toKm + ' km'
-          + (theme ? ' — but the theme computes ' + theme.distanceKm + ' km (expects ' + theme.formatted + ')' : '')
-          + '. ShipZip is measuring a DIFFERENT distance than the theme, so its ORIGIN or destination GEOCODING is wrong (most likely the ShipZip origin is not Beadon Street).';
-        out.exactSetting = 'Set the ShipZip rate ORIGIN/warehouse to the same outlet the theme uses: ' + JSON.stringify(origin) + ' (Beadon Street). Confirm ShipZip geocodes the checkout address1+zip to Eco Park, not the outlet.';
-        out.alsoRuleOut = 'DUPLICATE rate — rename the rate to "Standard Delivery TEST 123"; if the checkout label does not change, a different rate is being returned.';
-      }
-      out.disambiguateBase = 'If ₹' + observed + ' could also be this rate’s BASE price, set Base=₹999 in the tier-bump test to tell base from tier apart.';
-    } else {
-      out.shipZipTier = 'no distance tier has price ₹' + observed;
-      out.conclusion = '₹' + observed + ' matches no distance tier (' + slabs.map(function (s) { return '₹' + s.price; }).join(' / ') + '), so it is either the ShipZip BASE/fallback price (the distance condition was not met or no tier matched) or a DUPLICATE/other rate.';
-      out.exactSetting = 'Run the tier-bump test (0–5=₹51, 5.01–10=₹71, 10.01–15=₹101, 15.01–20=₹151, Base=₹999): ₹999 => base/fallback; a 51/71/101/151 value => that exact tier; an unchanged ₹' + observed + ' => a duplicate/other rate (use the rename test).';
-    }
-    return out;
-  }
-  // Consolidated THEME-side snapshot to compare against the ShipZip checkout rate.
-  function shipZipDiagnosis() {
-    var slabs = slabTable(), theme = themeExpected(), addr = fullAddress();
-    var pin = activePincode() || (addr ? (addr.zip || addr.pincode) : '');
-    var url = addr ? buildUrl('full_address', addr, pin) : (norm(pin) ? buildUrl('pincode_only', null, pin) : null);
-    return {
-      note: 'CHECKOUT rate is produced by ShipZip; the theme cannot set or override it. Compare these THEME values with the ShipZip rate at checkout.',
-      themeOrigin: themeOrigin(),
-      selectedPincode: activePincode(),
-      sending: paramsOf(url),
-      themeDistanceKm: theme ? theme.distanceKm : null,
-      themeDistanceMeters: theme ? theme.distanceMeters : null,
-      themeExpectedStandard: theme ? theme.formatted : null,
-      themeSlabTiers: slabs.map(function (s, i) { var b = bandFor(slabs, i); return { band: b.fromKm + '–' + b.toKm + ' km', rupees: s.price }; }),
-      observedRateInterpretation: {
-        '50': 'ShipZip 0–5 km tier (or a duplicate ₹50 rate) — ShipZip distance ≤5 km',
-        '70': 'ShipZip 5.01–10 km tier',
-        '100': 'ShipZip 10.01–15 km tier OR the ₹100 base/fallback',
-        '150': 'ShipZip 15.01–20 km tier — matches the theme for Eco Park',
-        '999 (test base)': 'ShipZip base/fallback — no tier matched'
-      },
-      howToUse: 'GanguramCheckoutPrefill.explainCheckoutRate(<the ₹ you see at checkout>) -> conclusion + exact setting.'
-    };
-  }
-
   // ---- clean-session hydration (Phase 2.12L) — cart attributes are the SOURCE OF TRUTH -------
   // localStorage (GanguramAddress / GanguramZone) is only a same-session cache; it is EMPTY on a
   // clean / private session (or when localStorage is blocked, e.g. Safari private mode). So we
@@ -462,10 +379,10 @@
     } catch (e) { hydrating = false; }
   }
 
-  window.GanguramCheckoutPrefill = { debugState: debugState, prepareCheckout: prepareCheckout, shipZipDiagnosis: shipZipDiagnosis, explainCheckoutRate: explainCheckoutRate, hydrate: hydrate };
+  window.GanguramCheckoutPrefill = { debugState: debugState, prepareCheckout: prepareCheckout, hydrate: hydrate };
 
   document.addEventListener('click', onClick, true);
   hydrate();                                                                   // load: cart is already populated from prior pages
-  window.addEventListener('ganguram:delivery-location-changed', function () { setTimeout(hydrate, 700); }); // after the cart-attributes write lands
+  window.addEventListener('ganguram:delivery-location-changed', function () { selectionChanged = true; cartCache = null; setTimeout(hydrate, 700); }); // after the cart-attributes write lands
   window.addEventListener('ganguram:delivery-address-updated', function () { setTimeout(hydrate, 700); });
 })();
