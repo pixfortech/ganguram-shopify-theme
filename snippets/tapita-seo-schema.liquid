@@ -107,33 +107,34 @@
         {%- break -%}
       {%- endif -%}
     {%- endfor -%}
-    {%- assign current_product_handle = product.handle | prepend: "/products/" -%}
-    {%- assign current_collection_handle = collection.handle | prepend: "/collections/" -%}
-    {%- assign current_page_handle = page.handle | prepend: "/pages/" -%}
+    {%- if request.page_type == "product" -%}
+      {%- assign current_product_handle = product.handle | prepend: "/products/" -%}
+    {%- elsif  request.page_type == "collection" -%}
+      {%- assign current_collection_handle = collection.handle | prepend: "/collections/" -%}
+    {%- elsif  request.page_type == "page" -%}
+      {%- assign current_page_handle = page.handle | prepend: "/pages/" -%}
+    {%- endif -%}
     {%- assign aicustom_tcontents = aicustom_tcontents | where: "language", shop.locale  -%}
+    {%- assign request_path = request.path | remove_first: request.locale.root_url | url_decode -%}
+    {%- assign first_char = request_path | slice: 0 -%}
+    {%- unless first_char == "/" -%}
+      {%- assign request_path = "/" | append: request_path -%}
+    {%- endunless -%}
+    {%- assign request_path_with_slash = request_path | append: "/" -%}
+    {%- assign url_parts = request_path | split: '/' -%}
+    {%- assign blog_handle = blog.handle -%}
     {%- for aicustom_tcontent in aicustom_tcontents -%}
       {%- assign handle_decoded = aicustom_tcontent.handle | url_decode | url_decode -%}
       {%- assign handle_with_language = handle_decoded | prepend: aicustom_tcontent.language -%}
       {%- assign handle_with_language = handle_with_language | prepend: "/" -%}
       {%- assign tptmetamatched = false -%}
-      {%- assign request_path = request.path | remove_first: request.locale.root_url | url_decode -%}
-      {%- assign first_char = request_path | slice: 0 -%}
-      {%- unless first_char == "/" -%}
-        {%- assign request_path = "/" | append: request_path -%}
-      {%- endunless -%}
-      {%- assign request_path_with_slash = request_path | append: "/" -%}
-      {%- if handle_decoded == current_product_handle and request.page_type == "product" -%}
-        {%- assign tptmetamatched = true -%}
-      {%- elsif handle_decoded == current_collection_handle and request.page_type == "collection" -%}
-        {%- assign tptmetamatched = true -%}
-      {%- elsif handle_decoded == current_page_handle -%}
+      {%- if handle_decoded == current_product_handle or handle_decoded == current_collection_handle or handle_decoded == current_page_handle -%}
         {%- assign tptmetamatched = true -%}
       {%- elsif handle_decoded == request_path or handle_decoded == request_path_with_slash or handle_with_language == request_path or handle_with_language == request_path_with_slash -%}
         {%- assign tptmetamatched = true -%}
       {%- endif -%}
       {%- unless tptmetamatched -%}
         {%- if template == 'article' and handle_decoded contains '/blogs/' -%}
-          {%- assign url_parts = request_path | split: '/' -%}
           {%- assign template_parts = handle_decoded | split: '/' -%}
           {%- if template_parts[3] == url_parts.last and template_parts[1] == blog_handle -%}
             {%- assign tptmetamatched = true -%}
