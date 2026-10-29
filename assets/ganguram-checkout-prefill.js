@@ -317,19 +317,16 @@
       checkoutPrefillMode: mode,
       checkoutParamsIncluded: paramsIncluded,      // which checkout[shipping_address][*] params are attached
       checkoutParamKeys: paramKeys,                // the exact param keys on the URL
-      checkoutParamsIgnoredLikely: (paramKeys.length > 0), // present but the new one-page checkout drops them
+      checkoutParamsIgnoredLikely: null, // storefront cannot observe whether hosted checkout applied each field
       cartAttributeAddress1: (cartAddr ? cartAddr.address1 : null),
       cartAttributeAddress2: (cartAddr ? cartAddr.address2 : null),
       cartAttributeCity: (cartAddr ? cartAddr.city : null),
       cartAttributeProvince: (cartAddr ? cartAddr.state : null),
       cartAttributeCountry: (cartAddr ? cartAddr.country : null),
       cartAttributeZip: (cartAddr ? cartAddr.zip : (cartPin || null)),
-      // FALSE by design: theme JS CANNOT visibly auto-fill Shopify's one-page checkout shipping
-      // address — the new checkout ignores checkout[shipping_address][...] URL params. The data is
-      // preserved in cart/order attributes (above + ShipZip reads the pincode). True field prefill
-      // needs a logged-in customer (Shopify auto-fills) or a Checkout UI Extension / Storefront Cart
-      // API buyerIdentity. See docs/phase2-checkout-prefill-limitation.md.
-      shopifyCheckoutFieldPrefillSupported: false,
+      // Standard checkout URL prefill was verified on this store (2026-10-29).
+      // Accelerated wallets or a saved customer address may override the supplied values.
+      shopifyCheckoutFieldPrefillSupported: true,
       willRedirect: enabled() && !guardBlocked() && !!url,
       reason: (mode === 'none') ? 'no serviceable pincode (in-memory) and none on the cart attributes — enter a pincode/address' : null,
       themeEstimate: themeEstimate(norm(pin))
