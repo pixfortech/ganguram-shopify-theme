@@ -50,3 +50,25 @@ pickup-availability-widget { display: none !important; }
   position: sticky;
   top: 0;
 }
+
+/* Rewards stays opposite Inbox in both Smile's lightweight and expanded UI.
+   CSS only: no app loading, delivery, cart or tracking behaviour changes. */
+#smile-ui-lite-launcher-frame-container,
+#smile-ui-container .smile-launcher-frame-container {
+  left: max(16px, env(safe-area-inset-left, 0px)) !important;
+  right: auto !important;
+  bottom: max(20px, env(safe-area-inset-bottom, 0px)) !important;
+}
+#smile-ui-lite-container,
+#smile-ui-container { z-index: 2147482999 !important; }
+/* Keep an open Rewards panel beside its launcher on larger screens. */
+@media (min-width: 750px) {
+  #smile-ui-container .smile-panel-frame-container {
+    left: max(16px, env(safe-area-inset-left, 0px)) !important;
+    right: auto !important;
+  }
+}
+/* One support panel at a time, with Rewards' native close control retained. */
+body:has(#smile-ui-container .smile-launcher-open) shopify-chat {
+  visibility: hidden !important;
+}
