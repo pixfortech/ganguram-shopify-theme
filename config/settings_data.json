@@ -298,6 +298,27 @@
           "modal_item_product_background": "#FFFFFF",
           "custom_css": ""
         }
+      },
+      "14044569291296200651": {
+        "type": "shopify://apps/kitenzo/blocks/bb-cart-integration-custom/78802baf-205d-4d1d-908c-fae911f24e36",
+        "disabled": false,
+        "settings": {
+          "theme_override": "",
+          "page_cartItemBox": "#AjaxCartForm .cart-form__items",
+          "page_cartItem": "#AjaxCartForm .cart-form-item[data-js-cart-item]",
+          "page_cartSubtotal": "#AjaxCartSubtotal .cart__total > strong",
+          "page_cartOriginalTotal": "#AjaxCartSubtotal .cart__subtotal > strong",
+          "page_checkoutButton": "#AjaxCartSubtotal #CheckOut",
+          "drawer_cartItemBox": "#AjaxCartForm .cart__items",
+          "drawer_cartItem": "#AjaxCartForm .cart-item[data-js-cart-item]",
+          "drawer_cartSubtotal": "#AjaxCartSubtotal .cart__total > strong",
+          "drawer_cartOriginalTotal": "#AjaxCartSubtotal .cart__subtotal > strong",
+          "drawer_checkoutButton": "#AjaxCartSubtotal #CheckOut",
+          "cartItemPrice": "",
+          "cartItemLinePrice": "",
+          "cartItemQuantity": "",
+          "observeTargets": ""
+        }
       }
     }
   },
