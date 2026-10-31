@@ -1,0 +1,886 @@
+{
+  "origin": [
+    88.37350202482604,
+    22.586852842169446
+  ],
+  "radiusKm": 20,
+  "sourceSHA256": "5405c3d79e0f0dee854ffaa05007b45caa3da10775873e5551701714480b8f5e",
+  "kolkata": [
+    {
+      "pincode": "700001",
+      "nearestBoundaryKm": 1.95933
+    },
+    {
+      "pincode": "700002",
+      "nearestBoundaryKm": 1.835471
+    },
+    {
+      "pincode": "700003",
+      "nearestBoundaryKm": 1.590512
+    },
+    {
+      "pincode": "700004",
+      "nearestBoundaryKm": 0.493144
+    },
+    {
+      "pincode": "700005",
+      "nearestBoundaryKm": 0.898932
+    },
+    {
+      "pincode": "700006",
+      "nearestBoundaryKm": 0
+    },
+    {
+      "pincode": "700007",
+      "nearestBoundaryKm": 0.999813
+    },
+    {
+      "pincode": "700008",
+      "nearestBoundaryKm": 11.263085
+    },
+    {
+      "pincode": "700009",
+      "nearestBoundaryKm": 0.203961
+    },
+    {
+      "pincode": "700010",
+      "nearestBoundaryKm": 2.430224
+    },
+    {
+      "pincode": "700011",
+      "nearestBoundaryKm": 0.745581
+    },
+    {
+      "pincode": "700012",
+      "nearestBoundaryKm": 1.69682
+    },
+    {
+      "pincode": "700013",
+      "nearestBoundaryKm": 2.569574
+    },
+    {
+      "pincode": "700014",
+      "nearestBoundaryKm": 1.767984
+    },
+    {
+      "pincode": "700015",
+      "nearestBoundaryKm": 1.983107
+    },
+    {
+      "pincode": "700016",
+      "nearestBoundaryKm": 3.229245
+    },
+    {
+      "pincode": "700017",
+      "nearestBoundaryKm": 4.092096
+    },
+    {
+      "pincode": "700018",
+      "nearestBoundaryKm": 11.491586
+    },
+    {
+      "pincode": "700019",
+      "nearestBoundaryKm": 5.302489
+    },
+    {
+      "pincode": "700020",
+      "nearestBoundaryKm": 5.305635
+    },
+    {
+      "pincode": "700021",
+      "nearestBoundaryKm": 3.739257
+    },
+    {
+      "pincode": "700022",
+      "nearestBoundaryKm": 5.658539
+    },
+    {
+      "pincode": "700023",
+      "nearestBoundaryKm": 6.436271
+    },
+    {
+      "pincode": "700024",
+      "nearestBoundaryKm": 8.485839
+    },
+    {
+      "pincode": "700025",
+      "nearestBoundaryKm": 6.062251
+    },
+    {
+      "pincode": "700026",
+      "nearestBoundaryKm": 6.929054
+    },
+    {
+      "pincode": "700027",
+      "nearestBoundaryKm": 6.705905
+    },
+    {
+      "pincode": "700028",
+      "nearestBoundaryKm": 5.241565
+    },
+    {
+      "pincode": "700029",
+      "nearestBoundaryKm": 6.757263
+    },
+    {
+      "pincode": "700030",
+      "nearestBoundaryKm": 3.450257
+    },
+    {
+      "pincode": "700031",
+      "nearestBoundaryKm": 8.025265
+    },
+    {
+      "pincode": "700032",
+      "nearestBoundaryKm": 9.223818
+    },
+    {
+      "pincode": "700033",
+      "nearestBoundaryKm": 8.977831
+    },
+    {
+      "pincode": "700034",
+      "nearestBoundaryKm": 10.307668
+    },
+    {
+      "pincode": "700035",
+      "nearestBoundaryKm": 5.879084
+    },
+    {
+      "pincode": "700036",
+      "nearestBoundaryKm": 4.790342
+    },
+    {
+      "pincode": "700037",
+      "nearestBoundaryKm": 1.670798
+    },
+    {
+      "pincode": "700038",
+      "nearestBoundaryKm": 9.602066
+    },
+    {
+      "pincode": "700039",
+      "nearestBoundaryKm": 5.522992
+    },
+    {
+      "pincode": "700040",
+      "nearestBoundaryKm": 10.809336
+    },
+    {
+      "pincode": "700041",
+      "nearestBoundaryKm": 10.922173
+    },
+    {
+      "pincode": "700042",
+      "nearestBoundaryKm": 7.183613
+    },
+    {
+      "pincode": "700043",
+      "nearestBoundaryKm": 5.598072
+    },
+    {
+      "pincode": "700044",
+      "nearestBoundaryKm": 10.627324
+    },
+    {
+      "pincode": "700045",
+      "nearestBoundaryKm": 8.57731
+    },
+    {
+      "pincode": "700046",
+      "nearestBoundaryKm": 3.251617
+    },
+    {
+      "pincode": "700047",
+      "nearestBoundaryKm": 11.429504
+    },
+    {
+      "pincode": "700048",
+      "nearestBoundaryKm": 2.13322
+    },
+    {
+      "pincode": "700049",
+      "nearestBoundaryKm": 7.264867
+    },
+    {
+      "pincode": "700050",
+      "nearestBoundaryKm": 4.114279
+    },
+    {
+      "pincode": "700051",
+      "nearestBoundaryKm": 8.803319
+    },
+    {
+      "pincode": "700052",
+      "nearestBoundaryKm": 7.007814
+    },
+    {
+      "pincode": "700053",
+      "nearestBoundaryKm": 8.977443
+    },
+    {
+      "pincode": "700054",
+      "nearestBoundaryKm": 0.632344
+    },
+    {
+      "pincode": "700055",
+      "nearestBoundaryKm": 3.994317
+    },
+    {
+      "pincode": "700056",
+      "nearestBoundaryKm": 7.10932
+    },
+    {
+      "pincode": "700057",
+      "nearestBoundaryKm": 8.092337
+    },
+    {
+      "pincode": "700058",
+      "nearestBoundaryKm": 9.244524
+    },
+    {
+      "pincode": "700059",
+      "nearestBoundaryKm": 5.471887
+    },
+    {
+      "pincode": "700060",
+      "nearestBoundaryKm": 10.29839
+    },
+    {
+      "pincode": "700061",
+      "nearestBoundaryKm": 12.579873
+    },
+    {
+      "pincode": "700062",
+      "nearestBoundaryKm": 3.050572
+    },
+    {
+      "pincode": "700063",
+      "nearestBoundaryKm": 13.510595
+    },
+    {
+      "pincode": "700064",
+      "nearestBoundaryKm": 2.31344
+    },
+    {
+      "pincode": "700065",
+      "nearestBoundaryKm": 5.820405
+    },
+    {
+      "pincode": "700066",
+      "nearestBoundaryKm": 10.617709
+    },
+    {
+      "pincode": "700067",
+      "nearestBoundaryKm": 0.633467
+    },
+    {
+      "pincode": "700068",
+      "nearestBoundaryKm": 8.351763
+    },
+    {
+      "pincode": "700069",
+      "nearestBoundaryKm": 3.069244
+    },
+    {
+      "pincode": "700070",
+      "nearestBoundaryKm": 12.455278
+    },
+    {
+      "pincode": "700071",
+      "nearestBoundaryKm": 4.285111
+    },
+    {
+      "pincode": "700072",
+      "nearestBoundaryKm": 2.760271
+    },
+    {
+      "pincode": "700073",
+      "nearestBoundaryKm": 1.093688
+    },
+    {
+      "pincode": "700074",
+      "nearestBoundaryKm": 3.762734
+    },
+    {
+      "pincode": "700075",
+      "nearestBoundaryKm": 9.202067
+    },
+    {
+      "pincode": "700076",
+      "nearestBoundaryKm": 7.687927
+    },
+    {
+      "pincode": "700077",
+      "nearestBoundaryKm": 4.803211
+    },
+    {
+      "pincode": "700078",
+      "nearestBoundaryKm": 8.148223
+    },
+    {
+      "pincode": "700079",
+      "nearestBoundaryKm": 8.175082
+    },
+    {
+      "pincode": "700080",
+      "nearestBoundaryKm": 6.382921
+    },
+    {
+      "pincode": "700081",
+      "nearestBoundaryKm": 8.565983
+    },
+    {
+      "pincode": "700082",
+      "nearestBoundaryKm": 11.637326
+    },
+    {
+      "pincode": "700083",
+      "nearestBoundaryKm": 8.479755
+    },
+    {
+      "pincode": "700084",
+      "nearestBoundaryKm": 12.009258
+    },
+    {
+      "pincode": "700085",
+      "nearestBoundaryKm": 1.691763
+    },
+    {
+      "pincode": "700086",
+      "nearestBoundaryKm": 11.450132
+    },
+    {
+      "pincode": "700087",
+      "nearestBoundaryKm": 3.3147
+    },
+    {
+      "pincode": "700088",
+      "nearestBoundaryKm": 8.96172
+    },
+    {
+      "pincode": "700089",
+      "nearestBoundaryKm": 3.56065
+    },
+    {
+      "pincode": "700090",
+      "nearestBoundaryKm": 5.152979
+    },
+    {
+      "pincode": "700091",
+      "nearestBoundaryKm": 3.696377
+    },
+    {
+      "pincode": "700092",
+      "nearestBoundaryKm": 10.656072
+    },
+    {
+      "pincode": "700093",
+      "nearestBoundaryKm": 12.076887
+    },
+    {
+      "pincode": "700094",
+      "nearestBoundaryKm": 11.365169
+    },
+    {
+      "pincode": "700095",
+      "nearestBoundaryKm": 9.456195
+    },
+    {
+      "pincode": "700096",
+      "nearestBoundaryKm": 13.620364
+    },
+    {
+      "pincode": "700097",
+      "nearestBoundaryKm": 2.935796
+    },
+    {
+      "pincode": "700099",
+      "nearestBoundaryKm": 10.092078
+    },
+    {
+      "pincode": "700100",
+      "nearestBoundaryKm": 6.251452
+    },
+    {
+      "pincode": "700101",
+      "nearestBoundaryKm": 4.951975
+    },
+    {
+      "pincode": "700102",
+      "nearestBoundaryKm": 5.684111
+    },
+    {
+      "pincode": "700103",
+      "nearestBoundaryKm": 14.799582
+    },
+    {
+      "pincode": "700104",
+      "nearestBoundaryKm": 13.773397
+    },
+    {
+      "pincode": "700105",
+      "nearestBoundaryKm": 3.699499
+    },
+    {
+      "pincode": "700106",
+      "nearestBoundaryKm": 3.602322
+    },
+    {
+      "pincode": "700107",
+      "nearestBoundaryKm": 4.166206
+    },
+    {
+      "pincode": "700108",
+      "nearestBoundaryKm": 6.282536
+    },
+    {
+      "pincode": "700109",
+      "nearestBoundaryKm": 9.584767
+    },
+    {
+      "pincode": "700110",
+      "nearestBoundaryKm": 11.540336
+    },
+    {
+      "pincode": "700111",
+      "nearestBoundaryKm": 11.387707
+    },
+    {
+      "pincode": "700112",
+      "nearestBoundaryKm": 14.005441
+    },
+    {
+      "pincode": "700113",
+      "nearestBoundaryKm": 12.910492
+    },
+    {
+      "pincode": "700114",
+      "nearestBoundaryKm": 10.944666
+    },
+    {
+      "pincode": "700115",
+      "nearestBoundaryKm": 12.880036
+    },
+    {
+      "pincode": "700116",
+      "nearestBoundaryKm": 14.239967
+    },
+    {
+      "pincode": "700117",
+      "nearestBoundaryKm": 14.876209
+    },
+    {
+      "pincode": "700118",
+      "nearestBoundaryKm": 13.842424
+    },
+    {
+      "pincode": "700119",
+      "nearestBoundaryKm": 15.02152
+    },
+    {
+      "pincode": "700120",
+      "nearestBoundaryKm": 18.129408
+    },
+    {
+      "pincode": "700121",
+      "nearestBoundaryKm": 16.580305
+    },
+    {
+      "pincode": "700122",
+      "nearestBoundaryKm": 18.817366
+    },
+    {
+      "pincode": "700123",
+      "nearestBoundaryKm": 17.642185
+    },
+    {
+      "pincode": "700124",
+      "nearestBoundaryKm": 15.322417
+    },
+    {
+      "pincode": "700125",
+      "nearestBoundaryKm": 17.174836
+    },
+    {
+      "pincode": "700126",
+      "nearestBoundaryKm": 16.067332
+    },
+    {
+      "pincode": "700127",
+      "nearestBoundaryKm": 16.072517
+    },
+    {
+      "pincode": "700128",
+      "nearestBoundaryKm": 14.413666
+    },
+    {
+      "pincode": "700129",
+      "nearestBoundaryKm": 13.683659
+    },
+    {
+      "pincode": "700130",
+      "nearestBoundaryKm": 13.909876
+    },
+    {
+      "pincode": "700131",
+      "nearestBoundaryKm": 11.970248
+    },
+    {
+      "pincode": "700132",
+      "nearestBoundaryKm": 10.725492
+    },
+    {
+      "pincode": "700133",
+      "nearestBoundaryKm": 11.519273
+    },
+    {
+      "pincode": "700134",
+      "nearestBoundaryKm": 10.635137
+    },
+    {
+      "pincode": "700135",
+      "nearestBoundaryKm": 10.108012
+    },
+    {
+      "pincode": "700136",
+      "nearestBoundaryKm": 7.96668
+    },
+    {
+      "pincode": "700137",
+      "nearestBoundaryKm": 19.273452
+    },
+    {
+      "pincode": "700139",
+      "nearestBoundaryKm": 16.192744
+    },
+    {
+      "pincode": "700140",
+      "nearestBoundaryKm": 12.917757
+    },
+    {
+      "pincode": "700141",
+      "nearestBoundaryKm": 11.785529
+    },
+    {
+      "pincode": "700142",
+      "nearestBoundaryKm": 12.335656
+    },
+    {
+      "pincode": "700143",
+      "nearestBoundaryKm": 11.246524
+    },
+    {
+      "pincode": "700145",
+      "nearestBoundaryKm": 19.962288
+    },
+    {
+      "pincode": "700146",
+      "nearestBoundaryKm": 19.209258
+    },
+    {
+      "pincode": "700147",
+      "nearestBoundaryKm": 18.512558
+    },
+    {
+      "pincode": "700148",
+      "nearestBoundaryKm": 18.989488
+    },
+    {
+      "pincode": "700149",
+      "nearestBoundaryKm": 17.183189
+    },
+    {
+      "pincode": "700150",
+      "nearestBoundaryKm": 9.301281
+    },
+    {
+      "pincode": "700151",
+      "nearestBoundaryKm": 17.433739
+    },
+    {
+      "pincode": "700152",
+      "nearestBoundaryKm": 11.065167
+    },
+    {
+      "pincode": "700153",
+      "nearestBoundaryKm": 14.251076
+    },
+    {
+      "pincode": "700154",
+      "nearestBoundaryKm": 14.253651
+    },
+    {
+      "pincode": "700155",
+      "nearestBoundaryKm": 13.262037
+    },
+    {
+      "pincode": "700156",
+      "nearestBoundaryKm": 9.82906
+    },
+    {
+      "pincode": "700157",
+      "nearestBoundaryKm": 6.794605
+    },
+    {
+      "pincode": "700158",
+      "nearestBoundaryKm": 11.273954
+    },
+    {
+      "pincode": "700159",
+      "nearestBoundaryKm": 5.666532
+    },
+    {
+      "pincode": "700160",
+      "nearestBoundaryKm": 10.595302
+    },
+    {
+      "pincode": "700161",
+      "nearestBoundaryKm": 8.618614
+    },
+    {
+      "pincode": "700162",
+      "nearestBoundaryKm": 6.407393
+    },
+    {
+      "pincode": "700163",
+      "nearestBoundaryKm": 7.067847
+    },
+    {
+      "pincode": "711101",
+      "nearestBoundaryKm": 2.617272
+    },
+    {
+      "pincode": "711102",
+      "nearestBoundaryKm": 4.175996
+    },
+    {
+      "pincode": "711103",
+      "nearestBoundaryKm": 6.028611
+    },
+    {
+      "pincode": "711104",
+      "nearestBoundaryKm": 5.789516
+    },
+    {
+      "pincode": "711105",
+      "nearestBoundaryKm": 4.813425
+    },
+    {
+      "pincode": "711106",
+      "nearestBoundaryKm": 2.477009
+    },
+    {
+      "pincode": "711107",
+      "nearestBoundaryKm": 2.632784
+    },
+    {
+      "pincode": "711108",
+      "nearestBoundaryKm": 5.637216
+    },
+    {
+      "pincode": "711109",
+      "nearestBoundaryKm": 7.604607
+    },
+    {
+      "pincode": "711110",
+      "nearestBoundaryKm": 7.591537
+    },
+    {
+      "pincode": "711111",
+      "nearestBoundaryKm": 8.435986
+    },
+    {
+      "pincode": "711112",
+      "nearestBoundaryKm": 6.939183
+    },
+    {
+      "pincode": "711113",
+      "nearestBoundaryKm": 7.257981
+    },
+    {
+      "pincode": "711114",
+      "nearestBoundaryKm": 7.14142
+    },
+    {
+      "pincode": "711115",
+      "nearestBoundaryKm": 9.548671
+    },
+    {
+      "pincode": "711201",
+      "nearestBoundaryKm": 5.887889
+    },
+    {
+      "pincode": "711202",
+      "nearestBoundaryKm": 3.463159
+    },
+    {
+      "pincode": "711203",
+      "nearestBoundaryKm": 5.510184
+    },
+    {
+      "pincode": "711204",
+      "nearestBoundaryKm": 4.117467
+    },
+    {
+      "pincode": "711205",
+      "nearestBoundaryKm": 7.91888
+    },
+    {
+      "pincode": "711206",
+      "nearestBoundaryKm": 6.448886
+    },
+    {
+      "pincode": "711227",
+      "nearestBoundaryKm": 6.987288
+    },
+    {
+      "pincode": "711302",
+      "nearestBoundaryKm": 9.881497
+    },
+    {
+      "pincode": "711304",
+      "nearestBoundaryKm": 13.026945
+    },
+    {
+      "pincode": "711309",
+      "nearestBoundaryKm": 14.777545
+    },
+    {
+      "pincode": "711310",
+      "nearestBoundaryKm": 18.497778
+    },
+    {
+      "pincode": "711313",
+      "nearestBoundaryKm": 13.831577
+    },
+    {
+      "pincode": "711317",
+      "nearestBoundaryKm": 11.159087
+    },
+    {
+      "pincode": "711322",
+      "nearestBoundaryKm": 18.539521
+    },
+    {
+      "pincode": "711331",
+      "nearestBoundaryKm": 19.745564
+    },
+    {
+      "pincode": "711403",
+      "nearestBoundaryKm": 8.705632
+    },
+    {
+      "pincode": "711405",
+      "nearestBoundaryKm": 11.909735
+    },
+    {
+      "pincode": "711409",
+      "nearestBoundaryKm": 9.345823
+    },
+    {
+      "pincode": "711411",
+      "nearestBoundaryKm": 13.495568
+    },
+    {
+      "pincode": "712201",
+      "nearestBoundaryKm": 17.165775
+    },
+    {
+      "pincode": "712202",
+      "nearestBoundaryKm": 15.642929
+    },
+    {
+      "pincode": "712203",
+      "nearestBoundaryKm": 16.618643
+    },
+    {
+      "pincode": "712204",
+      "nearestBoundaryKm": 19.362393
+    },
+    {
+      "pincode": "712223",
+      "nearestBoundaryKm": 19.032002
+    },
+    {
+      "pincode": "712232",
+      "nearestBoundaryKm": 9.063974
+    },
+    {
+      "pincode": "712233",
+      "nearestBoundaryKm": 10.301312
+    },
+    {
+      "pincode": "712234",
+      "nearestBoundaryKm": 12.372772
+    },
+    {
+      "pincode": "712235",
+      "nearestBoundaryKm": 11.752435
+    },
+    {
+      "pincode": "712245",
+      "nearestBoundaryKm": 8.751137
+    },
+    {
+      "pincode": "712246",
+      "nearestBoundaryKm": 12.071475
+    },
+    {
+      "pincode": "712248",
+      "nearestBoundaryKm": 14.236237
+    },
+    {
+      "pincode": "712249",
+      "nearestBoundaryKm": 15.930155
+    },
+    {
+      "pincode": "712250",
+      "nearestBoundaryKm": 14.515303
+    },
+    {
+      "pincode": "712258",
+      "nearestBoundaryKm": 7.662449
+    },
+    {
+      "pincode": "712304",
+      "nearestBoundaryKm": 16.922785
+    },
+    {
+      "pincode": "712306",
+      "nearestBoundaryKm": 18.175736
+    },
+    {
+      "pincode": "712310",
+      "nearestBoundaryKm": 12.355998
+    },
+    {
+      "pincode": "712311",
+      "nearestBoundaryKm": 10.826337
+    },
+    {
+      "pincode": "712701",
+      "nearestBoundaryKm": 19.761338
+    },
+    {
+      "pincode": "712702",
+      "nearestBoundaryKm": 14.289812
+    },
+    {
+      "pincode": "743330",
+      "nearestBoundaryKm": 17.878607
+    },
+    {
+      "pincode": "743502",
+      "nearestBoundaryKm": 10.934584
+    },
+    {
+      "pincode": "743503",
+      "nearestBoundaryKm": 19.873794
+    },
+    {
+      "pincode": "743613",
+      "nearestBoundaryKm": 18.919181
+    }
+  ]
+}

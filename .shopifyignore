@@ -1,0 +1,7 @@
+node_modules/*
+scripts/*
+tests/*
+docs/*
+package*.json
+pincode-catalog.html
+test-results/*
