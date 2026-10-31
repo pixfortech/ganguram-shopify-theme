@@ -3467,7 +3467,7 @@ body:has(shopify-chat[open]) #smile-ui-lite-launcher-frame-container {
 }
 
 /* Ganguram brand finish: presentation only; no cart or delivery behaviour. */
-.main-footer {
+.shopify-section.main-footer {
   background-image: linear-gradient(125deg, rgba(255,255,255,.045), transparent 52%, rgba(41,40,79,.15));
 }
 .main-footer .footer-bottom { background-color: rgba(41,40,79,.1); }
@@ -3478,3 +3478,6 @@ body:has(shopify-chat[open]) #smile-ui-lite-launcher-frame-container {
   .main-footer a { transition: opacity .18s ease; }
   .main-footer a:hover { opacity: .82; }
 }
+
+/* Keep floating support/rewards controls clear of footer links on small screens. */
+@media(max-width:749px) { .main-footer .footer-bottom { padding-bottom: 90px; } }
