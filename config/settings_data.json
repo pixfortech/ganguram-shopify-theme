@@ -270,35 +270,6 @@
           "embed_template": ""
         }
       },
-      "1386531382474587334": {
-        "type": "shopify://apps/kitenzo/blocks/bb-cart-integration/78802baf-205d-4d1d-908c-fae911f24e36",
-        "disabled": false,
-        "settings": {
-          "cart_style": "refreshed",
-          "hide_accelerated_checkout": false,
-          "show_compare_at": false,
-          "placement": "below",
-          "hide_empty_line_items": false,
-          "font_size": 16,
-          "font_color": "",
-          "button_color": "",
-          "button_background": "",
-          "button_radius": 0,
-          "border_color": "#000000",
-          "background": "",
-          "heading": "Your cart contains {count} bundle",
-          "heading_plural": "Your cart contains {count} bundles",
-          "view_text": "View Details",
-          "modal_title": "Your bundle summary",
-          "modal_font_color": "#000000",
-          "modal_background": "#FFFFFF",
-          "modal_border_color": "#C4C4C4",
-          "modal_item_background": "",
-          "modal_item_content_background": "#F1F1F1",
-          "modal_item_product_background": "#FFFFFF",
-          "custom_css": ""
-        }
-      },
       "14044569291296200651": {
         "type": "shopify://apps/kitenzo/blocks/bb-cart-integration-custom/78802baf-205d-4d1d-908c-fae911f24e36",
         "disabled": false,
@@ -318,6 +289,35 @@
           "cartItemLinePrice": "",
           "cartItemQuantity": "",
           "observeTargets": ""
+        }
+      },
+      "1386531382474587334": {
+        "type": "shopify://apps/kitenzo/blocks/bb-cart-integration/78802baf-205d-4d1d-908c-fae911f24e36",
+        "disabled": false,
+        "settings": {
+          "cart_style": "refreshed",
+          "hide_accelerated_checkout": false,
+          "show_compare_at": false,
+          "placement": "below",
+          "hide_empty_line_items": false,
+          "font_size": 16,
+          "font_color": "",
+          "button_color": "#FFFFFF",
+          "button_background": "#49488D",
+          "button_radius": 0,
+          "border_color": "#000000",
+          "background": "",
+          "heading": "Your cart contains {count} bundle",
+          "heading_plural": "Your cart contains {count} bundles",
+          "view_text": "View Details",
+          "modal_title": "Your bundle summary",
+          "modal_font_color": "#000000",
+          "modal_background": "#FFFFFF",
+          "modal_border_color": "#c4c4c4",
+          "modal_item_background": "",
+          "modal_item_content_background": "#f1f1f1",
+          "modal_item_product_background": "#ffffff",
+          "custom_css": ""
         }
       }
     }
