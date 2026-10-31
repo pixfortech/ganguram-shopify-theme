@@ -3460,3 +3460,8 @@ html[dir=ltr] .show-more_panel:after {
   height: 100%;
   width: 100%;
 }
+/* Keep the Rewards launcher clear of the open Shopify Inbox panel. */
+body:has(shopify-chat[open]) #smile-ui-lite-launcher-frame-container {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
