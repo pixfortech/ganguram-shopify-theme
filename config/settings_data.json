@@ -274,7 +274,7 @@
         "type": "shopify://apps/kitenzo/blocks/bb-cart-integration/78802baf-205d-4d1d-908c-fae911f24e36",
         "disabled": false,
         "settings": {
-          "cart_style": "classic",
+          "cart_style": "refreshed",
           "hide_accelerated_checkout": false,
           "show_compare_at": false,
           "placement": "below",
