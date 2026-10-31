@@ -245,14 +245,9 @@
     <span>
       {{ 'general.copyright' | t }} &copy; {{ 'now' | date: '%Y' }}
       <a href="{{ routes.root_url }}">{{ shop.name | escape }}</a>.
-      {%- if section.settings.show_locale_selector or section.settings.show_country_selector -%}
-        <span class="powered-by-shopify">{{ powered_by_link }}</span>
-      {%- endif -%}
     </span>
 
-    {%- if section.settings.show_locale_selector == false and section.settings.show_country_selector == false -%}
-      <span class="powered-by-shopify">{{ powered_by_link }}</span>
-    {%- else -%}
+    {%- if section.settings.show_locale_selector or section.settings.show_country_selector -%}
       {%- render 'localization-form',
         show_country_selector: section.settings.show_country_selector,
         show_locale_selector: section.settings.show_locale_selector,
