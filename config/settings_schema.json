@@ -1563,7 +1563,7 @@
 				"type": "text",
 				"id": "ganguram_4h_start",
 				"label": "Start time (24h HH:MM)",
-				"default": "11:00"
+				"default": "09:00"
 			},
 			{
 				"type": "text",

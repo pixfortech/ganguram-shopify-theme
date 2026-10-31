@@ -20,8 +20,7 @@
  * the optional MOV gate, window.GanguramDeliveryRules + [data-gdpr-cart-total]. It NEVER
  * mutates the cart, changes ShipZip rates / service codes / distance slabs / the MOV
  * formula / pincode prefill / the Custom Box Builder / discounts, and never blocks
- * checkout. Fail-safe: with no admin config it treats the window as OPEN (so 4HR is not
- * hidden by an unconfigured store). No jQuery; theme has no dependency on it (consumers
+ * checkout. Fail-safe: missing or invalid admin time settings make 4HR unavailable. No jQuery; theme has no dependency on it (consumers
  * fall back to their legacy behaviour when this module is absent).
  *
  * Public API: window.GanguramFourHour
@@ -58,10 +57,10 @@
     var m = String(s == null ? '' : s).trim().match(/^(\d{1,2}):(\d{2})$/);
     if (!m) { return null; }
     var h = parseInt(m[1], 10), mi = parseInt(m[2], 10);
-    if (h < 0 || h > 24 || mi < 0 || mi > 59) { return null; }
+    if (h < 0 || h > 24 || mi < 0 || mi > 59 || (h === 24 && mi !== 0)) { return null; }
     return h * 60 + mi;
   }
-  // Current { day:'mon'..'sun', minutes } in the configured timezone (fallback: local).
+  // Current { day:'mon'..'sun', minutes } in the configured timezone (invalid timezone: unavailable).
   function nowInTz(z) {
     try {
       var parts = new Intl.DateTimeFormat('en-US', {
@@ -75,23 +74,26 @@
       });
       return { day: day, minutes: h * 60 + mi };
     } catch (e) {
-      var d = new Date();
-      var names = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-      return { day: names[d.getDay()], minutes: d.getHours() * 60 + d.getMinutes() };
+      return null; // Invalid timezone must not promise express delivery.
     }
   }
-  // true when "now" is inside the admin window. No config / misconfigured times fail OPEN
-  // (treated as within) so 4HR is never silently hidden by an unconfigured/typo'd window.
+  // Admin-defined daily window. Invalid or missing configuration is unavailable.
+  // For overnight windows, the after-midnight portion belongs to the opening day.
   function withinWindow() {
-    var c = cfg(); if (!c) { return true; }
+    var c = cfg(); if (!c) { return false; }
     var days = parseDays(c.days);
-    var start = parseHM(startRaw()), end = parseHM(endRaw());
-    var now = nowInTz(tz());
-    if (days && days.indexOf(now.day) === -1) { return false; }
-    if (start == null || end == null) { return true; }   // misconfig -> don't hide
-    if (start === end) { return true; }                  // equal -> all-day
+    var start = parseHM(c.startTime || c.start), end = parseHM(c.endTime || c.end);
+    var now = nowInTz(c.timezone);
+    if (!now || start == null || end == null || start === 1440) { return false; }
+    var day = now.day;
+    if (start > end && now.minutes < end) {
+      var names = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+      day = names[(names.indexOf(day) + 6) % 7];
+    }
+    if (days && days.indexOf(day) === -1) { return false; }
+    if (start === end) { return true; } // Retain the documented all-day setting.
     if (start < end) { return now.minutes >= start && now.minutes < end; }
-    return now.minutes >= start || now.minutes < end;     // overnight window
+    return now.minutes >= start || now.minutes < end;
   }
 
   function pad(n) { return n < 10 ? '0' + n : '' + n; }
@@ -103,7 +105,7 @@
   }
   function startText() { return fmt12(parseHM(startRaw())); }
   function endText() { return fmt12(parseHM(endRaw())); }
-  function currentKolkataTime() { return fmt24(nowInTz(tz()).minutes); }
+  function currentKolkataTime() { var now = nowInTz(tz()); return now ? fmt24(now.minutes) : ""; }
 
   // Customer-facing "available between X and Y" message (admin-overridable template).
   function message() {
@@ -167,9 +169,8 @@
     var withinTime = withinWindow();
 
     var reason = '', visible = true;
-    // Only gate on the admin enable flag when the store is actually configured. With NO config
-    // the module can't know the merchant's intent, so it fails OPEN (legacy radius + all-QC).
-    if (c && !en) { reason = 'disabled'; visible = false; }
+    // Do not advertise the express method without an enabled admin configuration.
+    if (!en) { reason = 'disabled'; visible = false; }
     else if (isPanIndia(l) && !radius) { reason = 'pan_india'; visible = false; }
     else if (!radius) { reason = 'outside_radius'; visible = false; }
     else if (!allQc) { reason = 'mixed_cart'; visible = false; }
@@ -231,7 +232,7 @@
         enabled: e.enabled,
         movRequired: e.movRequired,
         movMet: e.movMet,
-        window: (e.windowStart && e.windowEnd) ? (e.windowStart + ' – ' + e.windowEnd) : '(open / unconfigured)',
+        window: (e.windowStart && e.windowEnd) ? (e.windowStart + ' – ' + e.windowEnd) : '(unconfigured)',
         message: message()
       };
     }

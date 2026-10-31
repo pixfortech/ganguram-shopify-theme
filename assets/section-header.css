@@ -1332,3 +1332,20 @@ shopify-account .button__icon {
   height: 2.5rem;
   margin-inline-start: -0.125rem;
 }
+/* Keep all main categories visible beside the delivery control on laptop screens. */
+@media screen and (min-width: 1024px) and (max-width: 1399px) {
+  .header__bottom .site-nav.style--classic nav { padding-inline-end: 0; }
+  .header__bottom .site-nav.style--classic nav > ul > li > .menu-link {
+    padding-inline: 0.4375rem;
+    font-size: 0.875rem;
+  }
+  .header__bottom .ganguram-delivery-widget__label { display: none; }
+  .sticky-header .header__bottom .button--cart-handle {
+    padding-inline: 0;
+    min-width: 44px;
+    width: 44px;
+    justify-content: center;
+  }
+  .sticky-header .header__bottom .button--cart-handle [data-header-cart-total],
+  .sticky-header .header__bottom .button--cart-handle [data-header-cart-count] { display: none; }
+}

@@ -55,10 +55,10 @@
     var m = String(s == null ? '' : s).trim().match(/^(\d{1,2}):(\d{2})$/);
     if (!m) { return null; }
     var h = parseInt(m[1], 10), mi = parseInt(m[2], 10);
-    if (h < 0 || h > 24 || mi < 0 || mi > 59) { return null; }
+    if (h < 0 || h > 24 || mi < 0 || mi > 59 || (h === 24 && mi !== 0)) { return null; }
     return h * 60 + mi;
   }
-  // Current {day:'mon'..'sun', minutes} in the configured timezone (fallback: local).
+  // Current {day:'mon'..'sun', minutes} in the configured timezone (invalid timezone: unavailable).
   function nowInTz(tz) {
     try {
       var parts = new Intl.DateTimeFormat('en-US', {
@@ -72,23 +72,26 @@
       });
       return { day: day, minutes: h * 60 + mi };
     } catch (e) {
-      var d = new Date();
-      var names = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-      return { day: names[d.getDay()], minutes: d.getHours() * 60 + d.getMinutes() };
+      return null; // Invalid timezone must not promise express delivery.
     }
   }
-  // true when "now" is inside the admin window. Misconfigured times fail OPEN
-  // (treated as within) so a typo never silently hides the service.
+  // Admin-defined daily window. Invalid or missing configuration is unavailable.
+  // For overnight windows, the after-midnight portion belongs to the opening day.
   function withinWindow() {
     var c = cfg(); if (!c) { return false; }
     var days = parseDays(c.days);
-    var start = parseHM(c.start), end = parseHM(c.end);
+    var start = parseHM(c.startTime || c.start), end = parseHM(c.endTime || c.end);
     var now = nowInTz(c.timezone);
-    if (days && days.indexOf(now.day) === -1) { return false; }
-    if (start == null || end == null) { return true; }   // misconfig -> don't hide
-    if (start === end) { return true; }                  // equal -> treat as all-day
+    if (!now || start == null || end == null || start === 1440) { return false; }
+    var day = now.day;
+    if (start > end && now.minutes < end) {
+      var names = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+      day = names[(names.indexOf(day) + 6) % 7];
+    }
+    if (days && days.indexOf(day) === -1) { return false; }
+    if (start === end) { return true; } // Retain the documented all-day setting.
     if (start < end) { return now.minutes >= start && now.minutes < end; }
-    return now.minutes >= start || now.minutes < end;    // overnight window
+    return now.minutes >= start || now.minutes < end;
   }
 
   // ---- zone -----------------------------------------------------------------
