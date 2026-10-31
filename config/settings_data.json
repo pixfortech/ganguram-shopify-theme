@@ -261,6 +261,14 @@
           "agent_activator_font_size": 17,
           "agent_border_radius": 12
         }
+      },
+      "2323586426992478052": {
+        "type": "shopify://apps/kitenzo/blocks/bundle-page-redirect/78802baf-205d-4d1d-908c-fae911f24e36",
+        "disabled": false,
+        "settings": {
+          "bundle_prefix": "/apps/bundles/bundle",
+          "embed_template": ""
+        }
       }
     }
   },
