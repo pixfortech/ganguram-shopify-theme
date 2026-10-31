@@ -1850,4 +1850,60 @@
 			}
 		]
 	}
+,
+{
+  "name": "Ganguram brand doodles",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "ganguram_doodles_enabled",
+      "label": "Show brand doodles",
+      "default": true
+    },
+    {
+      "type": "paragraph",
+      "content": "Original Ganguram artwork, softly tinted brand purple. Set an opacity to 0 to hide that placement. Product photographs and purchase controls remain clear."
+    },
+    {
+      "type": "range",
+      "id": "ganguram_doodles_footer_opacity",
+      "label": "Footer opacity",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "%",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "ganguram_doodles_product_opacity",
+      "label": "Product descriptions opacity",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "%",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "ganguram_doodles_story_opacity",
+      "label": "Jalbhara story accents opacity",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "%",
+      "default": 7
+    },
+    {
+      "type": "range",
+      "id": "ganguram_doodles_scale",
+      "label": "Pattern width",
+      "min": 500,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "default": 700
+    }
+  ]
+}
 ]

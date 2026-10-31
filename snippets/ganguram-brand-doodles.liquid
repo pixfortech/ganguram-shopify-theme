@@ -1,0 +1,47 @@
+{%- if settings.ganguram_doodles_enabled != false -%}
+<style id="ganguram-brand-doodles">
+  :root {
+    --ganguram-doodle-image: url({{ 'ganguram-brand-doodles.webp' | asset_url }});
+    --ganguram-doodle-scale: {{ settings.ganguram_doodles_scale | default: 700 }}px;
+    --ganguram-doodle-footer: {{ settings.ganguram_doodles_footer_opacity | default: 10 | divided_by: 100.0 }};
+    --ganguram-doodle-product: {{ settings.ganguram_doodles_product_opacity | default: 5 | divided_by: 100.0 }};
+    --ganguram-doodle-story: {{ settings.ganguram_doodles_story_opacity | default: 7 | divided_by: 100.0 }};
+  }
+  /* Decorative layers only: no layout, input, delivery or product-photo changes. */
+  .main-footer .footer-top,
+  :is(.product__description, .gp-detail-content),
+  #jalbhara-home .jl-gift,
+  #jalbhara-home .jl-faq {position:relative;isolation:isolate;}
+  .main-footer .footer-top::before,
+  :is(.product__description, .gp-detail-content)::before,
+  #jalbhara-home .jl-gift::before,
+  #jalbhara-home .jl-faq::before {
+    content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+    background-image:var(--ganguram-doodle-image);
+    background-size:var(--ganguram-doodle-scale) auto;
+    background-repeat:repeat;border-radius:inherit;
+  }
+  .main-footer .footer-top::before {
+    opacity:var(--ganguram-doodle-footer);filter:brightness(0) invert(1);
+    -webkit-mask-image:linear-gradient(90deg,#000,transparent 44%,transparent 56%,#000);
+    mask-image:linear-gradient(90deg,#000,transparent 44%,transparent 56%,#000);
+  }
+  :is(.product__description, .gp-detail-content)::before {
+    opacity:var(--ganguram-doodle-product);background-position:right top;
+    -webkit-mask-image:linear-gradient(115deg,transparent 25%,#000);
+    mask-image:linear-gradient(115deg,transparent 25%,#000);
+  }
+  #jalbhara-home .jl-gift::before,
+  #jalbhara-home .jl-faq::before {
+    opacity:var(--ganguram-doodle-story);
+    -webkit-mask-image:linear-gradient(90deg,#000,transparent 65%);
+    mask-image:linear-gradient(90deg,#000,transparent 65%);
+  }
+  @media(max-width:749px) {
+    .main-footer .footer-top::before {opacity:calc(var(--ganguram-doodle-footer) * .7);}
+    :is(.product__description, .gp-detail-content)::before {opacity:calc(var(--ganguram-doodle-product) * .7);}
+    #jalbhara-home .jl-gift::before,#jalbhara-home .jl-faq::before {opacity:calc(var(--ganguram-doodle-story) * .7);}
+  }
+  @media print {.main-footer .footer-top::before,:is(.product__description, .gp-detail-content)::before,#jalbhara-home .jl-gift::before,#jalbhara-home .jl-faq::before{display:none;}}
+</style>
+{%- endif -%}
