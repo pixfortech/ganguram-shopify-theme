@@ -1,0 +1,23 @@
+{%- comment -%}
+  Compact, data-driven pack choices for product cards. Single packs and
+  non-pack options (such as flavour) do not need another line on the card.
+{%- endcomment -%}
+{%- unless product.has_only_default_variant -%}
+  {%- for option in product.options_with_values -%}
+    {%- assign option_name = option.name | downcase | strip -%}
+    {%- assign is_pack_option = false -%}
+    {%- case option_name -%}
+      {%- when 'size', 'quantity', 'weight', 'pack', 'pack size', 'pack size / weight', 'pieces', 'number of pieces' -%}
+        {%- assign is_pack_option = true -%}
+    {%- endcase -%}
+    {%- if is_pack_option and option.values.size > 1 -%}
+      <span class="product-item__pack-options">
+        <span class="visually-hidden">{{ option.name | escape }} choices: </span>
+        {%- for value in option.values -%}
+          <span class="product-item__pack-option">{{ value | escape }}</span>
+          {%- unless forloop.last -%}<span class="product-item__pack-separator" aria-hidden="true"> · </span>{%- endunless -%}
+        {%- endfor -%}
+      </span>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endunless -%}

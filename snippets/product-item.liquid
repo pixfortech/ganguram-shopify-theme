@@ -149,6 +149,9 @@
                 -%}
               </span>
             </div>
+            {%- unless blank_product -%}
+              {%- render 'ganguram-product-pack-options', product: product -%}
+            {%- endunless -%}
           </a>
 
         {%- when 'price' -%}
