@@ -1,5 +1,12 @@
 {{ 'section-footer.css' | asset_url | stylesheet_tag }}
 
+{%- if request.page_type == 'product' -%}
+  <div class="ganguram-rewards-footer container--large">
+    <a href="#smile-home">Rewards &amp; points</a>
+    <span>Explore Ganguram Sweets Club</span>
+  </div>
+{%- endif -%}
+
 {%- if section.settings.remove_margin -%}
   {% style %}
     .main-footer {

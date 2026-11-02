@@ -72,3 +72,30 @@ pickup-availability-widget { display: none !important; }
 body:has(#smile-ui-container .smile-launcher-open) shopify-chat {
   visibility: hidden !important;
 }
+
+/* On mobile product pages, Rewards lives in the footer instead of covering
+   prices, quantities or purchase buttons. Keep the app panel and its close
+   control intact; the footer uses Smile's native panel deep link. */
+.ganguram-rewards-footer { display: none; }
+@media (max-width: 749px) {
+  .ganguram-rewards-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .25rem 1rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  .ganguram-rewards-footer a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    text-decoration: underline;
+    text-underline-offset: .2em;
+  }
+  .ganguram-rewards-footer span { font-size: .875rem; }
+  body.template-product:has(.ganguram-rewards-footer) #smile-ui-lite-launcher-frame-container,
+  body.template-product:has(.ganguram-rewards-footer) #smile-ui-container .smile-launcher-frame-container {
+    display: none !important;
+  }
+}
