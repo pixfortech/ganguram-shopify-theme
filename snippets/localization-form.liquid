@@ -22,7 +22,7 @@
 
 {%- if country_selector or locale_selector -%}
 
-  {{ 'component-localization-form.css' | asset_url | stylesheet_tag }}
+  <style>{{ 'component-localization-form.css' | inline_asset_content }}</style>
   {% # theme-check-disable VariableName %}{%- assign formId = 'localization_form-' | append: location -%}{% # theme-check-enable VariableName %}
   {%- form 'localization', id: formId, class: 'localization-form' -%}
 

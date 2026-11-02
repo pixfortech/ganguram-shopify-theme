@@ -26,6 +26,7 @@
   {{ mobile_image | image_url: width: mobile_image.width }} {{ mobile_image.width }}w
 {%- endcapture -%}
 <style>
+  {% if preload %}#responsive-slide-{{ id }} img { transition: none; }{% endif %}
   #responsive-slide-{{ id }} { padding-top: {{ 100 | divided_by: image.aspect_ratio }}%; }
   {% if image_alignment %}
     #responsive-slide-{{ id }} img { object-position: {{ image.presentation.focal_point }}; }

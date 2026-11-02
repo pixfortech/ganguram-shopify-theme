@@ -590,7 +590,7 @@ if ( typeof MobileNavigation !== 'function' ) {
 				})
 			});
 
-			this.querySelectorAll('.submenu-back a').forEach(elm=>{
+			this.querySelectorAll('.submenu-back a, .submenu-back button').forEach(elm=>{
 				elm.addEventListener('click', e=>{
 					if ( this._openedSecondSubmenu ) {
 						this._openedSecondSubmenu = false;

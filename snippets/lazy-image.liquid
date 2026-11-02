@@ -95,7 +95,7 @@
 {%- endif -%}
 
 <figure 
-	class="lazy-image {{ class }}
+	class="lazy-image {% if preload %}lazyloaded{% endif %} {{ class }}
 		{% if type == 'background' %}lazy-image--background{% endif %}  
 		{% if fit %} lazy-image--fit {% endif %}
 	" 

@@ -7,7 +7,8 @@ mobile-navigation .site-nav {
 mobile-navigation .site-nav nav {
   transition: transform 300ms ease-in-out;
 }
-mobile-navigation .site-nav ul a:not(.button) {
+mobile-navigation .site-nav ul a:not(.button),
+mobile-navigation .site-nav .submenu-back-button {
   width: 100%;
   padding: 0.625rem var(--sidebar-gutter);
   border-bottom: 1px solid var(--color-borders-main);
@@ -56,8 +57,16 @@ mobile-navigation .site-nav .submenu-back {
   cursor: pointer;
   background: var(--color-third-background-main);
 }
-mobile-navigation .site-nav .submenu-back a {
+mobile-navigation .site-nav .submenu-back a,
+mobile-navigation .site-nav .submenu-back-button {
   justify-content: flex-start !important;
+}
+mobile-navigation .site-nav .submenu-back-button {
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
 }
 mobile-navigation .site-nav .submenu-back .icon {
   margin-inline-start: -0.125rem;
