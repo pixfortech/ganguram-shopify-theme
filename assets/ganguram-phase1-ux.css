@@ -72,6 +72,10 @@ pickup-availability-widget { display: none !important; }
 body:has(#smile-ui-container .smile-launcher-open) shopify-chat {
   visibility: hidden !important;
 }
+/* Inbox's current agent widget uses a new shadow host. */
+body:has(#smile-ui-container .smile-launcher-open) shopify-agent-runtime {
+  display: none !important;
+}
 
 /* On mobile product pages, Rewards lives in the footer instead of covering
    prices, quantities or purchase buttons. Keep the app panel and its close
