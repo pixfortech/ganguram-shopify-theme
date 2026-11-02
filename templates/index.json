@@ -961,12 +961,63 @@
         "seo_h_tag": "h2",
         "section_visibility": "always"
       }
+    },
+    "ganguram_gift_boxes": {
+      "type": "featured-collection",
+      "blocks": {
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "quick_buy": {
+          "type": "quick_buy",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "title",
+        "price",
+        "quick_buy"
+      ],
+      "settings": {
+        "heading": "Gift Boxes",
+        "subheading": "Thoughtful assortments for celebrations, thank-yous and sweet surprises. Available for serviceable Kolkata pincodes.",
+        "show_view_all": true,
+        "section_heading_layout": "section-heading--left",
+        "style": "grid",
+        "layout_desktop": "three-columns",
+        "layout_mobile": "grid-palm-2",
+        "products_number": 6,
+        "collection": "gift-boxes",
+        "collection_1": "",
+        "collection_2": "",
+        "collection_3": "",
+        "color_background_main": "rgba(0,0,0,0)",
+        "color_text_main": "rgba(0,0,0,0)",
+        "color_button_main": "rgba(0,0,0,0)",
+        "color_borders_main": "rgba(0,0,0,0)",
+        "color_shadow_main": "rgba(0,0,0,0)",
+        "color_hide_borders": false,
+        "color_hide_shadow": false,
+        "section_background_color": "rgba(0,0,0,0)",
+        "section_background_gradient": "",
+        "section_heading_color": "rgba(0,0,0,0)",
+        "descrease_margin": false,
+        "remove_margin": false,
+        "seo_h_tag": "h2",
+        "section_visibility": "always"
+      }
     }
   },
   "order": [
     "flex_slideshow_fVfj3k",
     "text_columns_images_9m9Xcc",
     "featured-collection",
+    "ganguram_gift_boxes",
     "165406738229739f4d",
     "featured_collection_X3jgLR",
     "flex_grid_DhRTt8",
