@@ -70,10 +70,7 @@ pickup-availability-widget { display: none !important; }
 }
 /* One support panel at a time, with Rewards' native close control retained. */
 body:has(#smile-ui-container .smile-launcher-open) shopify-chat {
-  visibility: hidden !important;
-}
-/* Inbox's current agent widget uses a new shadow host. */
-body:has(#smile-ui-container .smile-launcher-open) shopify-agent-runtime {
+  /* display also hides descendants that set visibility inside Inbox's shadow DOM. */
   display: none !important;
 }
 
