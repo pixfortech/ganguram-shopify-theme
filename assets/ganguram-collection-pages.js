@@ -178,8 +178,9 @@
   }
 
   const start = () => render();
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',start);
+  if (document.readyState !== 'complete') document.addEventListener('DOMContentLoaded',start,{once:true});
   else start();
+  window.addEventListener('load',()=>{ if (!current) start(); },{once:true});
   window.addEventListener('ganguram:delivery-location-changed',()=>render(true));
   document.addEventListener('krown:main-collection-grid:filtered',()=>queueMicrotask(start));
   document.addEventListener('shopify:section:load',start);
