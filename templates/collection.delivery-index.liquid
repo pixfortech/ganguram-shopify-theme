@@ -1,0 +1,9 @@
+{% layout none %}
+{%- paginate collection.products by 250 -%}
+{"pages":{{ paginate.pages }},"page":{{ paginate.current_page }},"products":[
+{%- for item in collection.products -%}
+[{{ item.id | append: '' | json }},{% if item.tags contains 'Kolkata' %}1{% else %}0{% endif %},{% if item.tags contains 'PAN India' %}1{% else %}0{% endif %},{% if item.tags contains 'Quick Commerce' %}1{% else %}0{% endif %},{% if item.tags contains 'Local Delivery' %}1{% else %}0{% endif %}]{% unless forloop.last %},{% endunless %}
+{%- endfor -%}
+]}
+{%- endpaginate -%}
+
