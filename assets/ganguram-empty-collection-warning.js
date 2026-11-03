@@ -208,6 +208,7 @@
     var g = grid();
     if (!g) { cleanup(); return; }
     if (!activeZone()) { cleanup(); return; }          // no / invalid / unserviceable pincode
+    if (Number(g.dataset.total) > Number(g.dataset.pageSize) && g.dataset.deliveryResult !== "empty") { cleanup(); return; }
     var c = counts(g);
     if (c.total === 0) { cleanup(); return; }           // naturally empty collection -> no redirect
     if (c.visible === 0) { showWarning(); }             // all filtered out -> warn + countdown
@@ -225,6 +226,7 @@
   function init() {
     if (!isCollectionPage()) { return; }
     // A pincode change starts a fresh cycle (re-enable the countdown).
+    document.addEventListener('ganguram:collection-page-ready', evaluateSoon);
     window.addEventListener(EVENT, function () { paused = false; evaluateSoon(); });
     var g = grid();
     if (g && 'MutationObserver' in window) {

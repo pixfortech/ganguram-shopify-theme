@@ -186,7 +186,7 @@
             <div
               id="main-collection-product-grid"
               data-id="{{ section.id }}"
-              data-ganguram-collection="{{ collection.handle }}"
+              data-ganguram-collection="{{ collection.handle }}" data-source-page="{{ paginate.current_page }}" data-page-size="{{ paginate.page_size }}" data-total="{{ paginate.items }}" data-count-one="{{ 'collections.product_count_simple' | t: count: 1 | escape }}" data-count-many="{{ 'collections.product_count_simple' | t: count: 987654 | escape }}"
               class="collection grid grid--layout {{ grid_class_desktop }} {{ grid_class_mobile }}"
             >
       {%- else -%}
@@ -220,7 +220,7 @@
           <div
             id="main-collection-product-grid"
             data-id="{{ section.id }}"
-            data-ganguram-collection="{{ collection.handle }}"
+            data-ganguram-collection="{{ collection.handle }}" data-source-page="{{ paginate.current_page }}" data-page-size="{{ paginate.page_size }}" data-total="{{ paginate.items }}" data-count-one="{{ 'collections.product_count_simple' | t: count: 1 | escape }}" data-count-many="{{ 'collections.product_count_simple' | t: count: 987654 | escape }}"
             class="collection grid grid--layout {{ grid_class_desktop }} {{ grid_class_mobile }}"
           >
       {%- endif -%}
@@ -255,7 +255,7 @@
       {%- endfor -%}
 
       {%- if paginate.pages > 1 -%}
-        <div class="{{ pagination_offset_class }} {{ pagination_offset_mobile_class | append: ' offset-mobile-on'}}">
+        <div data-delivery-pagination class="{{ pagination_offset_class }} {{ pagination_offset_mobile_class | append: ' offset-mobile-on'}}">
           {%- render 'pagination', paginate: paginate %}
         </div>
       {%- endif -%}
@@ -270,6 +270,7 @@
       {%- endif -%}
     </div>
   {%- endpaginate -%}
+  <script src="{{ 'ganguram-collection-pages.js' | asset_url }}" defer></script>
 </div>
 
 {%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
