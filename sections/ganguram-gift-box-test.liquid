@@ -1,0 +1,19 @@
+{{ 'ganguram-gift-box.css' | asset_url | stylesheet_tag }}
+<ganguram-gift-box class="ggb-experience" style="display:block">
+  <div class="ggb-intro"><p class="ggb-eyebrow">Ganguram · The art of gifting</p><h1>A little box.<br>A grand gesture.</h1><p>Lift the lid on a beautifully considered gift.<br>Made for the moments worth sharing.</p></div>
+  <div class="ggb-scene" id="gift-box-scene-{{ section.id }}" role="img" aria-label="Interactive red magnetic gift box. Use the button below to open and close its hinged lid.">
+    <img class="ggb-base" src="{{ 'ganguram-magnetic-gift-box-top-down-test.jpg' | file_url }}" width="1536" height="1024" alt="" fetchpriority="high">
+    <div class="ggb-shade" aria-hidden="true"></div>
+    <div class="ggb-lid" aria-hidden="true">
+      <div class="ggb-face ggb-outer"><img src="{{ 'ganguram-test-gift-box-magnetic-closed.jpg' | file_url }}" width="1536" height="1024" alt=""></div>
+      <div class="ggb-face ggb-inner"><img src="{{ 'ganguram-test-gift-box-inner-lid-texture.jpg' | file_url }}" width="1536" height="1024" alt=""></div>
+      <div class="ggb-lid-edge"></div><div class="ggb-flap"></div>
+    </div>
+  </div>
+  <div class="ggb-controls"><button class="ggb-toggle" type="button" aria-expanded="false" aria-controls="gift-box-scene-{{ section.id }}" disabled><span data-ggb-label>Open the box</span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 14 6-6 6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><p class="ggb-status" role="status" aria-live="polite">Preparing your gift…</p></div>
+  <div class="ggb-detail"><img src="{{ 'ganguram-test-gift-box-close-up.jpg' | file_url }}" width="1536" height="1024" loading="lazy" alt="An assortment of Bengali sweets in a red magnetic gift box on beige woven linen."><div><p class="ggb-eyebrow">Thoughtfully presented</p><h2>Every detail,<br>part of the gift.</h2><p>A rich red magnetic box. A delicate gold ornament. Inside, an inviting assortment of sweets, arranged to make the first glimpse feel special.</p><p>From the soft texture of Sandesh to the golden glow of Mihidana Laddu, there is something delightful in every row.</p><p class="ggb-preview-note">Design test · Not available for purchase. Images are a presentation concept; final assortment and quantities will follow the selected gift product.</p></div></div>
+</ganguram-gift-box>
+<script src="{{ 'ganguram-gift-box.js' | asset_url }}" defer></script>
+{% schema %}
+{"name":"Magnetic gift box test","tag":"section","class":"ganguram-gift-box-test","settings":[],"presets":[{"name":"Magnetic gift box test"}]}
+{% endschema %}
