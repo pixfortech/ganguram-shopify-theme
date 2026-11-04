@@ -80,9 +80,13 @@
     var rect=button.getBoundingClientRect();
     if (rect.width<1 || rect.height<1) return;
     var s=getComputedStyle(button);
-    put('--gg-launcher-height',rect.height+'px');
-    put('--gg-launcher-bottom',Math.max(16,window.innerHeight-rect.bottom)+'px');
-    put('--gg-launcher-inset',Math.max(16,window.innerWidth-rect.right)+'px');
+    // Use layout dimensions, not the temporary scale during Inbox entrance/exit.
+    var anchor=button.parentElement, anchorStyle=anchor && getComputedStyle(anchor);
+    var bottom=anchorStyle && parseFloat(anchorStyle.bottom);
+    var inset=anchorStyle && parseFloat(anchorStyle.right);
+    put('--gg-launcher-height',(parseFloat(s.height)||rect.height)+'px');
+    put('--gg-launcher-bottom',Math.max(16,Number.isFinite(bottom)?bottom:window.innerHeight-rect.bottom)+'px');
+    put('--gg-launcher-inset',Math.max(16,Number.isFinite(inset)?inset:document.documentElement.clientWidth-rect.right)+'px');
     put('--gg-launcher-radius',s.borderRadius);
     put('--gg-launcher-bg',s.backgroundColor);
     put('--gg-launcher-blur',s.backdropFilter || 'blur(6px)');
