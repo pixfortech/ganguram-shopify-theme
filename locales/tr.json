@@ -171,6 +171,9 @@
     "view_all_collections": "Tüm koleksiyonları görüntüle"
   },
   "products": {
+    "card": {
+      "gift_contents": "Hediye içeriği"
+    },
     "grid": {
       "on_sale_from_html": "{{ price }}'dan satışta",
       "from_text_html": "{{ price }}'den",

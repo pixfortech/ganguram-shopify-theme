@@ -171,6 +171,9 @@
     "view_all_collections": "عرض جميع المجموعات"
   },
   "products": {
+    "card": {
+      "gift_contents": "محتويات الهدية"
+    },
     "grid": {
       "on_sale_from_html": "للبيع من {{ price }}",
       "from_text_html": "من {{ price }}",

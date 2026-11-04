@@ -171,6 +171,9 @@
     "view_all_collections": "Zobrazit všechny kolekce"
   },
   "products": {
+    "card": {
+      "gift_contents": "Obsah dárku"
+    },
     "grid": {
       "on_sale_from_html": "Ve výprodeji od {{ price }}",
       "from_text_html": "Od {{ price }}",

@@ -171,6 +171,9 @@
     "view_all_collections": "Peržiūrėti visas kolekcijas"
   },
   "products": {
+    "card": {
+      "gift_contents": "Dovanos turinys"
+    },
     "grid": {
       "on_sale_from_html": "Parduodama nuo {{ price }}",
       "from_text_html": "Nuo {{ price }}",

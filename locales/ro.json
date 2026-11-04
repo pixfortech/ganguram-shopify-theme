@@ -171,6 +171,9 @@
     "view_all_collections": "Vedeți toate colecțiile"
   },
   "products": {
+    "card": {
+      "gift_contents": "Conținutul cadoului"
+    },
     "grid": {
       "on_sale_from_html": "Disponibil de la {{ price }}",
       "from_text_html": "De la {{ price }}",

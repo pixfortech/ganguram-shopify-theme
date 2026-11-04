@@ -171,6 +171,9 @@
     "view_all_collections": "Prikaži sve kolekcije"
   },
   "products": {
+    "card": {
+      "gift_contents": "Sadržaj poklona"
+    },
     "grid": {
       "on_sale_from_html": "Rasprodaja od {{ price }}",
       "from_text_html": "Od {{ price }}",

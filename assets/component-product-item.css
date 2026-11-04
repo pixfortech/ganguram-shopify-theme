@@ -284,3 +284,35 @@ html[dir=ltr] .product-item__badges {
   filter: grayscale(0.2);
   opacity: 0.95;
 }
+
+/* Fixed gift contents: native disclosure keeps long assortments compact. */
+.product-item__gift-contents {
+  margin-top: .6rem;
+  font-size: .8125rem;
+  line-height: 1.5;
+  text-align: start;
+  color: var(--color-text-cards);
+  overflow-wrap: anywhere;
+}
+.product-item__gift-contents summary {
+  display: block;
+  list-style: none;
+  min-height: 44px;
+  padding: .4rem 0;
+  cursor: pointer;
+}
+.product-item__gift-contents summary::-webkit-details-marker { display: none; }
+.product-item__gift-contents summary:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; border-radius: 3px; }
+.product-item__gift-heading { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+.product-item__gift-label { font-weight: 600; }
+.product-item__gift-toggle { position: relative; width: 12px; height: 12px; flex: 0 0 12px; }
+.product-item__gift-toggle::before, .product-item__gift-toggle::after { content: ''; position: absolute; background: currentColor; }
+.product-item__gift-toggle::before { top: 5px; left: 0; width: 12px; height: 1px; }
+.product-item__gift-toggle::after { top: 0; left: 5px; width: 1px; height: 12px; }
+.product-item__gift-preview { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: .2rem; }
+.product-item__gift-contents[open] .product-item__gift-preview,
+.product-item__gift-contents[open] .product-item__gift-toggle::after { display: none; }
+.product-item__gift-contents .product-item__gift-list { margin: .15rem 0 .4rem; padding-inline-start: 1.1rem; list-style: disc; }
+.product-item__gift-list li + li { margin-top: .2rem; }
+.product-item__gift-contents--single { padding: .4rem 0; }
+.product-item__gift-contents--single > span { display: block; }

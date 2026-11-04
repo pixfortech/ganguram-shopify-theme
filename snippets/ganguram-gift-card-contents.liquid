@@ -1,0 +1,26 @@
+{% doc %}
+  Displays confirmed fixed gift contents separately from selectable pack options.
+  @param {product} product - Product whose custom.gift_contents list is shown.
+{% enddoc %}
+{%- assign gift_contents = product.metafields.custom.gift_contents.value -%}
+{%- if gift_contents != blank -%}
+  {%- if gift_contents.size == 1 -%}
+    <div class="product-item__gift-contents product-item__gift-contents--single">
+      <span class="product-item__gift-label">{{ 'products.card.gift_contents' | t }}</span>
+      <span>{{ gift_contents.first | escape }}</span>
+    </div>
+  {%- else -%}
+    <details class="product-item__gift-contents">
+      <summary>
+        <span class="product-item__gift-heading">
+          <span class="product-item__gift-label">{{ 'products.card.gift_contents' | t }}</span>
+          <span class="product-item__gift-toggle" aria-hidden="true"></span>
+        </span>
+        <span class="product-item__gift-preview" aria-hidden="true">{{ gift_contents | join: ' · ' | escape }}</span>
+      </summary>
+      <ul class="product-item__gift-list" role="list">
+        {%- for item in gift_contents -%}<li>{{ item | escape }}</li>{%- endfor -%}
+      </ul>
+    </details>
+  {%- endif -%}
+{%- endif -%}

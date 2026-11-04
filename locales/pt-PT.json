@@ -171,6 +171,9 @@
     "view_all_collections": "Ver todas as coleções"
   },
   "products": {
+    "card": {
+      "gift_contents": "Conteúdo do presente"
+    },
     "grid": {
       "on_sale_from_html": "Em Promoção a partir de {{ price }}",
       "from_text_html": "A partir de {{ price }}",

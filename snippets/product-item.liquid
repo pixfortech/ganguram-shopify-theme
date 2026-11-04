@@ -153,6 +153,9 @@
               {%- render 'ganguram-product-pack-options', product: product -%}
             {%- endunless -%}
           </a>
+          {%- unless blank_product -%}
+            {%- render 'ganguram-gift-card-contents', product: product -%}
+          {%- endunless -%}
 
         {%- when 'price' -%}
           <div 

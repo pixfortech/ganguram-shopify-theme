@@ -171,6 +171,9 @@
     "view_all_collections": "すべてのコレクションを表示する"
   },
   "products": {
+    "card": {
+      "gift_contents": "ギフトの内容"
+    },
     "grid": {
       "on_sale_from_html": "{{ price }} から発売中",
       "from_text_html": "{{ price }} から",

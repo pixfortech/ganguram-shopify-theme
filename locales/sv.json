@@ -171,6 +171,9 @@
     "view_all_collections": "Visa alla samlingar"
   },
   "products": {
+    "card": {
+      "gift_contents": "Presentens innehåll"
+    },
     "grid": {
       "on_sale_from_html": "På rea från {{ price }}",
       "from_text_html": "Från {{ price }}",
