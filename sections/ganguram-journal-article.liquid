@@ -1,0 +1,38 @@
+{{ 'ganguram-journal.css' | asset_url | stylesheet_tag }}
+<article class="gj gj-story container--large">
+  <header class="gj-story-header">
+    <a class="gj-back" href="{{ blog.url }}">← All Journal stories</a>
+    <p class="gj-eyebrow">{{ article.tags.first | default: 'Ganguram Journal' | escape }}</p>
+    <h1>{{ article.title | escape }}</h1>
+    <p class="gj-meta">By {{ article.author | escape }} · <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%d %B %Y' }}</time></p>
+    {% if article.excerpt != blank %}<div class="gj-lead">{{ article.excerpt }}</div>{% endif %}
+  </header>
+  {% if article.image %}
+    <div class="gj-story-image">{{ article.image | image_url: width: 1200 | image_tag: widths: '400,640,840,1200', sizes: '(min-width: 900px) 840px, 100vw', loading: 'eager', alt: article.image.alt }}</div>
+  {% endif %}
+  <div class="gj-prose">{{ article.content }}</div>
+  <div class="gj-story-end">
+    <p>Questions about a sweet or delivery? <a href="mailto:support@ganguram.com">support@ganguram.com</a> · <a href="tel:+919073096322">+91 90730 96322</a></p>
+    {% assign share_url = shop.url | append: article.url | url_encode %}
+    {% assign share_title = article.title | url_encode %}
+    <nav class="gj-share" aria-label="Share this story">
+      <a href="https://wa.me/?text={{ share_title }}%20{{ share_url }}" target="_blank" rel="noopener noreferrer">Share on WhatsApp ↗</a>
+      <a href="mailto:?subject={{ share_title }}&amp;body={{ share_url }}">Share by email</a>
+    </nav>
+  </div>
+  <aside class="gj-related" aria-labelledby="gj-related-title">
+    <h2 id="gj-related-title">Keep exploring</h2>
+    <div class="gj-related-links">
+      {% assign related_count = 0 %}
+      {% for story in blog.articles %}
+        {% if story.id != article.id %}
+          <a href="{{ story.url }}">{{ story.title | escape }} <span aria-hidden="true">↗</span></a>
+          {% assign related_count = related_count | plus: 1 %}
+          {% if related_count == 3 %}{% break %}{% endif %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  </aside>
+</article>
+{% schema %}{"name":"Journal article","settings":[]}{% endschema %}
+

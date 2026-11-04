@@ -1,0 +1,59 @@
+{{ 'ganguram-journal.css' | asset_url | stylesheet_tag }}
+<section class="gj container--large">
+  <header class="gj-intro">
+    <p class="gj-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+    <h1>{{ blog.title | escape }}</h1>
+    <p class="gj-lead">{{ section.settings.intro | escape }}</p>
+  </header>
+  <nav class="gj-topics" aria-label="Journal topics">
+    <a href="{{ blog.url }}" {% if current_tags == blank %}aria-current="page"{% endif %}>All stories</a>
+    {% assign topics = 'Sandesh,Jalbhara,Gifting,Heritage,Press' | split: ',' %}
+    {% for topic in topics %}
+      {% if blog.all_tags contains topic %}
+        <a href="{{ blog.url }}/tagged/{{ topic | handleize }}" {% if current_tags contains topic %}aria-current="page"{% endif %}>{{ topic }}</a>
+      {% endif %}
+    {% endfor %}
+  </nav>
+  {% paginate blog.articles by 9 %}
+    <div class="gj-grid">
+    {% for story in blog.articles %}
+      <article class="gj-card {% if forloop.first and current_tags == blank and paginate.current_page == 1 %}gj-card--featured{% endif %}{% unless story.image %} gj-card--text{% endunless %}">
+        {% if story.image %}
+          <a class="gj-image" href="{{ story.url }}" tabindex="-1" aria-hidden="true">
+            {% if forloop.first %}
+              {{ story.image | image_url: width: 1200 | image_tag: widths: '360,540,720,960,1200', sizes: '(min-width: 900px) 55vw, 100vw', loading: 'eager', alt: story.image.alt }}
+            {% else %}
+              {{ story.image | image_url: width: 720 | image_tag: widths: '360,540,720', sizes: '(min-width: 900px) 33vw, (min-width: 600px) 50vw, 100vw', loading: 'lazy', alt: story.image.alt }}
+            {% endif %}
+          </a>
+        {% endif %}
+        <div class="gj-card-copy">
+          <p class="gj-eyebrow">{% if story.tags contains 'Press' %}In the media{% else %}{{ story.tags.first | default: 'From Ganguram' | escape }}{% endif %}</p>
+          <h2><a href="{{ story.url }}">{{ story.title | escape }}</a></h2>
+          <p class="gj-excerpt">{{ story.excerpt_or_content | strip_html | truncatewords: 32 }}</p>
+          <p class="gj-meta"><time datetime="{{ story.published_at | date: '%Y-%m-%d' }}">{{ story.published_at | date: '%d %B %Y' }}</time></p>
+          <a class="gj-read" href="{{ story.url }}">Read {% if story.tags contains 'Press' %}the press collection{% else %}the story{% endif %}<span aria-hidden="true"> ↗</span><span class="visually-hidden">: {{ story.title | escape }}</span></a>
+        </div>
+      </article>
+    {% else %}
+      <p>No stories in this topic yet. <a href="{{ blog.url }}">Explore all Journal stories</a>.</p>
+    {% endfor %}
+    </div>
+    {% if paginate.pages > 1 %}{% render 'pagination', paginate: paginate %}{% endif %}
+  {% endpaginate %}
+  <aside class="gj-shop" aria-labelledby="gj-shop-title">
+    <p class="gj-eyebrow">From reading to tasting</p>
+    <h2 id="gj-shop-title">Find your next box of mishti.</h2>
+    <p>Choose your delivery PIN on the website to see eligible sweets. Availability and delivery options are confirmed at checkout.</p>
+    <div class="gj-shop-links">
+      <a href="{{ routes.root_url }}collections/jalbhara"><strong>Discover Jalbhara</strong><span>Flavours, piece packs and 400g options ↗</span></a>
+      <a href="{{ routes.root_url }}collections/gift-boxes"><strong>Gift boxes for Kolkata</strong><span>Assortments for serviceable local PINs ↗</span></a>
+      <a href="{{ routes.root_url }}collections/sandesh-gifts-for-delivery-across-india"><strong>Sandesh for delivery across India</strong><span>Selected 400g Kadapak packs, by PIN ↗</span></a>
+    </div>
+  </aside>
+  <p class="gj-contact">Planning a story or a larger gift order? <a href="mailto:support@ganguram.com">Contact Ganguram</a>.</p>
+</section>
+{% schema %}
+{"name":"Ganguram Journal","settings":[{"type":"text","id":"eyebrow","label":"Eyebrow","default":"Stories. Sweets. Thoughtful gifting."},{"type":"textarea","id":"intro","label":"Introduction","default":"Meet the sweets, understand the textures and choose a gift with confidence. Practical guides and stories from Ganguram, Kolkata since 1885."}]}
+{% endschema %}
+
