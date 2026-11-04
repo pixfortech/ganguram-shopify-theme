@@ -1,0 +1,65 @@
+{%- assign gift = product.metafields.custom.gift_editorial.value -%}
+{%- if gift.items.size > 0 -%}
+  {{ 'ganguram-gift-selection.css' | asset_url | stylesheet_tag }}
+  <section class="gg-editorial" id="gift-selection" aria-labelledby="GiftHeading-{{ section.id }}">
+    <div class="gg-editorial__inner">
+      <header class="gg-editorial__header">
+        <p class="gg-editorial__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+        <h2 id="GiftHeading-{{ section.id }}">{{ gift.heading | escape }}</h2>
+        <p class="gg-editorial__intro">{{ gift.intro | escape }}</p>
+      </header>
+      <div class="gg-editorial__section-heading">
+        <h3>{{ section.settings.heading | escape }}</h3>
+        <span>{{ gift.pack | escape }}</span>
+      </div>
+      <div class="gg-editorial__grid{% if gift.items.size == 1 %} gg-editorial__grid--single{% endif %}">
+        {%- for item in gift.items -%}
+          {%- assign sweet_image = nil -%}
+          {%- if item.handle != blank -%}
+            {%- assign sweet_product = all_products[item.handle] -%}
+            {%- assign sweet_image = sweet_product.featured_image -%}
+          {%- endif -%}
+          <article class="gg-editorial__item{% if sweet_image == blank %} gg-editorial__item--text{% endif %}">
+            {%- if sweet_image != blank -%}
+              <div class="gg-editorial__image">
+                {{ sweet_image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '300, 450, 600, 900', sizes: '(min-width: 1000px) 380px, (min-width: 640px) 45vw, 92vw', alt: item.name }}
+              </div>
+            {%- endif -%}
+            <div class="gg-editorial__body">
+              <p class="gg-editorial__quantity">{{ item.quantity | escape }}</p>
+              <h4>{{ item.name | escape }}</h4>
+              <p class="gg-editorial__tagline">{{ item.tagline | escape }}</p>
+              <p class="gg-editorial__text">{{ item.text | escape }}</p>
+            </div>
+          </article>
+        {%- endfor -%}
+      </div>
+      <p class="gg-editorial__note">{{ section.settings.note | escape }}</p>
+      <aside class="gg-editorial__occasion" aria-label="{{ section.settings.contact_heading | escape }}">
+        <div>
+          <h3>{{ section.settings.contact_heading | escape }}</h3>
+          <p>{{ section.settings.contact_text | escape }}</p>
+        </div>
+        <div class="gg-editorial__contact">
+          <a href="mailto:support@ganguram.com">Contact our team <span aria-hidden="true">↗</span></a>
+          <a href="tel:+919073096322">+91 90730 96322</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+{%- endif -%}
+{% schema %}
+{
+  "name": "Gift selection story",
+  "tag": "div",
+  "settings": [
+    {"type":"text","id":"eyebrow","label":"Eyebrow","default":"A GIFT FROM GANGURAM"},
+    {"type":"text","id":"heading","label":"Selection heading","default":"Meet the selection"},
+    {"type":"textarea","id":"note","label":"Photography note","default":"Individual sweet photographs show the varieties in the gift; presentation, garnish and piece size can vary. The contents and quantities listed above define your selection."},
+    {"type":"text","id":"contact_heading","label":"Gifting heading","default":"A gift for your kind of occasion"},
+    {"type":"textarea","id":"contact_text","label":"Gifting text","default":"For wedding, festive or corporate gifting, our team can help you plan quantities and delivery. Please confirm availability and timing before placing a time-sensitive order."}
+  ],
+  "presets":[{"name":"Gift selection story"}],
+  "enabled_on":{"templates":["product"]}
+}
+{% endschema %}
