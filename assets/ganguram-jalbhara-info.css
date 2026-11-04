@@ -29,3 +29,4 @@
 .gj-product-copy a,.gj-collection-guide a{color:#49488d;text-decoration:underline;text-underline-offset:3px}
 .gj-product-copy .gj-explore,.gj-collection-guide .gj-explore{margin:24px 0 0;font-size:14px;font-weight:600}
 @media(max-width:600px){.gj-collection-header{padding-top:18px;padding-bottom:20px}.gj-choice-grid{grid-template-columns:1fr;gap:12px}.gj-guide-wrap{padding-top:28px;padding-bottom:28px}.gj-facts{padding:14px;gap:10px}.gj-facts dd{font-size:12px}}
+.shopify-section:has(>.gj-collection-header)+.shopify-section{margin-top:24px}
