@@ -64,7 +64,7 @@
 
   -%}
 
-  <a href="{{ product_url }}" 
+  <a href="{{ product_url }}" aria-label="{{ product.title | escape }}" 
     class="card__image product-item__image
     {% if section_blocks.size == 0 %} product-item__image--no-text {% endif %}
     {% if settings.product_card_show_secondary_image and product.media.size >= 2 %} product-item__image--has-secondary {% endif %}"
