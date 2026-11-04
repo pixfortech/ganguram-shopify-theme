@@ -13,7 +13,7 @@
       this.label = this.querySelector('[data-ggb-label]');
       this.status = this.querySelector('.ggb-status');
       if (!this.lid || !this.button) return;
-      this.toggle = () => this.animateTo(this.target ? 0 : 1);
+      this.toggle = event => { event.preventDefault(); event.stopPropagation(); this.animateTo(this.target ? 0 : 1); };
       this.button.addEventListener('click', this.toggle);
       const images = [...this.querySelectorAll('.ggb-scene img')];
       Promise.all(images.map(img => img.decode())).then(() => {
@@ -46,7 +46,8 @@
       cancelAnimationFrame(this.frame);
       this.target = target;
       this.button.setAttribute('aria-expanded', String(Boolean(target)));
-      this.label.textContent = target ? 'Close the box' : 'Open the box';
+      this.label.textContent = target ? 'Close box' : 'Open box';
+      this.button.setAttribute('aria-label', this.label.textContent);
       const start = this.progress;
       const duration = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 2200 * Math.abs(target - start);
       const began = performance.now();

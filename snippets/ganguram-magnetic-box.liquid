@@ -1,0 +1,20 @@
+{% doc %}
+  Interactive magnetic gift box. The button does not navigate or add to cart.
+  @param {product} product - Gift product
+  @param {boolean} [compact] - Compact collection card presentation
+{% enddoc %}
+{{ 'ganguram-gift-box.css' | asset_url | stylesheet_tag }}
+<ganguram-gift-box class="ggb-experience{% if compact %} ggb-card{% endif %}">
+  <div class="ggb-scene" role="img" aria-label="{{ product.title | escape }}. Use Open box below to reveal the 26 sweets.">
+    <img class="ggb-base" src="{{ 'regal-mishti-open-1024x921.jpg' | file_url }}" width="1024" height="921" alt="" loading="lazy">
+    <div class="ggb-shade" aria-hidden="true"></div>
+    <div class="ggb-lid" aria-hidden="true">
+      <div class="ggb-face ggb-outer"><img src="{{ 'regal-mishti-closed-1024x921.jpg' | file_url }}" width="1024" height="921" alt="" loading="lazy"></div>
+      <div class="ggb-face ggb-inner"><img src="{{ 'regal-mishti-inner-1024x921.jpg' | file_url }}" width="1024" height="921" alt="" loading="lazy"></div>
+      <div class="ggb-lid-edge"></div><div class="ggb-flap"></div>
+    </div>
+  </div>
+  <div class="ggb-controls"><button class="ggb-toggle" type="button" aria-expanded="false" aria-label="Open {{ product.title | escape }}" disabled><span data-ggb-label>Open box</span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 14 6-6 6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><p class="ggb-status" role="status" aria-live="polite">Preparing your gift…</p></div>
+  <noscript><p>26 sweets inside. View the product photographs to explore the selection.</p></noscript>
+</ganguram-gift-box>
+<script src="{{ 'ganguram-gift-box.js' | asset_url }}" defer></script>

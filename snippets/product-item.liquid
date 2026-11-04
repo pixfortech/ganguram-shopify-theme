@@ -64,6 +64,9 @@
 
   -%}
 
+  {%- if product.tags contains 'gift-box-animation' -%}
+    {% render 'ganguram-magnetic-box', product: product, compact: true %}
+  {%- else -%}
   <a href="{{ product_url }}" aria-label="{{ product.title | escape }}" 
     class="card__image product-item__image
     {% if section_blocks.size == 0 %} product-item__image--no-text {% endif %}
@@ -124,6 +127,7 @@
     {%- endif -%}
 
   </a>
+  {%- endif -%}
 
   <div class="card__text product-item__text gutter--regular spacing--xlarge remove-empty-space text-align--{{ settings.product_card_text_alignment }}">
 
