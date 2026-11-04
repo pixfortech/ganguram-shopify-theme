@@ -1,0 +1,19 @@
+{% if section.settings.position == 'intro' %}
+{{ 'ganguram-jalbhara-info.css' | asset_url | stylesheet_tag }}
+<header class="gj-collection-header container--large">
+  <h1>{{ collection.title | escape }}</h1>
+  <div class="gj-collection-intro rte">{{ section.settings.intro }}</div>
+</header>
+{% elsif collection.description != blank %}
+<div class="gj-guide-wrap container--large">{{ collection.description }}</div>
+{% endif %}
+{% schema %}
+{
+  "name":"Jalbhara collection",
+  "settings":[
+    {"type":"select","id":"position","label":"Position","default":"intro","options":[{"value":"intro","label":"Introduction"},{"value":"guide","label":"Collection buying guide"}]},
+    {"type":"richtext","id":"intro","label":"Short introduction"}
+  ],
+  "presets":[{"name":"Jalbhara collection"}]
+}
+{% endschema %}

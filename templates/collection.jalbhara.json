@@ -1,0 +1,54 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "banner": {
+      "type": "ganguram-jalbhara-collection",
+      "settings": {
+        "position": "intro",
+        "intro": "<p>Discover Ganguram’s Jalbhara Sandesh: Bengali chhena sweets with a liquid centre. From fragrant Nolen Gur to fruit, chocolate and 2-in-1 flavours, find your favourite pack for sharing or gifting.</p>"
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "blocks": {
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "quick_buy": {
+          "type": "quick_buy",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "price",
+        "title",
+        "quick_buy"
+      ],
+      "settings": {}
+    },
+    "jalbhara_guide": {
+      "type": "ganguram-jalbhara-collection",
+      "settings": {
+        "position": "guide"
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "product-grid",
+    "jalbhara_guide"
+  ]
+}
