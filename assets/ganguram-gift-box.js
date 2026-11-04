@@ -16,6 +16,8 @@
       this.toggle = event => { event.preventDefault(); event.stopPropagation(); this.animateTo(this.target ? 0 : 1); };
       this.button.addEventListener('click', this.toggle);
       const images = [...this.querySelectorAll('.ggb-scene img')];
+      const loadImages = () => {
+      images.forEach(img => { img.loading = 'eager'; });
       Promise.all(images.map(img => img.decode())).then(() => {
         if (!this.isConnected) return;
         this.button.disabled = false;
@@ -23,10 +25,19 @@
       }).catch(() => {
         this.status.textContent = 'The image could not load. Please refresh to try again.';
       });
+      };
+      this.observer = new IntersectionObserver(entries => {
+        if (entries.some(entry => entry.isIntersecting)) {
+          this.observer.disconnect();
+          loadImages();
+        }
+      }, { rootMargin: '400px' });
+      this.observer.observe(this);
       this.render(0);
     }
     disconnectedCallback() {
       cancelAnimationFrame(this.frame);
+      this.observer?.disconnect();
       this.button?.removeEventListener('click', this.toggle);
       this.ready = false;
     }
