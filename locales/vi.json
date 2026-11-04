@@ -172,6 +172,8 @@
   },
   "products": {
     "card": {
+      "express_eligible": "4-hour eligible",
+      "express_conditions": "Availability depends on delivery PIN, ordering hours and minimum order value.",
       "gift_contents": "Bên trong món quà"
     },
     "grid": {

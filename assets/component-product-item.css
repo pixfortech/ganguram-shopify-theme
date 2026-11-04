@@ -316,3 +316,12 @@ html[dir=ltr] .product-item__badges {
 .product-item__gift-list li + li { margin-top: .2rem; }
 .product-item__gift-contents--single { padding: .4rem 0; }
 .product-item__gift-contents--single > span { display: block; }
+
+/* Brand eligibility badge; product tags remain the source of eligibility. */
+.product-item__express-badge { position:absolute; z-index:3; inset-inline-start:10px; bottom:10px; display:inline-flex; align-items:center; gap:5px; max-width:calc(100% - 20px); padding:6px 9px; border:1px solid rgba(255,255,255,.7); border-radius:99px; background:#49488D; color:#fff; font-family:inherit; font-size:11px; font-weight:600; line-height:1.3; pointer-events:none; }
+.product-item__express-badge svg { flex-shrink:0; }
+.product-item__express-badge[hidden] { display:none; }
+.product-item__gift-contents { width:100%; }
+.product-item__title { width:100%; }
+.product-item__title > div:first-child { box-sizing:border-box; }
+@media(max-width:474px) { .product-item__express-badge { font-size:10px; padding:5px 7px; inset-inline-start:7px; bottom:7px; max-width:calc(100% - 14px); } }

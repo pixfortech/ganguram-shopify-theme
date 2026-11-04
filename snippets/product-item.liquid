@@ -116,6 +116,13 @@
       endif
     -%}
 
+    {%- if gz_quick_commerce and product.available and settings.ganguram_4h_enabled -%}
+      <span class="product-item__express-badge" data-ganguram-express-badge title="{{ 'products.card.express_conditions' | t | escape }}">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-width="1.5"/><path d="M10 5.5V10l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        {{- 'products.card.express_eligible' | t -}}
+      </span>
+    {%- endif -%}
+
   </a>
 
   <div class="card__text product-item__text gutter--regular spacing--xlarge remove-empty-space text-align--{{ settings.product_card_text_alignment }}">
