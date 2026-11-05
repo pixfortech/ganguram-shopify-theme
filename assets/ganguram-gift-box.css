@@ -6,15 +6,15 @@
 .ggb-intro p:last-child{font-size:16px;line-height:1.6;color:#62617a;margin:0}
 .ggb-scene{position:relative;width:min(100%,1200px);aspect-ratio:1024/921;margin:auto;isolation:isolate;overflow:hidden;background:#e8d6bc;perspective:6000px;perspective-origin:50% 14.65%;border-radius:3px}
 .ggb-base{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain}
-.ggb-lid{position:absolute;left:6.6113%;top:14.648438%;width:86.9538%;height:73.242188%;transform-style:preserve-3d;transform-origin:50% 0;transform:rotateX(0deg);z-index:3}
+.ggb-lid{position:absolute;left:6.6113%;top:14.648438%;width:86.9538%;height:73.242188%;transform-style:preserve-3d;transform-origin:50% 0;transform:rotateX(99deg);z-index:3}
 .ggb-face{position:absolute;inset:0;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:2px;background:#ae1731}
 .ggb-face img{position:absolute;width:115.004%;height:136.533333%;max-width:none!important;left:-7.60283%;top:-20%;object-fit:fill}
 .ggb-outer{transform:translateZ(1px);box-shadow:0 1px 2px #5a0e1b}
 .ggb-inner{transform:rotateX(180deg) translateZ(1px);box-shadow:inset 0 0 0 2px #951b2a}
 .ggb-inner img{transform:none}
 .ggb-lid-edge{position:absolute;inset:0;border:2px solid #9b1628;transform:translateZ(-1px);pointer-events:none}
-.ggb-flap{position:absolute;left:0;top:100%;width:100%;height:3.5%;background:linear-gradient(#be2034,#a0112a);border:1px solid #931021;transform-origin:50% 0;transform:rotateX(-90deg);backface-visibility:visible;box-shadow:inset 0 -2px 2px #7d1321}
-.ggb-shade{position:absolute;left:7.2%;top:15.2%;width:85.5%;height:72%;background:linear-gradient(#26180799,#26180722);opacity:.22;pointer-events:none;z-index:2;transform-origin:50% 0;border-radius:3px}
+.ggb-flap{position:absolute;left:0;top:100%;width:100%;height:3.5%;background:linear-gradient(#be2034,#a0112a);border:1px solid #931021;transform-origin:50% 0;transform:rotateX(0deg);backface-visibility:visible;box-shadow:inset 0 -2px 2px #7d1321}
+.ggb-shade{position:absolute;left:7.2%;top:15.2%;width:85.5%;height:72%;background:linear-gradient(#26180799,#26180722);opacity:0;pointer-events:none;z-index:2;transform-origin:50% 0;border-radius:3px}
 .ggb-controls{display:flex;align-items:center;flex-direction:column;gap:12px;padding:24px 20px 0}
 .ggb-toggle{appearance:none;display:inline-flex;gap:14px;align-items:center;justify-content:center;border:1px solid var(--ggb-purple);background:var(--ggb-purple);color:white;border-radius:99px;min-width:200px;min-height:50px;padding:13px 26px;font:inherit;font-size:15px;cursor:pointer;transition:background .2s,box-shadow .2s}
 .ggb-toggle:hover{background:#363575;box-shadow:0 6px 18px #49488d24}

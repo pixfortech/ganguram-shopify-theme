@@ -4,8 +4,8 @@
     connectedCallback() {
       if (this.ready) return;
       this.ready = true;
-      this.progress = 0;
-      this.target = 0;
+      this.progress = 1;
+      this.target = 1;
       this.lid = this.querySelector('.ggb-lid');
       this.flap = this.querySelector('.ggb-flap');
       this.shade = this.querySelector('.ggb-shade');
@@ -21,7 +21,7 @@
       Promise.all(images.map(img => img.decode())).then(() => {
         if (!this.isConnected) return;
         this.button.disabled = false;
-        this.status.textContent = 'A little anticipation. A lovely reveal.';
+        this.status.textContent = 'A box full of little celebrations.';
       }).catch(() => {
         this.status.textContent = 'The image could not load. Please refresh to try again.';
       });
@@ -33,7 +33,7 @@
         }
       }, { rootMargin: '400px' });
       this.observer.observe(this);
-      this.render(0);
+      this.render(1);
     }
     disconnectedCallback() {
       cancelAnimationFrame(this.frame);
